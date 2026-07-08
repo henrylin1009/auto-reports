@@ -2,13 +2,13 @@ __pycache__/
 *.pyc
 .DS_Store
 ~$*
+# 完整報表要入庫給網頁下載(CI 不重建);其餘 xlsx 忽略
 *.xlsx
+!銀行債券_完整報表.xlsx
 .venv/
 site/
 output/
 logs/
-data.json
-銀行債券_完整報表.xlsx
 銀行債券_原生圖表.xlsx
 銀行債券_寬表.xlsx
 銀行債券投資_債種分析.xlsx

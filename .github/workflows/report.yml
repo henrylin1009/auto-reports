@@ -1,11 +1,17 @@
-name: 產出報表並發佈網頁
+name: 發佈網頁(GitHub Pages)
+
+# 說明:TWSE 會擋 GitHub 雲端 IP,無法在 CI 直接抓財報。
+# 因此資料在「本機」產好(build_report.py 產出 data.json + 完整報表.xlsx 並 commit),
+# CI 只負責讀這兩個檔、畫圖、發佈網頁 —— 穩定不依賴 TWSE。
+#
+# 更新流程:本機跑 `python3 build_report.py` → git add data.json 銀行債券_完整報表.xlsx → push,
+# 這個工作流程就會自動把新資料發佈上網。
 
 on:
-  schedule:
-    - cron: "0 3 5 * *"      # 每月5日 03:00 UTC 自動跑(涵蓋H1約8月、年報約3-4月及補正)
-  workflow_dispatch: {}       # 也可在 Actions 頁面手動按一下就跑
   push:
-    branches: [ main ]        # 推程式碼時也跑一次
+    branches: [ main ]
+    paths: [ "data.json", "銀行債券_完整報表.xlsx", "make_web.py", ".github/workflows/report.yml" ]
+  workflow_dispatch: {}
 
 permissions:
   contents: read
@@ -21,29 +27,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: 安裝中文字型(給圖表用)
+      - name: 安裝中文字型(圖表用)
         run: sudo apt-get update && sudo apt-get install -y fonts-noto-cjk
-
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-
       - name: 安裝依賴
-        run: pip install -r requirements.txt
-
-      - name: 快取 PDF(避免每次重抓、減輕來源負擔)
-        uses: actions/cache@v4
-        with:
-          path: pdf_cache
-          key: pdf-cache-v1
-
-      - name: 抓財報 + 產出 Excel
-        run: python3 build_report.py --refresh
-
-      - name: 產出網頁(site/)
+        run: pip install matplotlib
+      - name: 產出網頁(讀 data.json + xlsx)
         run: python3 make_web.py
-
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site
