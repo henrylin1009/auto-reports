@@ -1,25 +1,45 @@
-name: 打包 Windows 程式(給 mentor 用)
+name: 打包程式(給 mentor:Windows / Mac)
 
 on:
-  workflow_dispatch: {}          # 手動觸發:Actions 頁按 Run workflow
+  workflow_dispatch: {}
   push:
     branches: [ main ]
     paths: [ "app.py", "build_report.py", "extract*.py", "resolve.py", ".github/workflows/build-exe.yml" ]
 
 jobs:
-  build:
-    runs-on: windows-latest      # 用 Windows 機器打包(打包不需連 TWSE)
+  windows:
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-      - name: 安裝依賴
-        run: pip install pdfplumber openpyxl requests pyinstaller
-      - name: 打包成單一 exe
-        run: pyinstaller --onefile --name 銀行債券報表 --collect-all pdfplumber --collect-all pdfminer app.py
-      - name: 上傳 exe(可在此工作流程頁面下載)
-        uses: actions/upload-artifact@v4
+        with: { python-version: "3.11" }
+      - run: pip install pdfplumber openpyxl requests pyinstaller
+      - run: pyinstaller --onefile --name 銀行債券報表 --collect-all pdfplumber --collect-all pdfminer app.py
+      - uses: actions/upload-artifact@v4
         with:
           name: 銀行債券報表-Windows
           path: dist/銀行債券報表.exe
+
+  mac:
+    runs-on: macos-13          # Intel x86_64:Apple 晶片與 Intel Mac 皆可跑(ARM 走 Rosetta)
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: pip install pdfplumber openpyxl requests pyinstaller
+      - run: pyinstaller --onefile --name 銀行債券報表 --collect-all pdfplumber --collect-all pdfminer app.py
+      - name: 建立雙擊啟動器 + 打包
+        run: |
+          cd dist
+          cat > 啟動-產生報表.command <<'EOF'
+          #!/bin/bash
+          cd "$(dirname "$0")"
+          xattr -dr com.apple.quarantine . 2>/dev/null
+          ./銀行債券報表
+          EOF
+          chmod +x 啟動-產生報表.command 銀行債券報表
+          zip -r 銀行債券報表-Mac.zip 銀行債券報表 啟動-產生報表.command
+      - uses: actions/upload-artifact@v4
+        with:
+          name: 銀行債券報表-Mac
+          path: dist/銀行債券報表-Mac.zip
