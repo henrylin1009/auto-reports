@@ -5,7 +5,7 @@
 輸出 銀行債券_完整報表.xlsx:寬表(全期間) + 資料表 + 兩張原生圖儀表板(版面同參考圖)。
 圖表可調參數見下方 CONFIG。
 """
-import sys, pdfplumber
+import sys, datetime, pdfplumber
 from pathlib import Path
 import openpyxl
 from openpyxl.chart import BarChart, Reference
@@ -18,13 +18,16 @@ import extract3 as E
 # ===================== CONFIG(想調圖就改這裡)=====================
 GAP_WIDTH   = 20        # 長條群間距(越小越擠;參考圖約 20~40)
 CHART_W, CHART_H = 11, 6.5
-# 圖表只顯示這些期間(避免太密);寬表仍保留全部。改這行即可增減。
-SHOW_PERIODS = ["2022H1","2022H2","2023H1","2023H2","2024H1","2024H2"]
+START_ROC   = 109       # 起始:民國109 = 2020
+SHOW_N      = 6         # 圖表顯示「最近幾期(有資料的)」;寬表仍保留全部
 # ================================================================
 
 CACHE=Path("pdf_cache"); OUT="銀行債券_完整報表.xlsx"
 BANKS=[("5841","中信"),("5843","兆豐"),("5835","國泰"),("5836","富邦"),("5847","玉山")]
-ALL_PERIODS=[(roc,mth) for roc in range(109,114) for mth in ("02","04")]
+# 自動延伸到「當前民國年」→ 明年後年跑會自動含最新一期,不用改程式重打包
+END_ROC=datetime.date.today().year-1911
+ALL_PERIODS=[(roc,mth) for roc in range(START_ROC,END_ROC+1) for mth in ("02","04")]
+SHOW_PERIODS=[]         # 於 build() 依實際有資料的期間自動決定(取最近 SHOW_N 期)
 COLOR={"中信":"4a5e2a","兆豐":"8a8a3a","國泰":"e8c020","富邦":"3a8fd0","玉山":"8bc34a"}
 def plabel(roc,mth): return f"{1911+roc}{'H1' if mth=='02' else 'H2'}"
 
@@ -123,6 +126,11 @@ def wide_sheet(ws, rec):
 
 # ---------- 組裝 ----------
 def build(rec):
+    global SHOW_PERIODS
+    # 圖表期間 = 最近 SHOW_N 個「至少一家有資料」的期間(自動,不寫死年份)
+    have=[plabel(r,m) for r,m in ALL_PERIODS
+          if any(rec.get((plabel(r,m),n)) for _,n in BANKS)]
+    SHOW_PERIODS=have[-SHOW_N:] if have else [plabel(r,m) for r,m in ALL_PERIODS][-SHOW_N:]
     wb=openpyxl.Workbook(); wide_sheet(wb.active,rec); wb.active.title="寬表"
     for dash,specs in [("圖-按分類",DASH1),("圖-按債種",DASH2)]:
         wsd=wb.create_sheet(f"資料_{dash[-3:]}"); wsc=wb.create_sheet(dash); top=1

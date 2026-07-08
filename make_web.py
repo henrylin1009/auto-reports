@@ -10,7 +10,9 @@ from matplotlib import font_manager as fm
 SITE=Path("site"); SITE.mkdir(exist_ok=True)
 D=json.load(open("data.json")); PERIODS=D["periods"]; BANKS=D["banks"]; DATA=D["data"]
 COLOR={"中信":"#4a5e2a","兆豐":"#8a8a3a","國泰":"#e8c020","富邦":"#3a8fd0","玉山":"#8bc34a"}
-SHOW=["2022H1","2022H2","2023H1","2023H2","2024H1","2024H2"]
+# 圖表期間:最近 6 個「有資料」的期(自動,不寫死年份)
+_have=[p for p in PERIODS if any((DATA.get(f"{p}|{b}")) for b in BANKS)]
+SHOW=(_have or PERIODS)[-6:]
 
 # 中文字型(Linux CI: Noto CJK;mac: PingFang)
 for p in ["/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
