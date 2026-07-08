@@ -21,7 +21,7 @@ jobs:
           path: dist/bank-bond-report.exe
 
   mac:
-    runs-on: macos-13          # Intel x86_64:Apple 晶片與 Intel Mac 皆可跑(ARM 走 Rosetta)
+    runs-on: macos-latest      # Apple 晶片(arm64):mentor 是 M 系列 Mac;此 runner 排隊快
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
