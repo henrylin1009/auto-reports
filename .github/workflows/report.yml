@@ -1,0 +1,59 @@
+name: 產出報表並發佈網頁
+
+on:
+  schedule:
+    - cron: "0 3 5 * *"      # 每月5日 03:00 UTC 自動跑(涵蓋H1約8月、年報約3-4月及補正)
+  workflow_dispatch: {}       # 也可在 Actions 頁面手動按一下就跑
+  push:
+    branches: [ main ]        # 推程式碼時也跑一次
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 安裝中文字型(給圖表用)
+        run: sudo apt-get update && sudo apt-get install -y fonts-noto-cjk
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 安裝依賴
+        run: pip install -r requirements.txt
+
+      - name: 快取 PDF(避免每次重抓、減輕來源負擔)
+        uses: actions/cache@v4
+        with:
+          path: pdf_cache
+          key: pdf-cache-v1
+
+      - name: 抓財報 + 產出 Excel
+        run: python3 build_report.py --refresh
+
+      - name: 產出網頁(site/)
+        run: python3 make_web.py
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

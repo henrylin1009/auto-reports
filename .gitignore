@@ -1,0 +1,20 @@
+__pycache__/
+*.pyc
+.DS_Store
+~$*
+*.xlsx
+.venv/
+site/
+output/
+logs/
+data.json
+銀行債券_完整報表.xlsx
+銀行債券_原生圖表.xlsx
+銀行債券_寬表.xlsx
+銀行債券投資_債種分析.xlsx
+圖1_按分類.png
+圖2_按債種.png
+_圖1.png
+_圖2.png
+# PDF 快取:可選。想加速首次 CI 可保留;預設不入庫(CI 會自動抓)
+pdf_cache/

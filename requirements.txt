@@ -1,0 +1,4 @@
+pdfplumber>=0.11
+openpyxl>=3.1
+requests>=2.31
+matplotlib>=3.8   # 僅網頁版 make_web.py 需要(伺服器cron版可不裝)
