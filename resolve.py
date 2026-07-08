@@ -6,8 +6,18 @@ from pathlib import Path
 CACHE=Path("pdf_cache")
 BASE="https://doc.twse.com.tw"
 
+# 瀏覽器標頭(避免政府網站拒絕預設 python-requests UA)
+HEADERS={
+    "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                 "(KHTML, like Gecko) Chrome/125.0 Safari/537.36",
+    "Accept-Language":"zh-TW,zh;q=0.9",
+    "Referer":BASE+"/",
+}
+def _sess():
+    s=requests.Session(); s.headers.update(HEADERS); return s
+
 def list_year(code, roc):
-    r=requests.get(f"{BASE}/server-java/t57sb01",
+    r=_sess().get(f"{BASE}/server-java/t57sb01",
         params={"step":"1","colorchg":"1","mtype":"A","co_id":code,"year":roc},timeout=30)
     r.encoding="big5"; return r.text
 
@@ -31,7 +41,7 @@ def download(code, roc, month, tries=4):
             html=list_year(code,roc)
             fn=indiv_filename(html,yyyymm)
             if not fn: return None                        # 該期無個體檔(真的沒有)
-            s=requests.Session()
+            s=_sess()
             r=s.post(f"{BASE}/server-java/t57sb01",
                 data={"step":"9","kind":"A","co_id":code,"filename":fn,"colorchg":"1"},timeout=30)
             r.encoding="big5"; mm=re.search(r"href='(/pdf/[^']+\.pdf)'",r.text)

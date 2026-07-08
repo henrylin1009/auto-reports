@@ -1,0 +1,16 @@
+name: 診斷-雲端能否抓TWSE
+
+on:
+  workflow_dispatch: {}   # 只手動觸發:Actions 頁面按 Run workflow
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install requests pdfplumber
+      - name: 測 TWSE 抓取
+        run: python3 fetch_test.py
