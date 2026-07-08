@@ -14,11 +14,11 @@ jobs:
       - uses: actions/setup-python@v5
         with: { python-version: "3.11" }
       - run: pip install pdfplumber openpyxl requests pyinstaller
-      - run: pyinstaller --onefile --name 銀行債券報表 --collect-all pdfplumber --collect-all pdfminer app.py
+      - run: pyinstaller --onefile --name bank-bond-report --collect-all pdfplumber --collect-all pdfminer app.py
       - uses: actions/upload-artifact@v4
         with:
-          name: 銀行債券報表-Windows
-          path: dist/銀行債券報表.exe
+          name: bank-bond-report-Windows
+          path: dist/bank-bond-report.exe
 
   mac:
     runs-on: macos-13          # Intel x86_64:Apple 晶片與 Intel Mac 皆可跑(ARM 走 Rosetta)
@@ -27,19 +27,19 @@ jobs:
       - uses: actions/setup-python@v5
         with: { python-version: "3.11" }
       - run: pip install pdfplumber openpyxl requests pyinstaller
-      - run: pyinstaller --onefile --name 銀行債券報表 --collect-all pdfplumber --collect-all pdfminer app.py
-      - name: 建立雙擊啟動器 + 打包
+      - run: pyinstaller --onefile --name bank-bond-report --collect-all pdfplumber --collect-all pdfminer app.py
+      - name: 建立雙擊啟動器 + 打包(全英文檔名,避免解壓編碼問題)
         run: |
           cd dist
-          cat > 啟動-產生報表.command <<'EOF'
+          cat > START-HERE.command <<'EOF'
           #!/bin/bash
           cd "$(dirname "$0")"
           xattr -dr com.apple.quarantine . 2>/dev/null
-          ./銀行債券報表
+          ./bank-bond-report
           EOF
-          chmod +x 啟動-產生報表.command 銀行債券報表
-          zip -r 銀行債券報表-Mac.zip 銀行債券報表 啟動-產生報表.command
+          chmod +x START-HERE.command bank-bond-report
+          zip -r bank-bond-report-Mac.zip bank-bond-report START-HERE.command
       - uses: actions/upload-artifact@v4
         with:
-          name: 銀行債券報表-Mac
-          path: dist/銀行債券報表-Mac.zip
+          name: bank-bond-report-Mac
+          path: dist/bank-bond-report-Mac.zip
