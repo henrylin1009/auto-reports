@@ -106,7 +106,7 @@ table.wide tbody tr:nth-child(even) td{{background:#fafafa}}
 <div class="card note">
 <b>說明</b><br>
 · 單位:億元。x軸=五家銀行,每家一色、時間序列(顯示 {SHOW[0]}–{SHOW[-1]})。<br>
-· <b>兆豐</b>整條留白:其財報未揭露債券債種明細(先天缺料)。<br>
+· <b>兆豐</b>債種明細來自其財報「證券部門變動明細表」(排版與他家不同);其證券部門無 Trading 部位,故 Trading 列為 0。<br>
 · 數據經三層 checksum 驗算;完整方法與腳本見 repo。<br>
 · 本頁由 GitHub Actions 自動更新。
 </div></div></body></html>"""
