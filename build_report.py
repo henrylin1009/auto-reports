@@ -14,6 +14,7 @@ from openpyxl.chart.shapes import GraphicalProperties
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 import openpyxl.utils as XU
 import extract3 as E
+from extract_megabank import parse_megabank
 
 # ===================== CONFIG(想調圖就改這裡)=====================
 GAP_WIDTH   = 20        # 長條群間距(越小越擠;參考圖約 20~40)
@@ -37,14 +38,16 @@ def parse_all():
         import resolve
         for roc,mth in ALL_PERIODS:
             for code,_ in BANKS:
-                if code!="5843": resolve.download(code,roc,mth)
+                resolve.download(code,roc,mth)
     rec={}
     for roc,mth in ALL_PERIODS:
         lbl=plabel(roc,mth)
         for code,name in BANKS:
             p=CACHE/f"{1911+roc}{mth}_{code}_AI3.pdf"
-            if name=="兆豐" or not p.exists() or p.stat().st_size<100000:
+            if not p.exists() or p.stat().st_size<100000:
                 rec[(lbl,name)]=None; continue
+            if name=="兆豐":   # 兆豐:證券部門變動明細表(座標式),專用解析
+                rec[(lbl,name)]=parse_megabank(p); continue
             t="\n".join((pg.extract_text() or "") for pg in pdfplumber.open(p).pages)
             items={c:E.parse_class(t,c) for c in ("Trading","OCI","AC")}
             r={c:E.bond_buckets(items[c]) for c in ("Trading","OCI","AC")}
