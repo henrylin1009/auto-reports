@@ -54,8 +54,6 @@ def dash2():
     fig.tight_layout(rect=[0,0,1,0.96]); fig.savefig(SITE/"圖2.png",dpi=110); plt.close(fig)
 
 dash1(); dash2()
-for f in ["銀行債券_完整報表.xlsx"]:
-    if Path(f).exists(): shutil.copy(f, SITE/f)
 
 # ---- 寬表 HTML(那張 spreadsheet)----
 def wide_table_html():
@@ -80,32 +78,35 @@ def interactive_html():
     payload=json.dumps({"periods":PERIODS,"banks":BANKS,"wide":D.get("wide",{})}, ensure_ascii=False)
     css="""<style>
 .ix{font-family:inherit}
-.ix-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
-.ix-tab{font-size:13px;padding:7px 14px;border:1px solid #d6ddd9;border-radius:8px;background:#fff;cursor:pointer;color:#555}
-.ix-tab.on{border-color:#2e5b4e;background:#eef3f1;color:#2e5b4e;font-weight:bold}
-.ix-cptog{display:flex;align-items:center;gap:7px;font-size:13px;color:#555;margin:0 0 16px;cursor:pointer}
-.ix-ctl{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px}
-.ix-ctl label{font-size:12px;color:#666;margin-left:6px}
-.ix-ctl select{height:32px;border:1px solid #ccc;border-radius:6px;padding:0 6px}
-.ix-seg{display:inline-flex;border:1px solid #ccc;border-radius:6px;overflow:hidden}
-.ix-seg button{border:none;background:#fff;font-size:12px;padding:6px 12px;cursor:pointer;color:#666}
-.ix-seg button.on{background:#eef3f1;color:#2e5b4e;font-weight:bold}
-.ix-sentence{font-size:15px;line-height:1.7;color:#222;margin-bottom:14px}
-.ix-kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}
-.ix-kcard{background:#f5f6f5;border-radius:8px;padding:12px 14px}
-.ix-klabel{font-size:12px;color:#666;margin-bottom:6px}
-.ix-kval{font-size:22px;font-weight:bold;color:#222;line-height:1.2}
-.ix-ksub{font-size:12px;color:#999;margin-top:3px}
-.ix-legend{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:14px;font-size:12px;color:#666;align-items:center}
+.ix-tabs{display:inline-flex;gap:2px;flex-wrap:wrap;margin-bottom:12px;background:#eef0f3;border-radius:10px;padding:3px}
+.ix-tab{font-size:13px;padding:7px 16px;border:none;border-radius:8px;background:transparent;cursor:pointer;color:#5f6672;transition:all .15s}
+.ix-tab.on{background:#fff;color:#111827;font-weight:600;box-shadow:0 1px 2px rgba(16,24,40,.08)}
+.ix-cptog{display:flex;align-items:center;gap:8px;font-size:13px;color:#5f6672;margin:0 0 20px;cursor:pointer}
+.ix-cptog input{accent-color:#4f46e5}
+.ix-ctl{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.ix-ctl label{font-size:12px;color:#8a919e;margin-left:6px}
+.ix-ctl select{height:34px;border:1px solid #e0e3e8;border-radius:8px;padding:0 8px;background:#fff;color:#111827;font-size:13px;outline:none}
+.ix-ctl select:hover{border-color:#c6cbd4}
+.ix-seg{display:inline-flex;background:#eef0f3;border-radius:8px;padding:2px}
+.ix-seg button{border:none;background:transparent;font-size:12px;padding:6px 12px;cursor:pointer;color:#5f6672;border-radius:6px}
+.ix-seg button.on{background:#fff;color:#111827;font-weight:600;box-shadow:0 1px 2px rgba(16,24,40,.08)}
+.ix-sentence{font-size:17px;line-height:1.75;color:#111827;margin-bottom:18px;letter-spacing:-.01em}
+.ix-sentence b{color:#4f46e5}
+.ix-kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:24px}
+.ix-kcard{background:#fff;border:1px solid #e9ebef;border-radius:12px;padding:14px 16px}
+.ix-klabel{font-size:12px;color:#8a919e;margin-bottom:8px}
+.ix-kval{font-size:24px;font-weight:600;color:#111827;line-height:1.15;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.ix-ksub{font-size:12px;color:#8a919e;margin-top:4px}
+.ix-legend{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:14px;font-size:12px;color:#5f6672;align-items:center}
 .ix-legend span{display:flex;align-items:center;gap:5px}
-.ix-sw{width:11px;height:11px;border-radius:2px;display:inline-block}
-.ix-hatch{background:repeating-linear-gradient(45deg,#f5f6f5,#f5f6f5 3px,#bbb 3px,#bbb 4px)}
+.ix-sw{width:10px;height:10px;border-radius:3px;display:inline-block}
+.ix-hatch{background:repeating-linear-gradient(45deg,#f2f3f5,#f2f3f5 3px,#c4c9d1 3px,#c4c9d1 4px)}
 .ix-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-.ix-name{width:38px;font-size:13px;color:#222;text-align:right;flex:none}
-.ix-track{flex:1;display:flex;height:26px;border-radius:4px;overflow:hidden;background:#f0f0f0}
+.ix-name{width:38px;font-size:13px;color:#111827;text-align:right;flex:none}
+.ix-track{flex:1;display:flex;height:26px;border-radius:6px;overflow:hidden;background:#f2f3f5}
 .ix-s2{height:100%}
-.ix-tot{width:64px;font-size:12px;color:#555;text-align:right;flex:none}
-.ix-na{flex:1;height:26px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#999;background:repeating-linear-gradient(45deg,#f5f6f5,#f5f6f5 5px,rgba(150,150,150,.25) 5px,rgba(150,150,150,.25) 7px)}
+.ix-tot{width:64px;font-size:12px;color:#5f6672;text-align:right;flex:none;font-variant-numeric:tabular-nums}
+.ix-na{flex:1;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#8a919e;background:repeating-linear-gradient(45deg,#f5f6f8,#f5f6f8 5px,rgba(150,156,168,.25) 5px,rgba(150,156,168,.25) 7px)}
 </style>"""
     markup="""<div class="ix">
 <div class="ix-sentence" id="ix_sentence"></div>
@@ -242,37 +243,48 @@ now=datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
 html=f"""<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>銀行債券投資 債種分析</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-body{{font-family:-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;margin:0;background:#f5f6f5;color:#222}}
-header{{background:#2e5b4e;color:#fff;padding:20px 24px}}
-header h1{{margin:0;font-size:20px}} header p{{margin:6px 0 0;opacity:.85;font-size:13px}}
-.wrap{{max-width:1200px;margin:0 auto;padding:20px}}
-.dl{{display:inline-block;background:#2e5b4e;color:#fff;text-decoration:none;padding:12px 22px;border-radius:8px;font-weight:bold;margin:10px 0}}
-.card{{background:#fff;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.08);padding:16px;margin:18px 0}}
-.card h2{{margin:0 0 12px;font-size:16px;color:#2e5b4e}}
-img{{width:100%;height:auto;border-radius:6px}}
-.note{{font-size:13px;color:#666;line-height:1.7}}
-.tblwrap{{overflow-x:auto}}
-table.wide{{border-collapse:collapse;font-size:12px;white-space:nowrap}}
-table.wide th,table.wide td{{border:1px solid #ddd;padding:4px 8px;text-align:right}}
-table.wide thead th{{background:#2e5b4e;color:#fff;text-align:center;position:sticky;top:0}}
-table.wide th.rowh{{background:#eef3f1;text-align:left;position:sticky;left:0;z-index:1}}
-table.wide tbody tr:nth-child(even) td{{background:#fafafa}}
+:root{{--ink:#111827;--sub:#5f6672;--mut:#8a919e;--line:#e9ebef;--bg:#f5f6f8;--accent:#4f46e5}}
+*{{box-sizing:border-box}}
+body{{font-family:Inter,-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;margin:0;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}}
+header{{background:#fff;border-bottom:1px solid var(--line);padding:18px 28px;position:sticky;top:0;z-index:10}}
+header h1{{margin:0;font-size:16px;font-weight:600;letter-spacing:-.01em}}
+header p{{margin:3px 0 0;color:var(--mut);font-size:12px}}
+.wrap{{max-width:1100px;margin:0 auto;padding:28px 20px 60px}}
+.card{{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 1px 2px rgba(16,24,40,.04);padding:22px 24px;margin:0 0 20px}}
+.card h2{{margin:0 0 16px;font-size:14px;font-weight:600;color:var(--sub);text-transform:none;letter-spacing:.01em}}
+img{{width:100%;height:auto;border-radius:8px}}
+details.card{{padding:0}}
+details.card>summary{{cursor:pointer;list-style:none;padding:18px 24px;font-size:14px;font-weight:600;color:var(--sub);display:flex;align-items:center;gap:8px}}
+details.card>summary::before{{content:"▸";color:var(--mut);transition:transform .15s}}
+details.card[open]>summary::before{{transform:rotate(90deg)}}
+details.card>.inner{{padding:0 24px 22px}}
+.note{{font-size:13px;color:var(--sub);line-height:1.8}}
+.tblwrap{{overflow-x:auto;border:1px solid var(--line);border-radius:10px}}
+table.wide{{border-collapse:collapse;font-size:12px;white-space:nowrap;width:100%}}
+table.wide th,table.wide td{{border-bottom:1px solid var(--line);padding:6px 10px;text-align:right}}
+table.wide thead th{{background:#f8f9fb;color:var(--sub);font-weight:600;text-align:center;position:sticky;top:0}}
+table.wide th.rowh{{background:#f8f9fb;text-align:left;position:sticky;left:0;z-index:1;color:var(--ink);font-weight:500}}
+table.wide tbody tr:hover td{{background:#fafbfc}}
+@media print{{header{{position:static}}.card{{box-shadow:none;break-inside:avoid}}details.card{{display:none}}}}
 </style></head><body>
-<header><h1>銀行五家 債券投資 債種分析</h1>
-<p>國泰5835 / 富邦5836 / 中信5841 / 兆豐5843 / 玉山5847 · 個體財報 · 資料來源:公開資訊觀測站 · 最後更新:{now}</p></header>
+<header><h1>銀行五家 · 債券投資債種分析</h1>
+<p>國泰 5835 / 富邦 5836 / 中信 5841 / 兆豐 5843 / 玉山 5847 · 個體財報 · 公開資訊觀測站 · 更新 {now}</p></header>
 <div class="wrap">
-<a class="dl" href="銀行債券_完整報表.xlsx" download>⬇ 下載完整 Excel(寬表 + 原生圖表)</a>
 {interactive_html()}
-<div class="card"><h2>按會計分類 (Trading / OCI / AC)</h2><img src="圖1.png" alt="按分類"></div>
-<div class="card"><h2>按債種 (公債 / 信用債 / 公司債 / 金融債 / 其他)</h2><img src="圖2.png" alt="按債種"></div>
+<details class="card"><summary>靜態總覽圖(列印/貼信件用)</summary><div class="inner">
+<h2 style="margin-top:4px">按會計分類 (Trading / OCI / AC)</h2><img src="圖1.png" alt="按分類">
+<h2 style="margin-top:20px">按債種 (公債 / 信用債 / 公司債 / 金融債 / 其他)</h2><img src="圖2.png" alt="按債種">
+</div></details>
 {wide_table_html()}
 <div class="card note">
-<b>說明</b><br>
-· 單位:億元。x軸=五家銀行,每家一色、時間序列(顯示 {SHOW[0]}–{SHOW[-1]})。<br>
+<b style="color:var(--ink)">說明</b><br>
+· 單位:億元。靜態圖 x 軸=五家銀行、每家一色、時間序列(顯示 {SHOW[0]}–{SHOW[-1]})。<br>
 · <b>兆豐</b>債種明細來自其財報「證券部門變動明細表」(排版與他家不同);其證券部門無 Trading 部位,故 Trading 列為 0。<br>
-· 數據經三層 checksum 驗算;完整方法與腳本見 repo。<br>
-· 本頁由 GitHub Actions 自動更新。
+· 2020H1 國泰/玉山之個體財報為掃描影像檔,無法解析,標為「無資料」。<br>
+· 數據經三層 checksum 驗算;完整方法與腳本見 repo。本頁由 GitHub Actions 自動更新。
 </div></div></body></html>"""
 (SITE/"index.html").write_text(html, encoding="utf-8")
 print("已產生 site/ (index.html + 圖1/圖2.png + xlsx)")
