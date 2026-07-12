@@ -384,8 +384,7 @@ table.wide th.rowh{{background:#f8f9fb;text-align:left;position:sticky;left:0;z-
 table.wide tbody tr:hover td{{background:#fafbfc}}
 @media print{{header{{position:static}}.card{{box-shadow:none;break-inside:avoid}}details.card{{display:none}}}}
 </style></head><body>
-<header><h1>銀行債券投資債種分析</h1>
-<p>個體財報 · 公開資訊觀測站 · 更新 {now}</p></header>
+<header><h1>銀行債券投資債種分析 <span style="font-weight:400;color:var(--mut);font-size:12px">更新 {now}</span></h1></header>
 <div class="wrap">
 <div class="card ov">
 <div class="ov-stats">
