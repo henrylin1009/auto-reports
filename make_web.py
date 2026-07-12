@@ -312,7 +312,14 @@ function drawB(){
 ["B_c","B_b"].forEach(id=>document.getElementById(id).onchange=drawB);
 
 const bcEl=document.getElementById("bankchips");
-if(bcEl){bcEl.innerHTML=BANKS.map(b=>'<button class="ov-chip on" data-bank="'+b+'"><span class="ix-sw" style="background:'+BC[b]+'"></span>'+b+'</button>').join("");
+if(bcEl){bcEl.innerHTML=BANKS.map(b=>{
+    const filled=PERIODS.map(p=>has(p,b));
+    const cnt=filled.filter(Boolean).length;
+    const pr=PERIODS.filter((p,i)=>filled[i]);
+    const range=pr.length?pr[0]+"–"+pr[pr.length-1]:"無資料";
+    const ticks=filled.map(f=>'<span class="tk" style="background:'+(f?BC[b]:"#e3e5e9")+'"></span>').join("");
+    return '<button class="ov-chip on" data-bank="'+b+'" title="'+b+':'+cnt+' 期 · '+range+'"><span class="top"><span class="ix-sw" style="background:'+BC[b]+'"></span>'+b+'<span class="cnt">'+cnt+' 期</span></span><span class="ticks">'+ticks+'</span></button>';
+  }).join("");
   bcEl.querySelectorAll(".ov-chip").forEach(ch=>ch.onclick=()=>{const b=ch.dataset.bank;
     if(banksSel.has(b)){if(banksSel.size<=1)return;banksSel.delete(b);ch.classList.remove("on");}
     else{banksSel.add(b);ch.classList.add("on");}
@@ -353,11 +360,16 @@ details.card>.inner{{padding:0 24px 22px}}
 .ov-l{{font-size:12px;color:var(--mut);margin-top:4px}}
 .ov-filter{{display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:16px}}
 .ov-fl{{font-size:12px;color:var(--mut)}}
-#bankchips{{display:flex;gap:8px;flex-wrap:wrap}}
-.ov-chip{{display:inline-flex;align-items:center;gap:6px;font-size:13px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--mut);cursor:pointer}}
+#bankchips{{display:flex;gap:10px;flex-wrap:wrap}}
+.ov-chip{{display:inline-flex;flex-direction:column;align-items:flex-start;gap:6px;font-size:13px;padding:9px 13px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--mut);cursor:pointer}}
+.ov-chip .top{{display:flex;align-items:center;gap:6px}}
+.ov-chip .cnt{{font-size:11px;color:var(--mut);font-weight:400;margin-left:2px}}
+.ov-chip .ticks{{display:flex;gap:2px}}
+.ov-chip .tk{{width:6px;height:6px;border-radius:2px}}
 .ov-chip .ix-sw{{opacity:.35}}
 .ov-chip.on{{border-color:#c6cbd4;color:var(--ink);font-weight:500}}
 .ov-chip.on .ix-sw{{opacity:1}}
+.ov-chip:not(.on) .ticks{{opacity:.4}}
 .foot{{margin:4px 2px 0}}
 .foot>summary{{list-style:none;cursor:pointer;font-size:12px;color:var(--mut);user-select:none}}
 .foot>summary::-webkit-details-marker{{display:none}}
