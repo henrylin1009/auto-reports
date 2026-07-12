@@ -1,57 +1,113 @@
-# 銀行債券投資 債種分析 — 自動化報表
+# Bank Bond Portfolio Analysis — Automated Reporting Pipeline
 
-台灣主要銀行(目前 5835國泰 / 5836富邦 / 5841中信 / 5843兆豐 / 5847玉山,可擴充)**個體**財報,
-自公開資訊觀測站(doc.twse.com.tw)抓取,解析「透過損益(Trading)/其他綜合損益(OCI)/
-按攤銷後成本(AC)」三分類的債券債種明細,產出**互動網頁儀表板** + 含原生 Excel 圖表的報表。
+An end-to-end pipeline that extracts, validates, and visualizes the bond investment
+portfolios of major Taiwanese banks directly from their statutory financial reports.
 
-## ⚠️ 重要前提:抓取必須在「台灣網路」跑
-TWSE 會擋 GitHub 等雲端機房 IP(實測:清單有時抓得到、下載常失敗、DNS 時好時壞)。
-**所以「抓財報」這一步必須在台灣的機器上跑**(本機 Mac/PC、或台灣 VPS)。
-GitHub 只負責「把產好的資料發成網頁」,不抓資料。
+For each bank it parses the bond holdings broken down by **accounting classification**
+— FVTPL (Trading), FVOCI (OCI), and Amortized Cost (AC) — and by **instrument type**
+(government bonds, corporate bonds, bank debentures, money-market instruments), then
+produces an **interactive web dashboard** and an Excel report with native charts.
 
-## 三個產物 / 三種用法
-| 產物 | 給誰 | 怎麼來 |
+**Live dashboard:** https://henrylin1009.github.io/auto-reports/
+
+Banks currently covered (extensible): CTBC (5841), Cathay (5835), Fubon (5836),
+Mega (5843), E.Sun (5847). Source: entity-level (non-consolidated) semi-annual reports
+from the Taiwan Market Observation Post System (`doc.twse.com.tw`).
+
+## Highlights
+
+- **PDF parsing at scale** — extracts figures from footnotes across ~80 financial-report
+  PDFs with heterogeneous layouts, including one bank whose disclosure is a coordinate-based
+  "securities division" table requiring word-level (x/y) reconstruction.
+- **Three-layer checksum validation** — every extracted figure is reconciled
+  (pure-securities subtotal → total less derivatives/valuation → full-table tie-out),
+  so a mis-extraction is flagged rather than silently returned.
+- **Honest data model** — distinguishes a *true zero position* from *no data*
+  (e.g. two banks' 2020H1 reports are scanned image PDFs with no text layer, marked as
+  "no data" instead of 0).
+- **Interactive dashboard** — headline KPIs, cross-bank comparison, time-series trends,
+  and a bank × instrument heatmap; users can choose which instruments count toward
+  "holdings" and filter which banks are shown, all recomputed client-side.
+- **Self-updating** — the reporting period range extends automatically each year;
+  adding a new bank requires no code changes to the visualizations.
+
+## Architecture
+
+TWSE blocks cloud/data-center IP ranges (listing sometimes works, downloads frequently
+fail). The pipeline is therefore split into a **fetch** step that must run on a
+Taiwan-based machine, and a **render-only** step that runs in the cloud:
+
+| Step | Where it runs | What it does |
 |---|---|---|
-| **互動網頁** https://henrylin1009.github.io/auto-reports/ | 給人看 | 本機產資料 → push → GitHub Actions 發佈 |
-| **銀行債券_完整報表.xlsx**(寬表+原生圖表) | 給要檔案的人 | 本機 `python3 build_report.py` |
-| **雙擊工具**(exe / .app) | 給非技術者(mentor)自己跑 | GitHub Actions 打包,下載 Artifacts |
+| Fetch + parse | Local machine (Taiwan) | Downloads reports, parses, validates, writes `data.json` + Excel |
+| Publish | GitHub Actions | Reads the committed `data.json`, renders the site, deploys to GitHub Pages (never touches TWSE) |
 
-## A. 本機產出報表
+## Deliverables
+
+| Deliverable | Audience | How it's produced |
+|---|---|---|
+| **Interactive dashboard** (GitHub Pages) | Viewers / reviewers | Local data build → push → GitHub Actions publishes |
+| **`銀行債券_完整報表.xlsx`** (wide table + native Excel charts) | Anyone who needs the file | `python3 build_report.py` |
+| **Double-click desktop tool** (`.exe` / `.app`) | Non-technical users | Packaged by GitHub Actions, downloaded from Artifacts |
+
+## Usage
+
+### A. Build the report locally
 ```bash
 pip install -r requirements.txt
-python3 build_report.py            # 抓最新財報,產出 xlsx + data.json
+python3 build_report.py            # fetch latest reports → xlsx + data.json
 ```
-年份**自動**延伸到當前民國年(START_ROC=109 起),圖表自動取最近 6 期 —— 明年後年跑自動含新財報,免改程式。
+The period range extends automatically to the current year (from 2020); charts default to
+the most recent 6 periods — no code changes needed for future filings.
 
-## B. 更新網站(本機產 → GitHub 發佈)
+### B. Update the website (build locally → publish via GitHub)
 ```bash
 python3 build_report.py
 git add data.json 銀行債券_完整報表.xlsx
-git commit -m "更新資料" && git push
+git commit -m "update data" && git push
 ```
-push 後 `.github/workflows/report.yml` 會 **render-only**(只讀已 commit 的 data.json + xlsx、畫圖、發佈 Pages,不抓 TWSE)。
-Pages 設定:repo **Settings → Pages → Source =「GitHub Actions」**(一次性)。
+On push, `.github/workflows/report.yml` runs **render-only** (reads the committed
+`data.json`, draws the site, deploys Pages; it does not fetch from TWSE).
+One-time setup: repo **Settings → Pages → Source = "GitHub Actions"**.
 
-## C. 打包雙擊工具給 mentor
-`.github/workflows/build-exe.yml`:GitHub 用 Windows / Mac 機器把 `app.py` 打包成單一檔
-(打包不需連 TWSE)。到 Actions 該次 run 下載 Artifacts:
-- `銀行債券報表-Windows`(.exe)
-- `銀行債券報表-Mac`(.zip:含 binary + 「啟動-產生報表.command」)
+### C. Package the desktop tool
+`.github/workflows/build-exe.yml` uses GitHub's Windows / macOS runners to package
+`app.py` into a single binary (packaging does not require TWSE access). Download from the
+run's Artifacts:
+- `銀行債券報表-Windows` (`.exe`)
+- `銀行債券報表-Mac` (`.zip`: binary + launcher `.command`)
 
-mentor 在**台灣**執行(TWSE 通):雙擊(Mac 需右鍵→打開過 Gatekeeper)→ 2-3 分鐘 → 同資料夾產出 xlsx。
+The user runs it **in Taiwan** (so TWSE is reachable): double-click (on macOS, right-click →
+Open once to pass Gatekeeper) → ~2–3 minutes → the `.xlsx` appears in the same folder.
 
-## 檔案說明
-| 檔 | 用途 |
+## Files
+
+| File | Purpose |
 |---|---|
-| `build_report.py` | ★ 主程式(檔頭 CONFIG:GAP_WIDTH 間距、CHART_W/H 大小、SHOW_N 圖表期數) |
-| `extract3.py` / `extract2.py` | 核心解析 + 三層 checksum 驗算 |
-| `resolve.py` | 穩健取檔:自動找「個體」檔(代碼各家/各年不一,如 AI2/AI3),含瀏覽器標頭 |
-| `make_web.py` | 讀 data.json 產**互動儀表板網頁**(KPI 結論 + 跨行比較 + 時間趨勢 + 熱力圖;可選計入債種、可篩選銀行;給 GitHub Actions 用) |
-| `app.py` | 雙擊工具入口(供 PyInstaller 打包) |
-| `run.sh` | 台灣伺服器 cron 進入點(選用) |
+| `build_report.py` | Main entry point (header `CONFIG`: chart gap width, size, number of periods shown) |
+| `extract3.py` / `extract2.py` | Core parsing + three-layer checksum validation |
+| `extract_megabank.py` | Dedicated coordinate-based parser for Mega's securities-division table |
+| `resolve.py` | Robust file resolution: finds the "entity-level" report (codes vary by bank/year, e.g. AI2/AI3) |
+| `make_web.py` | Renders the **interactive dashboard** from `data.json` (KPIs + cross-bank comparison + trends + heatmap; selectable instruments, filterable banks) — used by GitHub Actions |
+| `app.py` | Desktop-tool entry point (for PyInstaller packaging) |
+| `run.sh` | cron entry point for a Taiwan-based server (optional) |
 
-## 重要注意
-- **兆豐**:債種明細來自其財報「證券部門變動明細表」(座標式排版,與他家彙總表不同,`extract_megabank.py` 專用解析)。其證券部門**無 Trading 部位**,故 Trading 為 0(真實零部位,非缺料)。
-- **真 0 vs 無資料**:2020H1 國泰/玉山之個體財報為掃描影像檔、無文字層,無法解析 → 標為 `null`(網頁畫斜線「無資料」),與「真實零部位」區分。抽不到文字層(`len(text)<2000`)即自動歸為無資料。
-- **資料可信度**:內建三層 checksum(純證券小計→合計扣除→整表對帳),抽錯會標記不會默默給錯。
-- **想全自動免本機**:需台灣/亞洲 VPS 跑 `run.sh` cron(GitHub 雲端會被 TWSE 擋,做不到)。
+## Notes on data integrity
+
+- **Mega (5843)** — instrument detail comes from its "securities-division change table"
+  (coordinate-based layout, unlike other banks' summary tables; handled by
+  `extract_megabank.py`). Its securities division holds **no Trading positions**, so
+  Trading is 0 — a genuine zero, not missing data.
+- **True zero vs. no data** — the 2020H1 entity reports for Cathay and E.Sun are scanned
+  image PDFs with no text layer and cannot be parsed, so they are marked `null`
+  ("no data", shown hatched on the dashboard) rather than 0. Any report whose extracted
+  text is too short (`len(text) < 2000`) is automatically classified as no-data.
+- **Trustworthy by construction** — the three-layer checksum flags mis-extractions instead
+  of silently returning wrong numbers.
+- **Fully unattended operation** requires a Taiwan/Asia VPS running `run.sh` via cron
+  (GitHub's cloud runners are blocked by TWSE).
+
+## Tech stack
+
+Python · pdfplumber (PDF parsing) · openpyxl (native Excel charts) · Chart.js
+(dashboard) · GitHub Actions (CI/CD, cross-platform packaging, Pages deployment).
