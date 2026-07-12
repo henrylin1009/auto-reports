@@ -338,6 +338,12 @@ details.card>summary::before{{content:"▸";color:var(--mut);transition:transfor
 details.card[open]>summary::before{{transform:rotate(90deg)}}
 details.card>.inner{{padding:0 24px 22px}}
 .note{{font-size:13px;color:var(--sub);line-height:1.8}}
+.foot{{margin:4px 2px 0}}
+.foot>summary{{list-style:none;cursor:pointer;font-size:12px;color:var(--mut);user-select:none}}
+.foot>summary::-webkit-details-marker{{display:none}}
+.foot>summary::before{{content:"▸ ";color:var(--mut)}}
+.foot[open]>summary::before{{content:"▾ "}}
+.foot-in{{font-size:12px;color:var(--mut);line-height:1.9;padding:8px 2px 0}}
 .tblwrap{{overflow-x:auto;border:1px solid var(--line);border-radius:10px}}
 table.wide{{border-collapse:collapse;font-size:12px;white-space:nowrap;width:100%}}
 table.wide th,table.wide td{{border-bottom:1px solid var(--line);padding:6px 10px;text-align:right}}
@@ -350,12 +356,13 @@ table.wide tbody tr:hover td{{background:#fafbfc}}
 <p>國泰 5835 / 富邦 5836 / 中信 5841 / 兆豐 5843 / 玉山 5847 · 個體財報 · 公開資訊觀測站 · 更新 {now}</p></header>
 <div class="wrap">
 {interactive_html()}
-<div class="card note">
-<b style="color:var(--ink)">說明</b><br>
+<details class="foot"><summary>資料說明與口徑</summary>
+<div class="foot-in">
 · 單位:億元。資料期間 {(_have or PERIODS)[0]}–{(_have or PERIODS)[-1]},每半年一期(H1=6/30、H2=12/31 期末餘額)。<br>
-· <b>兆豐</b>債種明細來自其財報「證券部門變動明細表」(排版與他家不同);其證券部門無 Trading 部位,故 Trading 列為 0。<br>
+· <b>兆豐</b>債種明細來自其財報「證券部門變動明細表」;其證券部門無 Trading 部位,故 Trading 為 0。<br>
 · 2020H1 國泰/玉山之個體財報為掃描影像檔,無法解析,標為「無資料」。<br>
-· 數據經三層 checksum 驗算;完整方法與腳本見 repo。本頁由 GitHub Actions 自動更新。
-</div></div></body></html>"""
+· 數據經三層 checksum 驗算;本頁由 GitHub Actions 自動更新。
+</div></details>
+</div></body></html>"""
 (SITE/"index.html").write_text(html, encoding="utf-8")
 print("已產生 site/ (index.html + 圖1/圖2.png + xlsx)")
