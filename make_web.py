@@ -78,10 +78,8 @@ def interactive_html():
     payload=json.dumps({"periods":_have or PERIODS,"banks":BANKS,"wide":D.get("wide",{})}, ensure_ascii=False)
     css="""<style>
 .ix{font-family:inherit}
-.ix-tabs{display:inline-flex;gap:2px;flex-wrap:wrap;margin-bottom:12px;background:#eef0f3;border-radius:10px;padding:3px}
-.ix-tab{font-size:13px;padding:7px 16px;border:none;border-radius:8px;background:transparent;cursor:pointer;color:#5f6672;transition:all .15s}
-.ix-tab.on{background:#fff;color:#111827;font-weight:600;box-shadow:0 1px 2px rgba(16,24,40,.08)}
-.ix-cptog{display:flex;align-items:center;gap:8px;font-size:13px;color:#5f6672;margin:0 0 20px;cursor:pointer}
+.ix-sub{font-weight:400;color:#8a919e;font-size:12px;margin-left:8px}
+.ix-cptog{display:flex;align-items:center;gap:8px;font-size:13px;color:#5f6672;margin:0;cursor:pointer}
 .ix-cptog input{accent-color:#4f46e5}
 .ix-ctl{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:16px}
 .ix-ctl label{font-size:12px;color:#8a919e;margin-left:6px}
@@ -130,31 +128,41 @@ def interactive_html():
 .ix-drill-ft{display:flex;gap:18px;align-items:center;margin-top:12px;font-size:12px;color:#5f6672;flex-wrap:wrap}
 </style>"""
     markup="""<div class="ix">
+<div class="card">
 <div class="ix-sentence" id="ix_sentence"></div>
 <div class="ix-kpi" id="ix_kpi"></div>
-<div class="ix-tabs">
-<button class="ix-tab on" data-t="A">A · 跨行比較</button>
-<button class="ix-tab" data-t="B">B · 時間趨勢</button>
-<button class="ix-tab" data-t="D">D · 增減(Δ)</button>
-<button class="ix-tab" data-t="C">C · 自由探索</button></div>
-<label class="ix-cptog"><input type="checkbox" id="ix_cp"> 含貨幣市場(CP／短期票券) — 看「總部位規模」勾選;看「純債券配置」不勾</label>
-<div id="ixA">
+<label class="ix-cptog"><input type="checkbox" id="ix_cp"> 含貨幣市場(CP／短期票券)— 勾=總部位規模,不勾=純債券配置。全頁連動。</label>
+</div>
+
+<div class="card">
+<h2>跨行比較 <span class="ix-sub">同一期,誰的部位大、怎麼配</span></h2>
 <div class="ix-ctl"><label>期間</label><select id="A_p"></select><label>分類</label><select id="A_c"><option value="合計">三分類合計</option><option value="Trading">Trading</option><option value="OCI" selected>OCI</option><option value="AC">AC</option></select><label>檢視</label><span class="ix-seg"><button id="A_amt" class="on">金額(億)</button><button id="A_pct">結構(%)</button></span></div>
 <div class="ix-legend" id="A_lg"></div><div id="A_bars"></div><div id="ix_drill"></div>
-<div style="font-size:12px;color:#8a919e;margin-top:4px">提示:點圖例可聚焦單一債種,點銀行名可展開該行明細。</div></div>
-<div id="ixB" style="display:none">
+<div style="font-size:12px;color:#8a919e;margin-top:6px">點圖例聚焦單一債種.點銀行名展開該行明細。</div>
+</div>
+
+<div class="card">
+<h2>時間趨勢 <span class="ix-sub">2020 以來,各家部位怎麼變</span></h2>
 <div class="ix-ctl"><label>分類</label><select id="B_c"><option value="合計">三分類合計</option><option value="Trading">Trading</option><option value="OCI" selected>OCI</option><option value="AC">AC</option></select><label>債種</label><select id="B_b"><option value="合計">全部債種</option><option value="GB">政府公債</option><option value="公司債">公司債</option><option value="金融債">金融債</option></select></div>
-<div class="ix-legend" id="B_lg"></div><div style="position:relative;width:100%;height:320px"><canvas id="B_cv" role="img" aria-label="五家銀行債券部位時間趨勢"></canvas></div></div>
-<div id="ixD" style="display:none">
+<div class="ix-legend" id="B_lg"></div><div style="position:relative;width:100%;height:320px"><canvas id="B_cv" role="img" aria-label="五家銀行債券部位時間趨勢"></canvas></div>
+</div>
+
+<div class="card">
+<h2>增減變化 <span class="ix-sub">這一期,誰加碼、誰減碼</span></h2>
 <div class="ix-ctl"><label>期間</label><select id="D_p"></select><label>對比</label><select id="D_base"><option value="1">較上期(半年)</option><option value="2" selected>較去年同期</option></select><label>分類</label><select id="D_c"><option value="合計">三分類合計</option><option value="Trading">Trading</option><option value="OCI" selected>OCI</option><option value="AC">AC</option></select></div>
 <div class="ix-legend"><span><span class="ix-sw" style="background:#1baf7a"></span>加碼(增)</span><span><span class="ix-sw" style="background:#e34948"></span>減碼(減)</span></div>
-<div id="D_bars"></div></div>
-<div id="ixC" style="display:none">
+<div id="D_bars"></div>
+</div>
+
+<div class="card">
+<h2>自由探索 <span class="ix-sub">銀行 × 債種熱力圖,掃全局</span></h2>
 <div class="ix-ctl"><label>期間</label><select id="C_p"></select><label>分類</label><select id="C_c"><option value="合計">三分類合計</option><option value="Trading">Trading</option><option value="OCI" selected>OCI</option><option value="AC">AC</option></select></div>
-<div id="C_grid"></div></div>
-<div class="ix-legend" style="margin-top:14px;border-top:1px solid #e5e5e5;padding-top:10px">
+<div id="C_grid"></div>
+<div class="ix-legend" style="margin-top:14px;border-top:1px solid #e9ebef;padding-top:12px">
 <span><span class="ix-sw" style="background:#f0f0f0;border:1px solid #ccc"></span>0 = 真實零部位</span>
-<span><span class="ix-sw ix-hatch"></span>無資料(當期財報為掃描影像檔)</span></div></div>"""
+<span><span class="ix-sw ix-hatch"></span>無資料(當期財報為掃描影像檔)</span></div>
+</div>
+</div>"""
     js=r"""
 const BANKS=RAW.banks,PERIODS=RAW.periods,W=RAW.wide;
 const BONDS3=[["GB","政府公債","#2a78d6"],["公司債","公司債","#1baf7a"],["金融債","金融債","#eda100"]];
@@ -228,11 +236,7 @@ function drawKPI(){
   if(dn)cards.push(["減碼最多(YoY)",dn.b,sgn(dn.d)+" 億"]);
   document.getElementById("ix_kpi").innerHTML=cards.map(c=>'<div class="ix-kcard"><div class="ix-klabel">'+c[0]+'</div><div class="ix-kval">'+c[1]+'</div><div class="ix-ksub">'+c[2]+'</div></div>').join("");
 }
-document.querySelectorAll(".ix-tab").forEach(b=>b.onclick=()=>{
-  document.querySelectorAll(".ix-tab").forEach(x=>x.classList.remove("on"));b.classList.add("on");
-  ["A","B","C","D"].forEach(t=>document.getElementById("ix"+t).style.display=(t===b.dataset.t)?"":"none");
-  if(b.dataset.t==="B")drawB();});
-document.getElementById("ix_cp").onchange=e=>{incCP=e.target.checked;drawKPI();drawA();drawC();drawD();if(document.getElementById("ixB").style.display!=="none")drawB();};
+document.getElementById("ix_cp").onchange=e=>{incCP=e.target.checked;drawKPI();drawA();drawC();drawD();drawB();};
 
 let A_mode="amt";
 function drawA(){
@@ -303,12 +307,11 @@ function drawB(){
   chartB=new Chart(document.getElementById("B_cv"),{type:"line",data:{labels:PERIODS,datasets:ds},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+": "+fmt(c.parsed.y)+"億"}}},scales:{y:{title:{display:true,text:"億元"}},x:{grid:{display:false},ticks:{maxRotation:45,autoSkip:false}}}}});
 }
 ["B_c","B_b"].forEach(id=>document.getElementById(id).onchange=drawB);
-drawKPI();drawA();drawC();drawD();
+drawKPI();drawA();drawC();drawD();drawB();
 """
-    return ('<div class="card"><h2>互動儀表板(可切換期間 / 分類 / 債種)</h2>'
-            + css + markup
+    return (css + markup
             + '<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>'
-            + '<script>const RAW=' + payload + ';\n' + js + '</script></div>')
+            + '<script>const RAW=' + payload + ';\n' + js + '</script>')
 
 now=datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
 html=f"""<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8">
