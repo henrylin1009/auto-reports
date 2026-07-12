@@ -88,8 +88,6 @@ def interactive_html():
 .ix-seg{display:inline-flex;background:#eef0f3;border-radius:8px;padding:2px}
 .ix-seg button{border:none;background:transparent;font-size:12px;padding:6px 12px;cursor:pointer;color:#5f6672;border-radius:6px}
 .ix-seg button.on{background:#fff;color:#111827;font-weight:600;box-shadow:0 1px 2px rgba(16,24,40,.08)}
-.ix-sentence{font-size:17px;line-height:1.75;color:#111827;margin-bottom:18px;letter-spacing:-.01em}
-.ix-sentence b{color:#4f46e5}
 .ix-kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:24px}
 .ix-kcard{background:#fff;border:1px solid #e9ebef;border-radius:12px;padding:14px 16px}
 .ix-klabel{font-size:12px;color:#8a919e;margin-bottom:8px}
@@ -129,7 +127,6 @@ def interactive_html():
 </style>"""
     markup="""<div class="ix">
 <div class="card">
-<div class="ix-sentence" id="ix_sentence"></div>
 <div class="ix-kpi" id="ix_kpi"></div>
 <label class="ix-cptog"><input type="checkbox" id="ix_cp"> 含貨幣市場(CP／短期票券)— 勾=總部位規模,不勾=純債券配置。全頁連動。</label>
 </div>
@@ -223,7 +220,6 @@ function drawKPI(){
   const dts=yp?BANKS.filter(b=>has(p,b)&&has(yp,b)).map(b=>({b,d:total(p,b,cat)-total(yp,b,cat)})):[];
   const up=dts.length?dts.reduce((a,b)=>b.d>a.d?b:a):null,dn=dts.length?dts.reduce((a,b)=>b.d<a.d?b:a):null;
   const scope=incCP?"總部位(含CP)":"純債券";
-  document.getElementById("ix_sentence").innerHTML="<b>"+p+"</b> "+scope+":五家合計 <b>"+fmt(sum)+"</b> 億;<b>"+top.b+"</b> 部位最大("+fmt(top.t)+"億)"+(up?"。較去年同期,<b>"+up.b+"</b> 加碼最多("+sgn(up.d)+"億)、<b>"+dn.b+"</b> 減碼最多("+sgn(dn.d)+"億)":"")+"。";
   const cards=[["本期五家合計",fmt(sum)+" 億",scope+" · "+p],["部位最大",top.b,fmt(top.t)+" 億"]];
   if(up)cards.push(["加碼最多(YoY)",up.b,sgn(up.d)+" 億"]);
   if(dn)cards.push(["減碼最多(YoY)",dn.b,sgn(dn.d)+" 億"]);
