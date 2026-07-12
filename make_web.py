@@ -142,8 +142,8 @@ def interactive_html():
 </div>
 
 <div class="card">
-<h2>時間趨勢 <span class="ix-sub">2020 以來,各家部位怎麼變、誰加碼誰減碼</span></h2>
-<div class="ix-ctl"><label>檢視</label><span class="ix-seg"><button id="B_lv" class="on">水位(億元)</button><button id="B_dt">增減(Δ)</button></span><label>分類</label><select id="B_c"><option value="合計">三分類合計</option><option value="Trading">Trading</option><option value="OCI" selected>OCI</option><option value="AC">AC</option></select><label>債種</label><select id="B_b"><option value="合計">全部債種</option><option value="GB">政府公債</option><option value="公司債">公司債</option><option value="金融債">金融債</option></select><span id="B_basew" style="display:none"><label>對比</label><select id="B_base"><option value="1" selected>較上期(半年)</option><option value="2">較去年同期</option></select></span></div>
+<h2>時間趨勢 <span class="ix-sub">2020 以來,各家部位怎麼變</span></h2>
+<div class="ix-ctl"><label>分類</label><select id="B_c"><option value="合計">三分類合計</option><option value="Trading">Trading</option><option value="OCI" selected>OCI</option><option value="AC">AC</option></select><label>債種</label><select id="B_b"><option value="合計">全部債種</option><option value="GB">政府公債</option><option value="公司債">公司債</option><option value="金融債">金融債</option></select></div>
 <div class="ix-legend" id="B_lg"></div><div style="position:relative;width:100%;height:320px"><canvas id="B_cv" role="img" aria-label="五家銀行債券部位時間趨勢"></canvas></div>
 </div>
 
@@ -275,33 +275,20 @@ function drawC(){
 }
 ["C_p","C_c"].forEach(id=>document.getElementById(id).onchange=drawC);
 
-let chartB=null,B_mode="level";
+let chartB=null;
 function drawB(){
   const cat=B_c.value,bond=B_b.value,dash=[[],[6,4],[2,3],[8,3,2,3],[]];
   const withCP=incCP&&(bond==="合計");
-  document.getElementById("B_basew").style.display=B_mode==="delta"?"":"none";
   const vOf=(p,bk)=>bond==="合計"?total(p,bk,cat):val(p,bk,cat,bond);
-  let ds,type,ytitle;
-  if(B_mode==="delta"){
-    const step=+B_base.value;type="bar";ytitle="增減(億元)";
-    ds=BANKS.map((bk,i)=>({label:bk,
-      data:PERIODS.map(p=>{const bp=prevP(p,step);if(!has(p,bk)||!bp||!has(bp,bk))return null;return vOf(p,bk)-vOf(bp,bk);}),
-      backgroundColor:SC[i],borderRadius:3}));
-  }else{
-    type="line";ytitle="億元";
-    ds=BANKS.map((bk,i)=>({label:bk,data:PERIODS.map(p=>has(p,bk)?vOf(p,bk):null),borderColor:SC[i],backgroundColor:SC[i],borderDash:dash[i],spanGaps:false,borderWidth:2,tension:0.25,pointRadius:2,pointHoverRadius:5}));
-  }
-  document.getElementById("B_lg").innerHTML=BANKS.map((bk,i)=>'<span><span class="ix-sw" style="background:'+SC[i]+'"></span>'+bk+'</span>').join("")
-    +(B_mode==="delta"?' <span style="color:#999">零軸之上=加碼,之下=減碼</span>':'')+(withCP?' <span style="color:#999">(已含CP)</span>':'');
+  const ds=BANKS.map((bk,i)=>({label:bk,data:PERIODS.map(p=>has(p,bk)?vOf(p,bk):null),borderColor:SC[i],backgroundColor:SC[i],borderDash:dash[i],spanGaps:false,borderWidth:2,tension:0.25,pointRadius:2,pointHoverRadius:5}));
+  document.getElementById("B_lg").innerHTML=BANKS.map((bk,i)=>'<span><span class="ix-sw" style="background:'+SC[i]+'"></span>'+bk+'</span>').join("")+(withCP?' <span style="color:#999">(已含CP)</span>':'');
   if(chartB)chartB.destroy();
-  chartB=new Chart(document.getElementById("B_cv"),{type,data:{labels:PERIODS,datasets:ds},
+  chartB=new Chart(document.getElementById("B_cv"),{type:"line",data:{labels:PERIODS,datasets:ds},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+": "+(B_mode==="delta"?sgn(c.parsed.y):fmt(c.parsed.y))+" 億"}}},
-      scales:{y:{title:{display:true,text:ytitle}},x:{grid:{display:false},ticks:{maxRotation:45,autoSkip:false}}}}});
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+": "+fmt(c.parsed.y)+" 億"}}},
+      scales:{y:{title:{display:true,text:"億元"}},x:{grid:{display:false},ticks:{maxRotation:45,autoSkip:false}}}}});
 }
-["B_c","B_b","B_base"].forEach(id=>document.getElementById(id).onchange=drawB);
-B_lv.onclick=()=>{B_mode="level";B_lv.classList.add("on");B_dt.classList.remove("on");drawB();};
-B_dt.onclick=()=>{B_mode="delta";B_dt.classList.add("on");B_lv.classList.remove("on");drawB();};
+["B_c","B_b"].forEach(id=>document.getElementById(id).onchange=drawB);
 drawKPI();drawA();drawC();drawB();
 """
     return (css + markup
