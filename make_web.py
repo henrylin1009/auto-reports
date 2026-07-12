@@ -342,8 +342,9 @@ html=f"""<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8">
 :root{{--ink:#111827;--sub:#5f6672;--mut:#8a919e;--line:#e9ebef;--bg:#f5f6f8;--accent:#4f46e5}}
 *{{box-sizing:border-box}}
 body{{font-family:Inter,-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;margin:0;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}}
-header{{background:#fff;border-bottom:1px solid var(--line);padding:18px 28px;position:sticky;top:0;z-index:10}}
+header{{background:#fff;border-bottom:1px solid var(--line);padding:18px 28px;position:sticky;top:0;z-index:10;display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}}
 header h1{{margin:0;font-size:16px;font-weight:600;letter-spacing:-.01em}}
+header .upd{{color:var(--mut);font-size:12px;white-space:nowrap}}
 header p{{margin:3px 0 0;color:var(--mut);font-size:12px}}
 .wrap{{max-width:1100px;margin:0 auto;padding:28px 20px 60px}}
 .card{{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 1px 2px rgba(16,24,40,.04);padding:22px 24px;margin:0 0 20px}}
@@ -384,7 +385,7 @@ table.wide th.rowh{{background:#f8f9fb;text-align:left;position:sticky;left:0;z-
 table.wide tbody tr:hover td{{background:#fafbfc}}
 @media print{{header{{position:static}}.card{{box-shadow:none;break-inside:avoid}}details.card{{display:none}}}}
 </style></head><body>
-<header><h1>銀行債券投資債種分析 <span style="font-weight:400;color:var(--mut);font-size:12px">更新 {now}</span></h1></header>
+<header><h1>銀行債券投資債種分析</h1><span class="upd">更新 {now}</span></header>
 <div class="wrap">
 <div class="card ov">
 <div class="ov-stats">
