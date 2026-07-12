@@ -75,7 +75,7 @@ def wide_table_html():
 
 # ---- 互動儀表板(A跨行比較 / B時間趨勢 / D增減 / C探索 + KPI + 含CP開關)----
 def interactive_html():
-    payload=json.dumps({"periods":PERIODS,"banks":BANKS,"wide":D.get("wide",{})}, ensure_ascii=False)
+    payload=json.dumps({"periods":_have or PERIODS,"banks":BANKS,"wide":D.get("wide",{})}, ensure_ascii=False)
     css="""<style>
 .ix{font-family:inherit}
 .ix-tabs{display:inline-flex;gap:2px;flex-wrap:wrap;margin-bottom:12px;background:#eef0f3;border-radius:10px;padding:3px}
@@ -107,6 +107,27 @@ def interactive_html():
 .ix-s2{height:100%}
 .ix-tot{width:64px;font-size:12px;color:#5f6672;text-align:right;flex:none;font-variant-numeric:tabular-nums}
 .ix-na{flex:1;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#8a919e;background:repeating-linear-gradient(45deg,#f5f6f8,#f5f6f8 5px,rgba(150,156,168,.25) 5px,rgba(150,156,168,.25) 7px)}
+.ix-tip{position:fixed;z-index:99;pointer-events:none;background:#111827;color:#fff;border-radius:10px;padding:10px 12px;font-size:12px;line-height:1.6;box-shadow:0 8px 24px rgba(16,24,40,.2);max-width:230px;opacity:0;transition:opacity .1s}
+.ix-tip b{color:#a5b4fc}
+.lg-item{cursor:pointer;padding:3px 8px;border-radius:7px;transition:all .12s;user-select:none}
+.lg-item:hover{background:#eef0f3}
+.lg-item.sel{background:#eef0f3;font-weight:600;color:#111827}
+.lg-item.dim{opacity:.35}
+.ix-s2.dim,.ix-cell.dim{opacity:.18}
+.ix-s2{transition:opacity .15s}
+.ix-name.click{cursor:pointer;border-bottom:1px dashed #c6cbd4}
+.ix-name.click:hover{color:#4f46e5;border-color:#4f46e5}
+.ix-drill{background:#f8f9fb;border:1px solid #e9ebef;border-radius:12px;padding:16px 18px;margin-top:6px}
+.ix-drill-h{display:flex;align-items:baseline;gap:10px;margin-bottom:12px}
+.ix-drill-h b{font-size:15px;color:#111827}
+.ix-drill-h span{font-size:12px;color:#8a919e}
+.ix-drill-x{margin-left:auto;cursor:pointer;border:none;background:none;color:#8a919e;font-size:16px;line-height:1;padding:2px 6px;border-radius:6px}
+.ix-drill-x:hover{background:#eef0f3;color:#111827}
+.ix-mini{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.ix-mini .lb{width:52px;font-size:12px;color:#5f6672;text-align:right;flex:none}
+.ix-mini .tk{flex:1;display:flex;height:18px;border-radius:5px;overflow:hidden;background:#eef0f3}
+.ix-mini .vv{width:56px;font-size:12px;color:#5f6672;text-align:right;flex:none;font-variant-numeric:tabular-nums}
+.ix-drill-ft{display:flex;gap:18px;align-items:center;margin-top:12px;font-size:12px;color:#5f6672;flex-wrap:wrap}
 </style>"""
     markup="""<div class="ix">
 <div class="ix-sentence" id="ix_sentence"></div>
@@ -119,7 +140,8 @@ def interactive_html():
 <label class="ix-cptog"><input type="checkbox" id="ix_cp"> 含貨幣市場(CP／短期票券) — 看「總部位規模」勾選;看「純債券配置」不勾</label>
 <div id="ixA">
 <div class="ix-ctl"><label>期間</label><select id="A_p"></select><label>分類</label><select id="A_c"><option value="合計">三分類合計</option><option value="Trading">Trading</option><option value="OCI" selected>OCI</option><option value="AC">AC</option></select><label>檢視</label><span class="ix-seg"><button id="A_amt" class="on">金額(億)</button><button id="A_pct">結構(%)</button></span></div>
-<div class="ix-legend" id="A_lg"></div><div id="A_bars"></div></div>
+<div class="ix-legend" id="A_lg"></div><div id="A_bars"></div><div id="ix_drill"></div>
+<div style="font-size:12px;color:#8a919e;margin-top:4px">提示:點圖例可聚焦單一債種,點銀行名可展開該行明細。</div></div>
 <div id="ixB" style="display:none">
 <div class="ix-ctl"><label>分類</label><select id="B_c"><option value="合計">三分類合計</option><option value="Trading">Trading</option><option value="OCI" selected>OCI</option><option value="AC">AC</option></select><label>債種</label><select id="B_b"><option value="合計">全部債種</option><option value="GB">政府公債</option><option value="公司債">公司債</option><option value="金融債">金融債</option></select></div>
 <div class="ix-legend" id="B_lg"></div><div style="position:relative;width:100%;height:320px"><canvas id="B_cv" role="img" aria-label="五家銀行債券部位時間趨勢"></canvas></div></div>
@@ -155,6 +177,43 @@ function latestP(){for(let i=PERIODS.length-1;i>=0;i--){if(BANKS.some(b=>has(PER
 ["A_p","C_p","D_p"].forEach(id=>fillSel(id,latestP()));
 function lgHTML(items){return items.map(i=>'<span><span class="ix-sw" style="background:'+i[2]+'"></span>'+i[1]+'</span>').join("");}
 
+let focusBond=null,drillBank=null;
+const tipEl=document.createElement("div");tipEl.className="ix-tip";document.body.appendChild(tipEl);
+document.addEventListener("mousemove",e=>{
+  const t=e.target.closest&&e.target.closest("[data-tip]");
+  if(t){tipEl.innerHTML=t.dataset.tip;tipEl.style.opacity=1;
+    let x=e.clientX+14,y=e.clientY+14;const r=tipEl.getBoundingClientRect();
+    if(x+r.width>innerWidth-8)x=e.clientX-r.width-10;
+    if(y+r.height>innerHeight-8)y=e.clientY-r.height-10;
+    tipEl.style.left=x+"px";tipEl.style.top=y+"px";
+  }else tipEl.style.opacity=0;
+});
+
+function renderDrill(bk){
+  drillBank=bk;const p=A_p.value,BD=bondList(),el=document.getElementById("ix_drill");
+  if(!bk||!has(p,bk)){el.innerHTML="";drillBank=null;return;}
+  const catTots=CATS.map(c=>({c,segs:BD.map(bd=>val(p,bk,c,bd[0]))}));
+  const mx=Math.max(...catTots.map(o=>o.segs.reduce((a,b)=>a+b,0)),1);
+  const rows=catTots.map(o=>{
+    const tot=o.segs.reduce((a,b)=>a+b,0);
+    const inner=BD.map((bd,i)=>{const v=o.segs[i];return v<=0?"":'<div style="width:'+(v/mx*100)+'%;background:'+bd[2]+'" data-tip="<b>'+o.c+' · '+bd[1]+'</b><br>'+fmt(v)+' 億"></div>';}).join("");
+    return '<div class="ix-mini"><div class="lb">'+o.c+'</div><div class="tk">'+inner+'</div><div class="vv">'+fmt(tot)+'</div></div>';
+  }).join("");
+  const vals=PERIODS.map(pp=>has(pp,bk)?total(pp,bk,"合計"):null);
+  const vmax=Math.max(...vals.filter(v=>v!=null),1),W=170,H=38;
+  let d="",pen=false;
+  vals.forEach((v,i)=>{if(v==null){pen=false;return;}
+    const x=(i/(PERIODS.length-1)*W).toFixed(1),y=(H-4-(v/vmax)*(H-8)).toFixed(1);
+    d+=(pen?"L":"M")+x+","+y;pen=true;});
+  const spark='<svg width="'+W+'" height="'+H+'" style="overflow:visible;vertical-align:middle"><path d="'+d+'" fill="none" stroke="#4f46e5" stroke-width="2" stroke-linecap="round"/></svg>';
+  const bp1=prevP(p,1),bp2=prevP(p,2);
+  const d1=(bp1&&has(bp1,bk))?sgn(total(p,bk,"合計")-total(bp1,bk,"合計"))+" 億":"—";
+  const d2=(bp2&&has(bp2,bk))?sgn(total(p,bk,"合計")-total(bp2,bk,"合計"))+" 億":"—";
+  el.innerHTML='<div class="ix-drill"><div class="ix-drill-h"><b>'+bk+'</b><span>'+p+' · 三分類 × 債種</span><button class="ix-drill-x" aria-label="關閉">×</button></div>'+rows+
+    '<div class="ix-drill-ft"><span>合計走勢('+PERIODS[0]+'–'+PERIODS[PERIODS.length-1]+') '+spark+'</span><span>較上期 <b style="color:#111827">'+d1+'</b></span><span>較去年同期 <b style="color:#111827">'+d2+'</b></span></div></div>';
+  el.querySelector(".ix-drill-x").onclick=()=>{drillBank=null;el.innerHTML="";};
+}
+
 function drawKPI(){
   const p=latestP(),cat="合計";
   const rows=BANKS.filter(b=>has(p,b)).map(b=>({b,t:total(p,b,cat)}));
@@ -177,17 +236,26 @@ document.getElementById("ix_cp").onchange=e=>{incCP=e.target.checked;drawKPI();d
 
 let A_mode="amt";
 function drawA(){
-  const p=A_p.value,cat=A_c.value,BD=bondList();
-  document.getElementById("A_lg").innerHTML=lgHTML(BD);
+  const p=A_p.value,cat=A_c.value,BD=bondList(),bp=prevP(p,1);
+  document.getElementById("A_lg").innerHTML=BD.map(bd=>'<span class="lg-item'+(focusBond?(focusBond===bd[0]?' sel':' dim'):'')+'" data-bond="'+bd[0]+'"><span class="ix-sw" style="background:'+bd[2]+'"></span>'+bd[1]+'</span>').join("");
+  document.querySelectorAll("#A_lg .lg-item").forEach(li=>li.onclick=()=>{focusBond=(focusBond===li.dataset.bond)?null:li.dataset.bond;drawA();drawC();});
   const rows=BANKS.map(bk=>({bk,ok:has(p,bk),segs:BD.map(bd=>val(p,bk,cat,bd[0])),tot:total(p,bk,cat)}));
   const mx=Math.max(...rows.map(r=>r.tot),1);
   document.getElementById("A_bars").innerHTML=rows.map(r=>{
     if(!r.ok)return '<div class="ix-row"><div class="ix-name">'+r.bk+'</div><div class="ix-na">無資料 · 該期財報為掃描影像檔</div><div class="ix-tot">N/A</div></div>';
     const base=A_mode==="pct"?(r.tot||1):mx,wp=A_mode==="pct"?100:(r.tot/mx*100);
-    const inner=BD.map((bd,i)=>{const v=r.segs[i];return v<=0?"":'<div class="ix-s2" style="width:'+(v/base*100)+'%;background:'+bd[2]+'" title="'+bd[1]+' '+fmt(v)+'億"></div>';}).join("");
+    const inner=BD.map((bd,i)=>{const v=r.segs[i];if(v<=0)return"";
+      const pct=r.tot?Math.round(v/r.tot*100):0;
+      const pv=(bp&&has(bp,r.bk))?val(bp,r.bk,cat,bd[0]):null;
+      const dtxt=pv==null?"—":sgn(v-pv)+" 億";
+      const tip="<b>"+r.bk+" · "+bd[1]+"</b><br>"+fmt(v)+" 億 · 佔該行 "+pct+"%<br>較上期 "+dtxt;
+      const dim=(focusBond&&focusBond!==bd[0])?" dim":"";
+      return '<div class="ix-s2'+dim+'" style="width:'+(v/base*100)+'%;background:'+bd[2]+'" data-tip="'+tip.replace(/"/g,"&quot;")+'"></div>';}).join("");
     const lab=A_mode==="pct"?(r.tot?"100%":"0"):fmt(r.tot);
-    return '<div class="ix-row"><div class="ix-name">'+r.bk+'</div><div class="ix-track" style="width:'+Math.max(wp,0.5)+'%">'+inner+'</div><div class="ix-tot">'+lab+'</div></div>';
+    return '<div class="ix-row"><div class="ix-name click" data-bank="'+r.bk+'">'+r.bk+'</div><div class="ix-track" style="width:'+Math.max(wp,0.5)+'%">'+inner+'</div><div class="ix-tot">'+lab+'</div></div>';
   }).join("");
+  document.querySelectorAll("#A_bars .ix-name.click").forEach(n=>n.onclick=()=>renderDrill(drillBank===n.dataset.bank?null:n.dataset.bank));
+  if(drillBank)renderDrill(drillBank);
 }
 ["A_p","A_c"].forEach(id=>document.getElementById(id).onchange=drawA);
 A_amt.onclick=()=>{A_mode="amt";A_amt.classList.add("on");A_pct.classList.remove("on");drawA();};
@@ -196,13 +264,14 @@ A_pct.onclick=()=>{A_mode="pct";A_pct.classList.add("on");A_amt.classList.remove
 function drawD(){
   const p=D_p.value,step=+D_base.value,cat=D_c.value,bp=prevP(p,step);
   const bl=step===2?"去年同期":"上期";
-  const rows=BANKS.map(bk=>{const ok=has(p,bk)&&bp&&has(bp,bk);return {bk,ok,d:ok?total(p,bk,cat)-total(bp,bk,cat):0};});
+  const rows=BANKS.map(bk=>{const ok=has(p,bk)&&bp&&has(bp,bk);return {bk,ok,now:ok?total(p,bk,cat):0,was:ok?total(bp,bk,cat):0,d:ok?total(p,bk,cat)-total(bp,bk,cat):0};});
   const mx=Math.max(...rows.map(r=>Math.abs(r.d)),1);
   document.getElementById("D_bars").innerHTML='<div style="font-size:12px;color:#999;margin-bottom:10px">'+p+' 較 '+(bp||"—")+'('+bl+')的部位增減,單位億元。</div>'+rows.map(r=>{
     if(!r.ok)return '<div class="ix-row"><div class="ix-name">'+r.bk+'</div><div class="ix-na">無可對比資料</div><div class="ix-tot"></div></div>';
     const w=Math.abs(r.d)/mx*50,pos=r.d>=0;
+    const tip="<b>"+r.bk+"</b><br>"+bp+":"+fmt(r.was)+" 億 → "+p+":"+fmt(r.now)+" 億<br>變化 "+sgn(r.d)+" 億("+(r.was?sgn(Math.round(r.d/r.was*100)).replace(" ","")+"%":"—")+")";
     const bar=pos?'<div style="width:50%"></div><div style="width:'+w+'%;height:22px;background:#1baf7a;border-radius:0 3px 3px 0"></div>':'<div style="width:'+(50-w)+'%"></div><div style="width:'+w+'%;height:22px;background:#e34948;border-radius:3px 0 0 3px"></div><div style="width:50%"></div>';
-    return '<div class="ix-row"><div class="ix-name">'+r.bk+'</div><div style="flex:1;display:flex;align-items:center;border-left:1px solid #ddd">'+bar+'</div><div class="ix-tot" style="color:'+(pos?"#0f6e56":"#a32d2d")+'">'+sgn(r.d)+'</div></div>';
+    return '<div class="ix-row"><div class="ix-name">'+r.bk+'</div><div style="flex:1;display:flex;align-items:center;border-left:1px solid #ddd" data-tip="'+tip.replace(/"/g,"&quot;")+'">'+bar+'</div><div class="ix-tot" style="color:'+(pos?"#0f6e56":"#a32d2d")+'">'+sgn(r.d)+'</div></div>';
   }).join("");
 }
 ["D_p","D_base","D_c"].forEach(id=>document.getElementById(id).onchange=drawD);
@@ -216,7 +285,9 @@ function drawC(){
     h+='<div style="font-size:13px;display:flex;align-items:center;justify-content:flex-end;padding-right:4px">'+bk+'</div>';
     if(!has(p,bk)){h+='<div style="grid-column:span '+BD.length+';height:52px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#999;background:repeating-linear-gradient(45deg,#f5f6f5,#f5f6f5 5px,rgba(150,150,150,.25) 5px,rgba(150,150,150,.25) 7px)">無資料(掃描影像檔)</div>';return;}
     BD.forEach(bd=>{const v=val(p,bk,cat,bd[0]),t=v/mx;const bg=v<=0?"#f0f0f0":"rgba(42,120,214,"+(0.12+t*0.8).toFixed(2)+")",col=t>0.45?"#fff":"#222";
-      h+='<div style="background:'+bg+';border-radius:6px;height:52px;display:flex;align-items:center;justify-content:center;font-size:13px;color:'+col+'">'+(v>0?fmt(v):"0")+'</div>';});
+      const dim=(focusBond&&focusBond!==bd[0])?" dim":"";
+      const tip="<b>"+bk+" · "+bd[1]+"</b><br>"+fmt(v)+" 億 · "+p+"("+cat+")";
+      h+='<div class="ix-cell'+dim+'" style="background:'+bg+';border-radius:6px;height:52px;display:flex;align-items:center;justify-content:center;font-size:13px;color:'+col+';transition:opacity .15s" data-tip="'+tip.replace(/"/g,"&quot;")+'">'+(v>0?fmt(v):"0")+'</div>';});
   });
   document.getElementById("C_grid").innerHTML=h+'</div>';
 }
@@ -274,14 +345,9 @@ table.wide tbody tr:hover td{{background:#fafbfc}}
 <p>國泰 5835 / 富邦 5836 / 中信 5841 / 兆豐 5843 / 玉山 5847 · 個體財報 · 公開資訊觀測站 · 更新 {now}</p></header>
 <div class="wrap">
 {interactive_html()}
-<details class="card"><summary>靜態總覽圖(列印/貼信件用)</summary><div class="inner">
-<h2 style="margin-top:4px">按會計分類 (Trading / OCI / AC)</h2><img src="圖1.png" alt="按分類">
-<h2 style="margin-top:20px">按債種 (公債 / 信用債 / 公司債 / 金融債 / 其他)</h2><img src="圖2.png" alt="按債種">
-</div></details>
-{wide_table_html()}
 <div class="card note">
 <b style="color:var(--ink)">說明</b><br>
-· 單位:億元。靜態圖 x 軸=五家銀行、每家一色、時間序列(顯示 {SHOW[0]}–{SHOW[-1]})。<br>
+· 單位:億元。資料期間 {(_have or PERIODS)[0]}–{(_have or PERIODS)[-1]},每半年一期(H1=6/30、H2=12/31 期末餘額)。<br>
 · <b>兆豐</b>債種明細來自其財報「證券部門變動明細表」(排版與他家不同);其證券部門無 Trading 部位,故 Trading 列為 0。<br>
 · 2020H1 國泰/玉山之個體財報為掃描影像檔,無法解析,標為「無資料」。<br>
 · 數據經三層 checksum 驗算;完整方法與腳本見 repo。本頁由 GitHub Actions 自動更新。
