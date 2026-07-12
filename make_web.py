@@ -79,7 +79,8 @@ def interactive_html():
     css="""<style>
 .ix{font-family:inherit}
 .ix-sub{font-weight:400;color:#8a919e;font-size:12px;margin-left:8px}
-.ix-cfg{position:relative;display:inline-block;margin-bottom:16px}
+.ix-kpihead{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.ix-cfg{position:relative;display:inline-block}
 .ix-cfg>summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-size:13px;color:#5f6672;border:1px solid #e0e3e8;border-radius:9px;padding:8px 12px;background:#fff;user-select:none}
 .ix-cfg>summary::-webkit-details-marker{display:none}
 .ix-cfg>summary:hover{border-color:#c6cbd4}
@@ -139,6 +140,7 @@ def interactive_html():
 </style>"""
     markup="""<div class="ix">
 <div class="card">
+<div class="ix-kpihead"><h2 style="margin:0">本期速覽 <span class="ix-sub">最新一期,五家一眼</span></h2>
 <details class="ix-cfg"><summary><span class="ix-cfg-ic">⚙</span>選擇項目<span class="ix-cfg-ar">▾</span></summary>
 <div class="ix-cfg-panel">
 <div class="ix-cfg-h">計入「部位」的項目(全頁與 KPI 連動)</div>
@@ -146,26 +148,26 @@ def interactive_html():
 <label><input type="checkbox" class="inclbox" value="公司債" checked autocomplete="off"><span class="ix-sw" style="background:#1baf7a"></span>公司債</label>
 <label><input type="checkbox" class="inclbox" value="金融債" checked autocomplete="off"><span class="ix-sw" style="background:#eda100"></span>金融債</label>
 <label><input type="checkbox" class="inclbox" value="CP" autocomplete="off"><span class="ix-sw" style="background:#888780"></span>貨幣市場<span class="ix-cfg-note">商業本票／可轉讓定存單／國庫券,非債券,僅 Trading 有</span></label>
-</div></details>
+</div></details></div>
 <div class="ix-kpi" id="ix_kpi"></div>
 </div>
 
 <div class="card">
 <h2>跨行比較 <span class="ix-sub">同一期,誰的部位大、怎麼配</span></h2>
-<div class="ix-ctl"><label>期間</label><select id="A_p"></select><label>分類</label><select id="A_c"><option value="合計">三分類合計</option><option value="Trading">Trading</option><option value="OCI" selected>OCI</option><option value="AC">AC</option></select><label>檢視</label><span class="ix-seg"><button id="A_amt" class="on">金額(億)</button><button id="A_pct">結構(%)</button></span></div>
+<div class="ix-ctl"><label>期間</label><select id="A_p"></select><label>分類</label><select id="A_c"><option value="合計" selected>三分類合計</option><option value="Trading">Trading</option><option value="OCI">OCI</option><option value="AC">AC</option></select><label>檢視</label><span class="ix-seg"><button id="A_amt" class="on">金額(億)</button><button id="A_pct">結構(%)</button></span></div>
 <div class="ix-legend" id="A_lg"></div><div id="A_bars"></div><div id="ix_drill"></div>
 <div style="font-size:12px;color:#8a919e;margin-top:6px">點圖例聚焦單一債種.點銀行名展開該行明細。</div>
 </div>
 
 <div class="card">
 <h2>時間趨勢 <span class="ix-sub">2020 以來,各家部位怎麼變</span></h2>
-<div class="ix-ctl"><label>分類</label><select id="B_c"><option value="合計">三分類合計</option><option value="Trading">Trading</option><option value="OCI" selected>OCI</option><option value="AC">AC</option></select><label>債種</label><select id="B_b"><option value="合計">全部債種</option><option value="GB">政府公債</option><option value="公司債">公司債</option><option value="金融債">金融債</option></select></div>
+<div class="ix-ctl"><label>分類</label><select id="B_c"><option value="合計" selected>三分類合計</option><option value="Trading">Trading</option><option value="OCI">OCI</option><option value="AC">AC</option></select><label>債種</label><select id="B_b"><option value="合計">全部債種</option><option value="GB">政府公債</option><option value="公司債">公司債</option><option value="金融債">金融債</option></select></div>
 <div class="ix-legend" id="B_lg"></div><div style="position:relative;width:100%;height:320px"><canvas id="B_cv" role="img" aria-label="五家銀行債券部位時間趨勢"></canvas></div>
 </div>
 
 <div class="card">
 <h2>自由探索 <span class="ix-sub">銀行 × 債種熱力圖,掃全局</span></h2>
-<div class="ix-ctl"><label>期間</label><select id="C_p"></select><label>分類</label><select id="C_c"><option value="合計">三分類合計</option><option value="Trading">Trading</option><option value="OCI" selected>OCI</option><option value="AC">AC</option></select></div>
+<div class="ix-ctl"><label>期間</label><select id="C_p"></select><label>分類</label><select id="C_c"><option value="合計" selected>三分類合計</option><option value="Trading">Trading</option><option value="OCI">OCI</option><option value="AC">AC</option></select></div>
 <div id="C_grid"></div>
 <div class="ix-legend" style="margin-top:14px;border-top:1px solid #e9ebef;padding-top:12px">
 <span><span class="ix-sw" style="background:#f0f0f0;border:1px solid #ccc"></span>0 = 真實零部位</span>
@@ -175,8 +177,8 @@ def interactive_html():
     js=r"""
 const BANKS=RAW.banks,PERIODS=RAW.periods,W=RAW.wide;
 const ALLBONDS=[["GB","政府公債","#2a78d6"],["公司債","公司債","#1baf7a"],["金融債","金融債","#eda100"],["CP","貨幣市場","#888780"]];
-const CATS=["Trading","OCI","AC"],SC=["#2a78d6","#1baf7a","#eda100","#4a3aa7","#008300"];
-const PAL=SC.concat(["#e34948","#e87ba4","#eb6834","#1d9e75","#534ab7"]);
+const CATS=["Trading","OCI","AC"],SC=["#2a78d6","#1baf7a","#eda100","#4a3aa7","#d4318c"];
+const PAL=SC.concat(["#e34948","#eb6834","#008300","#1d9e75","#534ab7"]);
 const BC={};BANKS.forEach((b,i)=>BC[b]=PAL[i%PAL.length]);
 let banksSel=new Set(BANKS);
 function AB(){return BANKS.filter(b=>banksSel.has(b));}
