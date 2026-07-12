@@ -1,4 +1,4 @@
-# Bank Bond Portfolio Analysis — Automated Reporting Pipeline
+# Auto-Reports — Bank Bond Portfolio Analysis Pipeline
 
 An end-to-end pipeline that extracts, validates, and visualizes the bond investment
 portfolios of major Taiwanese banks directly from their statutory financial reports.
