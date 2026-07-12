@@ -49,6 +49,8 @@ def parse_all():
             if name=="兆豐":   # 兆豐:證券部門變動明細表(座標式),專用解析
                 rec[(lbl,name)]=parse_megabank(p); continue
             t="\n".join((pg.extract_text() or "") for pg in pdfplumber.open(p).pages)
+            if len(t)<2000:      # 無文字層(掃描影像檔,如2020H1國泰/玉山)→ 無資料,非0
+                rec[(lbl,name)]=None; continue
             items={c:E.parse_class(t,c) for c in ("Trading","OCI","AC")}
             r={c:E.bond_buckets(items[c]) for c in ("Trading","OCI","AC")}
             r["_cp"]=items["Trading"].get("商業本票",0)/1e5
