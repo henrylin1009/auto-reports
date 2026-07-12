@@ -79,8 +79,20 @@ def interactive_html():
     css="""<style>
 .ix{font-family:inherit}
 .ix-sub{font-weight:400;color:#8a919e;font-size:12px;margin-left:8px}
-.ix-cptog{display:flex;align-items:center;gap:8px;font-size:13px;color:#5f6672;margin:0;cursor:pointer}
-.ix-cptog input{accent-color:#4f46e5}
+.ix-cfg{position:relative;display:inline-block}
+.ix-cfg>summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-size:13px;color:#5f6672;border:1px solid #e0e3e8;border-radius:9px;padding:8px 12px;background:#fff;user-select:none}
+.ix-cfg>summary::-webkit-details-marker{display:none}
+.ix-cfg>summary:hover{border-color:#c6cbd4}
+.ix-cfg>summary b{color:#111827;font-weight:600}
+.ix-cfg-ic{font-size:13px}
+.ix-cfg-ar{color:#8a919e;font-size:11px}
+.ix-cfg[open]>summary{border-color:#4f46e5}
+.ix-cfg-panel{position:absolute;z-index:20;top:calc(100% + 6px);left:0;background:#fff;border:1px solid #e9ebef;border-radius:12px;box-shadow:0 10px 30px rgba(16,24,40,.12);padding:12px 14px;min-width:280px}
+.ix-cfg-h{font-size:12px;color:#8a919e;margin-bottom:10px}
+.ix-cfg-panel label{display:flex;align-items:center;gap:8px;font-size:13px;color:#111827;padding:7px 6px;border-radius:7px;cursor:pointer;flex-wrap:wrap}
+.ix-cfg-panel label:hover{background:#f5f6f8}
+.ix-cfg-panel input{accent-color:#4f46e5;width:15px;height:15px}
+.ix-cfg-note{width:100%;padding-left:23px;font-size:11px;color:#a0a6b0;margin-top:-2px}
 .ix-ctl{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:16px}
 .ix-ctl label{font-size:12px;color:#8a919e;margin-left:6px}
 .ix-ctl select{height:34px;border:1px solid #e0e3e8;border-radius:8px;padding:0 8px;background:#fff;color:#111827;font-size:13px;outline:none}
@@ -128,7 +140,14 @@ def interactive_html():
     markup="""<div class="ix">
 <div class="card">
 <div class="ix-kpi" id="ix_kpi"></div>
-<label class="ix-cptog"><input type="checkbox" id="ix_cp"> 含貨幣市場(CP／短期票券)— 勾=總部位規模,不勾=純債券配置。全頁連動。</label>
+<details class="ix-cfg"><summary><span class="ix-cfg-ic">⚙</span>口徑:<b id="incl_lbl"></b><span class="ix-cfg-ar">▾</span></summary>
+<div class="ix-cfg-panel">
+<div class="ix-cfg-h">計入「部位」的項目(全頁與 KPI 連動)</div>
+<label><input type="checkbox" class="inclbox" value="GB" checked autocomplete="off"><span class="ix-sw" style="background:#2a78d6"></span>政府公債</label>
+<label><input type="checkbox" class="inclbox" value="公司債" checked autocomplete="off"><span class="ix-sw" style="background:#1baf7a"></span>公司債</label>
+<label><input type="checkbox" class="inclbox" value="金融債" checked autocomplete="off"><span class="ix-sw" style="background:#eda100"></span>金融債</label>
+<label><input type="checkbox" class="inclbox" value="CP" autocomplete="off"><span class="ix-sw" style="background:#888780"></span>貨幣市場<span class="ix-cfg-note">商業本票／可轉讓定存單／國庫券,非債券,僅 Trading 有</span></label>
+</div></details>
 </div>
 
 <div class="card">
@@ -155,11 +174,10 @@ def interactive_html():
 </div>"""
     js=r"""
 const BANKS=RAW.banks,PERIODS=RAW.periods,W=RAW.wide;
-const BONDS3=[["GB","政府公債","#2a78d6"],["公司債","公司債","#1baf7a"],["金融債","金融債","#eda100"]];
-const CPBOND=["CP","貨幣市場(CP)","#888780"];
+const ALLBONDS=[["GB","政府公債","#2a78d6"],["公司債","公司債","#1baf7a"],["金融債","金融債","#eda100"],["CP","貨幣市場","#888780"]];
 const CATS=["Trading","OCI","AC"],SC=["#2a78d6","#1baf7a","#eda100","#4a3aa7","#008300"];
-let incCP=false;
-function bondList(){return incCP?[CPBOND,...BONDS3]:BONDS3;}
+let incl=new Set(["GB","公司債","金融債"]);
+function bondList(){return ALLBONDS.filter(b=>incl.has(b[0]));}
 function has(p,bk){return W[p+"|"+bk]!=null;}
 function val(p,bk,cat,bond){
   const row=W[p+"|"+bk];if(!row)return 0;
@@ -219,13 +237,19 @@ function drawKPI(){
   const yp=prevP(p,2);
   const dts=yp?BANKS.filter(b=>has(p,b)&&has(yp,b)).map(b=>({b,d:total(p,b,cat)-total(yp,b,cat)})):[];
   const up=dts.length?dts.reduce((a,b)=>b.d>a.d?b:a):null,dn=dts.length?dts.reduce((a,b)=>b.d<a.d?b:a):null;
-  const scope=incCP?"總部位(含CP)":"純債券";
+  const SHORT={GB:"公債","公司債":"公司債","金融債":"金融債",CP:"貨幣"};
+  const scope=ALLBONDS.filter(b=>incl.has(b[0])).map(b=>SHORT[b[0]]).join("+")||"(未選)";
   const cards=[["本期五家合計",fmt(sum)+" 億",scope+" · "+p],["部位最大",top.b,fmt(top.t)+" 億"]];
   if(up)cards.push(["加碼最多(YoY)",up.b,sgn(up.d)+" 億"]);
   if(dn)cards.push(["減碼最多(YoY)",dn.b,sgn(dn.d)+" 億"]);
   document.getElementById("ix_kpi").innerHTML=cards.map(c=>'<div class="ix-kcard"><div class="ix-klabel">'+c[0]+'</div><div class="ix-kval">'+c[1]+'</div><div class="ix-ksub">'+c[2]+'</div></div>').join("");
 }
-document.getElementById("ix_cp").onchange=e=>{incCP=e.target.checked;drawKPI();drawA();drawC();drawB();};
+function syncIncl(){incl=new Set([...document.querySelectorAll(".inclbox:checked")].map(x=>x.value));
+  const names=ALLBONDS.filter(b=>incl.has(b[0])).map(b=>b[1]);
+  document.getElementById("incl_lbl").textContent=names.length?names.join("、"):"(未選)";
+}
+document.querySelectorAll(".inclbox").forEach(cb=>cb.onchange=()=>{syncIncl();drawKPI();drawA();drawC();drawB();});
+syncIncl();
 
 let A_mode="amt";
 function drawA(){
@@ -274,7 +298,7 @@ function drawC(){
 let chartB=null;
 function drawB(){
   const cat=B_c.value,bond=B_b.value,dash=[[],[6,4],[2,3],[8,3,2,3],[]];
-  const withCP=incCP&&(bond==="合計");
+  const withCP=incl.has("CP")&&(bond==="合計");
   const vOf=(p,bk)=>bond==="合計"?total(p,bk,cat):val(p,bk,cat,bond);
   const ds=BANKS.map((bk,i)=>({label:bk,data:PERIODS.map(p=>has(p,bk)?vOf(p,bk):null),borderColor:SC[i],backgroundColor:SC[i],borderDash:dash[i],spanGaps:false,borderWidth:2,tension:0.25,pointRadius:2,pointHoverRadius:5}));
   document.getElementById("B_lg").innerHTML=BANKS.map((bk,i)=>'<span><span class="ix-sw" style="background:'+SC[i]+'"></span>'+bk+'</span>').join("")+(withCP?' <span style="color:#999">(已含CP)</span>':'');
