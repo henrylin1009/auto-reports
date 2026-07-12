@@ -176,6 +176,10 @@ def interactive_html():
 const BANKS=RAW.banks,PERIODS=RAW.periods,W=RAW.wide;
 const ALLBONDS=[["GB","政府公債","#2a78d6"],["公司債","公司債","#1baf7a"],["金融債","金融債","#eda100"],["CP","貨幣市場","#888780"]];
 const CATS=["Trading","OCI","AC"],SC=["#2a78d6","#1baf7a","#eda100","#4a3aa7","#008300"];
+const PAL=SC.concat(["#e34948","#e87ba4","#eb6834","#1d9e75","#534ab7"]);
+const BC={};BANKS.forEach((b,i)=>BC[b]=PAL[i%PAL.length]);
+let banksSel=new Set(BANKS);
+function AB(){return BANKS.filter(b=>banksSel.has(b));}
 let incl=new Set(["GB","公司債","金融債"]);
 function bondList(){return ALLBONDS.filter(b=>incl.has(b[0]));}
 function has(p,bk){return W[p+"|"+bk]!=null;}
@@ -232,14 +236,14 @@ function renderDrill(bk){
 
 function drawKPI(){
   const p=latestP(),cat="合計";
-  const rows=BANKS.filter(b=>has(p,b)).map(b=>({b,t:total(p,b,cat)}));
+  const rows=AB().filter(b=>has(p,b)).map(b=>({b,t:total(p,b,cat)}));
   const sum=rows.reduce((s,r)=>s+r.t,0),top=rows.reduce((a,b)=>b.t>a.t?b:a);
   const yp=prevP(p,2);
-  const dts=yp?BANKS.filter(b=>has(p,b)&&has(yp,b)).map(b=>({b,d:total(p,b,cat)-total(yp,b,cat)})):[];
+  const dts=yp?AB().filter(b=>has(p,b)&&has(yp,b)).map(b=>({b,d:total(p,b,cat)-total(yp,b,cat)})):[];
   const up=dts.length?dts.reduce((a,b)=>b.d>a.d?b:a):null,dn=dts.length?dts.reduce((a,b)=>b.d<a.d?b:a):null;
   const SHORT={GB:"公債","公司債":"公司債","金融債":"金融債",CP:"貨幣"};
   const scope=ALLBONDS.filter(b=>incl.has(b[0])).map(b=>SHORT[b[0]]).join("+")||"(未選)";
-  const cards=[["本期五家合計",fmt(sum)+" 億",scope+" · "+p],["部位最大",top.b,fmt(top.t)+" 億"]];
+  const cards=[["本期合計("+rows.length+"家)",fmt(sum)+" 億",scope+" · "+p],["部位最大",top.b,fmt(top.t)+" 億"]];
   if(up)cards.push(["加碼最多(YoY)",up.b,sgn(up.d)+" 億"]);
   if(dn)cards.push(["減碼最多(YoY)",dn.b,sgn(dn.d)+" 億"]);
   document.getElementById("ix_kpi").innerHTML=cards.map(c=>'<div class="ix-kcard"><div class="ix-klabel">'+c[0]+'</div><div class="ix-kval">'+c[1]+'</div><div class="ix-ksub">'+c[2]+'</div></div>').join("");
@@ -253,7 +257,7 @@ function drawA(){
   const p=A_p.value,cat=A_c.value,BD=bondList(),bp=prevP(p,1);
   document.getElementById("A_lg").innerHTML=BD.map(bd=>'<span class="lg-item'+(focusBond?(focusBond===bd[0]?' sel':' dim'):'')+'" data-bond="'+bd[0]+'"><span class="ix-sw" style="background:'+bd[2]+'"></span>'+bd[1]+'</span>').join("");
   document.querySelectorAll("#A_lg .lg-item").forEach(li=>li.onclick=()=>{focusBond=(focusBond===li.dataset.bond)?null:li.dataset.bond;drawA();drawC();});
-  const rows=BANKS.map(bk=>({bk,ok:has(p,bk),segs:BD.map(bd=>val(p,bk,cat,bd[0])),tot:total(p,bk,cat)}));
+  const rows=AB().map(bk=>({bk,ok:has(p,bk),segs:BD.map(bd=>val(p,bk,cat,bd[0])),tot:total(p,bk,cat)}));
   const mx=Math.max(...rows.map(r=>r.tot),1);
   document.getElementById("A_bars").innerHTML=rows.map(r=>{
     if(!r.ok)return '<div class="ix-row"><div class="ix-name">'+r.bk+'</div><div class="ix-na">無資料 · 該期財報為掃描影像檔</div><div class="ix-tot">N/A</div></div>';
@@ -277,10 +281,10 @@ A_pct.onclick=()=>{A_mode="pct";A_pct.classList.add("on");A_amt.classList.remove
 
 function drawC(){
   const p=C_p.value,cat=C_c.value,BD=bondList();
-  let mx=1;BANKS.forEach(bk=>{if(has(p,bk))BD.forEach(bd=>{const v=val(p,bk,cat,bd[0]);if(v>mx)mx=v;});});
+  let mx=1;AB().forEach(bk=>{if(has(p,bk))BD.forEach(bd=>{const v=val(p,bk,cat,bd[0]);if(v>mx)mx=v;});});
   let h='<div style="font-size:12px;color:#999;margin-bottom:8px">色深=部位規模(億元)。</div><div style="display:grid;grid-template-columns:40px repeat('+BD.length+',1fr);gap:4px">';
   h+='<div></div>'+BD.map(bd=>'<div style="font-size:12px;color:#666;text-align:center;padding-bottom:2px">'+bd[1]+'</div>').join("");
-  BANKS.forEach(bk=>{
+  AB().forEach(bk=>{
     h+='<div style="font-size:13px;display:flex;align-items:center;justify-content:flex-end;padding-right:4px">'+bk+'</div>';
     if(!has(p,bk)){h+='<div style="grid-column:span '+BD.length+';height:52px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#999;background:repeating-linear-gradient(45deg,#f5f6f5,#f5f6f5 5px,rgba(150,150,150,.25) 5px,rgba(150,150,150,.25) 7px)">無資料(掃描影像檔)</div>';return;}
     BD.forEach(bd=>{const v=val(p,bk,cat,bd[0]),t=v/mx;const bg=v<=0?"#f0f0f0":"rgba(42,120,214,"+(0.12+t*0.8).toFixed(2)+")",col=t>0.45?"#fff":"#222";
@@ -297,8 +301,8 @@ function drawB(){
   const cat=B_c.value,bond=B_b.value,dash=[[],[6,4],[2,3],[8,3,2,3],[]];
   const withCP=incl.has("CP")&&(bond==="合計");
   const vOf=(p,bk)=>bond==="合計"?total(p,bk,cat):val(p,bk,cat,bond);
-  const ds=BANKS.map((bk,i)=>({label:bk,data:PERIODS.map(p=>has(p,bk)?vOf(p,bk):null),borderColor:SC[i],backgroundColor:SC[i],borderDash:dash[i],spanGaps:false,borderWidth:2,tension:0.25,pointRadius:2,pointHoverRadius:5}));
-  document.getElementById("B_lg").innerHTML=BANKS.map((bk,i)=>'<span><span class="ix-sw" style="background:'+SC[i]+'"></span>'+bk+'</span>').join("")+(withCP?' <span style="color:#999">(已含CP)</span>':'');
+  const ds=AB().map((bk)=>{const i=BANKS.indexOf(bk);return {label:bk,data:PERIODS.map(p=>has(p,bk)?vOf(p,bk):null),borderColor:BC[bk],backgroundColor:BC[bk],borderDash:dash[i%dash.length],spanGaps:false,borderWidth:2,tension:0.25,pointRadius:2,pointHoverRadius:5};});
+  document.getElementById("B_lg").innerHTML=AB().map((bk)=>'<span><span class="ix-sw" style="background:'+BC[bk]+'"></span>'+bk+'</span>').join("")+(withCP?' <span style="color:#999">(已含CP)</span>':'');
   if(chartB)chartB.destroy();
   chartB=new Chart(document.getElementById("B_cv"),{type:"line",data:{labels:PERIODS,datasets:ds},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},
@@ -306,6 +310,15 @@ function drawB(){
       scales:{y:{title:{display:true,text:"億元"}},x:{grid:{display:false},ticks:{maxRotation:45,autoSkip:false}}}}});
 }
 ["B_c","B_b"].forEach(id=>document.getElementById(id).onchange=drawB);
+
+const bcEl=document.getElementById("bankchips");
+if(bcEl){bcEl.innerHTML=BANKS.map(b=>'<button class="ov-chip on" data-bank="'+b+'"><span class="ix-sw" style="background:'+BC[b]+'"></span>'+b+'</button>').join("");
+  bcEl.querySelectorAll(".ov-chip").forEach(ch=>ch.onclick=()=>{const b=ch.dataset.bank;
+    if(banksSel.has(b)){if(banksSel.size<=1)return;banksSel.delete(b);ch.classList.remove("on");}
+    else{banksSel.add(b);ch.classList.add("on");}
+    if(drillBank&&!banksSel.has(drillBank)){drillBank=null;document.getElementById("ix_drill").innerHTML="";}
+    drawKPI();drawA();drawC();drawB();});
+}
 drawKPI();drawA();drawC();drawB();
 """
     return (css + markup
@@ -335,6 +348,16 @@ details.card>summary::before{{content:"▸";color:var(--mut);transition:transfor
 details.card[open]>summary::before{{transform:rotate(90deg)}}
 details.card>.inner{{padding:0 24px 22px}}
 .note{{font-size:13px;color:var(--sub);line-height:1.8}}
+.ov-stats{{display:flex;gap:36px;flex-wrap:wrap;margin-bottom:18px}}
+.ov-n{{font-size:24px;font-weight:600;color:var(--ink);letter-spacing:-.02em;line-height:1.1}}
+.ov-l{{font-size:12px;color:var(--mut);margin-top:4px}}
+.ov-filter{{display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:16px}}
+.ov-fl{{font-size:12px;color:var(--mut)}}
+#bankchips{{display:flex;gap:8px;flex-wrap:wrap}}
+.ov-chip{{display:inline-flex;align-items:center;gap:6px;font-size:13px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--mut);cursor:pointer}}
+.ov-chip .ix-sw{{opacity:.35}}
+.ov-chip.on{{border-color:#c6cbd4;color:var(--ink);font-weight:500}}
+.ov-chip.on .ix-sw{{opacity:1}}
 .foot{{margin:4px 2px 0}}
 .foot>summary{{list-style:none;cursor:pointer;font-size:12px;color:var(--mut);user-select:none}}
 .foot>summary::-webkit-details-marker{{display:none}}
@@ -349,9 +372,17 @@ table.wide th.rowh{{background:#f8f9fb;text-align:left;position:sticky;left:0;z-
 table.wide tbody tr:hover td{{background:#fafbfc}}
 @media print{{header{{position:static}}.card{{box-shadow:none;break-inside:avoid}}details.card{{display:none}}}}
 </style></head><body>
-<header><h1>銀行五家 · 債券投資債種分析</h1>
-<p>國泰 5835 / 富邦 5836 / 中信 5841 / 兆豐 5843 / 玉山 5847 · 個體財報 · 公開資訊觀測站 · 更新 {now}</p></header>
+<header><h1>銀行債券投資債種分析</h1>
+<p>個體財報 · 公開資訊觀測站 · 更新 {now}</p></header>
 <div class="wrap">
+<div class="card ov">
+<div class="ov-stats">
+<div class="ov-stat"><div class="ov-n">{len(BANKS)}</div><div class="ov-l">家銀行</div></div>
+<div class="ov-stat"><div class="ov-n">{len(_have or PERIODS)}</div><div class="ov-l">期(半年)</div></div>
+<div class="ov-stat"><div class="ov-n">{(_have or PERIODS)[0]}–{(_have or PERIODS)[-1]}</div><div class="ov-l">涵蓋期間</div></div>
+</div>
+<div class="ov-filter"><span class="ov-fl">顯示銀行</span><div id="bankchips"></div></div>
+</div>
 {interactive_html()}
 <details class="foot"><summary>資料說明與口徑</summary>
 <div class="foot-in">
