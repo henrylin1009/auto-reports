@@ -79,7 +79,7 @@ def interactive_html():
     css="""<style>
 .ix{font-family:inherit}
 .ix-sub{font-weight:400;color:#8a919e;font-size:12px;margin-left:8px}
-.ix-cfg{position:relative;display:inline-block}
+.ix-cfg{position:relative;display:inline-block;margin-bottom:16px}
 .ix-cfg>summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-size:13px;color:#5f6672;border:1px solid #e0e3e8;border-radius:9px;padding:8px 12px;background:#fff;user-select:none}
 .ix-cfg>summary::-webkit-details-marker{display:none}
 .ix-cfg>summary:hover{border-color:#c6cbd4}
@@ -139,8 +139,7 @@ def interactive_html():
 </style>"""
     markup="""<div class="ix">
 <div class="card">
-<div class="ix-kpi" id="ix_kpi"></div>
-<details class="ix-cfg"><summary><span class="ix-cfg-ic">⚙</span>口徑:<b id="incl_lbl"></b><span class="ix-cfg-ar">▾</span></summary>
+<details class="ix-cfg"><summary><span class="ix-cfg-ic">⚙</span>選擇項目<span class="ix-cfg-ar">▾</span></summary>
 <div class="ix-cfg-panel">
 <div class="ix-cfg-h">計入「部位」的項目(全頁與 KPI 連動)</div>
 <label><input type="checkbox" class="inclbox" value="GB" checked autocomplete="off"><span class="ix-sw" style="background:#2a78d6"></span>政府公債</label>
@@ -148,6 +147,7 @@ def interactive_html():
 <label><input type="checkbox" class="inclbox" value="金融債" checked autocomplete="off"><span class="ix-sw" style="background:#eda100"></span>金融債</label>
 <label><input type="checkbox" class="inclbox" value="CP" autocomplete="off"><span class="ix-sw" style="background:#888780"></span>貨幣市場<span class="ix-cfg-note">商業本票／可轉讓定存單／國庫券,非債券,僅 Trading 有</span></label>
 </div></details>
+<div class="ix-kpi" id="ix_kpi"></div>
 </div>
 
 <div class="card">
@@ -244,10 +244,7 @@ function drawKPI(){
   if(dn)cards.push(["減碼最多(YoY)",dn.b,sgn(dn.d)+" 億"]);
   document.getElementById("ix_kpi").innerHTML=cards.map(c=>'<div class="ix-kcard"><div class="ix-klabel">'+c[0]+'</div><div class="ix-kval">'+c[1]+'</div><div class="ix-ksub">'+c[2]+'</div></div>').join("");
 }
-function syncIncl(){incl=new Set([...document.querySelectorAll(".inclbox:checked")].map(x=>x.value));
-  const names=ALLBONDS.filter(b=>incl.has(b[0])).map(b=>b[1]);
-  document.getElementById("incl_lbl").textContent=names.length?names.join("、"):"(未選)";
-}
+function syncIncl(){incl=new Set([...document.querySelectorAll(".inclbox:checked")].map(x=>x.value));}
 document.querySelectorAll(".inclbox").forEach(cb=>cb.onchange=()=>{syncIncl();drawKPI();drawA();drawC();drawB();});
 syncIncl();
 
