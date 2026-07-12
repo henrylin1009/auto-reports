@@ -142,16 +142,9 @@ def interactive_html():
 </div>
 
 <div class="card">
-<h2>時間趨勢 <span class="ix-sub">2020 以來,各家部位怎麼變</span></h2>
-<div class="ix-ctl"><label>分類</label><select id="B_c"><option value="合計">三分類合計</option><option value="Trading">Trading</option><option value="OCI" selected>OCI</option><option value="AC">AC</option></select><label>債種</label><select id="B_b"><option value="合計">全部債種</option><option value="GB">政府公債</option><option value="公司債">公司債</option><option value="金融債">金融債</option></select></div>
+<h2>時間趨勢 <span class="ix-sub">2020 以來,各家部位怎麼變、誰加碼誰減碼</span></h2>
+<div class="ix-ctl"><label>檢視</label><span class="ix-seg"><button id="B_lv" class="on">水位(億元)</button><button id="B_dt">增減(Δ)</button></span><label>分類</label><select id="B_c"><option value="合計">三分類合計</option><option value="Trading">Trading</option><option value="OCI" selected>OCI</option><option value="AC">AC</option></select><label>債種</label><select id="B_b"><option value="合計">全部債種</option><option value="GB">政府公債</option><option value="公司債">公司債</option><option value="金融債">金融債</option></select><span id="B_basew" style="display:none"><label>對比</label><select id="B_base"><option value="1" selected>較上期(半年)</option><option value="2">較去年同期</option></select></span></div>
 <div class="ix-legend" id="B_lg"></div><div style="position:relative;width:100%;height:320px"><canvas id="B_cv" role="img" aria-label="五家銀行債券部位時間趨勢"></canvas></div>
-</div>
-
-<div class="card">
-<h2>增減變化 <span class="ix-sub">這一期,誰加碼、誰減碼</span></h2>
-<div class="ix-ctl"><label>期間</label><select id="D_p"></select><label>對比</label><select id="D_base"><option value="1">較上期(半年)</option><option value="2" selected>較去年同期</option></select><label>分類</label><select id="D_c"><option value="合計">三分類合計</option><option value="Trading">Trading</option><option value="OCI" selected>OCI</option><option value="AC">AC</option></select></div>
-<div class="ix-legend"><span><span class="ix-sw" style="background:#1baf7a"></span>加碼(增)</span><span><span class="ix-sw" style="background:#e34948"></span>減碼(減)</span></div>
-<div id="D_bars"></div>
 </div>
 
 <div class="card">
@@ -182,7 +175,7 @@ function sgn(n){return (n>=0?"+":"−")+fmt(Math.abs(n));}
 function prevP(p,step){const i=PERIODS.indexOf(p);return i-step>=0?PERIODS[i-step]:null;}
 function fillSel(id,def){const s=document.getElementById(id);PERIODS.forEach(v=>{const o=document.createElement("option");o.value=v;o.textContent=v;if(v===def)o.selected=true;s.appendChild(o);});}
 function latestP(){for(let i=PERIODS.length-1;i>=0;i--){if(BANKS.some(b=>has(PERIODS[i],b)))return PERIODS[i];}return PERIODS[0];}
-["A_p","C_p","D_p"].forEach(id=>fillSel(id,latestP()));
+["A_p","C_p"].forEach(id=>fillSel(id,latestP()));
 function lgHTML(items){return items.map(i=>'<span><span class="ix-sw" style="background:'+i[2]+'"></span>'+i[1]+'</span>').join("");}
 
 let focusBond=null,drillBank=null;
@@ -236,7 +229,7 @@ function drawKPI(){
   if(dn)cards.push(["減碼最多(YoY)",dn.b,sgn(dn.d)+" 億"]);
   document.getElementById("ix_kpi").innerHTML=cards.map(c=>'<div class="ix-kcard"><div class="ix-klabel">'+c[0]+'</div><div class="ix-kval">'+c[1]+'</div><div class="ix-ksub">'+c[2]+'</div></div>').join("");
 }
-document.getElementById("ix_cp").onchange=e=>{incCP=e.target.checked;drawKPI();drawA();drawC();drawD();drawB();};
+document.getElementById("ix_cp").onchange=e=>{incCP=e.target.checked;drawKPI();drawA();drawC();drawB();};
 
 let A_mode="amt";
 function drawA(){
@@ -265,21 +258,6 @@ function drawA(){
 A_amt.onclick=()=>{A_mode="amt";A_amt.classList.add("on");A_pct.classList.remove("on");drawA();};
 A_pct.onclick=()=>{A_mode="pct";A_pct.classList.add("on");A_amt.classList.remove("on");drawA();};
 
-function drawD(){
-  const p=D_p.value,step=+D_base.value,cat=D_c.value,bp=prevP(p,step);
-  const bl=step===2?"去年同期":"上期";
-  const rows=BANKS.map(bk=>{const ok=has(p,bk)&&bp&&has(bp,bk);return {bk,ok,now:ok?total(p,bk,cat):0,was:ok?total(bp,bk,cat):0,d:ok?total(p,bk,cat)-total(bp,bk,cat):0};});
-  const mx=Math.max(...rows.map(r=>Math.abs(r.d)),1);
-  document.getElementById("D_bars").innerHTML='<div style="font-size:12px;color:#999;margin-bottom:10px">'+p+' 較 '+(bp||"—")+'('+bl+')的部位增減,單位億元。</div>'+rows.map(r=>{
-    if(!r.ok)return '<div class="ix-row"><div class="ix-name">'+r.bk+'</div><div class="ix-na">無可對比資料</div><div class="ix-tot"></div></div>';
-    const w=Math.abs(r.d)/mx*50,pos=r.d>=0;
-    const tip="<b>"+r.bk+"</b><br>"+bp+":"+fmt(r.was)+" 億 → "+p+":"+fmt(r.now)+" 億<br>變化 "+sgn(r.d)+" 億("+(r.was?sgn(Math.round(r.d/r.was*100)).replace(" ","")+"%":"—")+")";
-    const bar=pos?'<div style="width:50%"></div><div style="width:'+w+'%;height:22px;background:#1baf7a;border-radius:0 3px 3px 0"></div>':'<div style="width:'+(50-w)+'%"></div><div style="width:'+w+'%;height:22px;background:#e34948;border-radius:3px 0 0 3px"></div><div style="width:50%"></div>';
-    return '<div class="ix-row"><div class="ix-name">'+r.bk+'</div><div style="flex:1;display:flex;align-items:center;border-left:1px solid #ddd" data-tip="'+tip.replace(/"/g,"&quot;")+'">'+bar+'</div><div class="ix-tot" style="color:'+(pos?"#0f6e56":"#a32d2d")+'">'+sgn(r.d)+'</div></div>';
-  }).join("");
-}
-["D_p","D_base","D_c"].forEach(id=>document.getElementById(id).onchange=drawD);
-
 function drawC(){
   const p=C_p.value,cat=C_c.value,BD=bondList();
   let mx=1;BANKS.forEach(bk=>{if(has(p,bk))BD.forEach(bd=>{const v=val(p,bk,cat,bd[0]);if(v>mx)mx=v;});});
@@ -297,17 +275,34 @@ function drawC(){
 }
 ["C_p","C_c"].forEach(id=>document.getElementById(id).onchange=drawC);
 
-let chartB=null;
+let chartB=null,B_mode="level";
 function drawB(){
   const cat=B_c.value,bond=B_b.value,dash=[[],[6,4],[2,3],[8,3,2,3],[]];
   const withCP=incCP&&(bond==="合計");
-  const ds=BANKS.map((bk,i)=>({label:bk,data:PERIODS.map(p=>{if(!has(p,bk))return null;return bond==="合計"?total(p,bk,cat):val(p,bk,cat,bond);}),borderColor:SC[i],backgroundColor:SC[i],borderDash:dash[i],spanGaps:false,borderWidth:2,tension:0.25,pointRadius:2,pointHoverRadius:5}));
-  document.getElementById("B_lg").innerHTML=BANKS.map((bk,i)=>'<span><span class="ix-sw" style="background:'+SC[i]+'"></span>'+bk+'</span>').join("")+(withCP?' <span style="color:#999">(已含CP)</span>':'');
+  document.getElementById("B_basew").style.display=B_mode==="delta"?"":"none";
+  const vOf=(p,bk)=>bond==="合計"?total(p,bk,cat):val(p,bk,cat,bond);
+  let ds,type,ytitle;
+  if(B_mode==="delta"){
+    const step=+B_base.value;type="bar";ytitle="增減(億元)";
+    ds=BANKS.map((bk,i)=>({label:bk,
+      data:PERIODS.map(p=>{const bp=prevP(p,step);if(!has(p,bk)||!bp||!has(bp,bk))return null;return vOf(p,bk)-vOf(bp,bk);}),
+      backgroundColor:SC[i],borderRadius:3}));
+  }else{
+    type="line";ytitle="億元";
+    ds=BANKS.map((bk,i)=>({label:bk,data:PERIODS.map(p=>has(p,bk)?vOf(p,bk):null),borderColor:SC[i],backgroundColor:SC[i],borderDash:dash[i],spanGaps:false,borderWidth:2,tension:0.25,pointRadius:2,pointHoverRadius:5}));
+  }
+  document.getElementById("B_lg").innerHTML=BANKS.map((bk,i)=>'<span><span class="ix-sw" style="background:'+SC[i]+'"></span>'+bk+'</span>').join("")
+    +(B_mode==="delta"?' <span style="color:#999">零軸之上=加碼,之下=減碼</span>':'')+(withCP?' <span style="color:#999">(已含CP)</span>':'');
   if(chartB)chartB.destroy();
-  chartB=new Chart(document.getElementById("B_cv"),{type:"line",data:{labels:PERIODS,datasets:ds},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+": "+fmt(c.parsed.y)+"億"}}},scales:{y:{title:{display:true,text:"億元"}},x:{grid:{display:false},ticks:{maxRotation:45,autoSkip:false}}}}});
+  chartB=new Chart(document.getElementById("B_cv"),{type,data:{labels:PERIODS,datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+": "+(B_mode==="delta"?sgn(c.parsed.y):fmt(c.parsed.y))+" 億"}}},
+      scales:{y:{title:{display:true,text:ytitle}},x:{grid:{display:false},ticks:{maxRotation:45,autoSkip:false}}}}});
 }
-["B_c","B_b"].forEach(id=>document.getElementById(id).onchange=drawB);
-drawKPI();drawA();drawC();drawD();drawB();
+["B_c","B_b","B_base"].forEach(id=>document.getElementById(id).onchange=drawB);
+B_lv.onclick=()=>{B_mode="level";B_lv.classList.add("on");B_dt.classList.remove("on");drawB();};
+B_dt.onclick=()=>{B_mode="delta";B_dt.classList.add("on");B_lv.classList.remove("on");drawB();};
+drawKPI();drawA();drawC();drawB();
 """
     return (css + markup
             + '<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>'
