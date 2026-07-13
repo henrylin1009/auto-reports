@@ -147,27 +147,27 @@ def interactive_html():
 <label><input type="checkbox" class="inclbox" value="GB" checked autocomplete="off"><span class="ix-sw" style="background:#2a78d6"></span>政府公債</label>
 <label><input type="checkbox" class="inclbox" value="公司債" checked autocomplete="off"><span class="ix-sw" style="background:#1baf7a"></span>公司債</label>
 <label><input type="checkbox" class="inclbox" value="金融債" checked autocomplete="off"><span class="ix-sw" style="background:#eda100"></span>金融債</label>
-<label><input type="checkbox" class="inclbox" value="CP" autocomplete="off"><span class="ix-sw" style="background:#888780"></span>貨幣市場<span class="ix-cfg-note">商業本票／可轉讓定存單／國庫券,非債券,僅 Trading 有</span></label>
+<label><input type="checkbox" class="inclbox" value="CP" autocomplete="off"><span class="ix-sw" style="background:#888780"></span>貨幣市場<span class="ix-cfg-note">商業本票／可轉讓定存單／國庫券,非債券,僅 FVTPL 有</span></label>
 </div></details></div>
 <div class="ix-kpi" id="ix_kpi"></div>
 </div>
 
 <div class="card">
 <h2>跨行比較 <span class="ix-sub">同一期,誰的部位大、怎麼配(可切依債種或依會計分類)</span></h2>
-<div class="ix-ctl"><label>期間</label><select id="A_p"></select><label>分段</label><span class="ix-seg"><button id="A_by_b" class="on">依債種</button><button id="A_by_c">依會計分類</button></span><span id="A_catwrap"><label>分類</label><select id="A_c"><option value="合計" selected>三分類合計</option><option value="Trading">Trading</option><option value="OCI">OCI</option><option value="AC">AC</option></select></span><label>檢視</label><span class="ix-seg"><button id="A_amt" class="on">金額(億)</button><button id="A_pct">結構(%)</button></span></div>
+<div class="ix-ctl"><label>期間</label><select id="A_p"></select><label>分段</label><span class="ix-seg"><button id="A_by_b" class="on">依債種</button><button id="A_by_c">依會計分類</button></span><span id="A_catwrap"><label>分類</label><select id="A_c"><option value="合計" selected>三分類合計</option><option value="Trading">FVTPL</option><option value="OCI">FVOCI</option><option value="AC">AC</option></select></span><label>檢視</label><span class="ix-seg"><button id="A_amt" class="on">金額(億)</button><button id="A_pct">結構(%)</button></span></div>
 <div class="ix-legend" id="A_lg"></div><div id="A_bars"></div><div id="ix_drill"></div>
 <div style="font-size:12px;color:#8a919e;margin-top:6px">點銀行名展開該行明細;依債種檢視時,點圖例可聚焦單一債種。</div>
 </div>
 
 <div class="card">
 <h2>時間趨勢 <span class="ix-sub">2020 以來,各家部位怎麼變</span></h2>
-<div class="ix-ctl"><label>分類</label><select id="B_c"><option value="合計" selected>三分類合計</option><option value="Trading">Trading</option><option value="OCI">OCI</option><option value="AC">AC</option></select><label>債種</label><select id="B_b"><option value="合計">全部債種</option><option value="GB">政府公債</option><option value="公司債">公司債</option><option value="金融債">金融債</option></select></div>
+<div class="ix-ctl"><label>分類</label><select id="B_c"><option value="合計" selected>三分類合計</option><option value="Trading">FVTPL</option><option value="OCI">FVOCI</option><option value="AC">AC</option></select><label>債種</label><select id="B_b"><option value="合計">全部債種</option><option value="GB">政府公債</option><option value="公司債">公司債</option><option value="金融債">金融債</option></select></div>
 <div class="ix-legend" id="B_lg"></div><div style="position:relative;width:100%;height:320px"><canvas id="B_cv" role="img" aria-label="五家銀行債券部位時間趨勢"></canvas></div>
 </div>
 
 <div class="card">
 <h2>自由探索 <span class="ix-sub">銀行 × 債種熱力圖,掃全局</span></h2>
-<div class="ix-ctl"><label>期間</label><select id="C_p"></select><label>分類</label><select id="C_c"><option value="合計" selected>三分類合計</option><option value="Trading">Trading</option><option value="OCI">OCI</option><option value="AC">AC</option></select></div>
+<div class="ix-ctl"><label>期間</label><select id="C_p"></select><label>分類</label><select id="C_c"><option value="合計" selected>三分類合計</option><option value="Trading">FVTPL</option><option value="OCI">FVOCI</option><option value="AC">AC</option></select></div>
 <div id="C_grid"></div>
 <div class="ix-legend" style="margin-top:14px;border-top:1px solid #e9ebef;padding-top:12px">
 <span><span class="ix-sw" style="background:#f0f0f0;border:1px solid #ccc"></span>0 = 真實零部位</span>
@@ -218,8 +218,8 @@ function renderDrill(bk){
   const mx=Math.max(...catTots.map(o=>o.segs.reduce((a,b)=>a+b,0)),1);
   const rows=catTots.map(o=>{
     const tot=o.segs.reduce((a,b)=>a+b,0);
-    const inner=BD.map((bd,i)=>{const v=o.segs[i];return v<=0?"":'<div style="width:'+(v/mx*100)+'%;background:'+bd[2]+'" data-tip="<b>'+o.c+' · '+bd[1]+'</b><br>'+fmt(v)+' 億"></div>';}).join("");
-    return '<div class="ix-mini"><div class="lb">'+o.c+'</div><div class="tk">'+inner+'</div><div class="vv">'+fmt(tot)+'</div></div>';
+    const inner=BD.map((bd,i)=>{const v=o.segs[i];return v<=0?"":'<div style="width:'+(v/mx*100)+'%;background:'+bd[2]+'" data-tip="<b>'+CLABEL[o.c]+' · '+bd[1]+'</b><br>'+fmt(v)+' 億"></div>';}).join("");
+    return '<div class="ix-mini"><div class="lb">'+CLABEL[o.c]+'</div><div class="tk">'+inner+'</div><div class="vv">'+fmt(tot)+'</div></div>';
   }).join("");
   const vals=PERIODS.map(pp=>has(pp,bk)?total(pp,bk,"合計"):null);
   const vmax=Math.max(...vals.filter(v=>v!=null),1),W=170,H=38;
@@ -255,7 +255,8 @@ document.querySelectorAll(".inclbox").forEach(cb=>cb.onchange=()=>{syncIncl();dr
 syncIncl();
 
 let A_mode="amt",A_by="bond";
-const CLS=[["Trading","Trading","#eb6834"],["OCI","OCI","#2a78d6"],["AC","AC","#4a3aa7"]];
+const CLS=[["Trading","FVTPL","#eb6834"],["OCI","FVOCI","#2a78d6"],["AC","AC","#4a3aa7"]];
+const CLABEL={Trading:"FVTPL",OCI:"FVOCI",AC:"AC"};
 function drawA(){
   const p=A_p.value,cat=A_c.value,bp=prevP(p,1),byCls=A_by==="cls";
   const cw=document.getElementById("A_catwrap");if(cw)cw.style.display=byCls?"none":"";
@@ -409,7 +410,8 @@ table.wide tbody tr:hover td{{background:#fafbfc}}
 <details class="foot"><summary>資料說明與口徑</summary>
 <div class="foot-in">
 · 單位:億元。資料期間 {(_have or PERIODS)[0]}–{(_have or PERIODS)[-1]},每半年一期(H1=6/30、H2=12/31 期末餘額)。<br>
-· <b>兆豐</b>債種明細來自其財報「證券部門變動明細表」;其證券部門無 Trading 部位,故 Trading 為 0。<br>
+· 會計分類(IFRS 9):<b>FVTPL</b> 透過損益按公允價值衡量(即交易目的,附註六(三))、<b>FVOCI</b> 透過其他綜合損益(六(四))、<b>AC</b> 按攤銷後成本(六(五))。<br>
+· <b>兆豐</b>債種明細來自其財報「證券部門變動明細表」;其證券部門無 FVTPL 部位,故 FVTPL 為 0。<br>
 · 2020H1 國泰/玉山之個體財報為掃描影像檔,無法解析,標為「無資料」。<br>
 · 數據經三層 checksum 驗算;本頁由 GitHub Actions 自動更新。
 </div></details>
