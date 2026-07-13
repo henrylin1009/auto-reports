@@ -153,10 +153,10 @@ def interactive_html():
 </div>
 
 <div class="card">
-<h2>跨行比較 <span class="ix-sub">同一期,誰的部位大、怎麼配</span></h2>
-<div class="ix-ctl"><label>期間</label><select id="A_p"></select><label>分類</label><select id="A_c"><option value="合計" selected>三分類合計</option><option value="Trading">Trading</option><option value="OCI">OCI</option><option value="AC">AC</option></select><label>檢視</label><span class="ix-seg"><button id="A_amt" class="on">金額(億)</button><button id="A_pct">結構(%)</button></span></div>
+<h2>跨行比較 <span class="ix-sub">同一期,誰的部位大、怎麼配(可切依債種或依會計分類)</span></h2>
+<div class="ix-ctl"><label>期間</label><select id="A_p"></select><label>分段</label><span class="ix-seg"><button id="A_by_b" class="on">依債種</button><button id="A_by_c">依會計分類</button></span><span id="A_catwrap"><label>分類</label><select id="A_c"><option value="合計" selected>三分類合計</option><option value="Trading">Trading</option><option value="OCI">OCI</option><option value="AC">AC</option></select></span><label>檢視</label><span class="ix-seg"><button id="A_amt" class="on">金額(億)</button><button id="A_pct">結構(%)</button></span></div>
 <div class="ix-legend" id="A_lg"></div><div id="A_bars"></div><div id="ix_drill"></div>
-<div style="font-size:12px;color:#8a919e;margin-top:6px">點圖例聚焦單一債種.點銀行名展開該行明細。</div>
+<div style="font-size:12px;color:#8a919e;margin-top:6px">點銀行名展開該行明細;依債種檢視時,點圖例可聚焦單一債種。</div>
 </div>
 
 <div class="card">
@@ -254,23 +254,29 @@ function syncIncl(){incl=new Set([...document.querySelectorAll(".inclbox:checked
 document.querySelectorAll(".inclbox").forEach(cb=>cb.onchange=()=>{syncIncl();drawKPI();drawA();drawC();drawB();});
 syncIncl();
 
-let A_mode="amt";
+let A_mode="amt",A_by="bond";
+const CLS=[["Trading","Trading","#eb6834"],["OCI","OCI","#2a78d6"],["AC","AC","#4a3aa7"]];
 function drawA(){
-  const p=A_p.value,cat=A_c.value,BD=bondList(),bp=prevP(p,1);
-  document.getElementById("A_lg").innerHTML=BD.map(bd=>'<span class="lg-item'+(focusBond?(focusBond===bd[0]?' sel':' dim'):'')+'" data-bond="'+bd[0]+'"><span class="ix-sw" style="background:'+bd[2]+'"></span>'+bd[1]+'</span>').join("");
-  document.querySelectorAll("#A_lg .lg-item").forEach(li=>li.onclick=()=>{focusBond=(focusBond===li.dataset.bond)?null:li.dataset.bond;drawA();drawC();});
-  const rows=AB().map(bk=>({bk,ok:has(p,bk),segs:BD.map(bd=>val(p,bk,cat,bd[0])),tot:total(p,bk,cat)}));
+  const p=A_p.value,cat=A_c.value,bp=prevP(p,1),byCls=A_by==="cls";
+  const cw=document.getElementById("A_catwrap");if(cw)cw.style.display=byCls?"none":"";
+  const SEGS=byCls?CLS:bondList();
+  const segVal=(bk,seg,per)=>byCls?bondList().reduce((s,bd)=>s+val(per,bk,seg[0],bd[0]),0):val(per,bk,cat,seg[0]);
+  document.getElementById("A_lg").innerHTML=SEGS.map(seg=>{
+    const cls=(!byCls&&focusBond)?(focusBond===seg[0]?' sel':' dim'):'';
+    return '<span class="lg-item'+cls+'" data-seg="'+seg[0]+'"><span class="ix-sw" style="background:'+seg[2]+'"></span>'+seg[1]+'</span>';}).join("");
+  if(!byCls)document.querySelectorAll("#A_lg .lg-item").forEach(li=>li.onclick=()=>{focusBond=(focusBond===li.dataset.seg)?null:li.dataset.seg;drawA();drawC();});
+  const rows=AB().map(bk=>({bk,ok:has(p,bk),tot:SEGS.reduce((s,seg)=>s+segVal(bk,seg,p),0)}));
   const mx=Math.max(...rows.map(r=>r.tot),1);
   document.getElementById("A_bars").innerHTML=rows.map(r=>{
     if(!r.ok)return '<div class="ix-row"><div class="ix-name">'+r.bk+'</div><div class="ix-na">無資料 · 該期財報為掃描影像檔</div><div class="ix-tot">N/A</div></div>';
     const base=A_mode==="pct"?(r.tot||1):mx,wp=A_mode==="pct"?100:(r.tot/mx*100);
-    const inner=BD.map((bd,i)=>{const v=r.segs[i];if(v<=0)return"";
+    const inner=SEGS.map(seg=>{const v=segVal(r.bk,seg,p);if(v<=0)return"";
       const pct=r.tot?Math.round(v/r.tot*100):0;
-      const pv=(bp&&has(bp,r.bk))?val(bp,r.bk,cat,bd[0]):null;
+      const pv=(bp&&has(bp,r.bk))?segVal(r.bk,seg,bp):null;
       const dtxt=pv==null?"—":sgn(v-pv)+" 億";
-      const tip="<b>"+r.bk+" · "+bd[1]+"</b><br>"+fmt(v)+" 億 · 佔該行 "+pct+"%<br>較上期 "+dtxt;
-      const dim=(focusBond&&focusBond!==bd[0])?" dim":"";
-      return '<div class="ix-s2'+dim+'" style="width:'+(v/base*100)+'%;background:'+bd[2]+'" data-tip="'+tip.replace(/"/g,"&quot;")+'"></div>';}).join("");
+      const tip="<b>"+r.bk+" · "+seg[1]+"</b><br>"+fmt(v)+" 億 · 佔該行 "+pct+"%<br>較上期 "+dtxt;
+      const dim=(!byCls&&focusBond&&focusBond!==seg[0])?" dim":"";
+      return '<div class="ix-s2'+dim+'" style="width:'+(v/base*100)+'%;background:'+seg[2]+'" data-tip="'+tip.replace(/"/g,"&quot;")+'"></div>';}).join("");
     const lab=A_mode==="pct"?(r.tot?"100%":"0"):fmt(r.tot);
     return '<div class="ix-row"><div class="ix-name click" data-bank="'+r.bk+'">'+r.bk+'</div><div class="ix-track" style="width:'+Math.max(wp,0.5)+'%">'+inner+'</div><div class="ix-tot">'+lab+'</div></div>';
   }).join("");
@@ -280,6 +286,8 @@ function drawA(){
 ["A_p","A_c"].forEach(id=>document.getElementById(id).onchange=drawA);
 A_amt.onclick=()=>{A_mode="amt";A_amt.classList.add("on");A_pct.classList.remove("on");drawA();};
 A_pct.onclick=()=>{A_mode="pct";A_pct.classList.add("on");A_amt.classList.remove("on");drawA();};
+A_by_b.onclick=()=>{A_by="bond";A_by_b.classList.add("on");A_by_c.classList.remove("on");drawA();};
+A_by_c.onclick=()=>{A_by="cls";A_by_c.classList.add("on");A_by_b.classList.remove("on");drawA();};
 
 function drawC(){
   const p=C_p.value,cat=C_c.value,BD=bondList();
