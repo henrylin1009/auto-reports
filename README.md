@@ -3,12 +3,14 @@
 An end-to-end pipeline that extracts, validates, and visualizes the bond investment
 portfolios of major Taiwanese banks directly from their statutory financial reports.
 
+**▶ Live dashboard:** https://henrylin1009.github.io/auto-reports/
+
+[![Bank bond dashboard](docs/dashboard-hero.png)](https://henrylin1009.github.io/auto-reports/)
+
 For each bank it parses the bond holdings broken down by **accounting classification**
 — FVTPL (Trading), FVOCI (OCI), and Amortized Cost (AC) — and by **instrument type**
 (government bonds, corporate bonds, bank debentures, money-market instruments), then
 produces an **interactive web dashboard** and an Excel report with native charts.
-
-**Live dashboard:** https://henrylin1009.github.io/auto-reports/
 
 Banks currently covered (extensible): CTBC (5841), Cathay (5835), Fubon (5836),
 Mega (5843), E.Sun (5847). Source: entity-level (non-consolidated) semi-annual reports
