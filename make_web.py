@@ -166,8 +166,8 @@ def interactive_html():
 </div>
 
 <div class="card">
-<h2>自由探索 <span class="ix-sub">銀行 × 債種熱力圖,掃全局</span></h2>
-<div class="ix-ctl"><label>期間</label><select id="C_p"></select><label>分類</label><select id="C_c"><option value="合計" selected>三分類合計</option><option value="Trading">FVTPL</option><option value="OCI">FVOCI</option><option value="AC">AC</option></select></div>
+<h2>自由探索 <span class="ix-sub">銀行 × 熱力圖,掃全局(可切依債種或依會計分類)</span></h2>
+<div class="ix-ctl"><label>期間</label><select id="C_p"></select><label>分段</label><span class="ix-seg"><button id="C_by_b" class="on">依債種</button><button id="C_by_c">依會計分類</button></span><span id="C_catwrap"><label>分類</label><select id="C_c"><option value="合計" selected>三分類合計</option><option value="Trading">FVTPL</option><option value="OCI">FVOCI</option><option value="AC">AC</option></select></span></div>
 <div id="C_grid"></div>
 <div class="ix-legend" style="margin-top:14px;border-top:1px solid #e9ebef;padding-top:12px">
 <span><span class="ix-sw" style="background:#f0f0f0;border:1px solid #ccc"></span>0 = 真實零部位</span>
@@ -290,22 +290,29 @@ A_pct.onclick=()=>{A_mode="pct";A_pct.classList.add("on");A_amt.classList.remove
 A_by_b.onclick=()=>{A_by="bond";A_by_b.classList.add("on");A_by_c.classList.remove("on");drawA();};
 A_by_c.onclick=()=>{A_by="cls";A_by_c.classList.add("on");A_by_b.classList.remove("on");drawA();};
 
+let C_by="bond";
 function drawC(){
-  const p=C_p.value,cat=C_c.value,BD=bondList();
-  let mx=1;AB().forEach(bk=>{if(has(p,bk))BD.forEach(bd=>{const v=val(p,bk,cat,bd[0]);if(v>mx)mx=v;});});
-  let h='<div style="font-size:12px;color:#999;margin-bottom:8px">色深=部位規模(億元)。</div><div style="display:grid;grid-template-columns:40px repeat('+BD.length+',1fr);gap:4px">';
-  h+='<div></div>'+BD.map(bd=>'<div style="font-size:12px;color:#666;text-align:center;padding-bottom:2px">'+bd[1]+'</div>').join("");
+  const p=C_p.value,cat=C_c.value,byCls=C_by==="cls";
+  const cw=document.getElementById("C_catwrap");if(cw)cw.style.display=byCls?"none":"";
+  const SEGS=byCls?CLS:bondList();
+  const segVal=(bk,seg)=>byCls?bondList().reduce((s,bd)=>s+val(p,bk,seg[0],bd[0]),0):val(p,bk,cat,seg[0]);
+  const catDisp=byCls?"":" · "+(cat==="合計"?"三分類合計":CLABEL[cat]);
+  let mx=1;AB().forEach(bk=>{if(has(p,bk))SEGS.forEach(seg=>{const v=segVal(bk,seg);if(v>mx)mx=v;});});
+  let h='<div style="font-size:12px;color:#999;margin-bottom:8px">色深=部位規模(億元)。</div><div style="display:grid;grid-template-columns:40px repeat('+SEGS.length+',1fr);gap:4px">';
+  h+='<div></div>'+SEGS.map(seg=>'<div style="font-size:12px;color:#666;text-align:center;padding-bottom:2px">'+seg[1]+'</div>').join("");
   AB().forEach(bk=>{
     h+='<div style="font-size:13px;display:flex;align-items:center;justify-content:flex-end;padding-right:4px">'+bk+'</div>';
-    if(!has(p,bk)){h+='<div style="grid-column:span '+BD.length+';height:52px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#999;background:repeating-linear-gradient(45deg,#f5f6f5,#f5f6f5 5px,rgba(150,150,150,.25) 5px,rgba(150,150,150,.25) 7px)">無資料(掃描影像檔)</div>';return;}
-    BD.forEach(bd=>{const v=val(p,bk,cat,bd[0]),t=v/mx;const bg=v<=0?"#f0f0f0":"rgba(42,120,214,"+(0.12+t*0.8).toFixed(2)+")",col=t>0.45?"#fff":"#222";
-      const dim=(focusBond&&focusBond!==bd[0])?" dim":"";
-      const tip="<b>"+bk+" · "+bd[1]+"</b><br>"+fmt(v)+" 億 · "+p+"("+cat+")";
+    if(!has(p,bk)){h+='<div style="grid-column:span '+SEGS.length+';height:52px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#999;background:repeating-linear-gradient(45deg,#f5f6f5,#f5f6f5 5px,rgba(150,150,150,.25) 5px,rgba(150,150,150,.25) 7px)">無資料(掃描影像檔)</div>';return;}
+    SEGS.forEach(seg=>{const v=segVal(bk,seg),t=v/mx;const bg=v<=0?"#f0f0f0":"rgba(42,120,214,"+(0.12+t*0.8).toFixed(2)+")",col=t>0.45?"#fff":"#222";
+      const dim=(!byCls&&focusBond&&focusBond!==seg[0])?" dim":"";
+      const tip="<b>"+bk+" · "+seg[1]+"</b><br>"+fmt(v)+" 億 · "+p+catDisp;
       h+='<div class="ix-cell'+dim+'" style="background:'+bg+';border-radius:6px;height:52px;display:flex;align-items:center;justify-content:center;font-size:13px;color:'+col+';transition:opacity .15s" data-tip="'+tip.replace(/"/g,"&quot;")+'">'+(v>0?fmt(v):"0")+'</div>';});
   });
   document.getElementById("C_grid").innerHTML=h+'</div>';
 }
 ["C_p","C_c"].forEach(id=>document.getElementById(id).onchange=drawC);
+C_by_b.onclick=()=>{C_by="bond";C_by_b.classList.add("on");C_by_c.classList.remove("on");drawC();};
+C_by_c.onclick=()=>{C_by="cls";C_by_c.classList.add("on");C_by_b.classList.remove("on");drawC();};
 
 let chartB=null;
 function drawB(){
