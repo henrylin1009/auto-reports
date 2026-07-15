@@ -13,8 +13,26 @@ from openpyxl.chart.series import DataPoint
 from openpyxl.chart.shapes import GraphicalProperties
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 import openpyxl.utils as XU
+import re
 import extract3 as E
 from extract_megabank import parse_megabank
+
+def robust_bs_ac(t):
+    """兆豐資產負債表 AC 總額(取所有『按攤銷後成本衡量之債務工具投資 [六(X)] 數字』的最大值,
+    避開附註引用等小數字)。回傳億元或 None。"""
+    vals=[]
+    for m in re.finditer(r"按攤銷後成本衡量之債務工具投資(?:\s*六\([一二三四五六七八九十]+\))?\s*\$?\s*([\d,]{6,})", t):
+        vals.append(int(m.group(1).replace(",",""))/1e5)
+    return max(vals) if vals else None
+
+def oci_equity_subtotal(t):
+    """FVOCI 權益工具(股票/REITs/受益憑證)小計 = 該類期末公允價值。中信/富邦式;其餘暫 None。"""
+    for m in re.finditer(r"透過其他綜合損益按公允價值衡量\s*之?權益工具", t):
+        seg=t[m.end():m.end()+600]
+        if "股票" in seg or "受益" in seg or "REIT" in seg:
+            sm=re.search(r"(小計|小 計|合計|合 計)\s*\$?\s*([\d,]{4,})", seg)
+            if sm: return int(sm.group(2).replace(",",""))
+    return None
 
 # ===================== CONFIG(想調圖就改這裡)=====================
 GAP_WIDTH   = 20        # 長條群間距(越小越擠;參考圖約 20~40)
@@ -46,14 +64,31 @@ def parse_all():
             p=CACHE/f"{1911+roc}{mth}_{code}_AI3.pdf"
             if not p.exists() or p.stat().st_size<100000:
                 rec[(lbl,name)]=None; continue
-            if name=="兆豐":   # 兆豐:證券部門變動明細表(座標式),專用解析
-                rec[(lbl,name)]=parse_megabank(p); continue
             t="\n".join((pg.extract_text() or "") for pg in pdfplumber.open(p).pages)
             if len(t)<2000:      # 無文字層(掃描影像檔,如2020H1國泰/玉山)→ 無資料,非0
                 rec[(lbl,name)]=None; continue
+            if name=="兆豐":
+                # 兆豐改用標準彙總(附註六),含央行定期存單/短期票券貨幣市場;
+                # 僅在 AC 對得起資產負債表(±3%)才採用→2025H2等近年正確,對不上的期(格式異/座標散)標N/A待補,
+                # 不再用「證券部門」子集(那是偏低的一小塊)。
+                items={c:E.parse_class(t,c) for c in ("Trading","OCI","AC")}
+                r={c:E.bond_buckets(items[c]) for c in ("Trading","OCI","AC")}
+                bs=robust_bs_ac(t); acsum=sum(r["AC"].values())
+                if bs and acsum>0 and abs(acsum-bs)<=0.03*bs:
+                    r["_cp"]=items["Trading"].get("商業本票",0)/1e5
+                    for c in ("Trading","OCI","AC"):
+                        r[c]["股票"]=(items["OCI"].get("股票",0)/1e5) if c=="OCI" else 0.0
+                    rec[(lbl,name)]=r
+                else:
+                    rec[(lbl,name)]=None
+                continue
             items={c:E.parse_class(t,c) for c in ("Trading","OCI","AC")}
             r={c:E.bond_buckets(items[c]) for c in ("Trading","OCI","AC")}
             r["_cp"]=items["Trading"].get("商業本票",0)/1e5
+            # 股票(權益工具,非債券):FVTPL=股票+受益憑證(已在items);FVOCI=權益工具小計;AC無
+            r["Trading"]["股票"]=(items["Trading"].get("股票",0)+items["Trading"].get("受益憑證",0))/1e5
+            oe=oci_equity_subtotal(t); r["OCI"]["股票"]=(oe/1e5) if oe else 0.0
+            r["AC"]["股票"]=0.0
             rec[(lbl,name)]=r
     return rec
 
@@ -146,13 +181,14 @@ def build(rec):
         wsd.column_dimensions["A"].width=8
     wb.save(OUT)
 
-WIDE_METRICS=["Trading_CP+NCD+BA","Trading_GB","Trading_公司債","Trading_金融債",
-              "OCI_GB","OCI_公司債","OCI_金融債","AC_GB","AC_公司債","AC_金融債"]
+BONDTYPES=["GB","公司債","金融債","資產基礎","貨幣市場","其他","股票"]
+WIDE_METRICS=[f"{c}_{t}" for c in ("Trading","OCI","AC") for t in BONDTYPES]
 def wide_metric(r, m):
     if r is None: return None
     cls,tp=m.split("_",1); b=r[cls]
-    if tp=="CP+NCD+BA": return round(r["_cp"]+b["國庫券"]+b["可轉讓定存單"])
-    return round({"GB":b["公債"],"公司債":b["公司債"],"金融債":b["金融債"]}[tp])
+    if tp=="貨幣市場":   # 短天期/貨幣市場:CP(僅FVTPL)+國庫券+可轉讓定存單
+        return round((r.get("_cp",0) if cls=="Trading" else 0)+b.get("國庫券",0)+b.get("可轉讓定存單",0))
+    return round(b.get({"GB":"公債"}.get(tp,tp),0))
 
 def dump_json(rec, path="data.json"):
     import json

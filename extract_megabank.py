@@ -133,6 +133,37 @@ def parse_megabank(pdf_path):
     return rec if found else None
 
 
+def parse_megabank_aoci(pdf_path, roc, mth):
+    """兆豐 ③ AOCI:其他權益項目表(座標式)當期『淨額』列的
+    『透過其他綜合損益按公允價值衡量之金融資產損益』欄(第2個值欄)。
+    兆豐 FVOCI 全為債券(無權益工具),故此=OCI 債券準備(稅後)。回傳仟元或 None。"""
+    day = "6月30日" if mth == "02" else "12月31日"
+    target = f"{roc}年{day}"
+    def row_values(cells):
+        # 各欄值以 $ 或 ( 起頭;移除欄內空白但保留 $/括號當分隔,避免相鄰欄數字相黏。
+        blob = "".join(cells[1:]).replace(" ", "")
+        vals = []
+        for m in re.finditer(r"\(\$?([\d,]+)\)|\$([\d,]+)", blob):
+            g = m.group(1) or m.group(2)
+            vals.append((-1 if m.group(1) else 1) * int(g.replace(",", "")))
+        return vals
+    with pdfplumber.open(pdf_path) as pdf:
+        for page in pdf.pages:
+            txt = "".join(c["text"] for c in page.chars if c["upright"])
+            if "其他權益項目" not in txt:
+                continue
+            for cells in _page_rows(page):
+                lbl = cells[0].replace(" ", "")
+                if lbl.startswith(target) and "淨額" in lbl:
+                    v = row_values(cells)
+                    if len(v) < 2:
+                        return None
+                    fvoci = v[1]                            # 欄序:兌換|FVOCI金融資產|其他|總計
+                    # 合理性守衛:兆豐 FVOCI 準備現實約 ±200億;超出=座標黏字亂碼→N/A不出誤導數
+                    return fvoci if abs(fvoci) <= 20_000_000 else None
+    return None
+
+
 if __name__ == "__main__":
     import sys, json
     r = parse_megabank(sys.argv[1] if len(sys.argv) > 1
