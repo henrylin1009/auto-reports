@@ -524,20 +524,29 @@ def profit_html():
     css="""<style>
 .pw .pgrid{display:flex;flex-direction:column;gap:12px}
 .pw .prow{display:flex;align-items:center;gap:12px}
-.pw .prow .ix-name{width:38px;flex:none}
-.pw .ptrack{position:relative;flex:1;height:34px;background:#f2f3f5;border-radius:6px;overflow:hidden}
-.pw .pcost{position:absolute;top:0;bottom:0;left:0;background:#e3a6a6;display:flex;align-items:center}
-.pw .pnim{position:absolute;top:0;bottom:0;background:#1baf7a;display:flex;align-items:center}
-.pw .pseg-l{font-size:10px;color:#7a2e2e;padding-left:7px;white-space:nowrap}
-.pw .pseg-n{font-size:10px;color:#fff;padding-left:7px;font-weight:600;white-space:nowrap}
-.pw .pval{width:120px;flex:none;font-size:12px;font-variant-numeric:tabular-nums;color:#111827}
+.pw .prow .ix-name{width:38px;flex:none;font-weight:500}
+.pw .ptrack{position:relative;flex:1;min-width:0;height:34px;background:#f2f3f5;border-radius:6px;overflow:hidden}
+.pw .pnim{position:absolute;top:0;bottom:0;left:0;display:flex;align-items:center}
+.pw .pcost{position:absolute;top:0;bottom:0;background:#e3a6a6;display:flex;align-items:center}
+.pw .pseg-l{font-size:10px;color:#7a2e2e;padding-left:6px;white-space:nowrap}
+.pw .pseg-n{font-size:11px;color:#fff;padding-left:7px;font-weight:600;white-space:nowrap}
+.pw .pval{width:96px;flex:none;font-size:12px;font-variant-numeric:tabular-nums;color:#111827;line-height:1.35}
 .pw .pval b{font-size:14px}
+.pw .pval .pc{color:#8a919e;font-size:11px}
+@media(max-width:560px){
+.pw .prow{gap:8px}
+.pw .prow .ix-name{width:30px;font-size:13px}
+.pw .ptrack{height:30px}
+.pw .pval{width:74px;font-size:11px}
+.pw .pval b{font-size:13px}
+.pw .pseg-l{display:none}
+}
 </style>"""
     markup="""<div class="pw">
 <div class="card">
 <div class="ix-kpihead"><h2 style="margin:0">獲利視角:淨利差(NIM)與資金成本 <span class="ix-sub">FY2024 全年 · 粗估口徑</span></h2></div>
 <div class="ix-kpi" id="p_kpi"></div>
-<div class="ix-legend"><span><span class="ix-sw" style="background:#e3a6a6"></span>利息費用(占總資產)</span><span><span class="ix-sw" style="background:#1baf7a"></span>粗估 NIM(利息淨收益÷總資產)</span><span style="color:#8a919e">整條=資產收益率(利息收入÷總資產)</span></div>
+<div class="ix-legend"><span><span class="ix-sw" style="background:#1baf7a"></span>粗估 NIM(利息淨收益÷總資產,由 0 起、可直接比高下)</span><span><span class="ix-sw" style="background:#e3a6a6"></span>利息費用(占總資產)</span><span style="color:#8a919e">整條=資產收益率</span></div>
 <div class="pgrid" id="p_bars"></div>
 <div class="vhint">從風險視角(資產買了什麼、藏多少含損)補上<b>獲利視角</b>:這門生意的利差在賺什麼。長條為同一分母(總資產)下的可加分解:<b>資產收益率 = 利息費用占資產 + NIM</b>。<br>
 <b>粗估 NIM</b>=利息淨收益÷資產總計(財報無「生息資產」科目,以總資產近似,故偏保守);另附<b>資金成本率</b>=利息費用÷(存款+同業存款)為慣用口徑。全年數免年化。</div>
@@ -551,13 +560,15 @@ const R=PNL.rows.slice().sort((a,b)=>(b.粗估NIM||0)-(a.粗估NIM||0));
 const mxY=Math.max(...R.map(r=>r.資產收益率||0));
 document.getElementById("p_bars").innerHTML=R.map(r=>{
   const yld=r.資產收益率||0, nim=r.粗估NIM||0, exp=r.費用占資產||0;
-  const wC=exp/mxY*100, wN=nim/mxY*100;
+  const wN=nim/mxY*100, wC=exp/mxY*100;
+  const nlab=wN>=18?'<span class="pseg-n">NIM '+nim+'%</span>':'';
+  const clab=wC>=20?'<span class="pseg-l">費用 '+exp+'%</span>':'';
   return '<div class="prow"><div class="ix-name">'+r.bank+'</div>'+
     '<div class="ptrack">'+
-      '<div class="pcost" style="width:'+wC+'%"><span class="pseg-l">費用 '+exp+'%</span></div>'+
-      '<div class="pnim" style="left:'+wC+'%;width:'+wN+'%;background:'+VC[r.bank]+'"><span class="pseg-n">NIM '+nim+'%</span></div>'+
+      '<div class="pnim" style="width:'+wN+'%;background:'+VC[r.bank]+'">'+nlab+'</div>'+
+      '<div class="pcost" style="left:'+wN+'%;width:'+wC+'%">'+clab+'</div>'+
     '</div>'+
-    '<div class="pval">收益率 <b>'+yld+'%</b><br><span style="color:#8a919e;font-size:11px">資金成本 '+r.資金成本率+'%</span></div></div>';
+    '<div class="pval">收益率 <b>'+yld+'%</b><br><span class="pc">成本 '+r.資金成本率+'%</span></div></div>';
 }).join("");
 const best=R[0], worst=R[R.length-1];
 const avg=(R.reduce((s,r)=>s+(r.粗估NIM||0),0)/R.length).toFixed(2);
