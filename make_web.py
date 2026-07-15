@@ -206,7 +206,9 @@ const BANKS=RAW.banks,PERIODS=RAW.periods,W=RAW.wide;
 const ALLBONDS=[["GB","政府公債","#2a78d6"],["公司債","公司債","#1baf7a"],["金融債","金融債","#eda100"],["資產基礎","資產基礎證券","#d4318c"],["其他","其他債券","#a0a6b0"],["貨幣市場","貨幣市場","#888780"],["股票","股票","#8b7fd6"]];
 const CATS=["Trading","OCI","AC"],SC=["#2a78d6","#1baf7a","#eda100","#4a3aa7","#d4318c"];
 const PAL=SC.concat(["#e34948","#eb6834","#008300","#1d9e75","#534ab7"]);
-const BC={};BANKS.forEach((b,i)=>BC[b]=PAL[i%PAL.length]);
+// 全站統一:一家一色(中信藍/兆豐綠/國泰金/富邦紫/玉山洋紅),與估值視角 VC 一致
+const BANKHUE={"中信":"#2a78d6","兆豐":"#1baf7a","國泰":"#eda100","富邦":"#4a3aa7","玉山":"#d4318c"};
+const BC={};BANKS.forEach((b,i)=>BC[b]=BANKHUE[b]||PAL[i%PAL.length]);
 let banksSel=new Set(BANKS);
 function AB(){return BANKS.filter(b=>banksSel.has(b));}
 let incl=new Set(["GB","公司債","金融債","資產基礎","其他"]);
@@ -416,7 +418,7 @@ def valuation_html():
     js=r"""
 (function(){
 const P=PH0.periods,B=PH0.banks,DD=PH0.data;
-const VC={"中信":"#2a78d6","兆豐":"#1baf7a","國泰":"#eda100","富邦":"#4a3aa7","玉山":"#008300"};
+const VC={"中信":"#2a78d6","兆豐":"#1baf7a","國泰":"#eda100","富邦":"#4a3aa7","玉山":"#d4318c"};
 const g=(p,bk)=>DD[p+"|"+bk]||null;
 const fmt=n=>Math.round(n).toLocaleString();
 const sgn=n=>(n>=0?"+":"−")+fmt(Math.abs(n));
