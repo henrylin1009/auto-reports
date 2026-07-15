@@ -116,8 +116,9 @@ def interactive_html():
 .ix-hatch{background:repeating-linear-gradient(45deg,#f2f3f5,#f2f3f5 3px,#c4c9d1 3px,#c4c9d1 4px)}
 .ix-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
 .ix-name{width:38px;font-size:13px;color:#111827;text-align:right;flex:none}
-.ix-track{flex:1;display:flex;height:26px;border-radius:6px;overflow:hidden;background:#f2f3f5}
-.ix-s2{height:100%}
+.ix-track{flex:1;display:flex;height:30px;border-radius:6px;overflow:hidden;background:#f2f3f5}
+.ix-s2{height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:inset -1.5px 0 0 #fff}
+.ix-s2 .s2l{font-size:10px;font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
 .ix-tot{width:64px;font-size:12px;color:#5f6672;text-align:right;flex:none;font-variant-numeric:tabular-nums}
 .ix-na{flex:1;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#8a919e;background:repeating-linear-gradient(45deg,#f5f6f8,#f5f6f8 5px,rgba(150,156,168,.25) 5px,rgba(150,156,168,.25) 7px)}
 .ix-tip{position:fixed;z-index:99;pointer-events:none;background:#111827;color:#fff;border-radius:10px;padding:10px 12px;font-size:12px;line-height:1.6;box-shadow:0 8px 24px rgba(16,24,40,.2);max-width:230px;opacity:0;transition:opacity .1s}
@@ -307,6 +308,9 @@ syncIncl();
 let A_mode="amt",A_by="bond";
 const CLS=[["Trading","FVTPL","#eb6834"],["OCI","FVOCI","#2a78d6"],["AC","AC","#4a3aa7"]];
 const CLABEL={Trading:"FVTPL",OCI:"FVOCI",AC:"AC"};
+// 依底色亮度選字色:亮底用深字、暗底用白字(段內數字才讀得清)
+function txtOn(hex){const h=hex.replace("#","");const r=parseInt(h.substr(0,2),16),g=parseInt(h.substr(2,2),16),b=parseInt(h.substr(4,2),16);
+  return (0.299*r+0.587*g+0.114*b)>150?"#3a2a00":"#fff";}
 function drawA(){
   const p=gp(),cat=A_c.value,bp=prevP(p,1),byCls=A_by==="cls";
   const cw=document.getElementById("A_catwrap");if(cw)cw.style.display=byCls?"none":"";
@@ -327,7 +331,10 @@ function drawA(){
       const dtxt=pv==null?"—":sgn(v-pv)+" 億";
       const tip="<b>"+r.bk+" · "+seg[1]+"</b><br>"+fmt(v)+" 億 · 佔該行 "+pct+"%<br>較上期 "+dtxt;
       const dim=(!byCls&&focusBond&&focusBond!==seg[0])?" dim":"";
-      return '<div class="ix-s2'+dim+'" style="width:'+(v/base*100)+'%;background:'+seg[2]+'" data-tip="'+tip.replace(/"/g,"&quot;")+'"></div>';}).join("");
+      const wp2=v/base*100;                                   // 段寬(占軌道 %)
+      const lab=A_mode==="pct"?pct+"%":fmt(Math.round(v));
+      const sl=wp2>=8?'<span class="s2l" style="color:'+txtOn(seg[2])+'">'+lab+'</span>':'';
+      return '<div class="ix-s2'+dim+'" style="width:'+wp2+'%;background:'+seg[2]+'" data-tip="'+tip.replace(/"/g,"&quot;")+'">'+sl+'</div>';}).join("");
     const lab=A_mode==="pct"?(r.tot?"100%":"0"):fmt(r.tot);
     return '<div class="ix-row"><div class="ix-name click" data-bank="'+r.bk+'">'+r.bk+'</div><div class="ix-track" style="width:'+Math.max(wp,0.5)+'%">'+inner+'</div><div class="ix-tot">'+lab+'</div></div>';
   }).join("");
