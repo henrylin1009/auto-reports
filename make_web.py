@@ -407,6 +407,11 @@ def valuation_html():
 <div class="ix-legend" id="vt_lg"></div>
 <div style="position:relative;width:100%;height:300px"><canvas id="vt_cv" role="img" aria-label="AC隱藏損失占比時間趨勢"></canvas></div>
 </div>
+<div class="card">
+<h2>利率風險視角 <span class="ix-sub">AC 隱藏損失反推:同樣升息下,誰的 AC 對利率最敏感(duration 最長)</span></h2>
+<div id="ir_bars"></div>
+<div class="vhint">利率一起漲時,AC 跌越多 = 存續期間(duration)越長。<b>隱含 duration(粗估)≈ AC隱藏損失% ÷ 期間累計升幅</b>(美 10Y 較 2020 低點 0.9%)。此為<b>跨行相對</b>強弱的 proxy,受買進時點、台美利率、外幣匯率影響,非精算 duration。</div>
+</div>
 </div>"""
     js=r"""
 (function(){
@@ -451,6 +456,23 @@ function drawV(){
       '</div></div>';
   }).join("");
   drawVKPI(p);
+  drawIR(p);
+}
+function drawIR(p){
+  const el=document.getElementById("ir_bars");if(!el)return;
+  const RBASE=0.93, dy=(RATE[p]!=null)?(RATE[p]-RBASE):null;   // 期間累計升幅(pp)
+  let rows=B.map(bk=>{const d=g(p,bk);return {bk,pct:d?d.ac_hidden_pct:null};}).filter(o=>o.pct!=null);
+  rows.sort((a,b)=>Math.abs(b.pct)-Math.abs(a.pct));            // 風險大→小
+  if(!rows.length){el.innerHTML='<div class="vhint">本期無 AC 隱藏損失資料</div>';return;}
+  const mx=Math.max(...rows.map(o=>Math.abs(o.pct)),0.0001);
+  el.innerHTML=rows.map(o=>{
+    const lp=o.pct*100, w=Math.abs(o.pct)/mx*100;
+    const dur=(dy&&dy>1)?(Math.abs(lp)/dy):null;
+    const durTxt=dur!=null?('隱含 '+dur.toFixed(1)+' 年'):'利率仍低,不適用';
+    return '<div class="vrow"><div class="ix-name">'+o.bk+'</div>'+
+      '<div class="vtrack" style="height:22px"><div class="vfill" style="left:0;width:'+w+'%;background:'+(VC[o.bk]||"#c2410c")+'"></div></div>'+
+      '<div class="vval" style="width:158px">'+lp.toFixed(1)+'% · '+durTxt+'</div></div>';
+  }).join("");
 }
 function drawVKPI(p){
   const hid=B.map(bk=>({bk,d:g(p,bk)})).filter(o=>o.d&&o.d.ac_hidden!=null);
