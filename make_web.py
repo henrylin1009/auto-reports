@@ -11,6 +11,8 @@ SITE=Path("site"); SITE.mkdir(exist_ok=True)
 D=json.load(open("data.json")); PERIODS=D["periods"]; BANKS=D["banks"]; DATA=D["data"]
 try: P0=json.load(open("phase0.json"))
 except FileNotFoundError: P0={"periods":PERIODS,"banks":BANKS,"data":{}}
+try: PNL=json.load(open("pnl.json"))
+except FileNotFoundError: PNL=None
 COLOR={"中信":"#4a5e2a","兆豐":"#8a8a3a","國泰":"#e8c020","富邦":"#3a8fd0","玉山":"#8bc34a"}
 # 圖表期間:最近 6 個「有資料」的期(自動,不寫死年份)
 _have=[p for p in PERIODS if any((DATA.get(f"{p}|{b}")) for b in BANKS)]
@@ -516,6 +518,59 @@ drawV();
     return (css + markup
             + '<script>const PH0=' + payload + ';\nconst RATE=' + json.dumps(US10Y, ensure_ascii=False) + ';\n' + js + '</script>')
 
+def profit_html():
+    if not PNL: return ""
+    payload=json.dumps(PNL, ensure_ascii=False)
+    css="""<style>
+.pw .pgrid{display:flex;flex-direction:column;gap:12px}
+.pw .prow{display:flex;align-items:center;gap:12px}
+.pw .prow .ix-name{width:38px;flex:none}
+.pw .ptrack{position:relative;flex:1;height:34px;background:#f2f3f5;border-radius:6px;overflow:hidden}
+.pw .pcost{position:absolute;top:0;bottom:0;left:0;background:#e3a6a6;display:flex;align-items:center}
+.pw .pnim{position:absolute;top:0;bottom:0;background:#1baf7a;display:flex;align-items:center}
+.pw .pseg-l{font-size:10px;color:#7a2e2e;padding-left:7px;white-space:nowrap}
+.pw .pseg-n{font-size:10px;color:#fff;padding-left:7px;font-weight:600;white-space:nowrap}
+.pw .pval{width:120px;flex:none;font-size:12px;font-variant-numeric:tabular-nums;color:#111827}
+.pw .pval b{font-size:14px}
+</style>"""
+    markup="""<div class="pw">
+<div class="card">
+<div class="ix-kpihead"><h2 style="margin:0">獲利視角:淨利差(NIM)與資金成本 <span class="ix-sub">FY2024 全年 · 粗估口徑</span></h2></div>
+<div class="ix-kpi" id="p_kpi"></div>
+<div class="ix-legend"><span><span class="ix-sw" style="background:#e3a6a6"></span>利息費用(占總資產)</span><span><span class="ix-sw" style="background:#1baf7a"></span>粗估 NIM(利息淨收益÷總資產)</span><span style="color:#8a919e">整條=資產收益率(利息收入÷總資產)</span></div>
+<div class="pgrid" id="p_bars"></div>
+<div class="vhint">從風險視角(資產買了什麼、藏多少含損)補上<b>獲利視角</b>:這門生意的利差在賺什麼。長條為同一分母(總資產)下的可加分解:<b>資產收益率 = 利息費用占資產 + NIM</b>。<br>
+<b>粗估 NIM</b>=利息淨收益÷資產總計(財報無「生息資產」科目,以總資產近似,故偏保守);另附<b>資金成本率</b>=利息費用÷(存款+同業存款)為慣用口徑。全年數免年化。</div>
+</div>
+</div>"""
+    js=r"""
+(function(){
+if(typeof PNL==="undefined"||!PNL)return;
+const VC={"中信":"#2a78d6","兆豐":"#1baf7a","國泰":"#eda100","富邦":"#4a3aa7","玉山":"#d4318c"};
+const R=PNL.rows.slice().sort((a,b)=>(b.粗估NIM||0)-(a.粗估NIM||0));
+const mxY=Math.max(...R.map(r=>r.資產收益率||0));
+document.getElementById("p_bars").innerHTML=R.map(r=>{
+  const yld=r.資產收益率||0, nim=r.粗估NIM||0, exp=r.費用占資產||0;
+  const wC=exp/mxY*100, wN=nim/mxY*100;
+  return '<div class="prow"><div class="ix-name">'+r.bank+'</div>'+
+    '<div class="ptrack">'+
+      '<div class="pcost" style="width:'+wC+'%"><span class="pseg-l">費用 '+exp+'%</span></div>'+
+      '<div class="pnim" style="left:'+wC+'%;width:'+wN+'%;background:'+VC[r.bank]+'"><span class="pseg-n">NIM '+nim+'%</span></div>'+
+    '</div>'+
+    '<div class="pval">收益率 <b>'+yld+'%</b><br><span style="color:#8a919e;font-size:11px">資金成本 '+r.資金成本率+'%</span></div></div>';
+}).join("");
+const best=R[0], worst=R[R.length-1];
+const avg=(R.reduce((s,r)=>s+(r.粗估NIM||0),0)/R.length).toFixed(2);
+const cheap=R.slice().sort((a,b)=>(a.資金成本率||9)-(b.資金成本率||9))[0];
+const cards=[
+  ["利差最大 NIM",best.bank,best.粗估NIM+"% · FY2024"],
+  ["利差最薄 NIM",worst.bank,worst.粗估NIM+"% · 躉售/同業重、利差被稀釋"],
+  ["資金成本最低",cheap.bank,cheap.資金成本率+"% · 存款基礎便宜"]];
+document.getElementById("p_kpi").innerHTML=cards.map(c=>'<div class="ix-kcard"><div class="ix-klabel">'+c[0]+'</div><div class="ix-kval">'+c[1]+'</div><div class="ix-ksub">'+c[2]+'</div></div>').join("");
+})();
+"""
+    return (css + markup + '<script>const PNL=' + payload + ';\n' + js + '</script>')
+
 now=datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
 html=f"""<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -573,6 +628,7 @@ table.wide tbody tr:hover td{{background:#fafbfc}}
 <div class="wrap">
 {interactive_html()}
 {valuation_html()}
+{profit_html()}
 <details class="foot"><summary>資料說明與口徑</summary>
 <div class="foot-in">
 · 單位:億元。資料期間 {(_have or PERIODS)[0]}–{(_have or PERIODS)[-1]},每半年一期(H1=6/30、H2=12/31 期末餘額)。<br>
