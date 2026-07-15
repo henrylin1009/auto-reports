@@ -551,12 +551,13 @@ def profit_html():
 </style>"""
     markup="""<div class="pw">
 <div class="card">
-<div class="ix-kpihead"><h2 style="margin:0">獲利視角:淨利差(NIM)與資金成本 <span class="ix-sub">FY2024 全年 · 粗估口徑</span></h2></div>
+<div class="ix-kpihead"><h2 style="margin:0">獲利視角:淨利差(NIM)與利差結構 <span class="ix-sub">FY2024 全年 · 粗估口徑 · 皆÷總資產</span></h2></div>
 <div class="ix-kpi" id="p_kpi"></div>
 <div class="ix-legend"><span><span class="ix-sw" style="background:#1baf7a"></span>粗估 NIM(利息淨收益÷總資產,由 0 起、可直接比高下)</span><span><span class="ix-sw" style="background:#e3a6a6"></span>利息費用(占總資產)</span><span style="color:#8a919e">整條=資產收益率</span></div>
 <div class="pgrid" id="p_bars"></div>
-<div class="vhint">從風險視角(資產買了什麼、藏多少含損)補上<b>獲利視角</b>:這門生意的利差在賺什麼。長條為同一分母(總資產)下的可加分解:<b>資產收益率 = 利息費用占資產 + NIM</b>。<br>
-<b>粗估 NIM</b>=利息淨收益÷資產總計(財報無「生息資產」科目,以總資產近似,故偏保守);另附<b>資金成本率</b>=利息費用÷(存款+同業存款)為慣用口徑。全年數免年化。</div>
+<div class="vhint">從風險視角(資產買了什麼、藏多少含損)補上<b>獲利視角</b>:這門生意的利差在賺什麼。三個數字皆<b>÷總資產</b>、同一基礎故可加:<b>資產收益率 = 利息費用 + NIM</b>(如兆豐 2.57% = 1.74% + 0.83%)。<br>
+<b>粗估 NIM</b>=利息淨收益÷資產總計(財報無「生息資產」科目,以總資產近似,故偏保守)。全年數免年化。<br>
+<span style="color:#a0a6b0">註:業界慣用的「資金成本率」改除以計息負債(存款+同業,不含免息權益),數字略高於此處費用占資產;為求可加一致,本圖統一用總資產基礎。</span></div>
 </div>
 </div>"""
     js=r"""
@@ -575,15 +576,14 @@ document.getElementById("p_bars").innerHTML=R.map(r=>{
       '<div class="pnim" style="width:'+wN+'%;background:'+VC[r.bank]+'">'+nlab+'</div>'+
       '<div class="pcost" style="left:'+wN+'%;width:'+wC+'%">'+clab+'</div>'+
     '</div>'+
-    '<div class="pval">收益率 <b>'+yld+'%</b><br><span class="pc">成本 '+r.資金成本率+'%</span></div></div>';
+    '<div class="pval">收益率 <b>'+yld+'%</b></div></div>';
 }).join("");
 const best=R[0], worst=R[R.length-1];
-const avg=(R.reduce((s,r)=>s+(r.粗估NIM||0),0)/R.length).toFixed(2);
-const cheap=R.slice().sort((a,b)=>(a.資金成本率||9)-(b.資金成本率||9))[0];
+const cheap=R.slice().sort((a,b)=>(a.費用占資產||9)-(b.費用占資產||9))[0];
 const cards=[
   ["利差最大 NIM",best.bank,best.粗估NIM+"% · FY2024"],
   ["利差最薄 NIM",worst.bank,worst.粗估NIM+"% · 躉售/同業重、利差被稀釋"],
-  ["資金成本最低",cheap.bank,cheap.資金成本率+"% · 存款基礎便宜"]];
+  ["利息費用占資產最低",cheap.bank,cheap.費用占資產+"% · 資金相對便宜"]];
 document.getElementById("p_kpi").innerHTML=cards.map(c=>'<div class="ix-kcard"><div class="ix-klabel">'+c[0]+'</div><div class="ix-kval">'+c[1]+'</div><div class="ix-ksub">'+c[2]+'</div></div>').join("");
 })();
 """
