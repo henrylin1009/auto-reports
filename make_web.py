@@ -268,6 +268,9 @@ function renderDrill(bk){
 function drawKPI(){
   const p=gp(),cat="合計";
   const rows=AB().filter(b=>has(p,b)).map(b=>({b,t:total(p,b,cat)}));
+  if(!rows.length){   // 所選銀行本期皆無資料 → 免 reduce 空陣列爆錯
+    document.getElementById("ix_kpi").innerHTML='<div class="ix-kcard"><div class="ix-klabel">部位最大('+p+')</div><div class="ix-kval">—</div><div class="ix-ksub">所選銀行本期無資料</div></div>';
+    document.getElementById("ix_concl").innerHTML="";return;}
   const sum=rows.reduce((s,r)=>s+r.t,0),top=rows.reduce((a,b)=>b.t>a.t?b:a);
   const yp=prevP(p,2);
   const dts=yp?AB().filter(b=>has(p,b)&&has(yp,b)).map(b=>({b,d:total(p,b,cat)-total(yp,b,cat)})):[];
@@ -417,7 +420,9 @@ def valuation_html():
 </div>"""
     js=r"""
 (function(){
-const P=PH0.periods,B=PH0.banks,DD=PH0.data;
+const B=PH0.banks,DD=PH0.data;
+// 只取「至少一家有資料」的期間,去掉尾端 2026 等空期(避免趨勢圖拖空標籤)
+const P=PH0.periods.filter(p=>B.some(bk=>DD[p+"|"+bk]));
 const VC={"中信":"#2a78d6","兆豐":"#1baf7a","國泰":"#eda100","富邦":"#4a3aa7","玉山":"#d4318c"};
 const g=(p,bk)=>DD[p+"|"+bk]||null;
 const fmt=n=>Math.round(n).toLocaleString();
