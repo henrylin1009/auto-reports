@@ -118,6 +118,9 @@ def parse_all():
                     rec[(lbl,name)]=None
                 continue
             items={c:E.parse_class(t,c) for c in ("Trading","OCI","AC")}
+            if name=="富邦":                                   # 富邦 FVTPL 主附註把國庫券/公司債/公債塞進「其他」→改讀附錄明細表二
+                fv=E.parse_fubon_fvtpl(p)
+                if fv: items["Trading"]=fv
             r={c:E.bond_buckets(items[c]) for c in ("Trading","OCI","AC")}
             r["_cp"]=items["Trading"].get("商業本票",0)/1e5
             # 股票(權益工具,非債券):FVTPL=股票+受益憑證(已在items);FVOCI=權益工具小計;AC無

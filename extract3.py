@@ -158,6 +158,34 @@ def checksum(text, cls):
                 if fok: return it, ft, True
     return it, st, ok
 
+def parse_fubon_fvtpl(pdf_path):
+    """富邦 FVTPL:主附註六(三)把國庫券/公司債/公債塞進「其他」(懶得拆),
+    改讀附錄「明細表二」(文字可讀、逐項列示)。回傳 {品名:仟元}(證券,不含衍生)或 None。
+    品名=每列首個中文;值=該列最後一個數字(公允價值總額欄)。"""
+    import pdfplumber
+    for pg in pdfplumber.open(pdf_path).pages:
+        ti="".join(c["text"] for c in pg.chars if c["upright"])[:80]
+        if "透過損益按公允價值衡量之金融資產明細表" not in ti or "證券部門" in ti:
+            continue
+        txt=pg.extract_text() or ""
+        seg=re.search(r"強制透過損益按公允價值衡量之金\s*融資產(.*?)衍生金融資產", txt, re.S)
+        if not seg:
+            return None
+        items={}
+        for ln in seg.group(1).splitlines():
+            ln=ln.strip()
+            if not ln:
+                continue
+            m=re.match(r"^([一-鿿（）()\s]+?)\s*(?:\d|\$|-)", ln)
+            nums=re.findall(r"[\d,]{4,}", ln)
+            if not m or not nums:
+                continue
+            name=re.sub(r"[（(].*$","",m.group(1).replace(" ",""))
+            if 2<=len(name)<=8:
+                items[canon(name)]=int(nums[-1].replace(",",""))
+        return items or None
+    return None
+
 # 債種桶(億元)
 def bond_buckets(items):
     g=lambda *k: sum(items.get(x,0) for x in k)/1e5
@@ -167,7 +195,7 @@ def bond_buckets(items):
         "國庫券": g("國庫券","央行定期存單","短期票券","央行票據","央行可轉讓定期存單"),
         "公司債": g("公司債","公司債券","可轉換公司債"),  # 兆豐「公司債券」;富邦交易簿有「可轉換公司債」
         "金融債": g("金融債券","金融債"),
-        "資產基礎": g("資產基礎證券","證券化商品"),   # 玉山用「證券化商品」
+        "資產基礎": g("資產基礎證券","證券化商品","資產證券化商品"),  # 玉山「證券化商品」、富邦「資產證券化商品」
         "可轉讓定存單": g("可轉讓定期存單","定存單"),
         "其他":   g("其他","其他證券及債券","其他債券","國外機構發行債券"),
     }
