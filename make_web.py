@@ -551,7 +551,7 @@ def profit_html():
 </style>"""
     markup="""<div class="pw">
 <div class="card">
-<div class="ix-kpihead"><h2 style="margin:0">獲利視角:淨利差(NIM)與利差結構 <span class="ix-sub">FY2024 全年 · 粗估口徑 · 皆÷總資產</span></h2></div>
+<div class="ix-kpihead"><h2 style="margin:0">獲利視角:淨利差(NIM)與利差結構 <span class="ix-sub">FY2025 全年 · 粗估口徑 · 皆÷總資產</span></h2></div>
 <div class="ix-kpi" id="p_kpi"></div>
 <div class="ix-legend"><span><span class="ix-sw" style="background:#1baf7a"></span>粗估 NIM(利息淨收益÷總資產,由 0 起、可直接比高下)</span><span><span class="ix-sw" style="background:#e3a6a6"></span>利息費用(占總資產)</span><span style="color:#8a919e">整條=資產收益率</span></div>
 <div class="pgrid" id="p_bars"></div>
@@ -581,7 +581,7 @@ document.getElementById("p_bars").innerHTML=R.map(r=>{
 const best=R[0], worst=R[R.length-1];
 const cheap=R.slice().sort((a,b)=>(a.費用占資產||9)-(b.費用占資產||9))[0];
 const cards=[
-  ["利差最大 NIM",best.bank,best.粗估NIM+"% · FY2024"],
+  ["利差最大 NIM",best.bank,best.粗估NIM+"% · FY2025"],
   ["利差最薄 NIM",worst.bank,worst.粗估NIM+"% · 躉售/同業重、利差被稀釋"],
   ["利息費用占資產最低",cheap.bank,cheap.費用占資產+"% · 資金相對便宜"]];
 document.getElementById("p_kpi").innerHTML=cards.map(c=>'<div class="ix-kcard"><div class="ix-klabel">'+c[0]+'</div><div class="ix-kval">'+c[1]+'</div><div class="ix-ksub">'+c[2]+'</div></div>').join("");

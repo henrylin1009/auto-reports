@@ -25,14 +25,42 @@ def robust_bs_ac(t):
         vals.append(int(m.group(1).replace(",",""))/1e5)
     return max(vals) if vals else None
 
+def bs_ac_esun(t):
+    """玉山 BS『按攤銷後成本衡量之債務工具投資[(附註…)] 數字』行最大金額(千元→億)。
+    早期(2020H2/2021H1)文字層亂碼→讀不到乾淨大數→None,作為該期不可靠的訊號。"""
+    best=0
+    for m in re.finditer(r"按攤銷後成本衡量之債務工具投資(?:（[^）]*）)?\s*([\d,]{7,})", t):
+        n=m.group(1)
+        if "," in n:                                  # 需含千分位,排除亂碼片段
+            best=max(best,int(n.replace(",",""))/1e5)
+    return best if best else None
+
 def oci_equity_subtotal(t):
-    """FVOCI 權益工具(股票/REITs/受益憑證)小計 = 該類期末公允價值。中信/富邦式;其餘暫 None。"""
+    """FVOCI 權益工具(股票/REITs/受益憑證)小計 = 該類期末公允價值。中信/富邦式;其餘 None。"""
     for m in re.finditer(r"透過其他綜合損益按公允價值衡量\s*之?權益工具", t):
         seg=t[m.end():m.end()+600]
         if "股票" in seg or "受益" in seg or "REIT" in seg:
             sm=re.search(r"(小計|小 計|合計|合 計)\s*\$?\s*([\d,]{4,})", seg)
             if sm: return int(sm.group(2).replace(",",""))
     return None
+
+_FE_A="".join(ch+r"\s*" for ch in "透過其他綜合損益按公允價值衡量之金融資產")
+_FE_S="".join(ch+r"\s*" for ch in "股票投資")
+_FE_PAT=re.compile(_FE_A+r".{0,80}?"+_FE_S+r"\$?\s*([\d,]{5,})")
+def fvoci_equity_level(t):
+    """FVOCI 權益(股票)後備:oci_equity_subtotal 抓不到時用(兆豐/國泰/玉山)。回傳仟元或 None。
+    層1=公允價值等級表 FVOCI 區塊之『股票投資』(兆豐/國泰);
+    層2=(四)明細之單一大額『股票投資』,排除 FVTPL/第三等級/處分 上下文(玉山)。"""
+    t2=t.replace("\n"," ")
+    m=_FE_PAT.search(t2)
+    if m: return int(m.group(1).replace(",",""))
+    cand=[]
+    for mm in re.finditer(r"股票投資\s*\$?\s*([\d,]{6,})", t2):
+        pre=t2[max(0,mm.start()-45):mm.start()]
+        if any(k in pre for k in ("透過損益","強制","第三等級","處分","移轉")): continue
+        v=int(mm.group(1).replace(",",""))
+        if 5_000_000<=v<=200_000_000: cand.append(v)
+    return max(cand) if cand else None
 
 # ===================== CONFIG(想調圖就改這裡)=====================
 GAP_WIDTH   = 20        # 長條群間距(越小越擠;參考圖約 20~40)
@@ -76,8 +104,9 @@ def parse_all():
                 bs=robust_bs_ac(t); acsum=sum(r["AC"].values())
                 if bs and acsum>0 and abs(acsum-bs)<=0.03*bs:
                     r["_cp"]=items["Trading"].get("商業本票",0)/1e5
+                    oe=oci_equity_subtotal(t) or fvoci_equity_level(t)   # 兆豐 FVOCI 股票走等級表後備
                     for c in ("Trading","OCI","AC"):
-                        r[c]["股票"]=(items["OCI"].get("股票",0)/1e5) if c=="OCI" else 0.0
+                        r[c]["股票"]=(oe/1e5 if oe else 0.0) if c=="OCI" else 0.0
                     # 兆豐 FVTPL 不在附註六彙總,改讀「重要會計項目明細表」旋轉座標表補上
                     fv=parse_megabank_fvtpl(p)
                     if fv and fv.get("_ok"):
@@ -93,8 +122,14 @@ def parse_all():
             r["_cp"]=items["Trading"].get("商業本票",0)/1e5
             # 股票(權益工具,非債券):FVTPL=股票+受益憑證(已在items);FVOCI=權益工具小計;AC無
             r["Trading"]["股票"]=(items["Trading"].get("股票",0)+items["Trading"].get("受益憑證",0))/1e5
-            oe=oci_equity_subtotal(t); r["OCI"]["股票"]=(oe/1e5) if oe else 0.0
+            oe=oci_equity_subtotal(t) or fvoci_equity_level(t); r["OCI"]["股票"]=(oe/1e5) if oe else 0.0
             r["AC"]["股票"]=0.0
+            # 玉山早期(2020H2/2021H1)文字層亂碼→分類抓錯表(OCI 抓到股利收入、AC 抓子集)。
+            # 守衛:AC 對不上 BS(讀不到乾淨大數 or 差>10%)→整期 N/A,不出誤導數。
+            if name=="玉山":
+                bs=bs_ac_esun(t); acp=sum(items["AC"].values())/1e5   # 用原始 parse 加總(對得起 BS)
+                if not bs or abs(acp-bs)>0.10*bs:
+                    rec[(lbl,name)]=None; continue
             rec[(lbl,name)]=r
     return rec
 

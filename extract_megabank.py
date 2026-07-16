@@ -200,7 +200,8 @@ def parse_megabank_fvtpl(pdf_path):
             for c in page.chars:
                 if not c["text"].strip():
                     continue
-                if c["x0"] < 160 and not c["upright"]:
+                # 品名欄 x<160。兆豐逐年在「旋轉字/正立字」間換版,故不用 upright 過濾。
+                if c["x0"] < 160:
                     labs[round(c["top"])].append((c["x0"], c["text"]))
                 elif 560 <= c["x0"] <= 665:            # 公允價值總額欄
                     vals[round(c["top"])].append((c["x0"], c["text"]))

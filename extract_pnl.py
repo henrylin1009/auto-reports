@@ -1,5 +1,5 @@
 """獲利面(粗估 NIM / 資金成本)抽取器 — 5 家個體損益表 + 資產負債表。
-一期原型:FY2024(民國113/12/31,全年,免年化)。單位:千元 → 輸出億元。
+一期原型:FY2025(民國114/12/31,全年,免年化)。單位:千元 → 輸出億元。
 所有指標標「粗估」:以資產總計近似生息資產,計息負債=存款+同業+應付債券。
 """
 import re, json, pdfplumber
@@ -68,7 +68,7 @@ def main():
         ta = (r['資產總計億']/1e4) if r['資產總計億'] else 0
         print(f"{r['bank']:<6}{str(r['粗估NIM']):>7}{str(r['資產收益率']):>9}"
               f"{str(r['資金成本率']):>9}{str(r['利息淨收益億']):>9}{ta:>8.2f}  {'✓' if r['對帳ok'] else '✗'}")
-    Path("pnl.json").write_text(json.dumps({"period":"FY2024","rows":rows},
+    Path("pnl.json").write_text(json.dumps({"period":"FY2025","rows":rows},
                                 ensure_ascii=False, indent=2))
     print("\n-> pnl.json")
 
