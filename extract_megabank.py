@@ -164,8 +164,93 @@ def parse_megabank_aoci(pdf_path, roc, mth):
     return None
 
 
+# FVTPL 明細品名 → 債種桶(證券部分;衍生工具不計,與其他四家 Trading 一致)
+_FVTPL_MAP = [
+    ("政府", "公債"), ("公債", "公債"),
+    ("公司債", "公司債"),
+    ("金融債", "金融債"),
+    ("資產基礎", "資產基礎"),
+    ("國庫券", "國庫券"),
+    ("可轉讓定期存單", "可轉讓定存單"), ("可轉讓定存單", "可轉讓定存單"),
+    ("股票", "股票"),
+    ("受益憑證", "其他"), ("不動產投資信託", "其他"), ("受益證券", "其他"),
+]
+def _fvtpl_bucket(label):
+    for kw, b in _FVTPL_MAP:
+        if kw in label:
+            return b
+    return None
+
+
+def parse_megabank_fvtpl(pdf_path):
+    """兆豐 FVTPL(六(三)):證券部門附錄無此表,改用「重要會計項目明細表」中
+    『透過損益按公允價值衡量之金融資產明細表』(本行層級)。該表品名為 90° 旋轉字、
+    數字為縮小正立字,故依 top 對齊品名(x<160)與公允價值(x≈560–660)。
+    自「衍生工具」列起停止(只取證券,與其他四家 Trading 口徑一致)。
+    回傳 {桶:億元, "股票":億元, "_合計":合計公允價值億元, "_ok":對帳} 或 None。"""
+    from collections import defaultdict
+    with pdfplumber.open(pdf_path) as pdf:
+        for page in pdf.pages:
+            title = "".join(c["text"] for c in page.chars if c["upright"])[:80]
+            if "透過損益按公允價值衡量之金融資產明細表" not in title:
+                continue
+            if "證券部門" in title or "負債" in title:
+                continue
+            labs, vals = defaultdict(list), defaultdict(list)
+            for c in page.chars:
+                if not c["text"].strip():
+                    continue
+                if c["x0"] < 160 and not c["upright"]:
+                    labs[round(c["top"])].append((c["x0"], c["text"]))
+                elif 560 <= c["x0"] <= 665:            # 公允價值總額欄
+                    vals[round(c["top"])].append((c["x0"], c["text"]))
+            def label_of(top):
+                for t in range(top - 2, top + 3):
+                    if t in labs:
+                        return "".join(x for _, x in sorted(labs[t]))
+                return ""
+            def value_of(top):
+                cs = sorted(vals.get(top, []))
+                s = "".join(x for _, x in cs)
+                m = re.search(r"[\d,]{4,}", s)
+                return _num(m.group()) if m else None
+
+            rec = {k: 0.0 for k in BUCKET_KEYS}
+            rec["股票"] = 0.0
+            total = None
+            derivative = False
+            for top in sorted(set(list(labs) + list(vals))):
+                lbl = label_of(top)
+                if "合計" in lbl:
+                    tv = value_of(top)
+                    if tv is not None:
+                        total = tv
+                    continue
+                if "衍生工具" in lbl:                  # 之後為衍生,證券口徑到此為止
+                    derivative = True
+                    continue
+                if derivative:
+                    continue
+                b = _fvtpl_bucket(lbl)
+                if not b:
+                    continue
+                v = value_of(top)
+                if v:
+                    rec[b] += v / 1e5                  # 仟元→億元
+            if total is None:
+                return None
+            sec = sum(rec.values())                    # 證券小計(含股票)
+            # 對帳:證券小計 + 衍生 ≈ 合計;證券本身應 < 合計且占多數
+            ok = sec > 0 and sec <= total / 1e5 * 1.02
+            rec["_合計"] = round(total / 1e5, 1)
+            rec["_證券"] = round(sec, 1)
+            rec["_ok"] = bool(ok)
+            return rec
+    return None
+
+
 if __name__ == "__main__":
     import sys, json
-    r = parse_megabank(sys.argv[1] if len(sys.argv) > 1
-                        else "pdf_cache/202402_5843_AI3.pdf")
-    print(json.dumps(r, ensure_ascii=False, indent=2))
+    p = sys.argv[1] if len(sys.argv) > 1 else "pdf_cache/202504_5843_AI3.pdf"
+    print("== parse_megabank_fvtpl ==")
+    print(json.dumps(parse_megabank_fvtpl(p), ensure_ascii=False, indent=2))

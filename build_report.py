@@ -15,7 +15,7 @@ from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 import openpyxl.utils as XU
 import re
 import extract3 as E
-from extract_megabank import parse_megabank
+from extract_megabank import parse_megabank, parse_megabank_fvtpl
 
 def robust_bs_ac(t):
     """兆豐資產負債表 AC 總額(取所有『按攤銷後成本衡量之債務工具投資 [六(X)] 數字』的最大值,
@@ -78,6 +78,12 @@ def parse_all():
                     r["_cp"]=items["Trading"].get("商業本票",0)/1e5
                     for c in ("Trading","OCI","AC"):
                         r[c]["股票"]=(items["OCI"].get("股票",0)/1e5) if c=="OCI" else 0.0
+                    # 兆豐 FVTPL 不在附註六彙總,改讀「重要會計項目明細表」旋轉座標表補上
+                    fv=parse_megabank_fvtpl(p)
+                    if fv and fv.get("_ok"):
+                        for k in E.bond_buckets({}):
+                            r["Trading"][k]=fv.get(k,0.0)
+                        r["Trading"]["股票"]=fv.get("股票",0.0)
                     rec[(lbl,name)]=r
                 else:
                     rec[(lbl,name)]=None
