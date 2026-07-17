@@ -13,9 +13,15 @@ from openpyxl.chart.series import DataPoint
 from openpyxl.chart.shapes import GraphicalProperties
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 import openpyxl.utils as XU
-import re
+import re, json as _json
 import extract3 as E
 from extract_megabank import parse_megabank, parse_megabank_fvtpl
+
+# 兆豐年報三分類債種:證券部門變動表對不上、標準彙總逐年格式異、附錄明細表旋轉多行。
+# 改用「重要會計項目明細表」附錄以座標+推理配對抽出、每類對帳零誤差的驗證值(見 megabank_override.json)。
+# 半年報無此附錄→不在 override→N/A。產生方式見 gen 腳本;未來新期需重跑補入(或接 LLM 自動化)。
+try: MEGA_OVERRIDE=_json.load(open("megabank_override.json"))["data"]
+except (FileNotFoundError, KeyError): MEGA_OVERRIDE={}
 
 def robust_bs_ac(t):
     """兆豐資產負債表 AC 總額(取所有『按攤銷後成本衡量之債務工具投資 [六(X)] 數字』的最大值,
@@ -96,23 +102,13 @@ def parse_all():
             if len(t)<2000:      # 無文字層(掃描影像檔,如2020H1國泰/玉山)→ 無資料,非0
                 rec[(lbl,name)]=None; continue
             if name=="兆豐":
-                # 兆豐改用標準彙總(附註六),含央行定期存單/短期票券貨幣市場;
-                # 僅在 AC 對得起資產負債表(±3%)才採用→2025H2等近年正確,對不上的期(格式異/座標散)標N/A待補,
-                # 不再用「證券部門」子集(那是偏低的一小塊)。
-                items={c:E.parse_class(t,c) for c in ("Trading","OCI","AC")}
-                r={c:E.bond_buckets(items[c]) for c in ("Trading","OCI","AC")}
-                bs=robust_bs_ac(t); acsum=sum(r["AC"].values())
-                if bs and acsum>0 and abs(acsum-bs)<=0.03*bs:
-                    r["_cp"]=items["Trading"].get("商業本票",0)/1e5
-                    oe=oci_equity_subtotal(t) or fvoci_equity_level(t)   # 兆豐 FVOCI 股票走等級表後備
-                    for c in ("Trading","OCI","AC"):
-                        r[c]["股票"]=(oe/1e5 if oe else 0.0) if c=="OCI" else 0.0
-                    # 兆豐 FVTPL 不在附註六彙總,改讀「重要會計項目明細表」旋轉座標表補上
-                    fv=parse_megabank_fvtpl(p)
-                    if fv and fv.get("_ok"):
-                        for k in E.bond_buckets({}):
-                            r["Trading"][k]=fv.get(k,0.0)
-                        r["Trading"]["股票"]=fv.get("股票",0.0)
+                # 兆豐年報三分類讀 megabank_override.json(附錄明細表座標+推理、每類對帳過);
+                # 不在 override 的期(半年報無附錄)→ N/A。
+                ov=MEGA_OVERRIDE.get(lbl)
+                if ov:
+                    r={c:{**{k:ov[c].get(k,0.0) for k in E.bond_buckets({})},
+                          "股票":ov[c].get("股票",0.0)} for c in ("Trading","OCI","AC")}
+                    r["_cp"]=ov.get("_cp",0.0)
                     rec[(lbl,name)]=r
                 else:
                     rec[(lbl,name)]=None
