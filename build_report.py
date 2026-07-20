@@ -103,9 +103,10 @@ def parse_all():
                 rec[(lbl,name)]=None; continue
             if name=="兆豐":
                 # 兆豐三分類:OCI/AC 讀主附註六(四)(五)彙總「毛額」(parse_megabank_main,
-                # 詞座標重組+對帳,口徑與其他四家一致);Trading 讀附錄 FVTPL 明細表
-                # (parse_megabank_fvtpl)。任一類對帳不過→退回 megabank_override.json
-                # 手工對帳值(僅年報有;AC 無評價調整故 override=毛額,退回一致)。全缺→N/A。
+                # 詞座標重組+對帳+缺口反推,口徑與其他四家一致);Trading 讀附錄 FVTPL 明細表
+                # (parse_megabank_fvtpl)。任一類對帳不過→退回 megabank_override.json 手工值。
+                # 註:加入缺口反推(_mega_infer)後,六期 OCI/AC 皆解析器直讀對帳,
+                #     override 目前為休眠後備(0 格使用),保留以防未來新版面。全缺→N/A。
                 EMPTY={**{k:0.0 for k in E.bond_buckets({})},"股票":0.0}
                 mn=parse_megabank_main(p); fv=parse_megabank_fvtpl(p); ov=MEGA_OVERRIDE.get(lbl)
                 def _ovc(c): return ({**{k:ov[c].get(k,0.0) for k in E.bond_buckets({})},

@@ -302,9 +302,12 @@ def _mega_rows(pg):
 
 
 def _mega_first_num(row):
-    """取這列切格後第一個數字格 = 當期(毛額)。括號→負。"""
+    """取這列切格後第一個數字格 = 當期(毛額)。括號→負。
+       去除 $ , () 及長短劃填充(如『5,860,463-』尾隨破折號),避免漏數。"""
     for cell in _mega_cells(row):
-        raw = cell.replace("$", "").replace(",", "").replace("(", "").replace(")", "")
+        raw = cell
+        for ch in "$,()―—–-":
+            raw = raw.replace(ch, "")
         if raw.isdigit() and len(raw) >= 5:
             return -int(raw) if "(" in cell else int(raw)
     return None
@@ -315,6 +318,32 @@ def _mega_name(txt):
         if raw in txt:
             return canon
     return None
+
+
+def _is_subseq(pat, s):
+    """pat 的字元是否依序出現在 s 中(容忍交錯字,如『公司債券』∈『公國司庫債券券』)。"""
+    it = iter(s)
+    return all(ch in it for ch in pat)
+
+
+# 缺口反推只補這幾類核心債種(貨幣市場類金額大、風險高,不推)
+_INFER_CORE = ["政府公債", "公司債券", "金融債券", "證券化商品"]
+
+
+def _mega_infer(items, subtotal, valued_noname, named_novalue):
+    """通用缺口反推,治『錯行/交錯字』。就地改 items。全程由外層對帳閘門保護。
+       規則①(交錯字):有數字但品名交錯→用『字元子序列』對到唯一未填核心債種。
+       規則②(錯行):有品名但無數字→若加總距小計恰差一個未填品名,把缺口給它。"""
+    # 規則①:valued_noname(有值、名交錯)→ 子序列唯一對到「尚未填的核心債種」
+    for val, raw in valued_noname:
+        cands = [c for c in _INFER_CORE if c not in items and _is_subseq(c, raw)]
+        if len(cands) == 1:
+            items[cands[0]] = items.get(cands[0], 0) + val
+    # 規則②:named_novalue(有名、無值)→ 缺口反推
+    gap = subtotal - sum(items.values())
+    nov = [n for n in named_novalue if n not in items]
+    if gap > 0 and len(nov) == 1:
+        items[nov[0]] = gap
 
 
 def parse_megabank_main(path):
@@ -371,16 +400,26 @@ def parse_megabank_main(path):
                     if any(k in txt for k in ("合計", "減：", "減:", "衍生", "應付", "償還", "發行")):
                         continue                          # 排除現金流量表的「應付/發行金融債券」等雜訊
                     nm = _mega_name(txt)
-                    if nm:
-                        v = _mega_first_num(r)
-                        if v is not None:
-                            cur["items"][nm] = cur["items"].get(nm, 0) + v
+                    v = _mega_first_num(r)
+                    if nm and v is not None:
+                        cur["items"][nm] = cur["items"].get(nm, 0) + v
+                    elif nm and v is None:                 # 有品名、無數字(錯行)→ 記待補
+                        cur.setdefault("named_novalue", []).append(nm)
+                    elif nm is None and v is not None and any(k in txt for k in ("債", "券", "單", "票")):
+                        cur.setdefault("valued_noname", []).append((v, txt))  # 有數字、品名交錯→待推名
             # 3) 選債務工具表 = 小計最大的那張(FVOCI 債務 >> FVTPL/權益)
             debt = max((b for b in blocks if b["subtotal"]),
                        key=lambda b: abs(b["subtotal"]), default=None)
             if not debt:
                 continue
-            out[cls] = debt["items"]
+            # 3.5) 缺口反推(通用,治「錯行/交錯字」):只在簡單比對對不上小計時啟動,
+            #      全程受對帳閘門保護——推錯→整組作廢→退回 override,只會更好不會更糟。
+            items = dict(debt["items"]); sub = debt["subtotal"]
+            if sub and abs(sum(items.values()) - sub) > 0.005 * abs(sub):
+                _mega_infer(items, sub, debt.get("valued_noname", []),
+                            debt.get("named_novalue", []))
+            debt["items"] = items
+            out[cls] = items
             # 股票只有 FVOCI 有權益工具:取債務表後的權益工具淨額(含評價調整,與他行一致)。
             # Trading/AC 無股票(AC 依定義只債券;Trading 股票另由 fvtpl 解析器處理)。
             if cls == "OCI":
