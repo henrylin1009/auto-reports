@@ -57,7 +57,9 @@ def _parse_block(seg, want_subtotal=False):
             if norm(_strip(ln)).startswith("減："):
                 continue                       # 備抵損失行,續找後面的合計
             break
-        nm=re.match(r"^([一-鿿（）()\s]+?)\s*\$?\s*(-|\(?[\d,]{3,}\)?)", ln)
+        # 容忍品名與金額間的長破折號填充(如國泰「可轉讓定存單 ―$ 25,599,336」),
+        # 僅吃 ―/—/– 長劃(非 ASCII '-';後者是「無/nil」值,留給數值群組)。
+        nm=re.match(r"^([一-鿿（）()\s]+?)\s*[―—–]?\s*\$?\s*(-|\(?[\d,]{3,}\)?)", ln)
         if nm:
             name=canon(_strip(nm.group(1))); val=to_num(nm.group(2))
             if not items and any(e in name for e in EQUITY):
