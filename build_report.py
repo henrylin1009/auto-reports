@@ -15,7 +15,7 @@ from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 import openpyxl.utils as XU
 import re, json as _json
 import extract3 as E
-from extract_megabank import parse_megabank, parse_megabank_fvtpl
+from extract_megabank import parse_megabank, parse_megabank_fvtpl, parse_megabank_main
 
 # 兆豐年報三分類債種:證券部門變動表對不上、標準彙總逐年格式異、附錄明細表旋轉多行。
 # 改用「重要會計項目明細表」附錄以座標+推理配對抽出、每類對帳零誤差的驗證值(見 megabank_override.json)。
@@ -102,16 +102,27 @@ def parse_all():
             if len(t)<2000:      # 無文字層(掃描影像檔,如2020H1國泰/玉山)→ 無資料,非0
                 rec[(lbl,name)]=None; continue
             if name=="兆豐":
-                # 兆豐年報三分類讀 megabank_override.json(附錄明細表座標+推理、每類對帳過);
-                # 不在 override 的期(半年報無附錄)→ N/A。
-                ov=MEGA_OVERRIDE.get(lbl)
-                if ov:
-                    r={c:{**{k:ov[c].get(k,0.0) for k in E.bond_buckets({})},
-                          "股票":ov[c].get("股票",0.0)} for c in ("Trading","OCI","AC")}
-                    r["_cp"]=ov.get("_cp",0.0)
-                    rec[(lbl,name)]=r
-                else:
-                    rec[(lbl,name)]=None
+                # 兆豐三分類:OCI/AC 讀主附註六(四)(五)彙總「毛額」(parse_megabank_main,
+                # 詞座標重組+對帳,口徑與其他四家一致);Trading 讀附錄 FVTPL 明細表
+                # (parse_megabank_fvtpl)。任一類對帳不過→退回 megabank_override.json
+                # 手工對帳值(僅年報有;AC 無評價調整故 override=毛額,退回一致)。全缺→N/A。
+                EMPTY={**{k:0.0 for k in E.bond_buckets({})},"股票":0.0}
+                mn=parse_megabank_main(p); fv=parse_megabank_fvtpl(p); ov=MEGA_OVERRIDE.get(lbl)
+                def _ovc(c): return ({**{k:ov[c].get(k,0.0) for k in E.bond_buckets({})},
+                                      "股票":ov[c].get("股票",0.0)} if ov else None)
+                def _mk(c):
+                    if c=="Trading":
+                        if fv and fv.get("_ok"):
+                            return {**{k:fv.get(k,0.0) for k in E.bond_buckets({})},"股票":fv.get("股票",0.0)}
+                    elif mn["ok"][c]:                     # OCI/AC 主附註對帳過→用毛額
+                        return {**E.bond_buckets(mn[c]),"股票":mn["股票"][c]/1e5}
+                    return _ovc(c)                        # 後備:override
+                parts={c:_mk(c) for c in ("Trading","OCI","AC")}
+                if all(v is None for v in parts.values()):
+                    rec[(lbl,name)]=None; continue
+                r={c:(parts[c] or dict(EMPTY)) for c in ("Trading","OCI","AC")}
+                r["_cp"]=(ov.get("_cp",0.0) if ov else 0.0)
+                rec[(lbl,name)]=r
                 continue
             items={c:E.parse_class(t,c) for c in ("Trading","OCI","AC")}
             if name=="富邦":                                   # 富邦 FVTPL 主附註把國庫券/公司債/公債塞進「其他」→改讀附錄明細表二

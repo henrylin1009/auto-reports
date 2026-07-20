@@ -250,8 +250,155 @@ def parse_megabank_fvtpl(pdf_path):
     return None
 
 
+# =====================================================================
+# 主附註六(三)(四)(五)彙總解析器(通用「詞座標重組」,讀毛額)
+# ---------------------------------------------------------------------
+# 兆豐主附註跟其他四家一樣有債種彙總表,只是排版讓 extract_text 打散成
+# 「字元湯」。這裡按詞的 y 座標重新分列、同列內按 x 切格,即可還原;
+# 各債種列取「當期(民國當年,年報中排最左)」的第一個數字 = 毛額(取得成本)。
+# 已驗:六期 AC 幾乎逐格對得上手工 override;OCI 為毛額(公債/資產基礎
+# 因長天期跌價,毛額 > override 淨額,屬口徑差非錯)。
+#
+# 口徑定案:主資料一律用毛額;評價調整(市價含損)另抓供估值視角。
+# 回傳 items 用「其他四家 bond_buckets 認得的正規名」,可直接餵 E.bond_buckets。
+# =====================================================================
+
+# 兆豐各表原始品名 → bond_buckets 正規名(仟元累加)
+_MAIN_NAME_MAP = [
+    ("政府債券", "政府公債"), ("政府公債", "政府公債"),
+    ("公司債券", "公司債券"), ("公司債", "公司債券"),
+    ("金融債券", "金融債券"), ("金融債", "金融債券"),
+    ("資產基礎", "證券化商品"), ("證券化商品", "證券化商品"), ("受益證券", "證券化商品"),
+    ("央行定期存單", "央行定期存單"), ("央行定存單", "央行定期存單"),
+    ("短期票券", "短期票券"), ("央行票據", "央行票據"), ("國庫券", "國庫券"),
+    ("銀行定期存單", "定存單"), ("定期存單-可轉讓", "可轉讓定期存單"),
+    ("可轉讓定期存單", "可轉讓定期存單"), ("定存單", "定存單"),
+]
+# 權益(股票桶):不進 bond_buckets,另計
+_MAIN_STOCK_KW = ("上市櫃公司股票", "興櫃公司股票", "非上市", "上市櫃股票",
+                  "未上市", "國外股票", "受益憑證")
+_MAIN_SKIP = ("小計", "合計", "淨額", "評價調整", "減：", "減:", "衍生")
+
+
+def _mega_cells(words, gap=12):
+    """一列的詞依 x 間距切成『格』(品名 / 各年數字各成一格)。"""
+    words = sorted(words)
+    out, cur = [], [words[0]]
+    for x, t in words[1:]:
+        if x - cur[-1][0] > gap:
+            out.append(cur); cur = [(x, t)]
+        else:
+            cur.append((x, t))
+    out.append(cur)
+    return ["".join(t for _, t in c) for c in out]
+
+
+def _mega_rows(pg):
+    """回傳 [(top, [(x,text)...])],依 y 分列。"""
+    rows = {}
+    for w in pg.extract_words():
+        rows.setdefault(round(w["top"] / 3.0), []).append((w["x0"], w["text"]))
+    return [(k, sorted(r)) for k, r in sorted(rows.items())]
+
+
+def _mega_first_num(row):
+    """取這列切格後第一個數字格 = 當期(毛額)。括號→負。"""
+    for cell in _mega_cells(row):
+        raw = cell.replace("$", "").replace(",", "").replace("(", "").replace(")", "")
+        if raw.isdigit() and len(raw) >= 5:
+            return -int(raw) if "(" in cell else int(raw)
+    return None
+
+
+def _mega_name(txt):
+    for raw, canon in _MAIN_NAME_MAP:
+        if raw in txt:
+            return canon
+    return None
+
+
+def parse_megabank_main(path):
+    """讀兆豐主附註六(三)(四)(五)彙總(毛額)。
+       回傳 {"Trading":items, "OCI":items, "AC":items,
+             "股票":{cls:仟元}, "adj":{cls:評價調整仟元}, "ok":{cls:bool}}
+       items 為正規名→仟元,可直接餵 extract3.bond_buckets。抓不到的類回 {}、ok=False。"""
+    TITLES = [
+        ("Trading", "透過損益按公允價值衡量之金融資產"),
+        ("OCI",     "透過其他綜合損益按公允價值衡量之金融資產"),
+        ("AC",      "按攤銷後成本衡量之債務工具投資"),
+    ]
+    out = {"Trading": {}, "OCI": {}, "AC": {},
+           "股票": {"Trading": 0, "OCI": 0, "AC": 0},
+           "adj": {"Trading": 0, "OCI": 0, "AC": 0},
+           "ok": {"Trading": False, "OCI": False, "AC": False}}
+    with pdfplumber.open(path) as pdf:
+        pages = pdf.pages
+        for cls, title in TITLES:
+            # 1) 逐頁重組;依「小計」把列切成一張張表(block)。
+            #    逐頁處理(頁尾未收尾的殘列丟棄),避免現金流量表等雜訊頁跨頁污染真表。
+            blocks = []            # [{"items":{}, "subtotal":int, "end":idx}]
+            adjs, netvals = [], []  # [(idx, value)]
+            idx = 0
+            for pg in pages:
+                raw = pg.extract_text() or ""
+                # Trading 標題是 OCI 標題的子字串→先剔除 OCI 標題再判,避免抓到 OCI 表
+                hay = raw.replace("透過其他綜合損益按公允價值衡量之金融資產", "") \
+                    if cls == "Trading" else raw
+                if title not in hay:
+                    continue
+                if "明細表" in raw or "證券部門" in raw:   # 排除附錄逐檔表,只要主附註
+                    continue
+                cur = {"items": {}, "subtotal": None}   # 每頁重置,不跨頁累積
+                for _, r in _mega_rows(pg):
+                    idx += 1
+                    txt = "".join(t for _, t in r)
+                    if "評價調整" in txt:
+                        v = _mega_first_num(r)
+                        if v is not None:
+                            adjs.append((idx, v))
+                        continue
+                    if "淨額" in txt:
+                        v = _mega_first_num(r)
+                        if v is not None:
+                            netvals.append((idx, v))
+                        continue
+                    if "小計" in txt:
+                        cur["subtotal"] = _mega_first_num(r); cur["end"] = idx
+                        if cur["items"]:
+                            blocks.append(cur)
+                        cur = {"items": {}, "subtotal": None}
+                        continue
+                    if any(k in txt for k in ("合計", "減：", "減:", "衍生", "應付", "償還", "發行")):
+                        continue                          # 排除現金流量表的「應付/發行金融債券」等雜訊
+                    nm = _mega_name(txt)
+                    if nm:
+                        v = _mega_first_num(r)
+                        if v is not None:
+                            cur["items"][nm] = cur["items"].get(nm, 0) + v
+            # 3) 選債務工具表 = 小計最大的那張(FVOCI 債務 >> FVTPL/權益)
+            debt = max((b for b in blocks if b["subtotal"]),
+                       key=lambda b: abs(b["subtotal"]), default=None)
+            if not debt:
+                continue
+            out[cls] = debt["items"]
+            # 股票只有 FVOCI 有權益工具:取債務表後的權益工具淨額(含評價調整,與他行一致)。
+            # Trading/AC 無股票(AC 依定義只債券;Trading 股票另由 fvtpl 解析器處理)。
+            if cls == "OCI":
+                eq = [v for i, v in netvals if i > debt["end"]]  # 債務表之後的淨額 = 權益淨額
+                out["股票"][cls] = eq[-1] if eq else 0
+            # 債務評價調整 = 該債務表小計之後第一個評價調整
+            after = [v for i, v in adjs if i > debt["end"]]
+            out["adj"][cls] = after[0] if after else 0
+            s = sum(debt["items"].values())
+            # 對帳門檻 0.5%:乾淨表餘裕 <0.1%;交錯字致某債種漏配者(如2022 AC公司債)
+            # 會落在 ~1% 被擋下→退回 override(手工對帳值),不靜默漏一類。
+            out["ok"][cls] = bool(debt["subtotal"] and s and
+                                  abs(s - debt["subtotal"]) <= 0.005 * abs(debt["subtotal"]))
+    return out
+
+
 if __name__ == "__main__":
     import sys, json
     p = sys.argv[1] if len(sys.argv) > 1 else "pdf_cache/202504_5843_AI3.pdf"
-    print("== parse_megabank_fvtpl ==")
-    print(json.dumps(parse_megabank_fvtpl(p), ensure_ascii=False, indent=2))
+    print("== parse_megabank_main ==")
+    print(json.dumps(parse_megabank_main(p), ensure_ascii=False, indent=2))
