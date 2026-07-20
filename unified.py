@@ -126,10 +126,11 @@ _BOUNDARY = {
 }
 
 def _parse_block(rows, cls):
-    """一段列 → (items 桶→仟元, adj 評價調整, subtotal, stock)。取『債券小計』止。
+    """一段列 → (items 桶→仟元, adj 評價調整, subtotal, stock, other)。
        equity-first(國泰:權益工具在前)時第一個小計是股票小計→不收尾,續讀債券。
-       撞到別類附註標題(section 邊界)→ 立即結束,避免 seg 溢流到隔壁表。"""
-    items = {}; adj = 0; sub = None; stock = 0
+       撞到別類附註標題(section 邊界)→ 立即結束,避免 seg 溢流到隔壁表。
+       other = 非債券/非股票/非評價的數字列(衍生工具等),Trading 對帳需計入。"""
+    items = {}; adj = 0; sub = None; stock = 0; other = 0
     for _, cells in rows:
         j = _norm(cells)
         if any(b in j for b in _BOUNDARY[cls]):   # 跨到別類附註 → 收尾
@@ -139,9 +140,9 @@ def _parse_block(rows, cls):
             if v is not None: adj += v
             continue
         if any(s in j for s in _STOP):
-            if items:                 # 已收到債券 → 這是債券小計,收尾
+            if items:                 # 已收到債券 → 這是(債券)小計/合計,收尾
                 sub = first_num(cells); break
-            stock = 0; adj = 0        # 尚無債券(權益工具區的小計)→ 重置,續讀債券區
+            stock = 0; adj = 0; other = 0   # 尚無債券(權益工具區的小計)→ 重置,續讀
             continue
         v = first_num(cells)
         if v is None:            # 敘述行 / 表頭(無數字)→ 跳過
@@ -155,23 +156,32 @@ def _parse_block(rows, cls):
             items[b] = items.get(b, 0) + v
         elif is_equity(nm):
             stock += v
-    return items, adj, sub, stock
+        elif nm:                 # 有品名但非債非股(衍生工具等)→ other(Trading 對帳用)
+            other += v
+    return items, adj, sub, stock, other
+
+_CACHE = {}   # path → [(raw_text, rows)]  逐頁快取,三類共用免重開 PDF
+def _load(path):
+    if path not in _CACHE:
+        pages = []
+        with pdfplumber.open(path) as pdf:
+            for pg in pdf.pages:
+                raw = pg.extract_text() or ""
+                pages.append((raw, page_rows(pg) if raw else []))
+        _CACHE[path] = pages
+    return _CACHE[path]
 
 def extract(path, cls, cfg=None):
     """統一入口:回傳 {桶:億元, 股票:億元} 或 None(對帳不過/無資料)。"""
     titles = TITLES[cls]
-    with pdfplumber.open(path) as pdf:
-        allrows = []
-        for pg in pdf.pages:
-            raw = pg.extract_text() or ""
-            if "明細表" in raw or "證券部門" in raw:
-                continue
-            hay = raw
-            if cls == "Trading":
-                hay = raw.replace("透過其他綜合損益按公允價值衡量之金融資產", "")
-            if not any(t in hay for t in titles):
-                continue
-            allrows.append(page_rows(pg))
+    allrows = []
+    for raw, rows in _load(path):
+        if not raw or "明細表" in raw or "證券部門" in raw:
+            continue
+        hay = raw.replace("透過其他綜合損益按公允價值衡量之金融資產", "") if cls == "Trading" else raw
+        if not any(t in hay for t in titles):
+            continue
+        allrows.append(rows)
     if not allrows:
         return None
     # 候選:每個「命中標題的列」之後到第一個小計,當一段
@@ -190,20 +200,24 @@ def extract(path, cls, cfg=None):
             continue
         if cls == "Trading" and "其他綜合" in j:     # Trading 別誤抓 OCI 表
             continue
-        seg = flat[i + 1:i + 60]
-        items, adj, sub, stock = _parse_block(seg, cls)
+        seg = flat[i + 1:i + 80]
+        items, adj, sub, stock, other = _parse_block(seg, cls)
         ndebt = sum(1 for b in items if b in BUCKETS)
-        if ndebt >= 2 and sub:
-            recon = abs(sum(items.values()) + adj - sub) <= max(100, 0.006 * abs(sub))
-            # 標題專屬度:此類的招牌字在標題內(避免 OCI 誤選 AC 之類跨類污染)
+        if ndebt >= 1 and sub:
+            # 統一對帳:債券 + 股票 + 其他(衍生) + 評價 ≈ 小計/合計。
+            # OCI/AC 債券子表無股票/衍生 → 化為 債券+評價;Trading 自然含股票+衍生。
+            recon = abs(sum(items.values()) + stock + other + adj - sub) <= max(100, 0.006 * abs(sub))
             sig = {"OCI": "其他綜合", "AC": "攤銷後成本", "Trading": "透過損益"}[cls]
             spec = 1 if sig in mt else 0
-            cands.append((recon, spec, ndebt, items, stock))
+            # 對帳過 > 招牌專屬 > 實質債券檔數(避開全零/子表) > 主表(小計最大)。
+            # 跨類污染已由 section 邊界擋掉,故可安心取最大表(避開負債/子表等小額同名表)。
+            nonzero = sum(1 for b in items if abs(items[b]) >= 1_000_000)   # ≥10億才算實質
+            cands.append((recon, spec, nonzero, abs(sub), items, stock))
     if not cands:
         return None
-    best = max(cands, key=lambda c: (c[0], c[1], c[2]))
+    best = max(cands, key=lambda c: (c[0], c[1], c[2], c[3]))
     if not best[0]:          # 對帳不過 → N/A
         return None
-    out = {b: best[3].get(b, 0) / 1e5 for b in BUCKETS}
-    out["股票"] = best[4] / 1e5
+    out = {b: best[4].get(b, 0) / 1e5 for b in BUCKETS}
+    out["股票"] = best[5] / 1e5
     return out
