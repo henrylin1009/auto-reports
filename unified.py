@@ -130,7 +130,7 @@ def _parse_block(rows, cls):
        equity-first(國泰:權益工具在前)時第一個小計是股票小計→不收尾,續讀債券。
        撞到別類附註標題(section 邊界)→ 立即結束,避免 seg 溢流到隔壁表。
        other = 非債券/非股票/非評價的數字列(衍生工具等),Trading 對帳需計入。"""
-    items = {}; adj = 0; sub = None; stock = 0; other = 0
+    items = {}; adj = 0; sub = None; stock = 0; other = 0; pending = []
     for _, cells in rows:
         j = _norm(cells)
         if any(b in j for b in _BOUNDARY[cls]):   # 跨到別類附註 → 收尾
@@ -156,9 +156,28 @@ def _parse_block(rows, cls):
             items[b] = items.get(b, 0) + v
         elif is_equity(nm):
             stock += v
-        elif nm:                 # 有品名但非債非股(衍生工具等)→ other(Trading 對帳用)
+        elif nm:                 # 有品名但非債非股→ 記入 other,並留名待推(交錯字)
             other += v
-    return items, adj, sub, stock, other
+            pending.append((nm, v))
+    return items, adj, sub, stock, other, pending
+
+
+# 缺口反推核心債種(交錯字時只推這幾類;貨幣市場金額大不推)
+_CORE = ("政府公債", "公司債券", "金融債券", "資產基礎證券")
+def _is_subseq(pat, s):
+    it = iter(s); return all(c in it for c in pat)
+
+def _infer(items, pending, sub):
+    """交錯字反推(通用,受對帳閘門保護):有數字但品名字元交錯(如兆豐『公國司庫債券券』)
+       → 用字元子序列對到『尚未填的核心債種』,把值歸回正確桶。回傳已歸桶總額(供 other 扣除)。"""
+    moved = 0
+    for nm, v in pending:
+        cands = [c for c in _CORE if bucket_of(c) not in items and _is_subseq(c, nm)]
+        if len(cands) == 1:
+            b = bucket_of(cands[0])
+            items[b] = items.get(b, 0) + v
+            moved += v
+    return moved
 
 _CACHE = {}   # path → [(raw_text, rows)]  逐頁快取,三類共用免重開 PDF
 def _load(path):
@@ -174,14 +193,17 @@ def _load(path):
 def extract(path, cls, cfg=None):
     """統一入口:回傳 {桶:億元, 股票:億元} 或 None(對帳不過/無資料)。"""
     titles = TITLES[cls]
+    pages = _load(path)
     allrows = []
-    for raw, rows in _load(path):
+    prev_hit = False
+    for raw, rows in pages:
         if not raw or "明細表" in raw or "證券部門" in raw:
-            continue
+            prev_hit = False; continue
         hay = raw.replace("透過其他綜合損益按公允價值衡量之金融資產", "") if cls == "Trading" else raw
-        if not any(t in hay for t in titles):
-            continue
-        allrows.append(rows)
+        hit = any(t in hay for t in titles)
+        if hit or prev_hit:          # 命中標題頁,或其緊接的續頁(表跨頁,如兆豐 FVTPL)
+            allrows.append(rows)
+        prev_hit = hit
     if not allrows:
         return None
     # 候選:每個「命中標題的列」之後到第一個小計,當一段
@@ -201,7 +223,9 @@ def extract(path, cls, cfg=None):
         if cls == "Trading" and "其他綜合" in j:     # Trading 別誤抓 OCI 表
             continue
         seg = flat[i + 1:i + 80]
-        items, adj, sub, stock, other = _parse_block(seg, cls)
+        items, adj, sub, stock, other, pending = _parse_block(seg, cls)
+        if sub:
+            other -= _infer(items, pending, sub)   # 交錯字歸桶,並從 other 扣除避免重複計
         ndebt = sum(1 for b in items if b in BUCKETS)
         if ndebt >= 1 and sub:
             # 統一對帳:債券 + 股票 + 其他(衍生) + 評價 ≈ 小計/合計。

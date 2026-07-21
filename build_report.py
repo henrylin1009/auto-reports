@@ -16,6 +16,7 @@ import openpyxl.utils as XU
 import re, json as _json
 import extract3 as E
 from extract_megabank import parse_megabank, parse_megabank_fvtpl, parse_megabank_main
+import unified as UNI   # 統一流水線:當兆豐現行路徑給空時的通用補洞後備(半年報 Trading/AC)
 
 # 兆豐年報三分類債種:證券部門變動表對不上、標準彙總逐年格式異、附錄明細表旋轉多行。
 # 改用「重要會計項目明細表」附錄以座標+推理配對抽出、每類對帳零誤差的驗證值(見 megabank_override.json)。
@@ -117,7 +118,10 @@ def parse_all():
                             return {**{k:fv.get(k,0.0) for k in E.bond_buckets({})},"股票":fv.get("股票",0.0)}
                     elif mn["ok"][c]:                     # OCI/AC 主附註對帳過→用毛額
                         return {**E.bond_buckets(mn[c]),"股票":mn["股票"][c]/1e5}
-                    return _ovc(c)                        # 後備:override
+                    r=_ovc(c)                             # 後備1:override(對帳過的手工值)
+                    if r: return r
+                    u=UNI.extract(str(p),c)               # 後備2:統一流水線補洞(半年報等,通用、對帳過才回)
+                    return u                              # 皆無 → None
                 parts={c:_mk(c) for c in ("Trading","OCI","AC")}
                 if all(v is None for v in parts.values()):
                     rec[(lbl,name)]=None; continue
