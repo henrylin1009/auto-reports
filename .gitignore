@@ -2,6 +2,7 @@ __pycache__/
 *.pyc
 .DS_Store
 ~$*
+.env
 # 完整報表要入庫給網頁下載(CI 不重建);其餘 xlsx 忽略
 *.xlsx
 !銀行債券_完整報表.xlsx
@@ -18,3 +19,5 @@ _圖1.png
 _圖2.png
 # PDF 快取:可選。想加速首次 CI 可保留;預設不入庫(CI 會自動抓)
 pdf_cache/
+# bridge_v2.py 每次執行自動備份的 data.json 快照,不需入庫
+data.json.pre_bridge

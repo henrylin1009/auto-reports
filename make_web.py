@@ -13,7 +13,9 @@ try: P0=json.load(open("phase0.json"))
 except FileNotFoundError: P0={"periods":PERIODS,"banks":BANKS,"data":{}}
 try: PNL=json.load(open("pnl.json"))
 except FileNotFoundError: PNL=None
-COLOR={"中信":"#4a5e2a","兆豐":"#8a8a3a","國泰":"#e8c020","富邦":"#3a8fd0","玉山":"#8bc34a"}
+# 企業品牌色(2026-07 改版):中信綠(CTBC logo 綠)、兆豐金(兆豐金控 CI 金色)、
+# 國泰墨綠(國泰「大樹綠」)、富邦藍(Fubon CI 藍)、玉山青(官網 CSS 實測青綠)
+COLOR={"中信":"#046A38","兆豐":"#C9A227","國泰":"#00584A","富邦":"#0072BC","玉山":"#007A7A"}
 # 圖表期間:最近 6 個「有資料」的期(自動,不寫死年份)
 _have=[p for p in PERIODS if any((DATA.get(f"{p}|{b}")) for b in BANKS)]
 SHOW=(_have or PERIODS)[-6:]
@@ -59,23 +61,39 @@ def dash2():
 
 dash1(); dash2()
 
-# ---- 寬表 HTML(那張 spreadsheet)----
+# ---- 寬表 HTML(那張 spreadsheet)+ 口徑切換(帳面/成本)----
 def wide_table_html():
     metrics=D.get("wide_metrics",[]); wide=D.get("wide",{})
     if not metrics: return ""
     th_p="".join(f'<th colspan="{len(BANKS)}">{p}</th>' for p in PERIODS)
     th_b="<th>指標＼期間</th>"+"".join(f"<th>{b}</th>" for _ in PERIODS for b in BANKS)
-    rows=""
-    for m in metrics:
-        tds=""
-        for p in PERIODS:
-            for b in BANKS:
-                v=(wide.get(f"{p}|{b}") or {}).get(m)
-                tds+=f"<td>{'' if v is None else format(v,',')}</td>"
-        rows+=f"<tr><th class='rowh'>{m}</th>{tds}</tr>"
-    return f"""<div class="card"><h2>數字明細(億元)</h2>
+    # 兩套口徑資料交給前端切換:帳面=wide(值/公允,AC 為攤銷成本);成本=wide_cost(取得成本,null→—)
+    wpayload=json.dumps({"metrics":metrics,"periods":PERIODS,"banks":BANKS,
+                         "book":wide,"cost":D.get("wide_cost",{})},ensure_ascii=False)
+    return f"""<div class="card"><div class="ix-kpihead" style="margin-bottom:10px">
+    <h2 style="margin:0">數字明細(億元)</h2>
+    <span class="ix-seg" id="wbasis"><button data-basis="book" class="on">帳面/公允</button><button data-basis="cost">取得成本</button></span></div>
+    <div class="ix-sub" id="wbasis_note" style="margin:0 0 8px">帳面口徑:Trading/OCI 為公允價值、AC 為攤銷後成本(資產負債表帳面金額)。</div>
     <div class="tblwrap"><table class="wide">
-    <thead><tr><th></th>{th_p}</tr><tr>{th_b}</tr></thead><tbody>{rows}</tbody></table></div></div>"""
+    <thead><tr><th></th>{th_p}</tr><tr>{th_b}</tr></thead><tbody id="wbody"></tbody></table></div></div>
+    <script>(function(){{
+      var WD={wpayload};
+      var seg=document.getElementById('wbasis'),body=document.getElementById('wbody'),note=document.getElementById('wbasis_note');
+      var NOTE={{book:'帳面口徑:Trading/OCI 為公允價值、AC 為攤銷後成本(資產負債表帳面金額)。',
+                cost:'取得成本口徑:僅年報 Trading/OCI 有揭露;半年報與 AC(攤銷成本表無取得成本欄)顯示「—」。'}};
+      function render(basis){{
+        var src=WD[basis]||{{}},html='';
+        for(var i=0;i<WD.metrics.length;i++){{var m=WD.metrics[i];var tds='';
+          for(var pi=0;pi<WD.periods.length;pi++)for(var bi=0;bi<WD.banks.length;bi++){{
+            var cell=src[WD.periods[pi]+'|'+WD.banks[bi]]||{{}};var v=cell[m];
+            tds+='<td>'+(v==null?'<span style="color:#c6cbd4">—</span>':v.toLocaleString('en-US'))+'</td>';}}
+          html+='<tr><th class="rowh">'+m+'</th>'+tds+'</tr>';}}
+        body.innerHTML=html;note.textContent=NOTE[basis];}}
+      seg.addEventListener('click',function(e){{var b=e.target.closest('button');if(!b)return;
+        [].forEach.call(seg.children,function(x){{x.classList.remove('on');}});b.classList.add('on');
+        render(b.getAttribute('data-basis'));}});
+      render('book');
+    }})();</script>"""
 
 # ---- 互動儀表板(A跨行比較 / B時間趨勢 / D增減 / C探索 + KPI + 含CP開關)----
 def interactive_html():
@@ -119,7 +137,7 @@ def interactive_html():
 .ix-track{flex:1;display:flex;height:30px;border-radius:6px;overflow:hidden;background:#f2f3f5}
 .ix-s2{height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:inset -1.5px 0 0 #fff}
 .ix-s2 .s2l{font-size:10px;font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
-.ix-tot{width:64px;font-size:12px;color:#5f6672;text-align:right;flex:none;font-variant-numeric:tabular-nums}
+.ix-tot{width:82px;font-size:12px;color:#5f6672;text-align:right;flex:none;font-variant-numeric:tabular-nums}
 .ix-na{flex:1;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#8a919e;background:repeating-linear-gradient(45deg,#f5f6f8,#f5f6f8 5px,rgba(150,156,168,.25) 5px,rgba(150,156,168,.25) 7px)}
 .ix-tip{position:fixed;z-index:99;pointer-events:none;background:#111827;color:#fff;border-radius:10px;padding:10px 12px;font-size:12px;line-height:1.6;box-shadow:0 8px 24px rgba(16,24,40,.2);max-width:230px;opacity:0;transition:opacity .1s}
 .ix-tip b{color:#a5b4fc}
@@ -158,6 +176,14 @@ def interactive_html():
 .ix-bar-sel{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:#5f6672}
 .ix-bar-sel select{height:36px;border:1px solid #e0e3e8;border-radius:9px;padding:0 10px;background:#fff;color:#111827;font-size:13px;font-weight:600;outline:none;cursor:pointer}
 .ix-bar-sel select:hover{border-color:#c6cbd4}
+.ix-panel{background:#fff;border:1px solid #e9ebef;border-radius:14px;padding:16px 20px;margin:0 0 20px;display:flex;flex-direction:column;gap:14px}
+.ix-panel-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.ix-panel-lbl{font-size:12px;color:#8a919e;width:64px;flex:none}
+.ix-chiprow{display:flex;gap:8px;flex-wrap:wrap}
+.incl-chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:6px 10px;border:1px solid #e9ebef;border-radius:20px;cursor:pointer;background:#fff;user-select:none}
+.incl-chip:hover{border-color:#c6cbd4}
+.incl-chip input{margin:0;accent-color:#4f46e5}
+.ix-curr-tag{font-size:12px;color:#5f6672;background:#f5f6f8;border:1px solid #e9ebef;border-radius:8px;padding:6px 10px}
 </style>"""
     _p=_have or PERIODS
     markup=f"""<div class="ix">
@@ -165,22 +191,30 @@ def interactive_html():
 <div class="ix-bar-info"><b>{len(BANKS)}</b> 家銀行 · <b>{len(_p)}</b> 期 · {_p[0]}–{_p[-1]}</div>
 <div class="ix-bar-ctl">
 <span class="ix-bar-sel"><label>期間</label><select id="G_p"></select></span>
-<details class="ix-cfg"><summary><span class="ix-cfg-ic">🏦</span>顯示銀行<span class="ix-cfg-ar">▾</span></summary>
-<div class="ix-cfg-panel" style="min-width:340px">
-<div class="ix-cfg-h">點選要顯示的銀行(全頁連動:比較 / 趨勢 / 速覽)</div>
-<div id="bankchips"></div></div></details>
-<details class="ix-cfg"><summary><span class="ix-cfg-ic">⚙</span>計入項目<span class="ix-cfg-ar">▾</span></summary>
-<div class="ix-cfg-panel">
-<div class="ix-cfg-h">計入「部位」的項目(全頁與 KPI 連動)</div>
-<label><input type="checkbox" class="inclbox" value="GB" checked autocomplete="off"><span class="ix-sw" style="background:#2a78d6"></span>政府公債</label>
-<label><input type="checkbox" class="inclbox" value="公司債" checked autocomplete="off"><span class="ix-sw" style="background:#1baf7a"></span>公司債</label>
-<label><input type="checkbox" class="inclbox" value="金融債" checked autocomplete="off"><span class="ix-sw" style="background:#eda100"></span>金融債</label>
-<label><input type="checkbox" class="inclbox" value="資產基礎" checked autocomplete="off"><span class="ix-sw" style="background:#d4318c"></span>資產基礎證券</label>
-<label><input type="checkbox" class="inclbox" value="其他" checked autocomplete="off"><span class="ix-sw" style="background:#a0a6b0"></span>其他債券</label>
-<label><input type="checkbox" class="inclbox" value="貨幣市場" autocomplete="off"><span class="ix-sw" style="background:#888780"></span>貨幣市場（短天期）<span class="ix-cfg-note">國庫券／可轉讓定存單／商業本票,短天期,非投資型債券</span></label>
-<label><input type="checkbox" class="inclbox" value="股票" autocomplete="off"><span class="ix-sw" style="background:#8b7fd6"></span>股票（權益工具,非債券）<span class="ix-cfg-note">FVTPL＋FVOCI 股票／受益憑證;FVOCI 股票玉山、國泰暫無</span></label>
-</div></details>
+<span class="ix-curr-tag">幣別:新台幣(億元)</span>
 </div></div>
+<div class="ix-panel">
+<div class="ix-panel-row">
+<span class="ix-panel-lbl">顯示銀行</span>
+<div id="bankchips" class="ix-chiprow"></div>
+</div>
+<div class="ix-panel-row">
+<span class="ix-panel-lbl">計入項目</span>
+<span class="ix-seg" id="inclQuick"><button data-q="bond" class="on">只看債券</button><button data-q="bondcp">含貨幣市場</button><button data-q="all">全選</button></span>
+</div>
+<div class="ix-panel-row">
+<span class="ix-panel-lbl"></span>
+<div class="ix-chiprow">
+<label class="incl-chip"><input type="checkbox" class="inclbox" value="GB" checked autocomplete="off"><span class="ix-sw" style="background:#2a78d6"></span>政府公債</label>
+<label class="incl-chip"><input type="checkbox" class="inclbox" value="公司債" checked autocomplete="off"><span class="ix-sw" style="background:#1baf7a"></span>公司債</label>
+<label class="incl-chip"><input type="checkbox" class="inclbox" value="金融債" checked autocomplete="off"><span class="ix-sw" style="background:#eda100"></span>金融債</label>
+<label class="incl-chip"><input type="checkbox" class="inclbox" value="資產基礎" checked autocomplete="off"><span class="ix-sw" style="background:#d4318c"></span>資產基礎證券</label>
+<label class="incl-chip"><input type="checkbox" class="inclbox" value="其他" checked autocomplete="off"><span class="ix-sw" style="background:#a0a6b0"></span>其他債券</label>
+<label class="incl-chip" title="國庫券／可轉讓定存單／商業本票,短天期,非投資型債券"><input type="checkbox" class="inclbox" value="貨幣市場" autocomplete="off"><span class="ix-sw" style="background:#888780"></span>貨幣市場(短天期)</label>
+<label class="incl-chip" title="FVTPL＋FVOCI 股票／受益憑證;FVOCI 股票玉山、國泰暫無"><input type="checkbox" class="inclbox" value="股票" autocomplete="off"><span class="ix-sw" style="background:#8b7fd6"></span>股票(權益工具,非債券)</label>
+</div>
+</div>
+</div>
 <div class="card">
 <div class="ix-kpihead"><h2 style="margin:0">本期速覽 <span class="ix-sub">所選期別,五家一眼(期間見上方工具列)</span></h2></div>
 <div class="ix-kpi" id="ix_kpi"></div>
@@ -189,14 +223,15 @@ def interactive_html():
 
 <div class="card">
 <h2>跨行比較 <span class="ix-sub">同一期,誰的部位大、怎麼配(可切依債種或依會計分類)</span></h2>
+<div class="ix-sub" style="margin:-4px 0 8px">本頁圖表均為<b>帳面口徑</b>:FVTPL/FVOCI 為公允價值、AC 為攤銷後成本(即資產負債表帳面金額)。取得成本見下方「數字明細」表切換鈕。</div>
 <div class="ix-ctl"><label>分段</label><span class="ix-seg"><button id="A_by_b" class="on">依債種</button><button id="A_by_c">依會計分類</button></span><span id="A_catwrap"><label>分類</label><select id="A_c"><option value="合計" selected>三分類合計</option><option value="Trading">FVTPL</option><option value="OCI">FVOCI</option><option value="AC">AC</option></select></span><label>檢視</label><span class="ix-seg"><button id="A_amt" class="on">金額(億)</button><button id="A_pct">結構(%)</button></span></div>
 <div class="ix-legend" id="A_lg"></div><div id="A_bars"></div><div id="ix_drill"></div>
 <div style="font-size:12px;color:#8a919e;margin-top:6px">點銀行名展開該行明細;依債種檢視時,點圖例可聚焦單一債種。</div>
 </div>
 
 <div class="card">
-<h2>時間趨勢 <span class="ix-sub">2020 以來,各家部位怎麼變</span></h2>
-<div class="ix-ctl"><label>分類</label><select id="B_c"><option value="合計" selected>三分類合計</option><option value="Trading">FVTPL</option><option value="OCI">FVOCI</option><option value="AC">AC</option></select><label>債種</label><select id="B_b"><option value="合計">全部債種</option><option value="GB">政府公債</option><option value="公司債">公司債</option><option value="金融債">金融債</option><option value="資產基礎">資產基礎證券</option><option value="貨幣市場">貨幣市場(短)</option><option value="股票">股票</option></select></div>
+<h2>時間趨勢 <span class="ix-sub">2020 以來,各家部位怎麼變(起訖區間同時套用到下方「AC 隱藏損失趨勢」圖)</span></h2>
+<div class="ix-ctl"><label>分類</label><select id="B_c"><option value="合計" selected>三分類合計</option><option value="Trading">FVTPL</option><option value="OCI">FVOCI</option><option value="AC">AC</option></select><label>債種</label><select id="B_b"><option value="合計">全部債種</option><option value="GB">政府公債</option><option value="公司債">公司債</option><option value="金融債">金融債</option><option value="資產基礎">資產基礎證券</option><option value="貨幣市場">貨幣市場(短)</option><option value="股票">股票</option></select><label>起</label><select id="B_from"></select><label>訖</label><select id="B_to"></select></div>
 <div class="ix-legend" id="B_lg"></div><div style="position:relative;width:100%;height:320px"><canvas id="B_cv" role="img" aria-label="五家銀行債券部位時間趨勢"></canvas></div>
 </div>
 
@@ -209,8 +244,8 @@ const BANKS=RAW.banks,PERIODS=RAW.periods,W=RAW.wide;
 const ALLBONDS=[["GB","政府公債","#2a78d6"],["公司債","公司債","#1baf7a"],["金融債","金融債","#eda100"],["資產基礎","資產基礎證券","#d4318c"],["其他","其他債券","#a0a6b0"],["貨幣市場","貨幣市場","#888780"],["股票","股票","#8b7fd6"]];
 const CATS=["Trading","OCI","AC"],SC=["#2a78d6","#1baf7a","#eda100","#4a3aa7","#d4318c"];
 const PAL=SC.concat(["#e34948","#eb6834","#008300","#1d9e75","#534ab7"]);
-// 全站統一:一家一色(中信藍/兆豐綠/國泰金/富邦紫/玉山洋紅),與估值視角 VC 一致
-const BANKHUE={"中信":"#2a78d6","兆豐":"#1baf7a","國泰":"#eda100","富邦":"#4a3aa7","玉山":"#d4318c"};
+// 全站統一:企業品牌色(中信綠/兆豐金/國泰墨綠/富邦藍/玉山青),與估值視角 VC 一致
+const BANKHUE={"中信":"#046A38","兆豐":"#C9A227","國泰":"#00584A","富邦":"#0072BC","玉山":"#007A7A"};
 const BC={};BANKS.forEach((b,i)=>BC[b]=BANKHUE[b]||PAL[i%PAL.length]);
 let banksSel=new Set(BANKS);
 function AB(){return BANKS.filter(b=>banksSel.has(b));}
@@ -228,7 +263,15 @@ function prevP(p,step){const i=PERIODS.indexOf(p);return i-step>=0?PERIODS[i-ste
 function fillSel(id,def){const s=document.getElementById(id);PERIODS.forEach(v=>{const o=document.createElement("option");o.value=v;o.textContent=v;if(v===def)o.selected=true;s.appendChild(o);});}
 function latestP(){for(let i=PERIODS.length-1;i>=0;i--){if(BANKS.some(b=>has(PERIODS[i],b)))return PERIODS[i];}return PERIODS[0];}
 fillSel("G_p",latestP());
+fillSel("B_from",PERIODS[0]);fillSel("B_to",PERIODS[PERIODS.length-1]);
 function gp(){return document.getElementById("G_p").value;}
+function trendIdx(){
+  const f=document.getElementById("B_from"),t=document.getElementById("B_to");
+  let i=PERIODS.indexOf(f.value),j=PERIODS.indexOf(t.value);
+  if(i>j){const tmp=i;i=j;j=tmp;}
+  return [i,j];
+}
+window.ixTrendRange=function(){const [i,j]=trendIdx();return [PERIODS[i],PERIODS[j]];};
 function lgHTML(items){return items.map(i=>'<span><span class="ix-sw" style="background:'+i[2]+'"></span>'+i[1]+'</span>').join("");}
 
 let focusBond=null,drillBank=null;
@@ -304,6 +347,21 @@ function drawConcl(p){
 function syncIncl(){incl=new Set([...document.querySelectorAll(".inclbox:checked")].map(x=>x.value));}
 document.querySelectorAll(".inclbox").forEach(cb=>cb.onchange=()=>{syncIncl();drawKPI();drawA();drawB();});
 syncIncl();
+const INCL_QUICK={
+  bond:["GB","公司債","金融債","資產基礎","其他"],
+  bondcp:["GB","公司債","金融債","資產基礎","其他","貨幣市場"],
+  all:["GB","公司債","金融債","資產基礎","其他","貨幣市場","股票"],
+};
+function setIncl(list){
+  document.querySelectorAll(".inclbox").forEach(cb=>{cb.checked=list.includes(cb.value);});
+  syncIncl();drawKPI();drawA();drawB();
+}
+const inclQuickEl=document.getElementById("inclQuick");
+if(inclQuickEl)inclQuickEl.addEventListener("click",e=>{
+  const b=e.target.closest("button");if(!b)return;
+  [...inclQuickEl.children].forEach(x=>x.classList.remove("on"));b.classList.add("on");
+  setIncl(INCL_QUICK[b.dataset.q]||[]);
+});
 
 let A_mode="amt",A_by="bond";
 const CLS=[["Trading","FVTPL","#eb6834"],["OCI","FVOCI","#2a78d6"],["AC","AC","#4a3aa7"]];
@@ -335,7 +393,7 @@ function drawA(){
       const lab=A_mode==="pct"?pct+"%":fmt(Math.round(v));
       const sl=wp2>=8?'<span class="s2l" style="color:'+txtOn(seg[2])+'">'+lab+'</span>':'';
       return '<div class="ix-s2'+dim+'" style="width:'+wp2+'%;background:'+seg[2]+'" data-tip="'+tip.replace(/"/g,"&quot;")+'">'+sl+'</div>';}).join("");
-    const lab=A_mode==="pct"?(r.tot?"100%":"0"):fmt(r.tot);
+    const lab=A_mode==="pct"?(r.tot?"100%":"0"):(fmt(r.tot)+" 億");
     return '<div class="ix-row"><div class="ix-name click" data-bank="'+r.bk+'">'+r.bk+'</div><div class="ix-track" style="width:'+Math.max(wp,0.5)+'%">'+inner+'</div><div class="ix-tot">'+lab+'</div></div>';
   }).join("");
   document.querySelectorAll("#A_bars .ix-name.click").forEach(n=>n.onclick=()=>renderDrill(drillBank===n.dataset.bank?null:n.dataset.bank));
@@ -350,19 +408,28 @@ A_by_c.onclick=()=>{A_by="cls";A_by_c.classList.add("on");A_by_b.classList.remov
 
 
 let chartB=null;
+const trendHidden=new Set();   // 點圖例可單獨隱藏某銀行的線(只影響本圖,不影響其他圖表/全域顯示銀行)
 function drawB(){
+  const [i0,i1]=trendIdx();
+  const P2=PERIODS.slice(i0,i1+1);
   const cat=B_c.value,bond=B_b.value,dash=[[],[6,4],[2,3],[8,3,2,3],[]];
   const withCP=incl.has("貨幣市場")&&(bond==="合計");
   const vOf=(p,bk)=>bond==="合計"?total(p,bk,cat):val(p,bk,cat,bond);
-  const ds=AB().map((bk)=>{const i=BANKS.indexOf(bk);return {label:bk,data:PERIODS.map(p=>has(p,bk)?vOf(p,bk):null),borderColor:BC[bk],backgroundColor:BC[bk],borderDash:dash[i%dash.length],spanGaps:false,borderWidth:2,tension:0.25,pointRadius:2,pointHoverRadius:5};});
-  document.getElementById("B_lg").innerHTML=AB().map((bk)=>'<span><span class="ix-sw" style="background:'+BC[bk]+'"></span>'+bk+'</span>').join("")+(withCP?' <span style="color:#999">(已含貨幣市場)</span>':'');
+  const ds=AB().map((bk)=>{const i=BANKS.indexOf(bk);return {label:bk,data:P2.map(p=>has(p,bk)?vOf(p,bk):null),borderColor:BC[bk],backgroundColor:BC[bk],borderDash:dash[i%dash.length],spanGaps:false,borderWidth:2,tension:0.25,pointRadius:2,pointHoverRadius:5,hidden:trendHidden.has(bk)};});
+  document.getElementById("B_lg").innerHTML=AB().map((bk)=>'<span class="lg-item'+(trendHidden.has(bk)?' dim':'')+'" data-bank="'+bk+'"><span class="ix-sw" style="background:'+BC[bk]+'"></span>'+bk+'</span>').join("")+(withCP?' <span style="color:#999">(已含貨幣市場)</span>':'');
+  document.querySelectorAll("#B_lg .lg-item").forEach(li=>li.onclick=()=>{
+    const bk=li.dataset.bank;
+    if(trendHidden.has(bk))trendHidden.delete(bk);else trendHidden.add(bk);
+    drawB();
+  });
   if(chartB)chartB.destroy();
-  chartB=new Chart(document.getElementById("B_cv"),{type:"line",data:{labels:PERIODS,datasets:ds},
+  chartB=new Chart(document.getElementById("B_cv"),{type:"line",data:{labels:P2,datasets:ds},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},
       plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+": "+fmt(c.parsed.y)+" 億"}}},
       scales:{y:{title:{display:true,text:"億元"}},x:{grid:{display:false},ticks:{maxRotation:45,autoSkip:false}}}}});
 }
 ["B_c","B_b"].forEach(id=>document.getElementById(id).onchange=drawB);
+["B_from","B_to"].forEach(id=>document.getElementById(id).addEventListener("change",()=>{drawB();document.dispatchEvent(new CustomEvent("ix-trendrange"));}));
 
 const bcEl=document.getElementById("bankchips");
 if(bcEl){bcEl.innerHTML=BANKS.map(b=>{
@@ -432,7 +499,7 @@ def valuation_html():
 const B=PH0.banks,DD=PH0.data;
 // 只取「至少一家有資料」的期間,去掉尾端 2026 等空期(避免趨勢圖拖空標籤)
 const P=PH0.periods.filter(p=>B.some(bk=>DD[p+"|"+bk]));
-const VC={"中信":"#2a78d6","兆豐":"#1baf7a","國泰":"#eda100","富邦":"#4a3aa7","玉山":"#d4318c"};
+const VC={"中信":"#046A38","兆豐":"#C9A227","國泰":"#00584A","富邦":"#0072BC","玉山":"#007A7A"};
 const g=(p,bk)=>DD[p+"|"+bk]||null;
 const fmt=n=>Math.round(n).toLocaleString();
 const sgn=n=>(n>=0?"+":"−")+fmt(Math.abs(n));
@@ -504,22 +571,32 @@ function drawVKPI(p){
 sel.addEventListener("change",drawV);
 document.getElementById("v_amt").onclick=()=>{vMode="amt";v_amt.classList.add("on");v_pct.classList.remove("on");drawV();};
 document.getElementById("v_pct").onclick=()=>{vMode="pct";v_pct.classList.add("on");v_amt.classList.remove("on");drawV();};
-// 趨勢圖
-const dash=[[],[6,4],[2,3],[8,3,2,3],[]];
-const ds=B.map((bk,i)=>({label:bk,data:P.map(p=>{const d=g(p,bk);return d&&d.ac_hidden_pct!=null?+(d.ac_hidden_pct*100).toFixed(2):null;}),
-  borderColor:VC[bk],backgroundColor:VC[bk],borderDash:dash[i%dash.length],spanGaps:false,borderWidth:2,tension:.25,pointRadius:2,pointHoverRadius:5,yAxisID:"y"}));
-// 疊美國10年公債殖利率(右軸,參考驅動線):升息→隱藏損失擴大,兩線反向
-ds.push({label:"美國10Y殖利率",data:P.map(p=>RATE[p]!=null?RATE[p]:null),borderColor:"#111827",
-  backgroundColor:"#111827",borderDash:[3,3],borderWidth:2.5,tension:.25,pointRadius:0,spanGaps:true,yAxisID:"y1"});
-document.getElementById("vt_lg").innerHTML=B.map(bk=>'<span><span class="ix-sw" style="background:'+VC[bk]+'"></span>'+bk+'</span>').join("")
-  +'<span style="margin-left:6px"><span class="ix-sw" style="background:#111827"></span>美國10Y殖利率(右軸,參考)</span>';
-new Chart(document.getElementById("vt_cv"),{type:"line",data:{labels:P,datasets:ds},
-  options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},
-    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y==null?null:c.dataset.label+": "+c.parsed.y+"%"}}},
-    scales:{y:{position:"left",title:{display:true,text:"AC隱藏損失 占AC %"},ticks:{callback:v=>v+"%"}},
-      y1:{position:"right",title:{display:true,text:"美10Y殖利率 %"},grid:{display:false},ticks:{callback:v=>v+"%"}},
-      x:{grid:{display:false},ticks:{maxRotation:45,autoSkip:false}}}}});
+// 趨勢圖(起訖區間吃上方「時間趨勢」卡片的 B_from/B_to,跨卡片共用同一組全域區間)
+let trendChart=null;
+function drawTrend(){
+  const dash=[[],[6,4],[2,3],[8,3,2,3],[]];
+  const range=window.ixTrendRange?window.ixTrendRange():null;
+  const Pr=range?P.filter(p=>p>=range[0]&&p<=range[1]):P;
+  const ds=B.map((bk,i)=>({label:bk,data:Pr.map(p=>{const d=g(p,bk);return d&&d.ac_hidden_pct!=null?+(d.ac_hidden_pct*100).toFixed(2):null;}),
+    borderColor:VC[bk],backgroundColor:VC[bk],borderDash:dash[i%dash.length],spanGaps:false,borderWidth:2,tension:.25,pointRadius:2,pointHoverRadius:5,yAxisID:"y"}));
+  // 疊美國10年公債殖利率(右軸,參考驅動線):升息→隱藏損失擴大,兩線反向
+  ds.push({label:"美國10Y殖利率",data:Pr.map(p=>RATE[p]!=null?RATE[p]:null),borderColor:"#111827",
+    backgroundColor:"#111827",borderDash:[3,3],borderWidth:2.5,tension:.25,pointRadius:0,spanGaps:true,yAxisID:"y1"});
+  document.getElementById("vt_lg").innerHTML=B.map(bk=>'<span><span class="ix-sw" style="background:'+VC[bk]+'"></span>'+bk+'</span>').join("")
+    +'<span style="margin-left:6px"><span class="ix-sw" style="background:#111827"></span>美國10Y殖利率(右軸,參考)</span>';
+  if(trendChart)trendChart.destroy();
+  trendChart=new Chart(document.getElementById("vt_cv"),{type:"line",data:{labels:Pr,datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y==null?null:c.dataset.label+": "+c.parsed.y+"%"}}},
+      scales:{y:{position:"left",title:{display:true,text:"AC隱藏損失 占AC %"},ticks:{callback:v=>v+"%"}},
+        y1:{position:"right",title:{display:true,text:"美10Y殖利率 %"},grid:{display:false},ticks:{callback:v=>v+"%"}},
+        x:{grid:{display:false},ticks:{maxRotation:45,autoSkip:false}}}}});
+}
+// 只在已初始化過(頁2已顯示過一次)才跟著區間變動即時重繪;頁2隱藏時不搶先建立 0 寬 canvas
+document.addEventListener("ix-trendrange",()=>{if(trendChart)drawTrend();});
 drawV();
+window.__lazyInits=window.__lazyInits||[];
+window.__lazyInits.push(drawTrend);   // 頁2(估值與獲利)首次顯示時才建立此圖,避免 hidden 容器內 Chart.js 量到 0 寬
 })();
 """
     return (css + markup
@@ -563,7 +640,7 @@ def profit_html():
     js=r"""
 (function(){
 if(typeof PNL==="undefined"||!PNL)return;
-const VC={"中信":"#2a78d6","兆豐":"#1baf7a","國泰":"#eda100","富邦":"#4a3aa7","玉山":"#d4318c"};
+const VC={"中信":"#046A38","兆豐":"#C9A227","國泰":"#00584A","富邦":"#0072BC","玉山":"#007A7A"};
 const R=PNL.rows.slice().sort((a,b)=>(b.粗估NIM||0)-(a.粗估NIM||0));
 const mxY=Math.max(...R.map(r=>r.資產收益率||0));
 document.getElementById("p_bars").innerHTML=R.map(r=>{
@@ -634,6 +711,7 @@ details.card>.inner{{padding:0 24px 22px}}
 .foot>summary::before{{content:"▸ ";color:var(--mut)}}
 .foot[open]>summary::before{{content:"▾ "}}
 .foot-in{{font-size:12px;color:var(--mut);line-height:1.9;padding:8px 2px 0}}
+#pagetabs{{flex:none}}
 .tblwrap{{overflow-x:auto;border:1px solid var(--line);border-radius:10px}}
 table.wide{{border-collapse:collapse;font-size:12px;white-space:nowrap;width:100%}}
 table.wide th,table.wide td{{border-bottom:1px solid var(--line);padding:6px 10px;text-align:right}}
@@ -642,19 +720,40 @@ table.wide th.rowh{{background:#f8f9fb;text-align:left;position:sticky;left:0;z-
 table.wide tbody tr:hover td{{background:#fafbfc}}
 @media print{{header{{position:static}}.card{{box-shadow:none;break-inside:avoid}}details.card{{display:none}}}}
 </style></head><body>
-<header><h1>銀行債券投資債種分析</h1><span class="upd">更新 {now}</span></header>
+<header><h1>銀行債券投資債種分析</h1>
+<span class="ix-seg" id="pagetabs"><button id="tab1" class="on">總覽</button><button id="tab2">估值與獲利</button></span>
+<span class="upd">更新 {now}</span></header>
 <div class="wrap">
+<div id="page1">
 {interactive_html()}
+</div>
+<div id="page2" hidden>
 {valuation_html()}
 {profit_html()}
+{wide_table_html()}
+</div>
 <details class="foot"><summary>資料說明與口徑</summary>
 <div class="foot-in">
-· 單位:億元。資料期間 {(_have or PERIODS)[0]}–{(_have or PERIODS)[-1]},每半年一期(H1=6/30、H2=12/31 期末餘額)。<br>
+· 單位:新台幣億元。資料期間 {(_have or PERIODS)[0]}–{(_have or PERIODS)[-1]},每半年一期(H1=6/30、H2=12/31 期末餘額)。<br>
 · 會計分類(IFRS 9):<b>FVTPL</b> 透過損益按公允價值衡量(即交易目的,附註六(三))、<b>FVOCI</b> 透過其他綜合損益(六(四))、<b>AC</b> 按攤銷後成本(六(五))。<br>
 · <b>兆豐</b>債種明細來自其財報「證券部門變動明細表」;其證券部門無 FVTPL 部位,故 FVTPL 為 0。<br>
 · 2020H1 國泰/玉山之個體財報為掃描影像檔,無法解析,標為「無資料」。<br>
 · 數據經三層 checksum 驗算;本頁由 GitHub Actions 自動更新。
 </div></details>
-</div></body></html>"""
+</div>
+<script>(function(){{
+  var p1=document.getElementById('page1'),p2=document.getElementById('page2');
+  var t1=document.getElementById('tab1'),t2=document.getElementById('tab2');
+  var inited=false;
+  function show(which){{
+    if(which==='p2'){{p1.hidden=true;p2.hidden=false;t2.classList.add('on');t1.classList.remove('on');history.replaceState(null,'','#p2');
+      if(!inited){{inited=true;(window.__lazyInits||[]).forEach(function(fn){{fn();}});}}
+    }}else{{p1.hidden=false;p2.hidden=true;t1.classList.add('on');t2.classList.remove('on');history.replaceState(null,'',location.pathname+location.search);}}
+    window.scrollTo(0,0);
+  }}
+  t1.onclick=function(){{show('p1');}};t2.onclick=function(){{show('p2');}};
+  show(location.hash==='#p2'?'p2':'p1');
+}})();</script>
+</body></html>"""
 (SITE/"index.html").write_text(html, encoding="utf-8")
 print("已產生 site/ (index.html + 圖1/圖2.png + xlsx)")
