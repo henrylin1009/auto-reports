@@ -1,7 +1,7 @@
 """產生給 GitHub Pages 的網頁:site/index.html(兩張儀表板圖 + Excel 下載)。
 讀 data.json;圖用 matplotlib(伺服器/CI 需裝 CJK 字型,如 fonts-noto-cjk)。
 """
-import json, shutil, datetime
+import json, re, shutil, datetime
 from pathlib import Path
 import matplotlib; matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -9,13 +9,15 @@ from matplotlib import font_manager as fm
 
 SITE=Path("site"); SITE.mkdir(exist_ok=True)
 D=json.load(open("data.json")); PERIODS=D["periods"]; BANKS=D["banks"]; DATA=D["data"]
+# 合併報表(AI1):獨立分頁用,不進主要 wide/banks(口徑範圍比個體大,混比會失真)
+BANKS_CONSOL=D.get("banks_consol",[]); WIDE_CONSOL=D.get("wide_consol",{}); HAS_CONSOL=bool(BANKS_CONSOL)
 try: P0=json.load(open("phase0.json"))
 except FileNotFoundError: P0={"periods":PERIODS,"banks":BANKS,"data":{}}
 try: PNL=json.load(open("pnl.json"))
 except FileNotFoundError: PNL=None
 # 企業品牌色(2026-07 改版):中信綠(CTBC logo 綠)、兆豐金(兆豐金控 CI 金色)、
 # 國泰墨綠(國泰「大樹綠」)、富邦藍(Fubon CI 藍)、玉山青(官網 CSS 實測青綠)
-COLOR={"中信":"#046A38","兆豐":"#C9A227","國泰":"#00584A","富邦":"#0072BC","玉山":"#007A7A"}
+COLOR={"中信":"#046A38","中信(合併)":"#046A38","兆豐":"#C9A227","國泰":"#00584A","富邦":"#0072BC","玉山":"#007A7A"}
 # 圖表期間:最近 6 個「有資料」的期(自動,不寫死年份)
 _have=[p for p in PERIODS if any((DATA.get(f"{p}|{b}")) for b in BANKS)]
 SHOW=(_have or PERIODS)[-6:]
@@ -96,8 +98,13 @@ def wide_table_html():
     }})();</script>"""
 
 # ---- 互動儀表板(A跨行比較 / B時間趨勢 / D增減 / C探索 + KPI + 含CP開關)----
-def interactive_html():
-    payload=json.dumps({"periods":_have or PERIODS,"banks":BANKS,"wide":D.get("wide",{})}, ensure_ascii=False)
+def interactive_html(prefix="", banks=None, wide=None, periods=None, expose_trend_range=True, include_chartjs=True, autorun=True):
+    """跨行比較+時間趨勢+KPI 儀表板。prefix 非空時可重複呼叫產生第二份(如「合併報表」分頁),
+    所有元素 id 會自動加前綴避免跟預設頁衝突,整段 JS 包成 IIFE 避免變數(BANKS/PERIODS/...)重複宣告。"""
+    banks = list(banks) if banks is not None else BANKS
+    wide_data = wide if wide is not None else D.get("wide", {})
+    _p = periods if periods is not None else (_have or PERIODS)
+    payload=json.dumps({"periods":_p,"banks":banks,"wide":wide_data}, ensure_ascii=False)
     css="""<style>
 .ix{font-family:inherit}
 .ix-sub{font-weight:400;color:#8a919e;font-size:12px;margin-left:8px}
@@ -185,10 +192,9 @@ def interactive_html():
 .incl-chip input{margin:0;accent-color:#4f46e5}
 .ix-curr-tag{font-size:12px;color:#5f6672;background:#f5f6f8;border:1px solid #e9ebef;border-radius:8px;padding:6px 10px}
 </style>"""
-    _p=_have or PERIODS
     markup=f"""<div class="ix">
 <div class="ix-bar">
-<div class="ix-bar-info"><b>{len(BANKS)}</b> 家銀行 · <b>{len(_p)}</b> 期 · {_p[0]}–{_p[-1]}</div>
+<div class="ix-bar-info"><b>{len(banks)}</b> 家銀行 · <b>{len(_p)}</b> 期 · {_p[0]}–{_p[-1]}</div>
 <div class="ix-bar-ctl">
 <span class="ix-bar-sel"><label>期間</label><select id="G_p"></select></span>
 <span class="ix-curr-tag">幣別:新台幣(億元)</span>
@@ -216,7 +222,7 @@ def interactive_html():
 </div>
 </div>
 <div class="card">
-<div class="ix-kpihead"><h2 style="margin:0">本期速覽 <span class="ix-sub">所選期別,五家一眼(期間見上方工具列)</span></h2></div>
+<div class="ix-kpihead"><h2 style="margin:0">本期速覽 <span class="ix-sub">所選期別,一眼看每家(期間見上方工具列)</span></h2></div>
 <div class="ix-kpi" id="ix_kpi"></div>
 <div class="ix-concl" id="ix_concl"></div>
 </div>
@@ -232,7 +238,7 @@ def interactive_html():
 <div class="card">
 <h2>時間趨勢 <span class="ix-sub">2020 以來,各家部位怎麼變(起訖區間同時套用到下方「AC 隱藏損失趨勢」圖)</span></h2>
 <div class="ix-ctl"><label>分類</label><select id="B_c"><option value="合計" selected>三分類合計</option><option value="Trading">FVTPL</option><option value="OCI">FVOCI</option><option value="AC">AC</option></select><label>債種</label><select id="B_b"><option value="合計">全部債種</option><option value="GB">政府公債</option><option value="公司債">公司債</option><option value="金融債">金融債</option><option value="資產基礎">資產基礎證券</option><option value="貨幣市場">貨幣市場(短)</option><option value="股票">股票</option></select><label>起</label><select id="B_from"></select><label>訖</label><select id="B_to"></select></div>
-<div class="ix-legend" id="B_lg"></div><div style="position:relative;width:100%;height:320px"><canvas id="B_cv" role="img" aria-label="五家銀行債券部位時間趨勢"></canvas></div>
+<div class="ix-legend" id="B_lg"></div><div style="position:relative;width:100%;height:320px"><canvas id="B_cv" role="img" aria-label="銀行債券部位時間趨勢"></canvas></div>
 </div>
 
 <div class="ix-legend" style="margin-top:2px">
@@ -245,7 +251,7 @@ const ALLBONDS=[["GB","政府公債","#2a78d6"],["公司債","公司債","#1baf7
 const CATS=["Trading","OCI","AC"],SC=["#2a78d6","#1baf7a","#eda100","#4a3aa7","#d4318c"];
 const PAL=SC.concat(["#e34948","#eb6834","#008300","#1d9e75","#534ab7"]);
 // 全站統一:企業品牌色(中信綠/兆豐金/國泰墨綠/富邦藍/玉山青),與估值視角 VC 一致
-const BANKHUE={"中信":"#046A38","兆豐":"#C9A227","國泰":"#00584A","富邦":"#0072BC","玉山":"#007A7A"};
+const BANKHUE={"中信":"#046A38","中信(合併)":"#046A38","兆豐":"#C9A227","國泰":"#00584A","富邦":"#0072BC","玉山":"#007A7A"};
 const BC={};BANKS.forEach((b,i)=>BC[b]=BANKHUE[b]||PAL[i%PAL.length]);
 let banksSel=new Set(BANKS);
 function AB(){return BANKS.filter(b=>banksSel.has(b));}
@@ -446,11 +452,30 @@ if(bcEl){bcEl.innerHTML=BANKS.map(b=>{
     if(drillBank&&!banksSel.has(drillBank)){drillBank=null;document.getElementById("ix_drill").innerHTML="";}
     drawKPI();drawA();drawB();});
 }
-drawKPI();drawA();drawB();
+%%AUTORUN%%
 """
-    return (css + markup
-            + '<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>'
-            + '<script>const RAW=' + payload + ';\n' + js + '</script>')
+    js = js.replace("%%AUTORUN%%", "drawKPI();drawA();drawB();" if autorun else
+                     "window.__lazyInitsP3=window.__lazyInitsP3||[];"
+                     "window.__lazyInitsP3.push(function(){drawKPI();drawA();drawB();});")
+    if not expose_trend_range:
+        # 合併報表分頁自己的期間不投影到「估值視角」的全域起訖(那頁只看個體資料)
+        js = js.replace(
+            'window.ixTrendRange=function(){const [i,j]=trendIdx();return [PERIODS[i],PERIODS[j]];};', '')
+    if prefix:
+        # 同一元件在頁面上出現第二次(如「合併報表」分頁):id 全部加前綴,避免跟預設頁撞名
+        for _id in sorted(_IX_IDS, key=len, reverse=True):
+            markup = re.sub(r'\b' + _id + r'\b', prefix + _id, markup)
+            js = re.sub(r'\b' + _id + r'\b', prefix + _id, js)
+    script = '<script>(function(){\nconst RAW=' + payload + ';\n' + js + '\n})();</script>'
+    if include_chartjs:
+        script = '<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>' + script
+    return css + markup + script
+
+
+# interactive_html() 內用到的元素 id,重複呼叫(第二個分頁)時要加前綴避免跟第一份撞名
+_IX_IDS = ["A_catwrap", "A_by_b", "A_by_c", "A_amt", "A_pct", "A_c", "A_lg", "A_bars",
+           "ix_drill", "ix_kpi", "ix_concl", "bankchips", "inclQuick",
+           "B_from", "B_to", "B_c", "B_b", "B_lg", "B_cv", "G_p"]
 
 # 美國10年期公債殖利率(期末,%)— render-only 內建參考值;2020–2024為市場實績,2025為估計待校正
 US10Y={"2020H1":0.66,"2020H2":0.93,"2021H1":1.45,"2021H2":1.52,
@@ -595,8 +620,8 @@ function drawTrend(){
 // 只在已初始化過(頁2已顯示過一次)才跟著區間變動即時重繪;頁2隱藏時不搶先建立 0 寬 canvas
 document.addEventListener("ix-trendrange",()=>{if(trendChart)drawTrend();});
 drawV();
-window.__lazyInits=window.__lazyInits||[];
-window.__lazyInits.push(drawTrend);   // 頁2(估值與獲利)首次顯示時才建立此圖,避免 hidden 容器內 Chart.js 量到 0 寬
+window.__lazyInitsP2=window.__lazyInitsP2||[];
+window.__lazyInitsP2.push(drawTrend);   // 頁2(估值與獲利)首次顯示時才建立此圖,避免 hidden 容器內 Chart.js 量到 0 寬
 })();
 """
     return (css + markup
@@ -721,7 +746,7 @@ table.wide tbody tr:hover td{{background:#fafbfc}}
 @media print{{header{{position:static}}.card{{box-shadow:none;break-inside:avoid}}details.card{{display:none}}}}
 </style></head><body>
 <header><h1>銀行債券投資債種分析</h1>
-<span class="ix-seg" id="pagetabs"><button id="tab1" class="on">總覽</button><button id="tab2">估值與獲利</button></span>
+<span class="ix-seg" id="pagetabs"><button id="tab1" class="on">總覽</button><button id="tab2">估值與獲利</button>{'<button id="tab3">合併報表</button>' if HAS_CONSOL else ''}</span>
 <span class="upd">更新 {now}</span></header>
 <div class="wrap">
 <div id="page1">
@@ -732,27 +757,34 @@ table.wide tbody tr:hover td{{background:#fafbfc}}
 {profit_html()}
 {wide_table_html()}
 </div>
+{'<div id="page3" hidden><div class="ix-sub" style="margin:0 0 14px">合併報表(含子公司)口徑範圍比個體大,故獨立成一頁,不與上方個體跨行比較混用。目前僅' + '、'.join(BANKS_CONSOL) + '有完整合併債券明細。</div>' + interactive_html(prefix="c_", banks=BANKS_CONSOL, wide=WIDE_CONSOL, periods=PERIODS, expose_trend_range=False, include_chartjs=False, autorun=False) + '</div>' if HAS_CONSOL else ''}
 <details class="foot"><summary>資料說明與口徑</summary>
 <div class="foot-in">
 · 單位:新台幣億元。資料期間 {(_have or PERIODS)[0]}–{(_have or PERIODS)[-1]},每半年一期(H1=6/30、H2=12/31 期末餘額)。<br>
 · 會計分類(IFRS 9):<b>FVTPL</b> 透過損益按公允價值衡量(即交易目的,附註六(三))、<b>FVOCI</b> 透過其他綜合損益(六(四))、<b>AC</b> 按攤銷後成本(六(五))。<br>
 · <b>兆豐</b>債種明細來自其財報「證券部門變動明細表」;其證券部門無 FVTPL 部位,故 FVTPL 為 0。<br>
 · 2020H1 國泰/玉山之個體財報為掃描影像檔,無法解析,標為「無資料」。<br>
+· 個體(AI3)與合併(AI1)分開頁面顯示,不互相混算。<br>
 · 數據經三層 checksum 驗算;本頁由 GitHub Actions 自動更新。
 </div></details>
 </div>
 <script>(function(){{
-  var p1=document.getElementById('page1'),p2=document.getElementById('page2');
-  var t1=document.getElementById('tab1'),t2=document.getElementById('tab2');
-  var inited=false;
+  var p1=document.getElementById('page1'),p2=document.getElementById('page2'),p3=document.getElementById('page3');
+  var t1=document.getElementById('tab1'),t2=document.getElementById('tab2'),t3=document.getElementById('tab3');
+  var initedP2=false,initedP3=false;
   function show(which){{
-    if(which==='p2'){{p1.hidden=true;p2.hidden=false;t2.classList.add('on');t1.classList.remove('on');history.replaceState(null,'','#p2');
-      if(!inited){{inited=true;(window.__lazyInits||[]).forEach(function(fn){{fn();}});}}
-    }}else{{p1.hidden=false;p2.hidden=true;t1.classList.add('on');t2.classList.remove('on');history.replaceState(null,'',location.pathname+location.search);}}
+    p1.hidden=(which!=='p1');p2.hidden=(which!=='p2');if(p3)p3.hidden=(which!=='p3');
+    t1.classList.toggle('on',which==='p1');t2.classList.toggle('on',which==='p2');
+    if(t3)t3.classList.toggle('on',which==='p3');
+    history.replaceState(null,'',which==='p1'?(location.pathname+location.search):('#'+which));
+    if(which==='p2'&&!initedP2){{initedP2=true;(window.__lazyInitsP2||[]).forEach(function(fn){{fn();}});}}
+    if(which==='p3'&&!initedP3){{initedP3=true;(window.__lazyInitsP3||[]).forEach(function(fn){{fn();}});}}
     window.scrollTo(0,0);
   }}
   t1.onclick=function(){{show('p1');}};t2.onclick=function(){{show('p2');}};
-  show(location.hash==='#p2'?'p2':'p1');
+  if(t3)t3.onclick=function(){{show('p3');}};
+  var start=(location.hash==='#p3'&&p3)?'p3':(location.hash==='#p2'?'p2':'p1');
+  show(start);
 }})();</script>
 </body></html>"""
 (SITE/"index.html").write_text(html, encoding="utf-8")
