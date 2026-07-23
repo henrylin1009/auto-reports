@@ -43,8 +43,18 @@ def to_yi(thousand):
 
 
 def doc_period(key):
+    # 個體(AI3):只有半年報(02)與年報(04)→ H1 / H2
     yr, per = key[:4], key[4:6]
     return f"{yr}H1" if per == "02" else f"{yr}H2"
+
+
+# 合併(AI1):中信有季報,期別碼 01/02/03/04 → Q1/Q2/Q3/Q4(季度時間軸,獨立於個體的半年軸)
+_Q = {"01": "Q1", "02": "Q2", "03": "Q3", "04": "Q4"}
+
+
+def doc_period_consol(key):
+    yr, per = key[:4], key[4:6]
+    return f"{yr}{_Q[per]}"
 
 
 def main():
@@ -64,10 +74,15 @@ def main():
         del wide_cost[cell]
     d["banks"] = [b for b in d.get("banks", []) if "(合併)" not in b]
 
-    def process(key, bank, wide_dst, cost_dst):
+    # 合併走季度軸,每次 bridge 全量重建(來源檔已含中信全部季別),避免殘留舊的 H1/H2 鍵
+    wide_c.clear()
+    wide_cost_c.clear()
+    d["banks_consol"] = []
+
+    def process(key, bank, wide_dst, cost_dst, period_fn=doc_period):
         """處理單一文件,回傳 (cell, cell_touched)。skipped_cls 用外層 list 累積。"""
         cls_data = src[key]["cls"]
-        cell = f"{doc_period(key)}|{bank}"
+        cell = f"{period_fn(key)}|{bank}"
         book = dict(wide_dst.get(cell) or {})
         cost = dict(cost_dst.get(cell) or {})
         cell_touched = False
@@ -110,7 +125,7 @@ def main():
             if ok:
                 touched.append(cell)
         elif kind == "AI1":
-            cell, ok = process(key, bank, wide_c, wide_cost_c)
+            cell, ok = process(key, bank, wide_c, wide_cost_c, period_fn=doc_period_consol)
             if ok:
                 touched_c.append(cell)
                 if bank not in d.get("banks_consol", []):
@@ -130,6 +145,9 @@ def main():
                 wide[cell] = None
                 wide_cost[cell] = None
                 blanked.append(cell)
+
+    # 合併報表的季度時間軸(獨立於個體 periods):由實際橋接到的合併格排序而得(YYYYQn 可直接字典序)
+    d["periods_consol"] = sorted({c.split("|", 1)[0] for c in touched_c})
 
     d["_bridge"] = {"source": SRC, "cells": touched, "cells_consol": touched_c,
                     "blanked_no_new_data": blanked,

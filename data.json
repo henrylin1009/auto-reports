@@ -2666,19 +2666,48 @@
    "2025H2|玉山"
   ],
   "cells_consol": [
-   "2023H1|中信",
-   "2023H2|中信",
-   "2024H1|中信",
-   "2024H2|中信",
-   "2025H1|中信",
-   "2025H2|中信"
+   "2023Q1|中信",
+   "2023Q2|中信",
+   "2023Q3|中信",
+   "2023Q4|中信",
+   "2024Q1|中信",
+   "2024Q2|中信",
+   "2024Q3|中信",
+   "2024Q4|中信",
+   "2025Q1|中信",
+   "2025Q2|中信",
+   "2025Q3|中信",
+   "2025Q4|中信"
   ],
   "blanked_no_new_data": [],
-  "at": "2026-07-23T22:00:15",
+  "at": "2026-07-23T23:22:32",
   "note": "wide=個體帳面;wide_consol=合併帳面(獨立分頁,不進跨行排行);wide_cost*=取得成本(null=未揭露);_pass=False 類別已跳過,保留舊值;來源檔未涵蓋的個體期別已清空,不用舊管線數字"
  },
  "wide_consol": {
-  "2023H1|中信": {
+  "2023Q1|中信": {
+   "Trading_GB": 50,
+   "Trading_公司債": 31,
+   "Trading_金融債": 1,
+   "Trading_資產基礎": 0,
+   "Trading_貨幣市場": 2302,
+   "Trading_其他": 0,
+   "Trading_股票": 7,
+   "OCI_GB": 685,
+   "OCI_公司債": 160,
+   "OCI_金融債": 1017,
+   "OCI_資產基礎": 284,
+   "OCI_貨幣市場": 169,
+   "OCI_其他": 167,
+   "OCI_股票": 302,
+   "AC_GB": 2821,
+   "AC_公司債": 847,
+   "AC_金融債": 539,
+   "AC_資產基礎": 923,
+   "AC_貨幣市場": 5462,
+   "AC_其他": 381,
+   "AC_股票": 0
+  },
+  "2023Q2|中信": {
    "Trading_GB": 30,
    "Trading_公司債": 39,
    "Trading_金融債": 13,
@@ -2701,7 +2730,30 @@
    "AC_其他": 386,
    "AC_股票": 0
   },
-  "2023H2|中信": {
+  "2023Q3|中信": {
+   "Trading_GB": 30,
+   "Trading_公司債": 81,
+   "Trading_金融債": 16,
+   "Trading_資產基礎": 0,
+   "Trading_貨幣市場": 3150,
+   "Trading_其他": 4,
+   "Trading_股票": 19,
+   "OCI_GB": 1022,
+   "OCI_公司債": 104,
+   "OCI_金融債": 772,
+   "OCI_資產基礎": 365,
+   "OCI_貨幣市場": 117,
+   "OCI_其他": 165,
+   "OCI_股票": 286,
+   "AC_GB": 2927,
+   "AC_公司債": 885,
+   "AC_金融債": 586,
+   "AC_資產基礎": 1021,
+   "AC_貨幣市場": 3088,
+   "AC_其他": 381,
+   "AC_股票": 0
+  },
+  "2023Q4|中信": {
    "Trading_GB": 67,
    "Trading_公司債": 132,
    "Trading_金融債": 86,
@@ -2724,7 +2776,30 @@
    "AC_其他": 367,
    "AC_股票": 0
   },
-  "2024H1|中信": {
+  "2024Q1|中信": {
+   "Trading_GB": 59,
+   "Trading_公司債": 160,
+   "Trading_金融債": 14,
+   "Trading_資產基礎": 0,
+   "Trading_貨幣市場": 3469,
+   "Trading_其他": 0,
+   "Trading_股票": 22,
+   "OCI_GB": 978,
+   "OCI_公司債": 91,
+   "OCI_金融債": 698,
+   "OCI_資產基礎": 381,
+   "OCI_貨幣市場": 325,
+   "OCI_其他": 190,
+   "OCI_股票": 264,
+   "AC_GB": 2886,
+   "AC_公司債": 867,
+   "AC_金融債": 656,
+   "AC_資產基礎": 1103,
+   "AC_貨幣市場": 3448,
+   "AC_其他": 379,
+   "AC_股票": 0
+  },
+  "2024Q2|中信": {
    "Trading_GB": 25,
    "Trading_公司債": 141,
    "Trading_金融債": 59,
@@ -2747,7 +2822,30 @@
    "AC_其他": 390,
    "AC_股票": 0
   },
-  "2024H2|中信": {
+  "2024Q3|中信": {
+   "Trading_GB": 28,
+   "Trading_公司債": 91,
+   "Trading_金融債": 41,
+   "Trading_資產基礎": 0,
+   "Trading_貨幣市場": 3150,
+   "Trading_其他": 0,
+   "Trading_股票": 51,
+   "OCI_GB": 1078,
+   "OCI_公司債": 89,
+   "OCI_金融債": 616,
+   "OCI_資產基礎": 380,
+   "OCI_貨幣市場": 213,
+   "OCI_其他": 266,
+   "OCI_股票": 255,
+   "AC_GB": 2734,
+   "AC_公司債": 950,
+   "AC_金融債": 650,
+   "AC_資產基礎": 1347,
+   "AC_貨幣市場": 2859,
+   "AC_其他": 383,
+   "AC_股票": 0
+  },
+  "2024Q4|中信": {
    "Trading_GB": 29,
    "Trading_公司債": 89,
    "Trading_金融債": 14,
@@ -2770,7 +2868,30 @@
    "AC_其他": 425,
    "AC_股票": 0
   },
-  "2025H1|中信": {
+  "2025Q1|中信": {
+   "Trading_GB": 43,
+   "Trading_公司債": 132,
+   "Trading_金融債": 40,
+   "Trading_資產基礎": 0,
+   "Trading_貨幣市場": 2635,
+   "Trading_其他": 0,
+   "Trading_股票": 8,
+   "OCI_GB": 1527,
+   "OCI_公司債": 119,
+   "OCI_金融債": 597,
+   "OCI_資產基礎": 418,
+   "OCI_貨幣市場": 214,
+   "OCI_其他": 340,
+   "OCI_股票": 318,
+   "AC_GB": 2731,
+   "AC_公司債": 1256,
+   "AC_金融債": 670,
+   "AC_資產基礎": 1488,
+   "AC_貨幣市場": 3584,
+   "AC_其他": 429,
+   "AC_股票": 0
+  },
+  "2025Q2|中信": {
    "Trading_GB": 78,
    "Trading_公司債": 114,
    "Trading_金融債": 55,
@@ -2793,7 +2914,30 @@
    "AC_其他": 370,
    "AC_股票": 0
   },
-  "2025H2|中信": {
+  "2025Q3|中信": {
+   "Trading_GB": 48,
+   "Trading_公司債": 131,
+   "Trading_金融債": 60,
+   "Trading_資產基礎": 0,
+   "Trading_貨幣市場": 1470,
+   "Trading_其他": 0,
+   "Trading_股票": 35,
+   "OCI_GB": 2095,
+   "OCI_公司債": 129,
+   "OCI_金融債": 625,
+   "OCI_資產基礎": 383,
+   "OCI_貨幣市場": 217,
+   "OCI_其他": 487,
+   "OCI_股票": 402,
+   "AC_GB": 2485,
+   "AC_公司債": 1222,
+   "AC_金融債": 591,
+   "AC_資產基礎": 1514,
+   "AC_貨幣市場": 3461,
+   "AC_其他": 474,
+   "AC_股票": 0
+  },
+  "2025Q4|中信": {
    "Trading_GB": 56,
    "Trading_公司債": 185,
    "Trading_金融債": 19,
@@ -2818,7 +2962,7 @@
   }
  },
  "wide_cost_consol": {
-  "2023H1|中信": {
+  "2023Q1|中信": {
    "Trading_GB": null,
    "Trading_公司債": null,
    "Trading_金融債": null,
@@ -2841,7 +2985,7 @@
    "AC_其他": null,
    "AC_股票": null
   },
-  "2023H2|中信": {
+  "2023Q2|中信": {
    "Trading_GB": null,
    "Trading_公司債": null,
    "Trading_金融債": null,
@@ -2864,7 +3008,7 @@
    "AC_其他": null,
    "AC_股票": null
   },
-  "2024H1|中信": {
+  "2023Q3|中信": {
    "Trading_GB": null,
    "Trading_公司債": null,
    "Trading_金融債": null,
@@ -2887,7 +3031,7 @@
    "AC_其他": null,
    "AC_股票": null
   },
-  "2024H2|中信": {
+  "2023Q4|中信": {
    "Trading_GB": null,
    "Trading_公司債": null,
    "Trading_金融債": null,
@@ -2910,7 +3054,7 @@
    "AC_其他": null,
    "AC_股票": null
   },
-  "2025H1|中信": {
+  "2024Q1|中信": {
    "Trading_GB": null,
    "Trading_公司債": null,
    "Trading_金融債": null,
@@ -2933,7 +3077,145 @@
    "AC_其他": null,
    "AC_股票": null
   },
-  "2025H2|中信": {
+  "2024Q2|中信": {
+   "Trading_GB": null,
+   "Trading_公司債": null,
+   "Trading_金融債": null,
+   "Trading_資產基礎": null,
+   "Trading_貨幣市場": null,
+   "Trading_其他": null,
+   "Trading_股票": null,
+   "OCI_GB": null,
+   "OCI_公司債": null,
+   "OCI_金融債": null,
+   "OCI_資產基礎": null,
+   "OCI_貨幣市場": null,
+   "OCI_其他": null,
+   "OCI_股票": null,
+   "AC_GB": null,
+   "AC_公司債": null,
+   "AC_金融債": null,
+   "AC_資產基礎": null,
+   "AC_貨幣市場": null,
+   "AC_其他": null,
+   "AC_股票": null
+  },
+  "2024Q3|中信": {
+   "Trading_GB": null,
+   "Trading_公司債": null,
+   "Trading_金融債": null,
+   "Trading_資產基礎": null,
+   "Trading_貨幣市場": null,
+   "Trading_其他": null,
+   "Trading_股票": null,
+   "OCI_GB": null,
+   "OCI_公司債": null,
+   "OCI_金融債": null,
+   "OCI_資產基礎": null,
+   "OCI_貨幣市場": null,
+   "OCI_其他": null,
+   "OCI_股票": null,
+   "AC_GB": null,
+   "AC_公司債": null,
+   "AC_金融債": null,
+   "AC_資產基礎": null,
+   "AC_貨幣市場": null,
+   "AC_其他": null,
+   "AC_股票": null
+  },
+  "2024Q4|中信": {
+   "Trading_GB": null,
+   "Trading_公司債": null,
+   "Trading_金融債": null,
+   "Trading_資產基礎": null,
+   "Trading_貨幣市場": null,
+   "Trading_其他": null,
+   "Trading_股票": null,
+   "OCI_GB": null,
+   "OCI_公司債": null,
+   "OCI_金融債": null,
+   "OCI_資產基礎": null,
+   "OCI_貨幣市場": null,
+   "OCI_其他": null,
+   "OCI_股票": null,
+   "AC_GB": null,
+   "AC_公司債": null,
+   "AC_金融債": null,
+   "AC_資產基礎": null,
+   "AC_貨幣市場": null,
+   "AC_其他": null,
+   "AC_股票": null
+  },
+  "2025Q1|中信": {
+   "Trading_GB": null,
+   "Trading_公司債": null,
+   "Trading_金融債": null,
+   "Trading_資產基礎": null,
+   "Trading_貨幣市場": null,
+   "Trading_其他": null,
+   "Trading_股票": null,
+   "OCI_GB": null,
+   "OCI_公司債": null,
+   "OCI_金融債": null,
+   "OCI_資產基礎": null,
+   "OCI_貨幣市場": null,
+   "OCI_其他": null,
+   "OCI_股票": null,
+   "AC_GB": null,
+   "AC_公司債": null,
+   "AC_金融債": null,
+   "AC_資產基礎": null,
+   "AC_貨幣市場": null,
+   "AC_其他": null,
+   "AC_股票": null
+  },
+  "2025Q2|中信": {
+   "Trading_GB": null,
+   "Trading_公司債": null,
+   "Trading_金融債": null,
+   "Trading_資產基礎": null,
+   "Trading_貨幣市場": null,
+   "Trading_其他": null,
+   "Trading_股票": null,
+   "OCI_GB": null,
+   "OCI_公司債": null,
+   "OCI_金融債": null,
+   "OCI_資產基礎": null,
+   "OCI_貨幣市場": null,
+   "OCI_其他": null,
+   "OCI_股票": null,
+   "AC_GB": null,
+   "AC_公司債": null,
+   "AC_金融債": null,
+   "AC_資產基礎": null,
+   "AC_貨幣市場": null,
+   "AC_其他": null,
+   "AC_股票": null
+  },
+  "2025Q3|中信": {
+   "Trading_GB": null,
+   "Trading_公司債": null,
+   "Trading_金融債": null,
+   "Trading_資產基礎": null,
+   "Trading_貨幣市場": null,
+   "Trading_其他": null,
+   "Trading_股票": null,
+   "OCI_GB": null,
+   "OCI_公司債": null,
+   "OCI_金融債": null,
+   "OCI_資產基礎": null,
+   "OCI_貨幣市場": null,
+   "OCI_其他": null,
+   "OCI_股票": null,
+   "AC_GB": null,
+   "AC_公司債": null,
+   "AC_金融債": null,
+   "AC_資產基礎": null,
+   "AC_貨幣市場": null,
+   "AC_其他": null,
+   "AC_股票": null
+  },
+  "2025Q4|中信": {
    "Trading_GB": null,
    "Trading_公司債": null,
    "Trading_金融債": null,
@@ -2959,5 +3241,19 @@
  },
  "banks_consol": [
   "中信"
+ ],
+ "periods_consol": [
+  "2023Q1",
+  "2023Q2",
+  "2023Q3",
+  "2023Q4",
+  "2024Q1",
+  "2024Q2",
+  "2024Q3",
+  "2024Q4",
+  "2025Q1",
+  "2025Q2",
+  "2025Q3",
+  "2025Q4"
  ]
 }
