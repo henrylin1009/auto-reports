@@ -1206,7 +1206,14 @@
    "AC_資產基礎": 485,
    "AC_貨幣市場": 5104,
    "AC_其他": 161,
-   "AC_股票": 0
+   "AC_股票": 0,
+   "Trading_GB": 3,
+   "Trading_公司債": 14,
+   "Trading_金融債": 6,
+   "Trading_資產基礎": 0,
+   "Trading_貨幣市場": 902,
+   "Trading_其他": 0,
+   "Trading_股票": 10
   },
   "2021H1|兆豐": {
    "Trading_GB": 12,
@@ -1383,7 +1390,14 @@
    "AC_資產基礎": 0,
    "AC_貨幣市場": 3665,
    "AC_其他": 407,
-   "AC_股票": 0
+   "AC_股票": 0,
+   "Trading_GB": 68,
+   "Trading_公司債": 328,
+   "Trading_金融債": 0,
+   "Trading_資產基礎": 0,
+   "Trading_貨幣市場": 330,
+   "Trading_其他": 102,
+   "Trading_股票": 0
   },
   "2021H2|玉山": {
    "Trading_GB": 0,
@@ -1484,7 +1498,21 @@
    "AC_資產基礎": 0,
    "AC_貨幣市場": 3234,
    "AC_其他": 421,
-   "AC_股票": 0
+   "AC_股票": 0,
+   "Trading_GB": 45,
+   "Trading_公司債": 269,
+   "Trading_金融債": 0,
+   "Trading_資產基礎": 0,
+   "Trading_貨幣市場": 374,
+   "Trading_其他": 537,
+   "Trading_股票": 0,
+   "OCI_GB": 241,
+   "OCI_公司債": 386,
+   "OCI_金融債": 328,
+   "OCI_資產基礎": 0,
+   "OCI_貨幣市場": 0,
+   "OCI_其他": 11,
+   "OCI_股票": 343
   },
   "2022H1|玉山": {
    "Trading_GB": 0,
@@ -3083,7 +3111,14 @@
    "AC_資產基礎": null,
    "AC_貨幣市場": null,
    "AC_其他": null,
-   "AC_股票": null
+   "AC_股票": null,
+   "Trading_GB": null,
+   "Trading_公司債": null,
+   "Trading_金融債": null,
+   "Trading_資產基礎": null,
+   "Trading_貨幣市場": null,
+   "Trading_其他": null,
+   "Trading_股票": null
   },
   "2021H1|兆豐": {
    "Trading_GB": null,
@@ -3145,7 +3180,14 @@
    "AC_資產基礎": null,
    "AC_貨幣市場": null,
    "AC_其他": null,
-   "AC_股票": null
+   "AC_股票": null,
+   "Trading_GB": 68,
+   "Trading_公司債": 312,
+   "Trading_金融債": null,
+   "Trading_資產基礎": null,
+   "Trading_貨幣市場": 331,
+   "Trading_其他": 0,
+   "Trading_股票": null
   },
   "2021H2|中信": {
    "Trading_GB": 10,
@@ -3246,7 +3288,21 @@
    "AC_資產基礎": null,
    "AC_貨幣市場": null,
    "AC_其他": null,
-   "AC_股票": null
+   "AC_股票": null,
+   "Trading_GB": null,
+   "Trading_公司債": null,
+   "Trading_金融債": null,
+   "Trading_資產基礎": null,
+   "Trading_貨幣市場": null,
+   "Trading_其他": null,
+   "Trading_股票": null,
+   "OCI_GB": null,
+   "OCI_公司債": null,
+   "OCI_金融債": null,
+   "OCI_資產基礎": null,
+   "OCI_貨幣市場": null,
+   "OCI_其他": null,
+   "OCI_股票": null
   },
   "2022H1|中信": {
    "Trading_GB": null,
@@ -3525,7 +3581,7 @@
    "2025Q4|中信"
   ],
   "blanked_no_new_data": [],
-  "at": "2026-07-23T23:46:12",
+  "at": "2026-07-23T23:58:37",
   "note": "wide=個體帳面;wide_consol=合併帳面(獨立分頁,不進跨行排行);wide_cost*=取得成本(null=未揭露);_pass=False 類別已跳過,保留舊值;來源檔未涵蓋的個體期別已清空,不用舊管線數字"
  },
  "wide_consol": {
