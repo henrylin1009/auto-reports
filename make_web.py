@@ -183,6 +183,7 @@ def interactive_html(prefix="", banks=None, wide=None, periods=None, expose_tren
 .ix-bar-sel{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:#5f6672}
 .ix-bar-sel select{height:36px;border:1px solid #e0e3e8;border-radius:9px;padding:0 10px;background:#fff;color:#111827;font-size:13px;font-weight:600;outline:none;cursor:pointer}
 .ix-bar-sel select:hover{border-color:#c6cbd4}
+.ix-bar-dash{color:#8a919e;font-size:13px}
 .ix-panel{background:#fff;border:1px solid #e9ebef;border-radius:14px;padding:16px 20px;margin:0 0 20px;display:flex;flex-direction:column;gap:14px}
 .ix-panel-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .ix-panel-lbl{font-size:12px;color:#8a919e;width:64px;flex:none}
@@ -196,7 +197,8 @@ def interactive_html(prefix="", banks=None, wide=None, periods=None, expose_tren
 <div class="ix-bar">
 <div class="ix-bar-info"><b>{len(banks)}</b> 家銀行 · <b>{len(_p)}</b> 期 · {_p[0]}–{_p[-1]}</div>
 <div class="ix-bar-ctl">
-<span class="ix-bar-sel"><label>期間</label><select id="G_p"></select></span>
+<span class="ix-bar-sel"><label>當期</label><select id="G_p"></select></span>
+<span class="ix-bar-sel"><label>起訖</label><select id="B_from"></select><span class="ix-bar-dash">–</span><select id="B_to"></select></span>
 <span class="ix-curr-tag">幣別:新台幣(億元)</span>
 </div></div>
 <div class="ix-panel">
@@ -236,8 +238,8 @@ def interactive_html(prefix="", banks=None, wide=None, periods=None, expose_tren
 </div>
 
 <div class="card">
-<h2>時間趨勢 <span class="ix-sub">2020 以來,各家部位怎麼變(起訖區間同時套用到下方「AC 隱藏損失趨勢」圖)</span></h2>
-<div class="ix-ctl"><label>分類</label><select id="B_c"><option value="合計" selected>三分類合計</option><option value="Trading">FVTPL</option><option value="OCI">FVOCI</option><option value="AC">AC</option></select><label>債種</label><select id="B_b"><option value="合計">全部債種</option><option value="GB">政府公債</option><option value="公司債">公司債</option><option value="金融債">金融債</option><option value="資產基礎">資產基礎證券</option><option value="貨幣市場">貨幣市場(短)</option><option value="股票">股票</option></select><label>起</label><select id="B_from"></select><label>訖</label><select id="B_to"></select></div>
+<h2>時間趨勢 <span class="ix-sub">2020 以來,各家部位怎麼變(起訖區間見上方工具列,同時套用到下方「AC 隱藏損失趨勢」圖)</span></h2>
+<div class="ix-ctl"><label>分類</label><select id="B_c"><option value="合計" selected>三分類合計</option><option value="Trading">FVTPL</option><option value="OCI">FVOCI</option><option value="AC">AC</option></select><label>債種</label><select id="B_b"><option value="合計">全部債種</option><option value="GB">政府公債</option><option value="公司債">公司債</option><option value="金融債">金融債</option><option value="資產基礎">資產基礎證券</option><option value="貨幣市場">貨幣市場(短)</option><option value="股票">股票</option></select></div>
 <div class="ix-legend" id="B_lg"></div><div style="position:relative;width:100%;height:320px"><canvas id="B_cv" role="img" aria-label="銀行債券部位時間趨勢"></canvas></div>
 </div>
 
@@ -596,7 +598,7 @@ function drawVKPI(p){
 sel.addEventListener("change",drawV);
 document.getElementById("v_amt").onclick=()=>{vMode="amt";v_amt.classList.add("on");v_pct.classList.remove("on");drawV();};
 document.getElementById("v_pct").onclick=()=>{vMode="pct";v_pct.classList.add("on");v_amt.classList.remove("on");drawV();};
-// 趨勢圖(起訖區間吃上方「時間趨勢」卡片的 B_from/B_to,跨卡片共用同一組全域區間)
+// 趨勢圖(起訖區間吃上方工具列的 B_from/B_to,跨卡片共用同一組全域區間)
 let trendChart=null;
 function drawTrend(){
   const dash=[[],[6,4],[2,3],[8,3,2,3],[]];
