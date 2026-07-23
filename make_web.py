@@ -197,8 +197,8 @@ def interactive_html(prefix="", banks=None, wide=None, periods=None, expose_tren
 <div class="ix-bar">
 <div class="ix-bar-info"><b>{len(banks)}</b> 家銀行 · <b>{len(_p)}</b> 期 · {_p[0]}–{_p[-1]}</div>
 <div class="ix-bar-ctl">
-<span class="ix-bar-sel"><label>當期</label><select id="G_p"></select></span>
 <span class="ix-bar-sel"><label>起訖</label><select id="B_from"></select><span class="ix-bar-dash">–</span><select id="B_to"></select></span>
+<span class="ix-bar-sel"><label>當期</label><select id="G_p"></select></span>
 <span class="ix-curr-tag">幣別:新台幣(億元)</span>
 </div></div>
 <div class="ix-panel">
@@ -270,8 +270,8 @@ function sgn(n){return (n>=0?"+":"−")+fmt(Math.abs(n));}
 function prevP(p,step){const i=PERIODS.indexOf(p);return i-step>=0?PERIODS[i-step]:null;}
 function fillSel(id,def){const s=document.getElementById(id);PERIODS.forEach(v=>{const o=document.createElement("option");o.value=v;o.textContent=v;if(v===def)o.selected=true;s.appendChild(o);});}
 function latestP(){for(let i=PERIODS.length-1;i>=0;i--){if(BANKS.some(b=>has(PERIODS[i],b)))return PERIODS[i];}return PERIODS[0];}
-fillSel("G_p",latestP());
 fillSel("B_from",PERIODS[0]);fillSel("B_to",PERIODS[PERIODS.length-1]);
+fillSel("G_p",latestP());
 function gp(){return document.getElementById("G_p").value;}
 function trendIdx(){
   const f=document.getElementById("B_from"),t=document.getElementById("B_to");
@@ -279,6 +279,18 @@ function trendIdx(){
   if(i>j){const tmp=i;i=j;j=tmp;}
   return [i,j];
 }
+// 「當期」下拉只列出目前起訖區間內的期別;原選期別若落在區間外,改挑區間內最新(有資料優先)那期。回傳當期是否被改動。
+function syncGp(){
+  const sel=document.getElementById("G_p"),cur=sel.value;
+  const [i0,i1]=trendIdx(),sub=PERIODS.slice(i0,i1+1);
+  let nv=sub.indexOf(cur)>=0?cur:null;
+  if(nv===null){for(let k=sub.length-1;k>=0;k--){if(BANKS.some(b=>has(sub[k],b))){nv=sub[k];break;}}}
+  if(nv===null)nv=sub[sub.length-1];
+  sel.innerHTML="";
+  sub.forEach(v=>{const o=document.createElement("option");o.value=v;o.textContent=v;if(v===nv)o.selected=true;sel.appendChild(o);});
+  return nv!==cur;
+}
+syncGp();
 window.ixTrendRange=function(){const [i,j]=trendIdx();return [PERIODS[i],PERIODS[j]];};
 function lgHTML(items){return items.map(i=>'<span><span class="ix-sw" style="background:'+i[2]+'"></span>'+i[1]+'</span>').join("");}
 
@@ -408,7 +420,7 @@ function drawA(){
   if(drillBank)renderDrill(drillBank);
 }
 document.getElementById("A_c").onchange=drawA;
-document.getElementById("G_p").addEventListener("change",()=>{drawKPI();drawA();});
+document.getElementById("G_p").addEventListener("change",()=>{drawKPI();drawA();drawB();});
 A_amt.onclick=()=>{A_mode="amt";A_amt.classList.add("on");A_pct.classList.remove("on");drawA();};
 A_pct.onclick=()=>{A_mode="pct";A_pct.classList.add("on");A_amt.classList.remove("on");drawA();};
 A_by_b.onclick=()=>{A_by="bond";A_by_b.classList.add("on");A_by_c.classList.remove("on");drawA();};
@@ -420,10 +432,11 @@ const trendHidden=new Set();   // 點圖例可單獨隱藏某銀行的線(只影
 function drawB(){
   const [i0,i1]=trendIdx();
   const P2=PERIODS.slice(i0,i1+1);
+  const cp=gp(),cpIdx=P2.indexOf(cp);   // 當期(在本圖區間內的位置),用來放大該點並畫標記線
   const cat=B_c.value,bond=B_b.value,dash=[[],[6,4],[2,3],[8,3,2,3],[]];
   const withCP=incl.has("貨幣市場")&&(bond==="合計");
   const vOf=(p,bk)=>bond==="合計"?total(p,bk,cat):val(p,bk,cat,bond);
-  const ds=AB().map((bk)=>{const i=BANKS.indexOf(bk);return {label:bk,data:P2.map(p=>has(p,bk)?vOf(p,bk):null),borderColor:BC[bk],backgroundColor:BC[bk],borderDash:dash[i%dash.length],spanGaps:false,borderWidth:2,tension:0.25,pointRadius:2,pointHoverRadius:5,hidden:trendHidden.has(bk)};});
+  const ds=AB().map((bk)=>{const i=BANKS.indexOf(bk);return {label:bk,data:P2.map(p=>has(p,bk)?vOf(p,bk):null),borderColor:BC[bk],backgroundColor:BC[bk],borderDash:dash[i%dash.length],spanGaps:false,borderWidth:2,tension:0.25,pointRadius:P2.map(p=>p===cp?5:2),pointHoverRadius:6,hidden:trendHidden.has(bk)};});
   document.getElementById("B_lg").innerHTML=AB().map((bk)=>'<span class="lg-item'+(trendHidden.has(bk)?' dim':'')+'" data-bank="'+bk+'"><span class="ix-sw" style="background:'+BC[bk]+'"></span>'+bk+'</span>').join("")+(withCP?' <span style="color:#999">(已含貨幣市場)</span>':'');
   document.querySelectorAll("#B_lg .lg-item").forEach(li=>li.onclick=()=>{
     const bk=li.dataset.bank;
@@ -432,12 +445,23 @@ function drawB(){
   });
   if(chartB)chartB.destroy();
   chartB=new Chart(document.getElementById("B_cv"),{type:"line",data:{labels:P2,datasets:ds},
-    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},
+    plugins:[{id:"curMark",afterDatasetsDraw(c){
+      if(cpIdx<0)return;const x=c.scales.x.getPixelForTick(cpIdx),a=c.chartArea,g=c.ctx;
+      g.save();
+      g.strokeStyle="#111827";g.lineWidth=1.5;g.setLineDash([4,3]);
+      g.beginPath();g.moveTo(x,a.top);g.lineTo(x,a.bottom);g.stroke();g.setLineDash([]);
+      const t="當期 "+cp;g.font="600 11px -apple-system,system-ui,sans-serif";
+      const w=g.measureText(t).width+10;let bx=x-w/2;bx=Math.max(a.left,Math.min(bx,a.right-w));
+      g.fillStyle="#111827";g.beginPath();(g.roundRect?g.roundRect(bx,a.top-19,w,15,4):g.rect(bx,a.top-19,w,15));g.fill();
+      g.fillStyle="#fff";g.textAlign="center";g.textBaseline="middle";g.fillText(t,bx+w/2,a.top-11);
+      g.restore();
+    }}],
+    options:{responsive:true,maintainAspectRatio:false,layout:{padding:{top:22}},interaction:{mode:"index",intersect:false},
       plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+": "+fmt(c.parsed.y)+" 億"}}},
       scales:{y:{title:{display:true,text:"億元"}},x:{grid:{display:false},ticks:{maxRotation:45,autoSkip:false}}}}});
 }
 ["B_c","B_b"].forEach(id=>document.getElementById(id).onchange=drawB);
-["B_from","B_to"].forEach(id=>document.getElementById(id).addEventListener("change",()=>{drawB();document.dispatchEvent(new CustomEvent("ix-trendrange"));}));
+["B_from","B_to"].forEach(id=>document.getElementById(id).addEventListener("change",()=>{syncGp();drawKPI();drawA();drawB();document.dispatchEvent(new CustomEvent("ix-trendrange"));}));
 
 const bcEl=document.getElementById("bankchips");
 if(bcEl){bcEl.innerHTML=BANKS.map(b=>{
