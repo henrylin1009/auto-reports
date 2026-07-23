@@ -746,7 +746,7 @@ table.wide tbody tr:hover td{{background:#fafbfc}}
 @media print{{header{{position:static}}.card{{box-shadow:none;break-inside:avoid}}details.card{{display:none}}}}
 </style></head><body>
 <header><h1>銀行債券投資債種分析</h1>
-<span class="ix-seg" id="pagetabs"><button id="tab1" class="on">總覽</button><button id="tab2">估值與獲利</button>{'<button id="tab3">合併報表</button>' if HAS_CONSOL else ''}</span>
+<span class="ix-seg" id="pagetabs"><button id="tab1" class="on">總覽</button>{'<button id="tab3">合併報表</button>' if HAS_CONSOL else ''}<button id="tab2">個體更多(估值與獲利)</button></span>
 <span class="upd">更新 {now}</span></header>
 <div class="wrap">
 <div id="page1">
