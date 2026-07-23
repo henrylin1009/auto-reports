@@ -1,18 +1,20 @@
 # -*- coding: utf-8 -*-
-"""把 extract_v2 結果(pre_witness)橋接進 data.json 供網站用。
+"""把 extract_v2 結果(當前最新一份,非備份檔)橋接進 data.json 供網站用。
 
 口徑(每桶兩個口徑,對應前端切換鈕):
-  - 帳面(值):res料負債表帳面金額 = bucket['值']。Trading/OCI 帳面即公允、AC 帳面為攤銷後成本。
+  - 帳面(值):資產負債表帳面金額 = bucket['值']。Trading/OCI 帳面即公允、AC 帳面為攤銷後成本。
     → 寫入 data.json['wide'](沿用既有欄位,前端既有圖表不動)。
   - 成本:取得成本 = bucket['成本']。半年報附註/ AC 表通常無此欄 → null(前端顯示「—」)。
     → 寫入 data.json['wide_cost'](新增;null 保留,不補 0,以區分『未揭露』vs『0』)。
 
-只更新 pre_witness 涵蓋的近兩年 20 格(5 家 × 2024H1/H2 2025H1/H2),舊期別保留。
+只更新來源檔涵蓋到的格,舊期別/未涵蓋的格保留原樣。
+單一(銀行,期別,類別)若對帳失敗(_pass=False,桶加總跟BS錨對不起來)→ 整個類別跳過、
+保留 data.json 原本該類別的值,不拿明知有缺漏的數字覆蓋掉能用的舊值。
 單位:仟元 → 億(÷100000,四捨五入取整,與既有 wide 一致)。
 """
 import json, shutil, datetime
 
-SRC = "extract_v2_results.pre_witness.json"
+SRC = "extract_v2_results.json"
 DATA = "data.json"
 
 BANK = {"5835": "國泰", "5836": "富邦", "5841": "中信", "5843": "兆豐", "5847": "玉山"}
@@ -45,7 +47,7 @@ def main():
     wide = d.setdefault("wide", {})
     wide_cost = d.setdefault("wide_cost", {})
 
-    touched = []
+    touched, skipped_cls = [], []
     for key in sorted(src):
         code = key[7:11]
         bank = BANK.get(code)
@@ -56,10 +58,15 @@ def main():
         cell = f"{period}|{bank}"
         cls_data = src[key]["cls"]
 
-        book = {}   # 帳面(值)
-        cost = {}   # 取得成本
+        # 從既有值出發(merge),而非整格重建:被跳過的類別保留 data.json 原值
+        book = dict(wide.get(cell) or {})
+        cost = dict(wide_cost.get(cell) or {})
+        cell_touched = False
         for cls in CLASSES:
             cb = cls_data.get(cls, {})
+            if cb.get("_pass") is False:
+                skipped_cls.append(f"{cell} {cls}(對帳失敗:桶加總={cb.get('bucket_sum')} vs BS錨={cb.get('bs_anchor')})")
+                continue   # 整類跳過,保留舊值
             buckets = cb.get("buckets", {})
             # 帳面:每個 wide 桶預設 0(沿用既有慣例:無此桶=0)
             for wb in WIDE_BUCKETS:
@@ -78,19 +85,25 @@ def main():
                 if c is not None:
                     prev = cost.get(f"{cls}_{wb}")
                     cost[f"{cls}_{wb}"] = (prev or 0) + c
+            cell_touched = True
 
-        wide[cell] = book
-        wide_cost[cell] = cost
-        touched.append(cell)
+        if cell_touched:
+            wide[cell] = book
+            wide_cost[cell] = cost
+            touched.append(cell)
 
     d["_bridge"] = {"source": SRC, "cells": touched,
                     "at": datetime.datetime.now().isoformat(timespec="seconds"),
-                    "note": "wide=帳面(值);wide_cost=取得成本(null=未揭露)"}
+                    "note": "wide=帳面(值);wide_cost=取得成本(null=未揭露);_pass=False 類別已跳過,保留舊值"}
 
     json.dump(d, open(DATA, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print(f"\n已更新 {len(touched)} 格 → {DATA}(備份 {DATA}.pre_bridge)")
     for c in touched:
         print("  ", c)
+    if skipped_cls:
+        print(f"\n跳過 {len(skipped_cls)} 個對帳失敗的類別(保留 data.json 原值):")
+        for s in skipped_cls:
+            print("  ✗", s)
 
 
 if __name__ == "__main__":
