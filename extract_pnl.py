@@ -6,7 +6,8 @@ import re, json, pdfplumber
 from pathlib import Path
 
 CACHE = Path("pdf_cache")
-BANKS = [("5841","中信"),("5843","兆豐"),("5835","國泰"),("5836","富邦"),("5847","玉山")]
+from config import BANKS as _B   # 名稱以 config 為準;順序沿用本檔既有處理序
+BANKS = [(c, _B[c]) for c in ("5841","5843","5835","5836","5847")]
 
 def full_text(code, period="202504"):
     p = CACHE / f"{period}_{code}_AI3.pdf"

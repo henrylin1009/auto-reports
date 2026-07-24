@@ -14,6 +14,11 @@ from openpyxl.chart.shapes import GraphicalProperties
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 import openpyxl.utils as XU
 import re, json as _json
+# 已退役:現行資料流見 archive/README.md(bridge_v2 獨寫 data.json)。
+# 本檔僅供追溯;若仍要跑,依賴 archive/ 內舊抽取器。
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "archive"))
 import extract3 as E
 from extract_megabank import parse_megabank, parse_megabank_fvtpl, parse_megabank_main
 import unified as UNI   # 統一流水線:當兆豐現行路徑給空時的通用補洞後備(半年報 Trading/AC)

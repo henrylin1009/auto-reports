@@ -1,0 +1,6171 @@
+{
+ "202302_5835_AI3": {
+  "loc": {},
+  "cls": {
+   "Trading": {
+    "buckets": {
+     "貨幣市場": {
+      "成本": null,
+      "值": 124642973
+     },
+     "公債": {
+      "成本": null,
+      "值": 612638
+     },
+     "公司債": {
+      "成本": null,
+      "值": 20288601
+     },
+     "金融債": {
+      "成本": null,
+      "值": 72437729
+     },
+     "可轉讓定存單": {
+      "成本": null,
+      "值": 8788988
+     },
+     "股票": {
+      "成本": null,
+      "值": 1899251
+     },
+     "其他": {
+      "成本": null,
+      "值": 96212510
+     }
+    },
+    "recon_fair": 324881690,
+    "bucket_cost": null,
+    "deriv_fair": 0,
+    "bs_anchor": 324881690,
+    "cost_total": null,
+    "value_total": 324881690,
+    "bucket_sum": 324882690,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      33,
+      34,
+      35,
+      36,
+      37,
+      38
+     ]
+    }
+   },
+   "OCI": {
+    "buckets": {
+     "股票": {
+      "成本": null,
+      "值": 23789129
+     },
+     "公司債": {
+      "成本": null,
+      "值": 83247667
+     },
+     "金融債": {
+      "成本": null,
+      "值": 37754274
+     },
+     "資產基礎": {
+      "成本": null,
+      "值": 14241081
+     },
+     "可轉讓定存單": {
+      "成本": null,
+      "值": 159955294
+     },
+     "公債": {
+      "成本": null,
+      "值": 79182969
+     }
+    },
+    "recon_fair": 398170414,
+    "bucket_cost": null,
+    "deriv_fair": 0,
+    "bs_anchor": 398170414,
+    "cost_total": null,
+    "value_total": 398170414,
+    "bucket_sum": 398170414,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      33,
+      34,
+      35,
+      36,
+      37,
+      38
+     ]
+    }
+   },
+   "AC": {
+    "buckets": {
+     "貨幣市場": {
+      "成本": null,
+      "值": 321171922
+     },
+     "公債": {
+      "成本": null,
+      "值": 49842606
+     },
+     "公司債": {
+      "成本": null,
+      "值": 27053800
+     },
+     "金融債": {
+      "成本": null,
+      "值": 52973658
+     },
+     "資產基礎": {
+      "成本": null,
+      "值": 67045546
+     }
+    },
+    "recon_fair": 518009809,
+    "bucket_cost": null,
+    "deriv_fair": -77723,
+    "bs_anchor": 518009809,
+    "cost_total": null,
+    "value_total": 518009809,
+    "bucket_sum": 518087532,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      33,
+      34,
+      35,
+      36,
+      37,
+      38
+     ]
+    }
+   }
+  }
+ },
+ "202302_5836_AI3": {
+  "loc": {},
+  "cls": {
+   "Trading": {
+    "buckets": {
+     "貨幣市場": {
+      "成本": null,
+      "值": 84542995
+     },
+     "股票": {
+      "成本": null,
+      "值": 0
+     },
+     "公司債": {
+      "成本": null,
+      "值": 19154424
+     },
+     "公債": {
+      "成本": null,
+      "值": 12435698
+     },
+     "金融債": {
+      "成本": null,
+      "值": 5613971
+     },
+     "可轉讓定存單": {
+      "成本": null,
+      "值": 637254
+     },
+     "其他": {
+      "成本": null,
+      "值": 3485498
+     }
+    },
+    "recon_fair": 167556941,
+    "bucket_cost": null,
+    "deriv_fair": 41687101,
+    "bs_anchor": 167556941,
+    "cost_total": null,
+    "value_total": 167556941,
+    "bucket_sum": 125869840,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      38,
+      39,
+      40,
+      41,
+      42
+     ]
+    }
+   },
+   "OCI": {
+    "buckets": {
+     "股票": {
+      "成本": null,
+      "值": 44150432
+     },
+     "公司債": {
+      "成本": null,
+      "值": 43091278
+     },
+     "金融債": {
+      "成本": null,
+      "值": 41672037
+     },
+     "公債": {
+      "成本": null,
+      "值": 25992839
+     },
+     "其他": {
+      "成本": null,
+      "值": 7192443
+     }
+    },
+    "recon_fair": 162099029,
+    "bucket_cost": null,
+    "deriv_fair": 0,
+    "bs_anchor": 162099029,
+    "cost_total": null,
+    "value_total": 162099029,
+    "bucket_sum": 162099029,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      38,
+      39,
+      40,
+      41,
+      42
+     ]
+    }
+   },
+   "AC": {
+    "buckets": {
+     "可轉讓定存單": {
+      "成本": null,
+      "值": 288339970
+     },
+     "公司債": {
+      "成本": null,
+      "值": 225186967
+     },
+     "金融債": {
+      "成本": null,
+      "值": 164723298
+     },
+     "公債": {
+      "成本": null,
+      "值": 74319561
+     },
+     "其他": {
+      "成本": null,
+      "值": 44905913
+     }
+    },
+    "recon_fair": 796847547,
+    "bucket_cost": null,
+    "deriv_fair": -628162,
+    "bs_anchor": 796847547,
+    "cost_total": null,
+    "value_total": 796847547,
+    "bucket_sum": 797475709,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      38,
+      39,
+      40,
+      41,
+      42
+     ]
+    }
+   }
+  }
+ },
+ "202302_5841_AI3": {
+  "loc": {},
+  "cls": {
+   "Trading": {
+    "buckets": {
+     "貨幣市場": {
+      "成本": null,
+      "值": 193683382
+     },
+     "可轉讓定存單": {
+      "成本": null,
+      "值": 16189484
+     },
+     "公債": {
+      "成本": null,
+      "值": 1479617
+     },
+     "公司債": {
+      "成本": null,
+      "值": 3949389
+     },
+     "金融債": {
+      "成本": null,
+      "值": 1264172
+     },
+     "股票": {
+      "成本": null,
+      "值": 1909070
+     }
+    },
+    "recon_fair": 289475201,
+    "bucket_cost": null,
+    "deriv_fair": 71000087,
+    "bs_anchor": 289475201,
+    "cost_total": null,
+    "value_total": 289475201,
+    "bucket_sum": 218475114,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35
+     ]
+    }
+   },
+   "OCI": {
+    "buckets": {
+     "可轉讓定存單": {
+      "成本": null,
+      "值": 3215329
+     },
+     "貨幣市場": {
+      "成本": null,
+      "值": 9319124
+     },
+     "公債": {
+      "成本": null,
+      "值": 61640884
+     },
+     "公司債": {
+      "成本": null,
+      "值": 10152522
+     },
+     "金融債": {
+      "成本": null,
+      "值": 92931701
+     },
+     "資產基礎": {
+      "成本": null,
+      "值": 16931901
+     },
+     "其他": {
+      "成本": null,
+      "值": 9952704
+     },
+     "股票": {
+      "成本": null,
+      "值": 10973251
+     }
+    },
+    "recon_fair": 209334435,
+    "bucket_cost": null,
+    "deriv_fair": -5782981,
+    "bs_anchor": 209334435,
+    "cost_total": null,
+    "value_total": 209334435,
+    "bucket_sum": 215117416,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35
+     ]
+    }
+   },
+   "AC": {
+    "buckets": {
+     "可轉讓定存單": {
+      "成本": null,
+      "值": 314321000
+     },
+     "貨幣市場": {
+      "成本": null,
+      "值": 13966872
+     },
+     "公債": {
+      "成本": null,
+      "值": 274890198
+     },
+     "公司債": {
+      "成本": null,
+      "值": 79693221
+     },
+     "金融債": {
+      "成本": null,
+      "值": 54700057
+     },
+     "資產基礎": {
+      "成本": null,
+      "值": 71507754
+     },
+     "其他": {
+      "成本": null,
+      "值": 37754459
+     }
+    },
+    "recon_fair": 846796020,
+    "bucket_cost": null,
+    "deriv_fair": -37541,
+    "bs_anchor": 846796020,
+    "cost_total": null,
+    "value_total": 846796020,
+    "bucket_sum": 846833561,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35
+     ]
+    }
+   }
+  }
+ },
+ "202302_5843_AI3": {
+  "loc": {},
+  "cls": {
+   "Trading": {
+    "buckets": {
+     "股票": {
+      "成本": null,
+      "值": 14415304
+     },
+     "資產基礎": {
+      "成本": null,
+      "值": 8495
+     },
+     "公債": {
+      "成本": null,
+      "值": 217397
+     },
+     "公司債": {
+      "成本": null,
+      "值": 22205798
+     },
+     "金融債": {
+      "成本": null,
+      "值": 5059113
+     }
+    },
+    "recon_fair": 55717136,
+    "bucket_cost": null,
+    "deriv_fair": 13969729,
+    "bs_anchor": 55717136,
+    "cost_total": null,
+    "value_total": 55717136,
+    "bucket_sum": 41906107,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      9
+     ],
+     "note_pages": [
+      22,
+      23,
+      24,
+      25,
+      26
+     ]
+    }
+   },
+   "OCI": {
+    "buckets": {
+     "公司債": {
+      "成本": null,
+      "值": 137983851
+     },
+     "金融債": {
+      "成本": null,
+      "值": 95214789
+     },
+     "公債": {
+      "成本": null,
+      "值": 85471881
+     },
+     "資產基礎": {
+      "成本": null,
+      "值": 63295653
+     },
+     "可轉讓定存單": {
+      "成本": null,
+      "值": 13698791
+     },
+     "股票": {
+      "成本": null,
+      "值": 26362948
+     }
+    },
+    "recon_fair": 417413028,
+    "bucket_cost": null,
+    "deriv_fair": -4614885,
+    "bs_anchor": 417413028,
+    "cost_total": null,
+    "value_total": 417413028,
+    "bucket_sum": 422027913,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      9
+     ],
+     "note_pages": [
+      22,
+      23,
+      24,
+      25,
+      26
+     ]
+    }
+   },
+   "AC": {
+    "buckets": {
+     "可轉讓定存單": {
+      "成本": null,
+      "值": 346653768
+     },
+     "貨幣市場": {
+      "成本": null,
+      "值": 214414479
+     },
+     "金融債": {
+      "成本": null,
+      "值": 23937090
+     },
+     "公債": {
+      "成本": null,
+      "值": 22901920
+     },
+     "公司債": {
+      "成本": null,
+      "值": 9823158
+     },
+     "資產基礎": {
+      "成本": null,
+      "值": 24335466
+     },
+     "其他": {
+      "成本": null,
+      "值": 4181884
+     }
+    },
+    "recon_fair": 646185857,
+    "bucket_cost": null,
+    "deriv_fair": -61908,
+    "bs_anchor": 646185857,
+    "cost_total": null,
+    "value_total": 646185857,
+    "bucket_sum": 646247765,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      9
+     ],
+     "note_pages": [
+      22,
+      23,
+      24,
+      25,
+      26
+     ]
+    }
+   }
+  }
+ },
+ "202302_5847_AI3": {
+  "loc": {},
+  "cls": {
+   "Trading": {
+    "buckets": {
+     "可轉讓定存單": {
+      "成本": null,
+      "值": 26617137
+     },
+     "貨幣市場": {
+      "成本": null,
+      "值": 94757829
+     },
+     "公債": {
+      "成本": null,
+      "值": 6898200
+     },
+     "公司債": {
+      "成本": null,
+      "值": 54960201
+     },
+     "金融債": {
+      "成本": null,
+      "值": 46049832
+     },
+     "其他": {
+      "成本": null,
+      "值": 10549113
+     },
+     "股票": {
+      "成本": null,
+      "值": 1176245
+     }
+    },
+    "recon_fair": 290426827,
+    "bucket_cost": null,
+    "deriv_fair": 59719398,
+    "bs_anchor": 290426827,
+    "cost_total": null,
+    "value_total": 290426827,
+    "bucket_sum": 241008557,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      21,
+      22,
+      23,
+      24,
+      25,
+      26
+     ]
+    }
+   },
+   "OCI": {
+    "buckets": {
+     "股票": {
+      "成本": null,
+      "值": 14248122
+     },
+     "金融債": {
+      "成本": null,
+      "值": 151679528
+     },
+     "公債": {
+      "成本": null,
+      "值": 54021240
+     },
+     "公司債": {
+      "成本": null,
+      "值": 108513624
+     },
+     "其他": {
+      "成本": null,
+      "值": 13157296
+     },
+     "可轉讓定存單": {
+      "成本": null,
+      "值": 311430
+     }
+    },
+    "recon_fair": 341931240,
+    "bucket_cost": null,
+    "deriv_fair": 0,
+    "bs_anchor": 341931240,
+    "cost_total": null,
+    "value_total": 341931240,
+    "bucket_sum": 341931240,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      21,
+      22,
+      23,
+      24,
+      25,
+      26
+     ]
+    }
+   },
+   "AC": {
+    "buckets": {
+     "其他": {
+      "成本": null,
+      "值": 38596458
+     },
+     "金融債": {
+      "成本": null,
+      "值": 48759351
+     },
+     "公司債": {
+      "成本": null,
+      "值": 21580910
+     },
+     "可轉讓定存單": {
+      "成本": null,
+      "值": 309994560
+     },
+     "公債": {
+      "成本": null,
+      "值": 21922843
+     }
+    },
+    "recon_fair": 440829468,
+    "bucket_cost": null,
+    "deriv_fair": -24654,
+    "bs_anchor": 440829468,
+    "cost_total": null,
+    "value_total": 440829468,
+    "bucket_sum": 440854122,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      21,
+      22,
+      23,
+      24,
+      25,
+      26
+     ]
+    }
+   }
+  }
+ },
+ "202304_5835_AI3": {
+  "loc": {
+   "Trading": [
+    129,
+    153
+   ],
+   "OCI": [
+    130,
+    154,
+    157
+   ],
+   "AC": [
+    131
+   ]
+  },
+  "cls": {
+   "Trading": {
+    "buckets": {
+     "公債": {
+      "成本": 1298430,
+      "值": 1298652
+     },
+     "公司債": {
+      "成本": 28951,
+      "值": 29587
+     },
+     "金融債": {
+      "成本": 1317216,
+      "值": 1317994
+     }
+    },
+    "recon_fair": 2646233,
+    "bucket_cost": 2644597,
+    "deriv_fair": 0,
+    "bs_anchor": 309791531,
+    "cost_total": 2644597,
+    "value_total": 2646233,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": false,
+    "_weak_anchor": false,
+    "_needs_review": true,
+    "_pass": false,
+    "_source": "detail",
+    "_select_mode": "best_effort",
+    "_meta": {
+     "det_pages": [
+      153,
+      154
+     ],
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43
+     ],
+     "header": "證券部門透過損益按公允價值衡量之金融資產明細表"
+    }
+   },
+   "OCI": {
+    "buckets": {
+     "股票": {
+      "成本": 14714876,
+      "值": 21304527
+     },
+     "公司債": {
+      "成本": 77442899,
+      "值": 74703677
+     },
+     "金融債": {
+      "成本": 35512171,
+      "值": 34962549
+     },
+     "資產基礎": {
+      "成本": 20127669,
+      "值": 18546743
+     },
+     "可轉讓定存單": {
+      "成本": 25740000,
+      "值": 25662547
+     },
+     "公債": {
+      "成本": 92895244,
+      "值": 88223270
+     }
+    },
+    "recon_fair": 263403313,
+    "bucket_cost": 266432859,
+    "deriv_fair": 0,
+    "bs_anchor": 263403313,
+    "cost_total": 266432859,
+    "value_total": 263403313,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": true,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公債",
+      "公司債",
+      "金融債",
+      "資產基礎",
+      "可轉讓定存單"
+     ],
+     "mismatch": [
+      {
+       "桶": "公債",
+       "明細表": 92895244,
+       "主附註": 88223270
+      },
+      {
+       "桶": "公司債",
+       "明細表": 77442899,
+       "主附註": 74703677
+      },
+      {
+       "桶": "金融債",
+       "明細表": 35512171,
+       "主附註": 34962549
+      },
+      {
+       "桶": "資產基礎",
+       "明細表": 20127669,
+       "主附註": 18546743
+      }
+     ]
+    },
+    "_bucket_warn": true,
+    "_meta": {
+     "det_pages": [
+      130,
+      131
+     ],
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43
+     ],
+     "header": "透過其他綜合損益按公允價值衡量之金融資產明細表"
+    }
+   },
+   "AC": {
+    "buckets": {
+     "貨幣市場": {
+      "成本": 0,
+      "值": 429250854
+     },
+     "公債": {
+      "成本": 0,
+      "值": 61234740
+     },
+     "公司債": {
+      "成本": 0,
+      "值": 25231853
+     },
+     "金融債": {
+      "成本": 0,
+      "值": 89258089
+     },
+     "資產基礎": {
+      "成本": 0,
+      "值": 70736135
+     }
+    },
+    "recon_fair": 675711671,
+    "bucket_cost": 0,
+    "deriv_fair": 0,
+    "bs_anchor": 675711671,
+    "cost_total": null,
+    "value_total": 675711671,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": false,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公債",
+      "公司債",
+      "金融債",
+      "資產基礎",
+      "貨幣市場"
+     ],
+     "mismatch": []
+    },
+    "_bucket_warn": false,
+    "_meta": {
+     "det_pages": [
+      131,
+      132
+     ],
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43
+     ],
+     "header": "按攤銷後成本衡量之債務工具投資明細表"
+    }
+   }
+  }
+ },
+ "202304_5836_AI3": {
+  "loc": {
+   "Trading": [
+    163,
+    209
+   ],
+   "OCI": [
+    164,
+    210,
+    214
+   ],
+   "AC": [
+    166,
+    211,
+    215
+   ]
+  },
+  "cls": {
+   "Trading": {
+    "buckets": {
+     "公司債": {
+      "成本": 49900499,
+      "值": 49558689
+     },
+     "金融債": {
+      "成本": 43325433,
+      "值": 43180067
+     },
+     "公債": {
+      "成本": 30550985,
+      "值": 30485821
+     },
+     "股票": {
+      "成本": 12007701,
+      "值": 16733129
+     },
+     "資產基礎": {
+      "成本": 8129041,
+      "值": 8261043
+     },
+     "其他": {
+      "成本": 12842975,
+      "值": 12874530
+     }
+    },
+    "recon_fair": 161093279,
+    "bucket_cost": 156756634,
+    "deriv_fair": 0,
+    "bs_anchor": 139940245,
+    "cost_total": 156756634,
+    "value_total": 161093279,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": false,
+    "_weak_anchor": false,
+    "_needs_review": true,
+    "_pass": false,
+    "_source": "detail",
+    "_select_mode": "best_effort",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公債",
+      "公司債"
+     ],
+     "mismatch": [
+      {
+       "桶": "公債",
+       "明細表": 30550985,
+       "主附註": 9952416
+      },
+      {
+       "桶": "公司債",
+       "明細表": 49900499,
+       "主附註": 16666018
+      }
+     ]
+    },
+    "_bucket_warn": true,
+    "_meta": {
+     "det_pages": [
+      163,
+      164
+     ],
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      38,
+      39,
+      40,
+      41,
+      42,
+      43
+     ],
+     "header": "台北富邦商業銀行股份有限公司透過其他綜合損益按公允價值衡量之金融資產明細表民國112年12月31日"
+    }
+   },
+   "OCI": {
+    "buckets": {
+     "公司債": {
+      "成本": 49900499,
+      "值": 49558689
+     },
+     "金融債": {
+      "成本": 43325433,
+      "值": 43180067
+     },
+     "公債": {
+      "成本": 30550985,
+      "值": 30485821
+     },
+     "股票": {
+      "成本": 12007701,
+      "值": 16733129
+     },
+     "資產基礎": {
+      "成本": 8129041,
+      "值": 8261043
+     },
+     "其他": {
+      "成本": 12842975,
+      "值": 12874530
+     }
+    },
+    "recon_fair": 161093279,
+    "bucket_cost": 156756634,
+    "deriv_fair": 0,
+    "bs_anchor": 161093279,
+    "cost_total": 156756634,
+    "value_total": 161093279,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": false,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公債",
+      "公司債",
+      "金融債"
+     ],
+     "mismatch": []
+    },
+    "_bucket_warn": false,
+    "_meta": {
+     "det_pages": [
+      164,
+      165
+     ],
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      38,
+      39,
+      40,
+      41,
+      42,
+      43
+     ],
+     "header": "台北富邦商業銀行股份有限公司 透過其他綜合損益按公允價值衡量之金融資產明細表 民國 112 年 12 月 31 日"
+    }
+   },
+   "AC": {
+    "buckets": {
+     "可轉讓定存單": {
+      "成本": 0,
+      "值": 253640727
+     },
+     "公司債": {
+      "成本": 0,
+      "值": 229109509
+     },
+     "金融債": {
+      "成本": 0,
+      "值": 164769432
+     },
+     "公債": {
+      "成本": 0,
+      "值": 73809812
+     },
+     "資產基礎": {
+      "成本": 0,
+      "值": 48115685
+     },
+     "其他": {
+      "成本": 0,
+      "值": 590680
+     }
+    },
+    "recon_fair": 770035845,
+    "bucket_cost": 0,
+    "deriv_fair": 0,
+    "bs_anchor": 770035845,
+    "cost_total": null,
+    "value_total": 770035845,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": true,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公債",
+      "公司債",
+      "金融債",
+      "資產基礎",
+      "可轉讓定存單"
+     ],
+     "mismatch": [
+      {
+       "桶": "資產基礎",
+       "明細表": 48115685,
+       "主附註": 45408917
+      }
+     ]
+    },
+    "_bucket_warn": true,
+    "_meta": {
+     "det_pages": [
+      166,
+      167
+     ],
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      38,
+      39,
+      40,
+      41,
+      42,
+      43
+     ],
+     "header": "按攤銷後成本衡量之債務工具投資明細表"
+    }
+   }
+  }
+ },
+ "202304_5841_AI3": {
+  "loc": {
+   "Trading": [
+    147,
+    168
+   ],
+   "OCI": [
+    148,
+    169
+   ],
+   "AC": [
+    148,
+    170
+   ]
+  },
+  "cls": {
+   "Trading": {
+    "buckets": {
+     "貨幣市場": {
+      "成本": 308795894,
+      "值": 308670404
+     },
+     "可轉讓定存單": {
+      "成本": 32664769,
+      "值": 32668304
+     },
+     "公債": {
+      "成本": 5601340,
+      "值": 5612925
+     },
+     "公司債": {
+      "成本": 13156774,
+      "值": 13176688
+     },
+     "金融債": {
+      "成本": 8573019,
+      "值": 8606777
+     },
+     "股票": {
+      "成本": 1926881,
+      "值": 766
+     },
+     "其他": {
+      "成本": 435431,
+      "值": 433791
+     }
+    },
+    "recon_fair": 420166820,
+    "bucket_cost": 371154108,
+    "deriv_fair": 49071020,
+    "bs_anchor": 420166820,
+    "cost_total": null,
+    "value_total": 420166820,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": true,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公債",
+      "公司債",
+      "金融債",
+      "貨幣市場"
+     ],
+     "mismatch": [
+      {
+       "桶": "貨幣市場",
+       "明細表": 308795894,
+       "主附註": 341437663
+      }
+     ]
+    },
+    "_bucket_warn": true,
+    "_meta": {
+     "det_pages": [
+      147,
+      148
+     ],
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      29,
+      30,
+      31,
+      32,
+      33
+     ],
+     "header": "透過損益按公允價值衡量之金融資產明細表"
+    }
+   },
+   "OCI": {
+    "buckets": {
+     "可轉讓定存單": {
+      "成本": 10064960,
+      "值": 10074195
+     },
+     "貨幣市場": {
+      "成本": 11285666,
+      "值": 11287462
+     },
+     "公債": {
+      "成本": 63274369,
+      "值": 62089164
+     },
+     "公司債": {
+      "成本": 5023075,
+      "值": 4781596
+     },
+     "金融債": {
+      "成本": 75011369,
+      "值": 74427083
+     },
+     "資產基礎": {
+      "成本": 21013065,
+      "值": 18775887
+     },
+     "其他": {
+      "成本": 10545885,
+      "值": 9931904
+     },
+     "股票": {
+      "成本": 9749274,
+      "值": 11594806
+     }
+    },
+    "recon_fair": 202962097,
+    "bucket_cost": 205967663,
+    "deriv_fair": 0,
+    "bs_anchor": 202962097,
+    "cost_total": 205967663,
+    "value_total": 202962097,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": false,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公債",
+      "公司債",
+      "金融債",
+      "資產基礎",
+      "可轉讓定存單",
+      "貨幣市場"
+     ],
+     "mismatch": []
+    },
+    "_bucket_warn": false,
+    "_meta": {
+     "det_pages": [
+      148,
+      149
+     ],
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      29,
+      30,
+      31,
+      32,
+      33
+     ],
+     "header": "透過其他綜合損益按公允價值衡量之金融資產明細表"
+    }
+   },
+   "AC": {
+    "buckets": {
+     "可轉讓定存單": {
+      "成本": 0,
+      "值": 271469492
+     },
+     "貨幣市場": {
+      "成本": 0,
+      "值": 16670807
+     },
+     "公債": {
+      "成本": 0,
+      "值": 274169183
+     },
+     "公司債": {
+      "成本": 0,
+      "值": 78420017
+     },
+     "資產基礎": {
+      "成本": 0,
+      "值": 68657781
+     },
+     "金融債": {
+      "成本": 0,
+      "值": 64005749
+     },
+     "其他": {
+      "成本": 0,
+      "值": 35979359
+     }
+    },
+    "recon_fair": 809372388,
+    "bucket_cost": 0,
+    "deriv_fair": 0,
+    "bs_anchor": 809372388,
+    "cost_total": null,
+    "value_total": 809372388,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": false,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公債",
+      "公司債",
+      "金融債",
+      "資產基礎",
+      "可轉讓定存單",
+      "貨幣市場"
+     ],
+     "mismatch": []
+    },
+    "_bucket_warn": false,
+    "_meta": {
+     "det_pages": [
+      148,
+      149
+     ],
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      29,
+      30,
+      31,
+      32,
+      33
+     ],
+     "header": "按攤銷後成本衡量之債務工具投資明細表"
+    }
+   }
+  }
+ },
+ "202304_5843_AI3": {
+  "loc": {
+   "Trading": [
+    128
+   ],
+   "OCI": [
+    129,
+    162,
+    163,
+    164
+   ],
+   "AC": [
+    132,
+    165
+   ]
+  },
+  "cls": {
+   "Trading": {
+    "buckets": {
+     "股票": {
+      "成本": 14161044,
+      "值": 19099226
+     },
+     "資產基礎": {
+      "成本": 8109,
+      "值": 8015
+     },
+     "公司債": {
+      "成本": 21877670,
+      "值": 22602696
+     },
+     "公債": {
+      "成本": 214383,
+      "值": 215578
+     },
+     "金融債": {
+      "成本": 6056884,
+      "值": 6074796
+     }
+    },
+    "recon_fair": 56779516,
+    "bucket_cost": 42318090,
+    "deriv_fair": 8779205,
+    "bs_anchor": 56779516,
+    "cost_total": 42432886,
+    "value_total": 56779516,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": false,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公債",
+      "公司債",
+      "金融債",
+      "資產基礎"
+     ],
+     "mismatch": []
+    },
+    "_bucket_warn": false,
+    "_meta": {
+     "det_pages": [
+      128,
+      129
+     ],
+     "bs_pages": [
+      8
+     ],
+     "note_pages": [
+      31,
+      32,
+      33,
+      34,
+      35
+     ],
+     "header": "透過損益按公允價值衡量之金融資產明細表"
+    }
+   },
+   "OCI": {
+    "buckets": {
+     "股票": {
+      "成本": 29495467,
+      "值": 50179149
+     },
+     "公債": {
+      "成本": 76256483,
+      "值": 71996396
+     },
+     "公司債": {
+      "成本": 134946087,
+      "值": 132667003
+     },
+     "金融債": {
+      "成本": 93029678,
+      "值": 92622501
+     },
+     "可轉讓定存單": {
+      "成本": 11500417,
+      "值": 11503394
+     },
+     "資產基礎": {
+      "成本": 59819666,
+      "值": 48895863
+     }
+    },
+    "recon_fair": 407864306,
+    "bucket_cost": 405047798,
+    "deriv_fair": 0,
+    "bs_anchor": 407864306,
+    "cost_total": 405047798,
+    "value_total": 407864306,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": false,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公債",
+      "公司債",
+      "金融債",
+      "資產基礎",
+      "可轉讓定存單"
+     ],
+     "mismatch": []
+    },
+    "_bucket_warn": false,
+    "_meta": {
+     "det_pages": [
+      129,
+      130
+     ],
+     "bs_pages": [
+      8
+     ],
+     "note_pages": [
+      31,
+      32,
+      33,
+      34,
+      35
+     ],
+     "header": "透過其他綜合損益按公允價值衡量之金融資產明細表"
+    }
+   },
+   "AC": {
+    "buckets": {
+     "公債": {
+      "成本": 0,
+      "值": 23535682
+     },
+     "可轉讓定存單": {
+      "成本": 0,
+      "值": 326936272
+     },
+     "貨幣市場": {
+      "成本": 0,
+      "值": 202074587
+     },
+     "金融債": {
+      "成本": 0,
+      "值": 24042577
+     },
+     "公司債": {
+      "成本": 0,
+      "值": 9489100
+     },
+     "資產基礎": {
+      "成本": 0,
+      "值": 23766430
+     }
+    },
+    "recon_fair": 609844648,
+    "bucket_cost": 0,
+    "deriv_fair": 0,
+    "bs_anchor": 609844648,
+    "cost_total": null,
+    "value_total": 609844648,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": false,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公債",
+      "公司債",
+      "金融債",
+      "資產基礎",
+      "可轉讓定存單",
+      "貨幣市場"
+     ],
+     "mismatch": []
+    },
+    "_bucket_warn": false,
+    "_meta": {
+     "det_pages": [
+      132,
+      133
+     ],
+     "bs_pages": [
+      8
+     ],
+     "note_pages": [
+      31,
+      32,
+      33,
+      34,
+      35
+     ],
+     "header": "按攤銷後成本衡量之債務工具投資明細表"
+    }
+   }
+  }
+ },
+ "202304_5847_AI3": {
+  "loc": {
+   "Trading": [
+    117
+   ],
+   "OCI": [
+    119,
+    165,
+    166
+   ],
+   "AC": [
+    120,
+    167,
+    168
+   ]
+  },
+  "cls": {
+   "Trading": {
+    "buckets": {
+     "貨幣市場": {
+      "成本": 105338552,
+      "值": 105526417
+     },
+     "公司債": {
+      "成本": 56344339,
+      "值": 50947037
+     },
+     "金融債": {
+      "成本": 49896755,
+      "值": 45665638
+     },
+     "其他": {
+      "成本": 838929,
+      "值": 857240
+     },
+     "股票": {
+      "成本": 969442,
+      "值": 1050621
+     }
+    },
+    "recon_fair": 244536866,
+    "bucket_cost": 213388017,
+    "deriv_fair": 40489913,
+    "bs_anchor": 244536866,
+    "cost_total": 215289686,
+    "value_total": 244536866,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": true,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公司債",
+      "金融債",
+      "貨幣市場"
+     ],
+     "mismatch": [
+      {
+       "桶": "公司債",
+       "明細表": 56344339,
+       "主附註": 50947037
+      },
+      {
+       "桶": "金融債",
+       "明細表": 49896755,
+       "主附註": 45665638
+      }
+     ]
+    },
+    "_bucket_warn": true,
+    "_meta": {
+     "det_pages": [
+      117,
+      118
+     ],
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44
+     ],
+     "header": "透過損益按公允價值衡量之金融資產明細表"
+    }
+   },
+   "OCI": {
+    "buckets": {
+     "股票": {
+      "成本": 13331106,
+      "值": 16397004
+     },
+     "金融債": {
+      "成本": 144852099,
+      "值": 141446649
+     },
+     "公債": {
+      "成本": 47903474,
+      "值": 46767798
+     },
+     "公司債": {
+      "成本": 113202819,
+      "值": 109884856
+     },
+     "其他": {
+      "成本": 18311248,
+      "值": 17994777
+     }
+    },
+    "recon_fair": 332491084,
+    "bucket_cost": 337600746,
+    "deriv_fair": 0,
+    "bs_anchor": 332491084,
+    "cost_total": 337600746,
+    "value_total": 332491084,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": true,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公債",
+      "公司債",
+      "金融債"
+     ],
+     "mismatch": [
+      {
+       "桶": "公債",
+       "明細表": 47903474,
+       "主附註": 46767798
+      },
+      {
+       "桶": "公司債",
+       "明細表": 113202819,
+       "主附註": 109884856
+      },
+      {
+       "桶": "金融債",
+       "明細表": 144852099,
+       "主附註": 141446649
+      }
+     ]
+    },
+    "_bucket_warn": true,
+    "_meta": {
+     "det_pages": [
+      119,
+      120
+     ],
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44
+     ],
+     "header": "玉山商業銀行股份有限公司透過其他綜合損益按公允價值衡量之金融資產明細表民國112年12月31日"
+    }
+   },
+   "AC": {
+    "buckets": {
+     "其他": {
+      "成本": 0,
+      "值": 46681262
+     },
+     "可轉讓定存單": {
+      "成本": 0,
+      "值": 330974826
+     },
+     "金融債": {
+      "成本": 0,
+      "值": 51516773
+     },
+     "公司債": {
+      "成本": 0,
+      "值": 22218321
+     },
+     "公債": {
+      "成本": 0,
+      "值": 22363768
+     }
+    },
+    "recon_fair": 473754950,
+    "bucket_cost": 0,
+    "deriv_fair": 0,
+    "bs_anchor": 473754950,
+    "cost_total": null,
+    "value_total": 473754950,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": true,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公債",
+      "公司債",
+      "金融債",
+      "可轉讓定存單"
+     ],
+     "mismatch": [
+      {
+       "桶": "公司債",
+       "明細表": 22218321,
+       "主附註": 2227643
+      }
+     ]
+    },
+    "_bucket_warn": true,
+    "_meta": {
+     "det_pages": [
+      120,
+      121
+     ],
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44
+     ],
+     "header": "按攤銷後成本衡量之債務工具投資明細表"
+    }
+   }
+  }
+ },
+ "202402_5835_AI3": {
+  "loc": {},
+  "cls": {
+   "Trading": {
+    "buckets": {
+     "貨幣市場": {
+      "成本": null,
+      "值": 100101897
+     },
+     "公債": {
+      "成本": null,
+      "值": 2948973
+     },
+     "公司債": {
+      "成本": null,
+      "值": 8012570
+     },
+     "金融債": {
+      "成本": null,
+      "值": 44818979
+     },
+     "可轉讓定存單": {
+      "成本": null,
+      "值": 430847
+     },
+     "股票": {
+      "成本": null,
+      "值": 2051552
+     },
+     "其他": {
+      "成本": null,
+      "值": 71199537
+     }
+    },
+    "recon_fair": 229564355,
+    "bucket_cost": null,
+    "deriv_fair": 0,
+    "bs_anchor": 229564355,
+    "cost_total": null,
+    "value_total": 229564355,
+    "bucket_sum": 229564355,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41
+     ]
+    }
+   },
+   "OCI": {
+    "buckets": {
+     "股票": {
+      "成本": null,
+      "值": 29320775
+     },
+     "公司債": {
+      "成本": null,
+      "值": 90162694
+     },
+     "金融債": {
+      "成本": null,
+      "值": 35020245
+     },
+     "資產基礎": {
+      "成本": null,
+      "值": 22430433
+     },
+     "可轉讓定存單": {
+      "成本": null,
+      "值": 19722462
+     },
+     "公債": {
+      "成本": null,
+      "值": 113697796
+     }
+    },
+    "recon_fair": 310354405,
+    "bucket_cost": null,
+    "deriv_fair": 0,
+    "bs_anchor": 310354405,
+    "cost_total": null,
+    "value_total": 310354405,
+    "bucket_sum": 310354405,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41
+     ]
+    }
+   },
+   "AC": {
+    "buckets": {
+     "貨幣市場": {
+      "成本": null,
+      "值": 284423232
+     },
+     "公債": {
+      "成本": null,
+      "值": 44439868
+     },
+     "公司債": {
+      "成本": null,
+      "值": 29153322
+     },
+     "金融債": {
+      "成本": null,
+      "值": 105214646
+     },
+     "資產基礎": {
+      "成本": null,
+      "值": 74408824
+     }
+    },
+    "recon_fair": 537594093,
+    "bucket_cost": null,
+    "deriv_fair": -45799,
+    "bs_anchor": 537594093,
+    "cost_total": null,
+    "value_total": 537594093,
+    "bucket_sum": 537639892,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41
+     ]
+    }
+   }
+  }
+ },
+ "202402_5836_AI3": {
+  "loc": {},
+  "cls": {
+   "Trading": {
+    "buckets": {
+     "公債": {
+      "成本": null,
+      "值": 4074115
+     },
+     "貨幣市場": {
+      "成本": null,
+      "值": 85637666
+     },
+     "公司債": {
+      "成本": null,
+      "值": 13076015
+     },
+     "其他": {
+      "成本": null,
+      "值": 51030737
+     }
+    },
+    "recon_fair": 156224813,
+    "bucket_cost": null,
+    "deriv_fair": 0,
+    "bs_anchor": 156224813,
+    "cost_total": null,
+    "value_total": 156224813,
+    "bucket_sum": 153818533,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      37,
+      38,
+      39,
+      40,
+      41
+     ]
+    }
+   },
+   "OCI": {
+    "buckets": {
+     "股票": {
+      "成本": null,
+      "值": 44378384
+     },
+     "金融債": {
+      "成本": null,
+      "值": 50189526
+     },
+     "公司債": {
+      "成本": null,
+      "值": 46312178
+     },
+     "公債": {
+      "成本": null,
+      "值": 33243101
+     },
+     "貨幣市場": {
+      "成本": null,
+      "值": 7345878
+     },
+     "其他": {
+      "成本": null,
+      "值": 7418253
+     }
+    },
+    "recon_fair": 188887320,
+    "bucket_cost": null,
+    "deriv_fair": 0,
+    "bs_anchor": 188887320,
+    "cost_total": null,
+    "value_total": 188887320,
+    "bucket_sum": 188887320,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      37,
+      38,
+      39,
+      40,
+      41
+     ]
+    }
+   },
+   "AC": {
+    "buckets": {
+     "公司債": {
+      "成本": null,
+      "值": 219172239
+     },
+     "可轉讓定存單": {
+      "成本": null,
+      "值": 217028214
+     },
+     "金融債": {
+      "成本": null,
+      "值": 185646336
+     },
+     "公債": {
+      "成本": null,
+      "值": 76300371
+     },
+     "資產基礎": {
+      "成本": null,
+      "值": 59253687
+     },
+     "其他": {
+      "成本": null,
+      "值": 646548
+     }
+    },
+    "recon_fair": 757443324,
+    "bucket_cost": null,
+    "deriv_fair": -604071,
+    "bs_anchor": 757443324,
+    "cost_total": null,
+    "value_total": 757443324,
+    "bucket_sum": 758047395,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      37,
+      38,
+      39,
+      40,
+      41
+     ]
+    }
+   }
+  }
+ },
+ "202402_5841_AI3": {
+  "loc": {},
+  "cls": {
+   "Trading": {
+    "buckets": {
+     "貨幣市場": {
+      "成本": null,
+      "值": 262130907
+     },
+     "公債": {
+      "成本": null,
+      "值": 1361718
+     },
+     "公司債": {
+      "成本": null,
+      "值": 14094242
+     },
+     "金融債": {
+      "成本": null,
+      "值": 5928992
+     },
+     "股票": {
+      "成本": null,
+      "值": 6084165
+     },
+     "可轉讓定存單": {
+      "成本": null,
+      "值": 29698388
+     }
+    },
+    "recon_fair": 378451544,
+    "bucket_cost": null,
+    "deriv_fair": 59153132,
+    "bs_anchor": 378451544,
+    "cost_total": null,
+    "value_total": 378451544,
+    "bucket_sum": 319298412,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      17,
+      18,
+      19,
+      20,
+      21
+     ]
+    }
+   },
+   "OCI": {
+    "buckets": {
+     "可轉讓定存單": {
+      "成本": null,
+      "值": 11121651
+     },
+     "貨幣市場": {
+      "成本": null,
+      "值": 15588130
+     },
+     "公債": {
+      "成本": null,
+      "值": 61474431
+     },
+     "公司債": {
+      "成本": null,
+      "值": 6413210
+     },
+     "金融債": {
+      "成本": null,
+      "值": 60808591
+     },
+     "資產基礎": {
+      "成本": null,
+      "值": 25010261
+     },
+     "其他": {
+      "成本": null,
+      "值": 13711993
+     },
+     "股票": {
+      "成本": null,
+      "值": 10389937
+     }
+    },
+    "recon_fair": 201346518,
+    "bucket_cost": null,
+    "deriv_fair": -3171686,
+    "bs_anchor": 201346518,
+    "cost_total": null,
+    "value_total": 201346518,
+    "bucket_sum": 204518204,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      17,
+      18,
+      19,
+      20,
+      21
+     ]
+    }
+   },
+   "AC": {
+    "buckets": {
+     "可轉讓定存單": {
+      "成本": null,
+      "值": 246031676
+     },
+     "貨幣市場": {
+      "成本": null,
+      "值": 37584533
+     },
+     "公債": {
+      "成本": null,
+      "值": 281253280
+     },
+     "公司債": {
+      "成本": null,
+      "值": 79617107
+     },
+     "金融債": {
+      "成本": null,
+      "值": 67618937
+     },
+     "資產基礎": {
+      "成本": null,
+      "值": 76480861
+     },
+     "其他": {
+      "成本": null,
+      "值": 38388953
+     }
+    },
+    "recon_fair": 826931820,
+    "bucket_cost": null,
+    "deriv_fair": -43527,
+    "bs_anchor": 826931820,
+    "cost_total": null,
+    "value_total": 826931820,
+    "bucket_sum": 826975347,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      17,
+      18,
+      19,
+      20,
+      21
+     ]
+    }
+   }
+  }
+ },
+ "202402_5843_AI3": {
+  "loc": {},
+  "cls": {
+   "Trading": {
+    "buckets": {
+     "股票": {
+      "成本": null,
+      "值": 13969040
+     },
+     "資產基礎": {
+      "成本": null,
+      "值": 8321
+     },
+     "公債": {
+      "成本": null,
+      "值": 162347
+     },
+     "公司債": {
+      "成本": null,
+      "值": 15283686
+     },
+     "金融債": {
+      "成本": null,
+      "值": 7303605
+     }
+    },
+    "recon_fair": 51108137,
+    "bucket_cost": null,
+    "deriv_fair": 14381138,
+    "bs_anchor": 51108137,
+    "cost_total": null,
+    "value_total": 51108137,
+    "bucket_sum": 36726999,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      8
+     ],
+     "note_pages": [
+      20,
+      21,
+      22,
+      23,
+      24
+     ]
+    }
+   },
+   "OCI": {
+    "buckets": {
+     "公司債": {
+      "成本": null,
+      "值": 129043157
+     },
+     "金融債": {
+      "成本": null,
+      "值": 97873146
+     },
+     "公債": {
+      "成本": null,
+      "值": 79486112
+     },
+     "資產基礎": {
+      "成本": null,
+      "值": 60833147
+     },
+     "可轉讓定存單": {
+      "成本": null,
+      "值": 14991937
+     },
+     "股票": {
+      "成本": null,
+      "值": 30032288
+     }
+    },
+    "recon_fair": 414679492,
+    "bucket_cost": null,
+    "deriv_fair": 2419780,
+    "bs_anchor": 414679492,
+    "cost_total": null,
+    "value_total": 414679492,
+    "bucket_sum": 412259787,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      8
+     ],
+     "note_pages": [
+      20,
+      21,
+      22,
+      23,
+      24
+     ]
+    }
+   },
+   "AC": {
+    "buckets": {
+     "可轉讓定存單": {
+      "成本": null,
+      "值": 304520599
+     },
+     "貨幣市場": {
+      "成本": null,
+      "值": 228089665
+     },
+     "金融債": {
+      "成本": null,
+      "值": 23563446
+     },
+     "公債": {
+      "成本": null,
+      "值": 28551617
+     },
+     "公司債": {
+      "成本": null,
+      "值": 10306303
+     },
+     "資產基礎": {
+      "成本": null,
+      "值": 23493161
+     }
+    },
+    "recon_fair": 618478159,
+    "bucket_cost": null,
+    "deriv_fair": -46632,
+    "bs_anchor": 618478159,
+    "cost_total": null,
+    "value_total": 618478159,
+    "bucket_sum": 618524791,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      8
+     ],
+     "note_pages": [
+      20,
+      21,
+      22,
+      23,
+      24
+     ]
+    }
+   }
+  }
+ },
+ "202402_5847_AI3": {
+  "loc": {},
+  "cls": {
+   "Trading": {
+    "buckets": {
+     "可轉讓定存單": {
+      "成本": null,
+      "值": 0
+     },
+     "貨幣市場": {
+      "成本": null,
+      "值": 113834991
+     },
+     "公債": {
+      "成本": null,
+      "值": 14953224
+     },
+     "公司債": {
+      "成本": null,
+      "值": 47652923
+     },
+     "金融債": {
+      "成本": null,
+      "值": 44939557
+     },
+     "其他": {
+      "成本": null,
+      "值": 0
+     },
+     "股票": {
+      "成本": null,
+      "值": 1183984
+     }
+    },
+    "recon_fair": 273701725,
+    "bucket_cost": null,
+    "deriv_fair": 51137046,
+    "bs_anchor": 273701725,
+    "cost_total": null,
+    "value_total": 273701725,
+    "bucket_sum": 222564679,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      21,
+      22,
+      23,
+      24,
+      25
+     ]
+    }
+   },
+   "OCI": {
+    "buckets": {
+     "股票": {
+      "成本": null,
+      "值": 26474613
+     },
+     "金融債": {
+      "成本": null,
+      "值": 140312388
+     },
+     "公債": {
+      "成本": null,
+      "值": 40528080
+     },
+     "公司債": {
+      "成本": null,
+      "值": 117573019
+     },
+     "其他": {
+      "成本": null,
+      "值": 37110571
+     },
+     "可轉讓定存單": {
+      "成本": null,
+      "值": 0
+     },
+     "資產基礎": {
+      "成本": null,
+      "值": 313572
+     }
+    },
+    "recon_fair": 362312243,
+    "bucket_cost": null,
+    "deriv_fair": 0,
+    "bs_anchor": 362312243,
+    "cost_total": null,
+    "value_total": 362312243,
+    "bucket_sum": 362312243,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      21,
+      22,
+      23,
+      24,
+      25
+     ]
+    }
+   },
+   "AC": {
+    "buckets": {
+     "其他": {
+      "成本": null,
+      "值": 53913092
+     },
+     "金融債": {
+      "成本": null,
+      "值": 58929162
+     },
+     "公司債": {
+      "成本": null,
+      "值": 24463233
+     },
+     "可轉讓定存單": {
+      "成本": null,
+      "值": 274260000
+     },
+     "公債": {
+      "成本": null,
+      "值": 23874623
+     },
+     "資產基礎": {
+      "成本": null,
+      "值": 7600506
+     }
+    },
+    "recon_fair": 443014297,
+    "bucket_cost": null,
+    "deriv_fair": -26319,
+    "bs_anchor": 443014297,
+    "cost_total": null,
+    "value_total": 443014297,
+    "bucket_sum": 443040616,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      21,
+      22,
+      23,
+      24,
+      25
+     ]
+    }
+   }
+  }
+ },
+ "202404_5835_AI3": {
+  "loc": {
+   "Trading": [
+    132,
+    156
+   ],
+   "OCI": [
+    133,
+    157,
+    160
+   ],
+   "AC": [
+    134
+   ]
+  },
+  "cls": {
+   "Trading": {
+    "buckets": {
+     "公債": {
+      "成本": 4187880,
+      "值": 4153386
+     },
+     "其他": {
+      "成本": 49613,
+      "值": 49977
+     },
+     "公司債": {
+      "成本": 18603,
+      "值": 18900
+     },
+     "金融債": {
+      "成本": 227278,
+      "值": 230149
+     }
+    },
+    "recon_fair": 4452412,
+    "bucket_cost": 4483374,
+    "deriv_fair": 0,
+    "bs_anchor": 261380653,
+    "cost_total": 4483374,
+    "value_total": 4452412,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": false,
+    "_weak_anchor": false,
+    "_needs_review": true,
+    "_pass": false,
+    "_source": "detail",
+    "_select_mode": "best_effort",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公債",
+      "公司債",
+      "金融債"
+     ],
+     "mismatch": [
+      {
+       "桶": "公債",
+       "明細表": 4187880,
+       "主附註": 13644268
+      },
+      {
+       "桶": "公司債",
+       "明細表": 18603,
+       "主附註": 21499407
+      },
+      {
+       "桶": "金融債",
+       "明細表": 227278,
+       "主附註": 22813083
+      }
+     ]
+    },
+    "_bucket_warn": true,
+    "_meta": {
+     "det_pages": [
+      156,
+      157
+     ],
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      35,
+      36,
+      37,
+      38,
+      39,
+      40
+     ],
+     "header": "證券部門透過損益按公允價值衡量之金融資產明細表"
+    }
+   },
+   "OCI": {
+    "buckets": {
+     "股票": {
+      "成本": 17582883,
+      "值": 27717034
+     },
+     "公司債": {
+      "成本": 97089689,
+      "值": 94242099
+     },
+     "金融債": {
+      "成本": 29352564,
+      "值": 29073073
+     },
+     "資產基礎": {
+      "成本": 33095165,
+      "值": 30790555
+     },
+     "公債": {
+      "成本": 154576462,
+      "值": 146891143
+     }
+    },
+    "recon_fair": 328713904,
+    "bucket_cost": 331696763,
+    "deriv_fair": 0,
+    "bs_anchor": 328713904,
+    "cost_total": 331696763,
+    "value_total": 328713904,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": true,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公債",
+      "公司債",
+      "金融債",
+      "資產基礎"
+     ],
+     "mismatch": [
+      {
+       "桶": "公債",
+       "明細表": 154576462,
+       "主附註": 146891143
+      },
+      {
+       "桶": "公司債",
+       "明細表": 97089689,
+       "主附註": 94242099
+      },
+      {
+       "桶": "資產基礎",
+       "明細表": 33095165,
+       "主附註": 30790555
+      }
+     ]
+    },
+    "_bucket_warn": true,
+    "_meta": {
+     "det_pages": [
+      133,
+      134
+     ],
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      35,
+      36,
+      37,
+      38,
+      39,
+      40
+     ],
+     "header": "透過其他綜合損益按公允價值衡量之金融資產明細表"
+    }
+   },
+   "AC": {
+    "buckets": {
+     "貨幣市場": {
+      "成本": 0,
+      "值": 332112481
+     },
+     "公債": {
+      "成本": 0,
+      "值": 46747587
+     },
+     "公司債": {
+      "成本": 0,
+      "值": 29327459
+     },
+     "金融債": {
+      "成本": 0,
+      "值": 92374560
+     },
+     "資產基礎": {
+      "成本": 0,
+      "值": 74465754
+     }
+    },
+    "recon_fair": 575027841,
+    "bucket_cost": 0,
+    "deriv_fair": 0,
+    "bs_anchor": 575027841,
+    "cost_total": null,
+    "value_total": 575027841,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": false,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公債",
+      "公司債",
+      "金融債",
+      "資產基礎",
+      "貨幣市場"
+     ],
+     "mismatch": []
+    },
+    "_bucket_warn": false,
+    "_meta": {
+     "det_pages": [
+      134,
+      135
+     ],
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      35,
+      36,
+      37,
+      38,
+      39,
+      40
+     ],
+     "header": "國泰世華商業銀行股份有限公司按攤銷後成本衡量之債務工具投資明細表113年12月31日"
+    }
+   }
+  }
+ },
+ "202404_5836_AI3": {
+  "loc": {
+   "Trading": [
+    151,
+    197
+   ],
+   "OCI": [
+    152,
+    198,
+    202
+   ],
+   "AC": [
+    154,
+    199,
+    203
+   ]
+  },
+  "cls": {
+   "Trading": {
+    "buckets": {
+     "貨幣市場": {
+      "成本": 113439909,
+      "值": 113428760
+     },
+     "公司債": {
+      "成本": 15225121,
+      "值": 15387901
+     },
+     "公債": {
+      "成本": 3022305,
+      "值": 3025365
+     },
+     "其他": {
+      "成本": 0,
+      "值": 11013442
+     }
+    },
+    "recon_fair": 192397889,
+    "bucket_cost": 131687335,
+    "deriv_fair": 49542421,
+    "bs_anchor": 192397889,
+    "cost_total": 178720282,
+    "value_total": 192397889,
+    "_internal_ok": true,
+    "_cost_internal_ok": false,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": true,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公債",
+      "公司債",
+      "貨幣市場"
+     ],
+     "mismatch": [
+      {
+       "桶": "公債",
+       "明細表": 3022305,
+       "主附註": 1225795
+      },
+      {
+       "桶": "公司債",
+       "明細表": 15225121,
+       "主附註": 11822659
+      }
+     ]
+    },
+    "_bucket_warn": true,
+    "_meta": {
+     "det_pages": [
+      151,
+      152
+     ],
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      38,
+      39,
+      40,
+      41,
+      42,
+      43
+     ],
+     "header": "透過損益按公允價值衡量之金融資產明細表"
+    }
+   },
+   "OCI": {
+    "buckets": {
+     "公債": {
+      "成本": 60495472,
+      "值": 59146054
+     },
+     "公司債": {
+      "成本": 48503925,
+      "值": 48000135
+     },
+     "金融債": {
+      "成本": 42896205,
+      "值": 42882962
+     },
+     "股票": {
+      "成本": 13180180,
+      "值": 19800195
+     },
+     "資產基礎": {
+      "成本": 7488667,
+      "值": 7106142
+     },
+     "其他": {
+      "成本": 6155833,
+      "值": 6220770
+     }
+    },
+    "recon_fair": 183156258,
+    "bucket_cost": 178720282,
+    "deriv_fair": 0,
+    "bs_anchor": 183156258,
+    "cost_total": 178720282,
+    "value_total": 183156258,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": true,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公債",
+      "公司債",
+      "金融債"
+     ],
+     "mismatch": [
+      {
+       "桶": "公債",
+       "明細表": 60495472,
+       "主附註": 59146054
+      },
+      {
+       "桶": "公司債",
+       "明細表": 48503925,
+       "主附註": 48000135
+      }
+     ]
+    },
+    "_bucket_warn": true,
+    "_meta": {
+     "det_pages": [
+      152,
+      153
+     ],
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      38,
+      39,
+      40,
+      41,
+      42,
+      43
+     ],
+     "header": "台北富邦商業銀行股份有限公司透過其他綜合損益按公允價值衡量之金融資產明細表民國113年12月31日"
+    }
+   },
+   "AC": {
+    "buckets": {
+     "可轉讓定存單": {
+      "成本": 0,
+      "值": 244757374
+     },
+     "公司債": {
+      "成本": 0,
+      "值": 217533532
+     },
+     "金融債": {
+      "成本": 0,
+      "值": 188078000
+     },
+     "公債": {
+      "成本": 0,
+      "值": 76960028
+     },
+     "資產基礎": {
+      "成本": 0,
+      "值": 61332697
+     },
+     "其他": {
+      "成本": 0,
+      "值": 9745508
+     }
+    },
+    "recon_fair": 798407139,
+    "bucket_cost": 0,
+    "deriv_fair": 0,
+    "bs_anchor": 798407139,
+    "cost_total": null,
+    "value_total": 798407139,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": false,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公債",
+      "公司債",
+      "金融債",
+      "資產基礎",
+      "可轉讓定存單"
+     ],
+     "mismatch": []
+    },
+    "_bucket_warn": false,
+    "_meta": {
+     "det_pages": [
+      154,
+      155
+     ],
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      38,
+      39,
+      40,
+      41,
+      42,
+      43
+     ],
+     "header": "台北富邦商業銀行股份有限公司 按攤銷後成本衡量之債務工具投資明細表 民國 113 年 12 月 31 日"
+    }
+   }
+  }
+ },
+ "202404_5841_AI3": {
+  "loc": {
+   "Trading": [
+    147,
+    167
+   ],
+   "OCI": [
+    148,
+    168
+   ],
+   "AC": [
+    148,
+    169
+   ]
+  },
+  "cls": {
+   "Trading": {
+    "buckets": {
+     "貨幣市場": {
+      "成本": 216831096,
+      "值": 216830713
+     },
+     "公債": {
+      "成本": 1946796,
+      "值": 1971780
+     },
+     "公司債": {
+      "成本": 8938790,
+      "值": 9109589
+     },
+     "金融債": {
+      "成本": 1387937,
+      "值": 1396184
+     },
+     "股票": {
+      "成本": 3904490,
+      "值": 4139145
+     },
+     "可轉讓定存單": {
+      "成本": 92192396,
+      "值": 92241386
+     }
+    },
+    "recon_fair": 403775497,
+    "bucket_cost": 325201505,
+    "deriv_fair": 78086700,
+    "bs_anchor": 403775497,
+    "cost_total": 325201505,
+    "value_total": 403775497,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": false,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公債",
+      "公司債",
+      "金融債",
+      "可轉讓定存單",
+      "貨幣市場"
+     ],
+     "mismatch": []
+    },
+    "_bucket_warn": false,
+    "_meta": {
+     "det_pages": [
+      147,
+      148
+     ],
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      31,
+      32,
+      33,
+      34,
+      35
+     ],
+     "header": "透過損益按公允價值衡量之金融資產明細表"
+    }
+   },
+   "OCI": {
+    "buckets": {
+     "可轉讓定存單": {
+      "成本": 11418366,
+      "值": 11432336
+     },
+     "貨幣市場": {
+      "成本": 11653622,
+      "值": 11654604
+     },
+     "公債": {
+      "成本": 93770840,
+      "值": 91597812
+     },
+     "公司債": {
+      "成本": 7778820,
+      "值": 7589760
+     },
+     "金融債": {
+      "成本": 59683330,
+      "值": 59543580
+     },
+     "資產基礎": {
+      "成本": 31426869,
+      "值": 28565097
+     },
+     "其他": {
+      "成本": 26003556,
+      "值": 25557229
+     },
+     "股票": {
+      "成本": 11512993,
+      "值": 13656530
+     }
+    },
+    "recon_fair": 249596948,
+    "bucket_cost": 253248396,
+    "deriv_fair": 0,
+    "bs_anchor": 249596948,
+    "cost_total": 253248396,
+    "value_total": 249596948,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": true,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公債",
+      "公司債",
+      "金融債",
+      "資產基礎",
+      "可轉讓定存單"
+     ],
+     "mismatch": [
+      {
+       "桶": "公債",
+       "明細表": 93770840,
+       "主附註": 105424462
+      }
+     ]
+    },
+    "_bucket_warn": true,
+    "_meta": {
+     "det_pages": [
+      148,
+      149
+     ],
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      31,
+      32,
+      33,
+      34,
+      35
+     ],
+     "header": "透過其他綜合損益按公允價值衡量之金融資產明細表"
+    }
+   },
+   "AC": {
+    "buckets": {
+     "可轉讓定存單": {
+      "成本": 0,
+      "值": 345580975
+     },
+     "貨幣市場": {
+      "成本": 0,
+      "值": 26790118
+     },
+     "公債": {
+      "成本": 0,
+      "值": 270227097
+     },
+     "公司債": {
+      "成本": 0,
+      "值": 105123152
+     },
+     "資產基礎": {
+      "成本": 0,
+      "值": 93974256
+     },
+     "金融債": {
+      "成本": 0,
+      "值": 67063616
+     },
+     "其他": {
+      "成本": 0,
+      "值": 42002917
+     }
+    },
+    "recon_fair": 950762131,
+    "bucket_cost": 0,
+    "deriv_fair": 0,
+    "bs_anchor": 950762131,
+    "cost_total": null,
+    "value_total": 950762131,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": false,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公債",
+      "公司債",
+      "金融債",
+      "資產基礎",
+      "可轉讓定存單",
+      "貨幣市場"
+     ],
+     "mismatch": []
+    },
+    "_bucket_warn": false,
+    "_meta": {
+     "det_pages": [
+      148,
+      149
+     ],
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      31,
+      32,
+      33,
+      34,
+      35
+     ],
+     "header": "按攤銷後成本衡量之債務工具投資明細表"
+    }
+   }
+  }
+ },
+ "202404_5843_AI3": {
+  "loc": {
+   "Trading": [
+    125
+   ],
+   "OCI": [
+    126,
+    159,
+    160,
+    161
+   ],
+   "AC": [
+    129,
+    162,
+    163
+   ]
+  },
+  "cls": {
+   "Trading": {
+    "buckets": {
+     "股票": {
+      "成本": 14176593,
+      "值": 18839667
+     },
+     "資產基礎": {
+      "成本": 7733,
+      "值": 7812
+     },
+     "公司債": {
+      "成本": 21684995,
+      "值": 22284807
+     },
+     "公債": {
+      "成本": 163518,
+      "值": 162599
+     },
+     "金融債": {
+      "成本": 8479767,
+      "值": 8453654
+     }
+    },
+    "recon_fair": 58831126,
+    "bucket_cost": 44512606,
+    "deriv_fair": 9082587,
+    "bs_anchor": 58831126,
+    "cost_total": 44631513,
+    "value_total": 58831126,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": false,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公債",
+      "公司債",
+      "金融債",
+      "資產基礎"
+     ],
+     "mismatch": []
+    },
+    "_bucket_warn": false,
+    "_meta": {
+     "det_pages": [
+      125,
+      126
+     ],
+     "bs_pages": [
+      8
+     ],
+     "note_pages": [
+      31,
+      32,
+      33,
+      34,
+      35
+     ],
+     "header": "透過損益按公允價值衡量之金融資產明細表"
+    }
+   },
+   "OCI": {
+    "buckets": {
+     "股票": {
+      "成本": 22133668,
+      "值": 41701384
+     },
+     "公債": {
+      "成本": 92663736,
+      "值": 87286670
+     },
+     "公司債": {
+      "成本": 118839815,
+      "值": 117247122
+     },
+     "金融債": {
+      "成本": 97661929,
+      "值": 97695371
+     },
+     "貨幣市場": {
+      "成本": 6825851,
+      "值": 6815648
+     },
+     "可轉讓定存單": {
+      "成本": 8571075,
+      "值": 8591111
+     },
+     "資產基礎": {
+      "成本": 58429676,
+      "值": 45737872
+     }
+    },
+    "recon_fair": 405075178,
+    "bucket_cost": 405125750,
+    "deriv_fair": 0,
+    "bs_anchor": 405075178,
+    "cost_total": 405125750,
+    "value_total": 405075178,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": true,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公債",
+      "公司債",
+      "金融債",
+      "資產基礎",
+      "可轉讓定存單"
+     ],
+     "mismatch": [
+      {
+       "桶": "可轉讓定存單",
+       "明細表": 8571075,
+       "主附註": 15396926
+      }
+     ]
+    },
+    "_bucket_warn": true,
+    "_meta": {
+     "det_pages": [
+      126,
+      127
+     ],
+     "bs_pages": [
+      8
+     ],
+     "note_pages": [
+      31,
+      32,
+      33,
+      34,
+      35
+     ],
+     "header": "透過其他綜合損益按公允價值衡量之金融資產明細表"
+    }
+   },
+   "AC": {
+    "buckets": {
+     "公債": {
+      "成本": 0,
+      "值": 32481350
+     },
+     "可轉讓定存單": {
+      "成本": 0,
+      "值": 292953807
+     },
+     "貨幣市場": {
+      "成本": 0,
+      "值": 254049959
+     },
+     "金融債": {
+      "成本": 0,
+      "值": 22848825
+     },
+     "公司債": {
+      "成本": 0,
+      "值": 12445470
+     },
+     "資產基礎": {
+      "成本": 0,
+      "值": 28277344
+     }
+    },
+    "recon_fair": 643056755,
+    "bucket_cost": 0,
+    "deriv_fair": 0,
+    "bs_anchor": 643056755,
+    "cost_total": null,
+    "value_total": 643056755,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": false,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公債",
+      "公司債",
+      "金融債",
+      "資產基礎",
+      "可轉讓定存單",
+      "貨幣市場"
+     ],
+     "mismatch": []
+    },
+    "_bucket_warn": false,
+    "_meta": {
+     "det_pages": [
+      129,
+      130
+     ],
+     "bs_pages": [
+      8
+     ],
+     "note_pages": [
+      31,
+      32,
+      33,
+      34,
+      35
+     ],
+     "header": "兆豐國際商業銀行股份有限公司 按攤銷後成本衡量之債務工具投資明細表 民國 113 年 12 月 31 日"
+    }
+   }
+  }
+ },
+ "202404_5847_AI3": {
+  "loc": {
+   "Trading": [
+    125,
+    176
+   ],
+   "OCI": [
+    127,
+    177,
+    178
+   ],
+   "AC": [
+    128,
+    179,
+    180
+   ]
+  },
+  "cls": {
+   "Trading": {
+    "buckets": {
+     "可轉讓定存單": {
+      "成本": 16100748,
+      "值": 16112757
+     },
+     "貨幣市場": {
+      "成本": 125537724,
+      "值": 125813112
+     },
+     "公司債": {
+      "成本": 42858161,
+      "值": 39896712
+     },
+     "金融債": {
+      "成本": 41233449,
+      "值": 38616424
+     },
+     "股票": {
+      "成本": 1072316,
+      "值": 1148558
+     }
+    },
+    "recon_fair": 275226180,
+    "bucket_cost": 226802398,
+    "deriv_fair": 53638617,
+    "bs_anchor": 275226180,
+    "cost_total": 229678002,
+    "value_total": 275226180,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": true,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公司債",
+      "金融債",
+      "可轉讓定存單",
+      "貨幣市場"
+     ],
+     "mismatch": [
+      {
+       "桶": "公司債",
+       "明細表": 42858161,
+       "主附註": 39896712
+      },
+      {
+       "桶": "金融債",
+       "明細表": 41233449,
+       "主附註": 38616424
+      }
+     ]
+    },
+    "_bucket_warn": true,
+    "_meta": {
+     "det_pages": [
+      125,
+      126
+     ],
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      38,
+      39,
+      40,
+      41,
+      42
+     ],
+     "header": "透過損益按公允價值衡量之金融資產明細表"
+    }
+   },
+   "OCI": {
+    "buckets": {
+     "股票": {
+      "成本": 18037634,
+      "值": 23623796
+     },
+     "金融債": {
+      "成本": 135999048,
+      "值": 133610518
+     },
+     "公債": {
+      "成本": 43309632,
+      "值": 41966705
+     },
+     "公司債": {
+      "成本": 114121491,
+      "值": 111529249
+     },
+     "其他": {
+      "成本": 37680311,
+      "值": 36798778
+     },
+     "資產基礎": {
+      "成本": 953168,
+      "值": 942844
+     }
+    },
+    "recon_fair": 348471890,
+    "bucket_cost": 350101284,
+    "deriv_fair": 0,
+    "bs_anchor": 348471890,
+    "cost_total": 350101284,
+    "value_total": 348471890,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": true,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公債",
+      "公司債",
+      "金融債",
+      "資產基礎"
+     ],
+     "mismatch": [
+      {
+       "桶": "公債",
+       "明細表": 43309632,
+       "主附註": 41966705
+      },
+      {
+       "桶": "公司債",
+       "明細表": 114121491,
+       "主附註": 111529249
+      },
+      {
+       "桶": "金融債",
+       "明細表": 135999048,
+       "主附註": 133610518
+      },
+      {
+       "桶": "資產基礎",
+       "明細表": 953168,
+       "主附註": 942844
+      }
+     ]
+    },
+    "_bucket_warn": true,
+    "_meta": {
+     "det_pages": [
+      127,
+      128
+     ],
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      38,
+      39,
+      40,
+      41,
+      42
+     ],
+     "header": "透過其他綜合損益按公允價值衡量之金融資產明細表"
+    }
+   },
+   "AC": {
+    "buckets": {
+     "其他": {
+      "成本": 0,
+      "值": 56119956
+     },
+     "可轉讓定存單": {
+      "成本": 0,
+      "值": 292130000
+     },
+     "金融債": {
+      "成本": 0,
+      "值": 66976726
+     },
+     "公司債": {
+      "成本": 0,
+      "值": 25720618
+     },
+     "公債": {
+      "成本": 0,
+      "值": 23857142
+     },
+     "資產基礎": {
+      "成本": 0,
+      "值": 17995486
+     }
+    },
+    "recon_fair": 482799928,
+    "bucket_cost": 0,
+    "deriv_fair": 0,
+    "bs_anchor": 482799928,
+    "cost_total": null,
+    "value_total": 482799928,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": false,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公債",
+      "公司債",
+      "金融債",
+      "資產基礎",
+      "可轉讓定存單"
+     ],
+     "mismatch": []
+    },
+    "_bucket_warn": false,
+    "_meta": {
+     "det_pages": [
+      128,
+      129
+     ],
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      38,
+      39,
+      40,
+      41,
+      42
+     ],
+     "header": "按攤銷後成本衡量之債務工具投資明細表"
+    }
+   }
+  }
+ },
+ "202502_5835_AI3": {
+  "loc": {},
+  "cls": {
+   "Trading": {
+    "buckets": {
+     "貨幣市場": {
+      "成本": null,
+      "值": 134116640
+     },
+     "金融債": {
+      "成本": null,
+      "值": 35577000
+     },
+     "公司債": {
+      "成本": null,
+      "值": 25910194
+     },
+     "公債": {
+      "成本": null,
+      "值": 14578770
+     },
+     "可轉讓定存單": {
+      "成本": null,
+      "值": 1481622
+     },
+     "股票": {
+      "成本": null,
+      "值": 667445
+     }
+    },
+    "recon_fair": 296338628,
+    "bucket_cost": null,
+    "deriv_fair": 84006957,
+    "bs_anchor": 296338628,
+    "cost_total": null,
+    "value_total": 296338628,
+    "bucket_sum": 212331671,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      35,
+      36,
+      37,
+      38,
+      39
+     ]
+    }
+   },
+   "OCI": {
+    "buckets": {
+     "股票": {
+      "成本": null,
+      "值": 24595634
+     },
+     "公司債": {
+      "成本": null,
+      "值": 96174020
+     },
+     "金融債": {
+      "成本": null,
+      "值": 21497706
+     },
+     "資產基礎": {
+      "成本": null,
+      "值": 32072146
+     },
+     "公債": {
+      "成本": null,
+      "值": 156424364
+     }
+    },
+    "recon_fair": 330763870,
+    "bucket_cost": null,
+    "deriv_fair": 0,
+    "bs_anchor": 330763870,
+    "cost_total": null,
+    "value_total": 330763870,
+    "bucket_sum": 330763870,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      35,
+      36,
+      37,
+      38,
+      39
+     ]
+    }
+   },
+   "AC": {
+    "buckets": {
+     "貨幣市場": {
+      "成本": null,
+      "值": 524437763
+     },
+     "公債": {
+      "成本": null,
+      "值": 44564723
+     },
+     "公司債": {
+      "成本": null,
+      "值": 26307913
+     },
+     "金融債": {
+      "成本": null,
+      "值": 66602544
+     },
+     "資產基礎": {
+      "成本": null,
+      "值": 73346099
+     }
+    },
+    "recon_fair": 735128515,
+    "bucket_cost": null,
+    "deriv_fair": 130527,
+    "bs_anchor": 735128515,
+    "cost_total": null,
+    "value_total": 735128515,
+    "bucket_sum": 735259042,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      35,
+      36,
+      37,
+      38,
+      39
+     ]
+    }
+   }
+  }
+ },
+ "202502_5836_AI3": {
+  "loc": {},
+  "cls": {
+   "Trading": {
+    "buckets": {
+     "公債": {
+      "成本": null,
+      "值": 975766
+     },
+     "貨幣市場": {
+      "成本": null,
+      "值": 135439049
+     },
+     "公司債": {
+      "成本": null,
+      "值": 14884740
+     },
+     "其他": {
+      "成本": null,
+      "值": 23368887
+     }
+    },
+    "recon_fair": 223428547,
+    "bucket_cost": null,
+    "deriv_fair": 48760105,
+    "bs_anchor": 223428547,
+    "cost_total": null,
+    "value_total": 223428547,
+    "bucket_sum": 174668442,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      36,
+      37,
+      38,
+      39,
+      40,
+      41
+     ]
+    }
+   },
+   "OCI": {
+    "buckets": {
+     "股票": {
+      "成本": null,
+      "值": 39256310
+     },
+     "公債": {
+      "成本": null,
+      "值": 59936220
+     },
+     "公司債": {
+      "成本": null,
+      "值": 44999472
+     },
+     "金融債": {
+      "成本": null,
+      "值": 39404486
+     },
+     "其他": {
+      "成本": null,
+      "值": 5690132
+     }
+    },
+    "recon_fair": 189286620,
+    "bucket_cost": null,
+    "deriv_fair": 0,
+    "bs_anchor": 189286620,
+    "cost_total": null,
+    "value_total": 189286620,
+    "bucket_sum": 189286620,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      36,
+      37,
+      38,
+      39,
+      40,
+      41
+     ]
+    }
+   },
+   "AC": {
+    "buckets": {
+     "可轉讓定存單": {
+      "成本": null,
+      "值": 240877508
+     },
+     "公司債": {
+      "成本": null,
+      "值": 204128131
+     },
+     "金融債": {
+      "成本": null,
+      "值": 179058350
+     },
+     "公債": {
+      "成本": null,
+      "值": 79656820
+     },
+     "資產基礎": {
+      "成本": null,
+      "值": 74407582
+     },
+     "其他": {
+      "成本": null,
+      "值": 8667318
+     }
+    },
+    "recon_fair": 786252196,
+    "bucket_cost": null,
+    "deriv_fair": -543513,
+    "bs_anchor": 786252196,
+    "cost_total": null,
+    "value_total": 786252196,
+    "bucket_sum": 786795709,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      36,
+      37,
+      38,
+      39,
+      40,
+      41
+     ]
+    }
+   }
+  }
+ },
+ "202502_5841_AI3": {
+  "loc": {},
+  "cls": {
+   "Trading": {
+    "buckets": {
+     "貨幣市場": {
+      "成本": null,
+      "值": 167873597
+     },
+     "公債": {
+      "成本": null,
+      "值": 5070680
+     },
+     "公司債": {
+      "成本": null,
+      "值": 11358332
+     },
+     "金融債": {
+      "成本": null,
+      "值": 5464465
+     },
+     "股票": {
+      "成本": null,
+      "值": 366125
+     },
+     "可轉讓定存單": {
+      "成本": null,
+      "值": 17463590
+     },
+     "其他": {
+      "成本": null,
+      "值": 29840
+     }
+    },
+    "recon_fair": 265899923,
+    "bucket_cost": null,
+    "deriv_fair": 58273294,
+    "bs_anchor": 265899923,
+    "cost_total": null,
+    "value_total": 265899923,
+    "bucket_sum": 207626629,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+     ]
+    }
+   },
+   "OCI": {
+    "buckets": {
+     "可轉讓定存單": {
+      "成本": null,
+      "值": 7737163
+     },
+     "公債": {
+      "成本": null,
+      "值": 147999756
+     },
+     "公司債": {
+      "成本": null,
+      "值": 10385375
+     },
+     "金融債": {
+      "成本": null,
+      "值": 57031926
+     },
+     "資產基礎": {
+      "成本": null,
+      "值": 24835758
+     },
+     "其他": {
+      "成本": null,
+      "值": 28491183
+     },
+     "股票": {
+      "成本": null,
+      "值": 18180902
+     }
+    },
+    "recon_fair": 292740340,
+    "bucket_cost": null,
+    "deriv_fair": -1921723,
+    "bs_anchor": 292740340,
+    "cost_total": null,
+    "value_total": 292740340,
+    "bucket_sum": 294662063,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+     ]
+    }
+   },
+   "AC": {
+    "buckets": {
+     "可轉讓定存單": {
+      "成本": null,
+      "值": 364437321
+     },
+     "貨幣市場": {
+      "成本": null,
+      "值": 20148622
+     },
+     "公債": {
+      "成本": null,
+      "值": 243759316
+     },
+     "公司債": {
+      "成本": null,
+      "值": 104685345
+     },
+     "金融債": {
+      "成本": null,
+      "值": 62616430
+     },
+     "資產基礎": {
+      "成本": null,
+      "值": 86315742
+     },
+     "其他": {
+      "成本": null,
+      "值": 36637725
+     }
+    },
+    "recon_fair": 918533325,
+    "bucket_cost": null,
+    "deriv_fair": -67176,
+    "bs_anchor": 918533325,
+    "cost_total": null,
+    "value_total": 918533325,
+    "bucket_sum": 918600501,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+     ]
+    }
+   }
+  }
+ },
+ "202502_5843_AI3": {
+  "loc": {},
+  "cls": {
+   "Trading": {
+    "buckets": {
+     "股票": {
+      "成本": null,
+      "值": 12410837
+     },
+     "資產基礎": {
+      "成本": null,
+      "值": 5932
+     },
+     "公債": {
+      "成本": null,
+      "值": 435226
+     },
+     "公司債": {
+      "成本": null,
+      "值": 22634008
+     },
+     "金融債": {
+      "成本": null,
+      "值": 8419666
+     }
+    },
+    "recon_fair": 59949282,
+    "bucket_cost": null,
+    "deriv_fair": 16043713,
+    "bs_anchor": 59949282,
+    "cost_total": null,
+    "value_total": 59949282,
+    "bucket_sum": 43905669,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      8
+     ],
+     "note_pages": [
+      21,
+      22,
+      23,
+      24,
+      25
+     ]
+    }
+   },
+   "OCI": {
+    "buckets": {
+     "公司債": {
+      "成本": null,
+      "值": 107316803
+     },
+     "金融債": {
+      "成本": null,
+      "值": 89586491
+     },
+     "公債": {
+      "成本": null,
+      "值": 75215084
+     },
+     "資產基礎": {
+      "成本": null,
+      "值": 49304833
+     },
+     "可轉讓定存單": {
+      "成本": null,
+      "值": 13355647
+     },
+     "股票": {
+      "成本": null,
+      "值": 22355166
+     }
+    },
+    "recon_fair": 361835859,
+    "bucket_cost": null,
+    "deriv_fair": 4701835,
+    "bs_anchor": 361835859,
+    "cost_total": null,
+    "value_total": 361835859,
+    "bucket_sum": 357134024,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      8
+     ],
+     "note_pages": [
+      21,
+      22,
+      23,
+      24,
+      25
+     ]
+    }
+   },
+   "AC": {
+    "buckets": {
+     "可轉讓定存單": {
+      "成本": null,
+      "值": 257114019
+     },
+     "貨幣市場": {
+      "成本": null,
+      "值": 221359228
+     },
+     "金融債": {
+      "成本": null,
+      "值": 17613790
+     },
+     "公債": {
+      "成本": null,
+      "值": 33455199
+     },
+     "公司債": {
+      "成本": null,
+      "值": 9728888
+     },
+     "資產基礎": {
+      "成本": null,
+      "值": 28412870
+     }
+    },
+    "recon_fair": 567635347,
+    "bucket_cost": null,
+    "deriv_fair": -48647,
+    "bs_anchor": 567635347,
+    "cost_total": null,
+    "value_total": 567635347,
+    "bucket_sum": 567683994,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      8
+     ],
+     "note_pages": [
+      21,
+      22,
+      23,
+      24,
+      25
+     ]
+    }
+   }
+  }
+ },
+ "202502_5847_AI3": {
+  "loc": {},
+  "cls": {
+   "Trading": {
+    "buckets": {
+     "可轉讓定存單": {
+      "成本": null,
+      "值": 17243444
+     },
+     "貨幣市場": {
+      "成本": null,
+      "值": 113369456
+     },
+     "公債": {
+      "成本": null,
+      "值": 19969604
+     },
+     "公司債": {
+      "成本": null,
+      "值": 33483630
+     },
+     "金融債": {
+      "成本": null,
+      "值": 32764158
+     },
+     "股票": {
+      "成本": null,
+      "值": 1057013
+     },
+     "其他": {
+      "成本": null,
+      "值": 74004605
+     }
+    },
+    "recon_fair": 252890908,
+    "bucket_cost": null,
+    "deriv_fair": 0,
+    "bs_anchor": 252890908,
+    "cost_total": null,
+    "value_total": 252890908,
+    "bucket_sum": 291891910,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      22,
+      23,
+      24,
+      25,
+      26
+     ]
+    }
+   },
+   "OCI": {
+    "buckets": {
+     "股票": {
+      "成本": null,
+      "值": 23130069
+     },
+     "金融債": {
+      "成本": null,
+      "值": 120654702
+     },
+     "公債": {
+      "成本": null,
+      "值": 31606624
+     },
+     "公司債": {
+      "成本": null,
+      "值": 113298779
+     },
+     "其他": {
+      "成本": null,
+      "值": 25036937
+     },
+     "資產基礎": {
+      "成本": null,
+      "值": 2346757
+     }
+    },
+    "recon_fair": 316073868,
+    "bucket_cost": null,
+    "deriv_fair": 0,
+    "bs_anchor": 316073868,
+    "cost_total": null,
+    "value_total": 316073868,
+    "bucket_sum": 316073868,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      22,
+      23,
+      24,
+      25,
+      26
+     ]
+    }
+   },
+   "AC": {
+    "buckets": {
+     "其他": {
+      "成本": null,
+      "值": 52965524
+     },
+     "金融債": {
+      "成本": null,
+      "值": 66378118
+     },
+     "公司債": {
+      "成本": null,
+      "值": 23227877
+     },
+     "可轉讓定存單": {
+      "成本": null,
+      "值": 276630000
+     },
+     "公債": {
+      "成本": null,
+      "值": 23839794
+     },
+     "資產基礎": {
+      "成本": null,
+      "值": 50926977
+     }
+    },
+    "recon_fair": 493942145,
+    "bucket_cost": null,
+    "deriv_fair": -26145,
+    "bs_anchor": 493942145,
+    "cost_total": null,
+    "value_total": 493942145,
+    "bucket_sum": 493968290,
+    "_internal_ok": null,
+    "_cost_internal_ok": null,
+    "_cross_ok": true,
+    "_source": "note",
+    "_pass": true,
+    "_meta": {
+     "det_pages": null,
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      22,
+      23,
+      24,
+      25,
+      26
+     ]
+    }
+   }
+  }
+ },
+ "202504_5835_AI3": {
+  "loc": {
+   "Trading": [
+    135,
+    157
+   ],
+   "OCI": [
+    136,
+    158,
+    162
+   ],
+   "AC": [
+    137
+   ]
+  },
+  "cls": {
+   "Trading": {
+    "buckets": {
+     "貨幣市場": {
+      "成本": 206365299,
+      "值": 206328338
+     },
+     "金融債": {
+      "成本": 45119648,
+      "值": 45193702
+     },
+     "公司債": {
+      "成本": 30430700,
+      "值": 30550253
+     },
+     "公債": {
+      "成本": 23132609,
+      "值": 23144692
+     },
+     "可轉讓定存單": {
+      "成本": 3176785,
+      "值": 3188250
+     },
+     "股票": {
+      "成本": 1313303,
+      "值": 1476620
+     }
+    },
+    "recon_fair": 368084926,
+    "bucket_cost": 309538344,
+    "deriv_fair": 58203071,
+    "bs_anchor": 368084926,
+    "cost_total": 309538344,
+    "value_total": 368084926,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": false,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公債",
+      "公司債",
+      "金融債",
+      "可轉讓定存單",
+      "貨幣市場"
+     ],
+     "mismatch": []
+    },
+    "_bucket_warn": false,
+    "_meta": {
+     "det_pages": [
+      135,
+      136
+     ],
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      35,
+      36,
+      37,
+      38,
+      39
+     ],
+     "header": "透過損益按公允價值衡量之金融資產明細表"
+    }
+   },
+   "OCI": {
+    "buckets": {
+     "股票": {
+      "成本": 17363315,
+      "值": 26263771
+     },
+     "公債": {
+      "成本": 170901021,
+      "值": 166845851
+     },
+     "公司債": {
+      "成本": 97158636,
+      "值": 95775086
+     },
+     "資產基礎": {
+      "成本": 32112115,
+      "值": 31028033
+     },
+     "金融債": {
+      "成本": 16645084,
+      "值": 16518690
+     }
+    },
+    "recon_fair": 336431431,
+    "bucket_cost": 334180171,
+    "deriv_fair": 0,
+    "bs_anchor": 336431431,
+    "cost_total": 334180171,
+    "value_total": 336431431,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": true,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公債",
+      "公司債",
+      "金融債",
+      "資產基礎"
+     ],
+     "mismatch": [
+      {
+       "桶": "公債",
+       "明細表": 170901021,
+       "主附註": 166845851
+      },
+      {
+       "桶": "公司債",
+       "明細表": 97158636,
+       "主附註": 95775086
+      },
+      {
+       "桶": "資產基礎",
+       "明細表": 32112115,
+       "主附註": 31028033
+      }
+     ]
+    },
+    "_bucket_warn": true,
+    "_meta": {
+     "det_pages": [
+      136,
+      137
+     ],
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      35,
+      36,
+      37,
+      38,
+      39
+     ],
+     "header": "透過其他綜合損益按公允價值衡量之金融資產明細表"
+    }
+   },
+   "AC": {
+    "buckets": {
+     "貨幣市場": {
+      "成本": 0,
+      "值": 454413362
+     },
+     "資產基礎": {
+      "成本": 0,
+      "值": 106514001
+     },
+     "金融債": {
+      "成本": 0,
+      "值": 55312214
+     },
+     "公債": {
+      "成本": 0,
+      "值": 42669704
+     },
+     "公司債": {
+      "成本": 0,
+      "值": 27734396
+     }
+    },
+    "recon_fair": 686643677,
+    "bucket_cost": 0,
+    "deriv_fair": 0,
+    "bs_anchor": 686643677,
+    "cost_total": null,
+    "value_total": 686643677,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": false,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公債",
+      "公司債",
+      "金融債",
+      "資產基礎",
+      "貨幣市場"
+     ],
+     "mismatch": []
+    },
+    "_bucket_warn": false,
+    "_meta": {
+     "det_pages": [
+      137,
+      138
+     ],
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      35,
+      36,
+      37,
+      38,
+      39
+     ],
+     "header": "按攤銷後成本衡量之債務工具投資明細表"
+    }
+   }
+  }
+ },
+ "202504_5836_AI3": {
+  "loc": {
+   "Trading": [
+    148,
+    194
+   ],
+   "OCI": [
+    149,
+    195,
+    199
+   ],
+   "AC": [
+    151,
+    196,
+    200
+   ]
+  },
+  "cls": {
+   "Trading": {
+    "buckets": {
+     "貨幣市場": {
+      "成本": 124499000,
+      "值": 124445548
+     },
+     "公司債": {
+      "成本": 22572344,
+      "值": 24373393
+     },
+     "公債": {
+      "成本": 2500662,
+      "值": 2489789
+     },
+     "其他": {
+      "成本": 0,
+      "值": 5034924
+     }
+    },
+    "recon_fair": 197535613,
+    "bucket_cost": 149572006,
+    "deriv_fair": 41191959,
+    "bs_anchor": 197535613,
+    "cost_total": null,
+    "value_total": 197535613,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": true,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公司債",
+      "貨幣市場"
+     ],
+     "mismatch": [
+      {
+       "桶": "公司債",
+       "明細表": 22572344,
+       "主附註": 19299987
+      },
+      {
+       "桶": "貨幣市場",
+       "明細表": 124499000,
+       "主附註": 116447590
+      }
+     ]
+    },
+    "_bucket_warn": true,
+    "_meta": {
+     "det_pages": [
+      148,
+      149
+     ],
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      36,
+      37,
+      38,
+      39,
+      40,
+      41
+     ],
+     "header": "台北富邦商業銀行股份有限公司 透過損益按公允價值衡量之金融資產明細表 民國 114 年 12 月 31 日"
+    }
+   },
+   "OCI": {
+    "buckets": {
+     "公債": {
+      "成本": 78407763,
+      "值": 77695701
+     },
+     "公司債": {
+      "成本": 50013472,
+      "值": 50107689
+     },
+     "金融債": {
+      "成本": 39849281,
+      "值": 40143756
+     },
+     "股票": {
+      "成本": 19998571,
+      "值": 29265574
+     },
+     "資產基礎": {
+      "成本": 8815602,
+      "值": 9284067
+     },
+     "其他": {
+      "成本": 3992980,
+      "值": 4053531
+     }
+    },
+    "recon_fair": 210550318,
+    "bucket_cost": 201077669,
+    "deriv_fair": 0,
+    "bs_anchor": 210550318,
+    "cost_total": 201077669,
+    "value_total": 210550318,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": false,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公債",
+      "公司債",
+      "金融債"
+     ],
+     "mismatch": []
+    },
+    "_bucket_warn": false,
+    "_meta": {
+     "det_pages": [
+      149,
+      150
+     ],
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      36,
+      37,
+      38,
+      39,
+      40,
+      41
+     ],
+     "header": "台北富邦商業銀行股份有限公司透過其他綜合損益按公允價值衡量之金融資產明細表民國 114 年 12 月 31 日"
+    }
+   },
+   "AC": {
+    "buckets": {
+     "可轉讓定存單": {
+      "成本": 0,
+      "值": 271157238
+     },
+     "公司債": {
+      "成本": 0,
+      "值": 209249172
+     },
+     "金融債": {
+      "成本": 0,
+      "值": 215235967
+     },
+     "公債": {
+      "成本": 0,
+      "值": 80801651
+     },
+     "資產基礎": {
+      "成本": 0,
+      "值": 85501828
+     },
+     "其他": {
+      "成本": 0,
+      "值": 13407576
+     }
+    },
+    "recon_fair": 875353432,
+    "bucket_cost": 0,
+    "deriv_fair": 0,
+    "bs_anchor": 875353432,
+    "cost_total": null,
+    "value_total": 875353432,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": false,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公債",
+      "公司債",
+      "金融債",
+      "資產基礎",
+      "可轉讓定存單"
+     ],
+     "mismatch": []
+    },
+    "_bucket_warn": false,
+    "_meta": {
+     "det_pages": [
+      151,
+      152
+     ],
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      36,
+      37,
+      38,
+      39,
+      40,
+      41
+     ],
+     "header": "按攤銷後成本衡量之債務工具投資明細表"
+    }
+   }
+  }
+ },
+ "202504_5841_AI3": {
+  "loc": {
+   "Trading": [
+    136,
+    157,
+    158
+   ],
+   "OCI": [
+    137,
+    159
+   ],
+   "AC": [
+    137,
+    160,
+    162
+   ]
+  },
+  "cls": {
+   "Trading": {
+    "buckets": {
+     "貨幣市場": {
+      "成本": 200947006,
+      "值": 200819989
+     },
+     "公債": {
+      "成本": 1382875,
+      "值": 1390922
+     },
+     "公司債": {
+      "成本": 18493480,
+      "值": 18645750
+     },
+     "金融債": {
+      "成本": 1912581,
+      "值": 1911605
+     },
+     "股票": {
+      "成本": 3955806,
+      "值": 4732611
+     },
+     "可轉讓定存單": {
+      "成本": 10887446,
+      "值": 10892549
+     },
+     "其他": {
+      "成本": 31373,
+      "值": 31988
+     }
+    },
+    "recon_fair": 295194288,
+    "bucket_cost": 237610567,
+    "deriv_fair": 56768874,
+    "bs_anchor": 295194288,
+    "cost_total": 237610567,
+    "value_total": 295194288,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": false,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公債",
+      "公司債",
+      "金融債",
+      "可轉讓定存單",
+      "貨幣市場"
+     ],
+     "mismatch": []
+    },
+    "_bucket_warn": false,
+    "_meta": {
+     "det_pages": [
+      136,
+      137
+     ],
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      28,
+      29,
+      30
+     ],
+     "header": "中國信託商業銀行股份有限公司 透過損益按公允價值衡量之金融資產明細表 民國一一四年十二月三十一日"
+    }
+   },
+   "OCI": {
+    "buckets": {
+     "可轉讓定存單": {
+      "成本": 173839,
+      "值": 173861
+     },
+     "貨幣市場": {
+      "成本": 20494371,
+      "值": 20494681
+     },
+     "公債": {
+      "成本": 146351504,
+      "值": 143426426
+     },
+     "公司債": {
+      "成本": 10294147,
+      "值": 10225642
+     },
+     "金融債": {
+      "成本": 63285196,
+      "值": 63357327
+     },
+     "資產基礎": {
+      "成本": 24340735,
+      "值": 22457094
+     },
+     "其他": {
+      "成本": 47489957,
+      "值": 46994521
+     },
+     "股票": {
+      "成本": 34951134,
+      "值": 43561783
+     }
+    },
+    "recon_fair": 350691335,
+    "bucket_cost": 347380883,
+    "deriv_fair": 0,
+    "bs_anchor": 350691335,
+    "cost_total": 347380883,
+    "value_total": 350691335,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": false,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公債",
+      "公司債",
+      "金融債",
+      "資產基礎",
+      "可轉讓定存單",
+      "貨幣市場"
+     ],
+     "mismatch": []
+    },
+    "_bucket_warn": false,
+    "_meta": {
+     "det_pages": [
+      137,
+      138
+     ],
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      28,
+      29,
+      30
+     ],
+     "header": "透過其他綜合損益按公允價值衡量之金融資產明細表"
+    }
+   },
+   "AC": {
+    "buckets": {
+     "可轉讓定存單": {
+      "成本": 0,
+      "值": 302551684
+     },
+     "貨幣市場": {
+      "成本": 0,
+      "值": 6892725
+     },
+     "公債": {
+      "成本": 0,
+      "值": 234112501
+     },
+     "公司債": {
+      "成本": 0,
+      "值": 130748455
+     },
+     "資產基礎": {
+      "成本": 0,
+      "值": 101782982
+     },
+     "金融債": {
+      "成本": 0,
+      "值": 60164190
+     },
+     "其他": {
+      "成本": 0,
+      "值": 50453723
+     }
+    },
+    "recon_fair": 886706260,
+    "bucket_cost": 0,
+    "deriv_fair": 0,
+    "bs_anchor": 886706260,
+    "cost_total": null,
+    "value_total": 886706260,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": false,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公債",
+      "公司債",
+      "金融債",
+      "資產基礎",
+      "可轉讓定存單",
+      "貨幣市場"
+     ],
+     "mismatch": []
+    },
+    "_bucket_warn": false,
+    "_meta": {
+     "det_pages": [
+      137,
+      138
+     ],
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      28,
+      29,
+      30
+     ],
+     "header": "按攤銷後成本衡量之債務工具投資明細表"
+    }
+   }
+  }
+ },
+ "202504_5843_AI3": {
+  "loc": {
+   "Trading": [
+    126
+   ],
+   "OCI": [
+    127,
+    160,
+    161,
+    162
+   ],
+   "AC": [
+    130,
+    163,
+    164
+   ]
+  },
+  "cls": {
+   "Trading": {
+    "buckets": {
+     "股票": {
+      "成本": 11836842,
+      "值": 17487276
+     },
+     "資產基礎": {
+      "成本": 156899,
+      "值": 157659
+     },
+     "公司債": {
+      "成本": 28503338,
+      "值": 30672961
+     },
+     "公債": {
+      "成本": 470957,
+      "值": 480077
+     },
+     "金融債": {
+      "成本": 10834310,
+      "值": 11029658
+     },
+     "其他": {
+      "成本": 0,
+      "值": 40217
+     }
+    },
+    "recon_fair": 67893839,
+    "bucket_cost": 51802346,
+    "deriv_fair": 8025991,
+    "bs_anchor": 67893839,
+    "cost_total": 51954004,
+    "value_total": 67893839,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": false,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公債",
+      "公司債",
+      "金融債",
+      "資產基礎"
+     ],
+     "mismatch": []
+    },
+    "_bucket_warn": false,
+    "_meta": {
+     "det_pages": [
+      126,
+      127
+     ],
+     "bs_pages": [
+      8
+     ],
+     "note_pages": [
+      31,
+      32,
+      33,
+      34,
+      35
+     ],
+     "header": "透過損益按公允價值衡量之金融資產明細表"
+    }
+   },
+   "OCI": {
+    "buckets": {
+     "股票": {
+      "成本": 22685773,
+      "值": 45837536
+     },
+     "公債": {
+      "成本": 81796633,
+      "值": 78937563
+     },
+     "公司債": {
+      "成本": 105602610,
+      "值": 105086659
+     },
+     "資產基礎": {
+      "成本": 55047133,
+      "值": 45896098
+     },
+     "金融債": {
+      "成本": 94380042,
+      "值": 94734680
+     },
+     "貨幣市場": {
+      "成本": 5658300,
+      "值": 5691891
+     },
+     "可轉讓定存單": {
+      "成本": 6648592,
+      "值": 6668555
+     }
+    },
+    "recon_fair": 382852982,
+    "bucket_cost": 371819083,
+    "deriv_fair": 0,
+    "bs_anchor": 382852982,
+    "cost_total": 371819083,
+    "value_total": 382852982,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": true,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公債",
+      "公司債",
+      "金融債",
+      "資產基礎",
+      "可轉讓定存單"
+     ],
+     "mismatch": [
+      {
+       "桶": "可轉讓定存單",
+       "明細表": 6648592,
+       "主附註": 12306892
+      }
+     ]
+    },
+    "_bucket_warn": true,
+    "_meta": {
+     "det_pages": [
+      127,
+      128
+     ],
+     "bs_pages": [
+      8
+     ],
+     "note_pages": [
+      31,
+      32,
+      33,
+      34,
+      35
+     ],
+     "header": "兆豐國際商業銀行股份有限公司透過其他綜合損益按公允價值衡量之金融資產明細表民國 114 年 12 月 31 日"
+    }
+   },
+   "AC": {
+    "buckets": {
+     "公債": {
+      "成本": 0,
+      "值": 37292830
+     },
+     "可轉讓定存單": {
+      "成本": 0,
+      "值": 342471162
+     },
+     "貨幣市場": {
+      "成本": 0,
+      "值": 290632658
+     },
+     "金融債": {
+      "成本": 0,
+      "值": 16131945
+     },
+     "公司債": {
+      "成本": 0,
+      "值": 10093604
+     },
+     "資產基礎": {
+      "成本": 0,
+      "值": 25916439
+     }
+    },
+    "recon_fair": 722538638,
+    "bucket_cost": 0,
+    "deriv_fair": 0,
+    "bs_anchor": 722538638,
+    "cost_total": null,
+    "value_total": 722538638,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": false,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公債",
+      "公司債",
+      "金融債",
+      "資產基礎",
+      "可轉讓定存單",
+      "貨幣市場"
+     ],
+     "mismatch": []
+    },
+    "_bucket_warn": false,
+    "_meta": {
+     "det_pages": [
+      130,
+      131
+     ],
+     "bs_pages": [
+      8
+     ],
+     "note_pages": [
+      31,
+      32,
+      33,
+      34,
+      35
+     ],
+     "header": "兆豐國際商業銀行股份有限公司按攤銷後成本衡量之金融資產明細表民國 114 年 12 月 31 日"
+    }
+   }
+  }
+ },
+ "202504_5847_AI3": {
+  "loc": {
+   "Trading": [
+    124,
+    175
+   ],
+   "OCI": [
+    126,
+    176,
+    177
+   ],
+   "AC": [
+    127,
+    178,
+    179
+   ]
+  },
+  "cls": {
+   "Trading": {
+    "buckets": {
+     "可轉讓定存單": {
+      "成本": 16000671,
+      "值": 16049286
+     },
+     "貨幣市場": {
+      "成本": 155521848,
+      "值": 155871235
+     },
+     "公司債": {
+      "成本": 29010282,
+      "值": 29719190
+     },
+     "金融債": {
+      "成本": 30038548,
+      "值": 30789285
+     },
+     "股票": {
+      "成本": 1098732,
+      "值": 1305329
+     }
+    },
+    "recon_fair": 270336715,
+    "bucket_cost": 231670081,
+    "deriv_fair": 36602390,
+    "bs_anchor": 270336715,
+    "cost_total": 234217533,
+    "value_total": 270336715,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": true,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公司債",
+      "金融債",
+      "可轉讓定存單",
+      "貨幣市場"
+     ],
+     "mismatch": [
+      {
+       "桶": "公司債",
+       "明細表": 29010282,
+       "主附註": 29719190
+      },
+      {
+       "桶": "金融債",
+       "明細表": 30038548,
+       "主附註": 30789285
+      }
+     ]
+    },
+    "_bucket_warn": true,
+    "_meta": {
+     "det_pages": [
+      124,
+      125
+     ],
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      39,
+      40,
+      41,
+      42,
+      43
+     ],
+     "header": "玉山商業銀行股份有限公司透過損益按公允價值衡量之金融資產明細表民國114年12月31日"
+    }
+   },
+   "OCI": {
+    "buckets": {
+     "股票": {
+      "成本": 22996133,
+      "值": 28751157
+     },
+     "金融債": {
+      "成本": 132154372,
+      "值": 131465522
+     },
+     "公債": {
+      "成本": 29902343,
+      "值": 29223648
+     },
+     "公司債": {
+      "成本": 123761213,
+      "值": 123387363
+     },
+     "其他": {
+      "成本": 22889364,
+      "值": 22685902
+     },
+     "資產基礎": {
+      "成本": 29387360,
+      "值": 29583483
+     }
+    },
+    "recon_fair": 365097075,
+    "bucket_cost": 361090785,
+    "deriv_fair": 0,
+    "bs_anchor": 365097075,
+    "cost_total": 361090785,
+    "value_total": 365097075,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": true,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公債",
+      "公司債",
+      "金融債",
+      "資產基礎"
+     ],
+     "mismatch": [
+      {
+       "桶": "公債",
+       "明細表": 29902343,
+       "主附註": 29223648
+      }
+     ]
+    },
+    "_bucket_warn": true,
+    "_meta": {
+     "det_pages": [
+      126,
+      127
+     ],
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      39,
+      40,
+      41,
+      42,
+      43
+     ],
+     "header": "透過其他綜合損益按公允價值衡量之金融資產明細表"
+    }
+   },
+   "AC": {
+    "buckets": {
+     "其他": {
+      "成本": 0,
+      "值": 61824219
+     },
+     "可轉讓定存單": {
+      "成本": 0,
+      "值": 261095000
+     },
+     "金融債": {
+      "成本": 0,
+      "值": 69761002
+     },
+     "公司債": {
+      "成本": 0,
+      "值": 25142611
+     },
+     "公債": {
+      "成本": 0,
+      "值": 23822014
+     },
+     "資產基礎": {
+      "成本": 0,
+      "值": 80470538
+     }
+    },
+    "recon_fair": 522115384,
+    "bucket_cost": 0,
+    "deriv_fair": 0,
+    "bs_anchor": 522115384,
+    "cost_total": null,
+    "value_total": 522115384,
+    "_internal_ok": true,
+    "_cost_internal_ok": true,
+    "_cross_ok": true,
+    "_weak_anchor": false,
+    "_needs_review": false,
+    "_pass": true,
+    "_source": "detail",
+    "_select_mode": "single",
+    "_bucket_check": {
+     "_mode": "逐桶成本證人",
+     "checked": [
+      "公債",
+      "公司債",
+      "金融債",
+      "資產基礎",
+      "可轉讓定存單"
+     ],
+     "mismatch": []
+    },
+    "_bucket_warn": false,
+    "_meta": {
+     "det_pages": [
+      127,
+      128
+     ],
+     "bs_pages": [
+      6
+     ],
+     "note_pages": [
+      39,
+      40,
+      41,
+      42,
+      43
+     ],
+     "header": "玉山商業銀行股份有限公司按攤銷後成本衡量之債務工具投資明細表民國114年12月31日"
+    }
+   }
+  }
+ }
+}

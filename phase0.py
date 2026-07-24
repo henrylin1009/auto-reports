@@ -132,7 +132,7 @@ def extract_one(code, name, roc, mth):
     # 兆豐=証券部門變動明細表(直排座標式):③用座標解析、AC帳面用 parse_megabank;
     # ①(稅前OCI債券未實現)兆豐無單一評價調整列→N/A,但兆豐OCI全為債券故③即OCI債券準備(稅後);②無FVOCI股票→N/A
     if name == "兆豐":
-        from extract_megabank import parse_megabank, parse_megabank_aoci
+        from archive.extract_megabank import parse_megabank, parse_megabank_aoci
         p = CACHE / f"{1911+roc}{mth}_{code}_AI3.pdf"
         mb = parse_megabank(p); aoci = parse_megabank_aoci(p, roc, mth)
         if mb is None and aoci is None: return None
@@ -154,7 +154,8 @@ def extract_one(code, name, roc, mth):
         "ac_hidden_pct": (hidden/book if hidden is not None and book else None),
     }
 
-BANKS = [("5841","中信"),("5843","兆豐"),("5835","國泰"),("5836","富邦"),("5847","玉山")]
+from config import BANKS as _B   # 名稱以 config 為準;順序沿用本檔既有處理序
+BANKS = [(c, _B[c]) for c in ("5841","5843","5835","5836","5847")]
 def plabel(roc, mth): return f"{1911+roc}{'H1' if mth=='02' else 'H2'}"
 
 def run_all(start_roc=109):

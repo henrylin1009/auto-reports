@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """把 extract_v2 結果(當前最新一份,非備份檔)橋接進 data.json 供網站用。
 
+⚠️ 本檔是 data.json 的【唯一寫入者】。舊的 compute_data.py(regex 管線)也曾寫 data.json,
+   已移到 archive/ 停用 —— 切勿再跑它,否則會用 regex 舊數字覆蓋掉本管線的 LLM+對帳結果。
+
+
 口徑(每桶兩個口徑,對應前端切換鈕):
   - 帳面(值):資產負債表帳面金額 = bucket['值']。Trading/OCI 帳面即公允、AC 帳面為攤銷後成本。
     → 寫入 data.json['wide'](沿用既有欄位,前端既有圖表不動)。
@@ -21,18 +25,10 @@
 跟既有「掃描影像檔無法解析」的顯示邏輯一致,不需要另外改網站。
 """
 import json, shutil, datetime
+from config import BANKS as BANK, BUCKET_MAP, WIDE_BUCKETS, CLASSES
 
 SRC = "extract_v2_results.json"
 DATA = "data.json"
-
-BANK = {"5835": "國泰", "5836": "富邦", "5841": "中信", "5843": "兆豐", "5847": "玉山"}
-# extract_v2 桶名 → data.json wide 欄位桶名(僅 公債→GB 需改名)
-BUCKET_MAP = {"公債": "GB", "公司債": "公司債", "金融債": "金融債",
-              "資產基礎": "資產基礎", "貨幣市場": "貨幣市場",
-              "可轉讓定存單": "貨幣市場",   # NCD 屬貨幣市場工具,併入貨幣市場(網站無獨立欄)
-              "其他": "其他", "股票": "股票"}
-WIDE_BUCKETS = ["GB", "公司債", "金融債", "資產基礎", "貨幣市場", "其他", "股票"]
-CLASSES = ["Trading", "OCI", "AC"]
 
 
 def to_yi(thousand):
@@ -79,8 +75,8 @@ def main():
     wide_cost_c.clear()
     d["banks_consol"] = []
 
-    def process(key, bank, wide_dst, cost_dst, period_fn=doc_period):
-        """處理單一文件,回傳 (cell, cell_touched)。skipped_cls 用外層 list 累積。"""
+    def process(key, bank, wide_dst, cost_dst, period_fn=doc_period, review_dst=None):
+        """處理單一文件,回傳 (cell, cell_touched)。skipped_cls / review 用外層累積。"""
         cls_data = src[key]["cls"]
         cell = f"{period_fn(key)}|{bank}"
         book = dict(wide_dst.get(cell) or {})
@@ -106,6 +102,24 @@ def main():
                 if c is not None:
                     prev = cost.get(f"{cls}_{wb}")
                     cost[f"{cls}_{wb}"] = (prev or 0) + c
+            # 待複核浮上網站:只收『會影響信任』的旗標(錨可疑/弱錨/面板)。
+            # 純分桶示警(_bucket_warn)留在 extract_v2_results 給工程師看,不上網(否則幾乎每期年報都亮角標)。
+            material = (cb.get("_anchor_doubt") or cb.get("_weak_anchor")
+                        or cb.get("_panel_outlier") or cb.get("_panel_rescue")
+                        or cb.get("_accept_note"))
+            if review_dst is not None and material:
+                reasons = []
+                if cb.get("_anchor_doubt"): reasons.append("錨可疑")
+                if cb.get("_panel_rescue"): reasons.append("面板救援")
+                if cb.get("_panel_outlier"): reasons.append("面板離群")
+                if cb.get("_weak_anchor") and "錨可疑" not in reasons and "面板救援" not in reasons:
+                    reasons.append("弱錨")
+                if not reasons: reasons.append("待複核")
+                review_dst.setdefault(cell, {})[cls] = {
+                    "reasons": reasons,
+                    "note": cb.get("_accept_note") or cb.get("_panel_note")
+                            or cb.get("_anchor_doubt_note") or "",
+                }
             cell_touched = True
         if cell_touched:
             wide_dst[cell] = book
@@ -113,6 +127,7 @@ def main():
         return cell, cell_touched
 
     touched, touched_c, skipped_cls = [], [], []
+    review, review_c = {}, {}
     for key in sorted(src):
         code = key[7:11]
         kind = key[12:]
@@ -121,11 +136,12 @@ def main():
             print(f"跳過未知代碼:{key}")
             continue
         if kind == "AI3":
-            cell, ok = process(key, bank, wide, wide_cost)
+            cell, ok = process(key, bank, wide, wide_cost, review_dst=review)
             if ok:
                 touched.append(cell)
         elif kind == "AI1":
-            cell, ok = process(key, bank, wide_c, wide_cost_c, period_fn=doc_period_consol)
+            cell, ok = process(key, bank, wide_c, wide_cost_c,
+                               period_fn=doc_period_consol, review_dst=review_c)
             if ok:
                 touched_c.append(cell)
                 if bank not in d.get("banks_consol", []):
@@ -149,19 +165,32 @@ def main():
     # 合併報表的季度時間軸(獨立於個體 periods):由實際橋接到的合併格排序而得(YYYYQn 可直接字典序)
     d["periods_consol"] = sorted({c.split("|", 1)[0] for c in touched_c})
 
+    # 待複核浮上網站(make_web 讀 review 畫角標);每次 bridge 全量覆寫,避免殘留舊旗標
+    d["review"] = review
+    d["review_consol"] = review_c
+
     d["_bridge"] = {"source": SRC, "cells": touched, "cells_consol": touched_c,
                     "blanked_no_new_data": blanked,
+                    "review_cells": len(review), "review_cells_consol": len(review_c),
                     "at": datetime.datetime.now().isoformat(timespec="seconds"),
                     "note": "wide=個體帳面;wide_consol=合併帳面(獨立分頁,不進跨行排行);"
                             "wide_cost*=取得成本(null=未揭露);_pass=False 類別已跳過,保留舊值;"
-                            "來源檔未涵蓋的個體期別已清空,不用舊管線數字"}
+                            "來源檔未涵蓋的個體期別已清空,不用舊管線數字;"
+                            "review*=待複核旗標(弱錨/錨可疑/面板離群)"}
 
     json.dump(d, open(DATA, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print(f"\n已更新 {len(touched)} 格個體 + {len(touched_c)} 格合併 → {DATA}(備份 {DATA}.pre_bridge)")
+    print(f"待複核 {len(review)} 格個體 + {len(review_c)} 格合併")
     for c in touched:
         print("  ", c)
     for c in touched_c:
         print("  [合併]", c)
+    if review:
+        print(f"\n待複核旗標:")
+        for cell, clss in sorted(review.items()):
+            for cls, info in clss.items():
+                print(f"  ~ {cell} {cls}: {','.join(info['reasons'])}"
+                      + (f" — {info['note'][:60]}" if info.get("note") else ""))
     if skipped_cls:
         print(f"\n跳過 {len(skipped_cls)} 個對帳失敗的類別(保留原值):")
         for s in skipped_cls:
