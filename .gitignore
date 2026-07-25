@@ -21,3 +21,5 @@ _圖2.png
 pdf_cache/
 # bridge_v2.py 每次執行自動備份的 data.json 快照,不需入庫
 data.json.pre_bridge
+golden/*.bak
+golden/run_*.json
