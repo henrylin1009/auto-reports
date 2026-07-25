@@ -44,10 +44,10 @@ def run_file(fn):
 
 
 def panel_validate(results):
-    """跨期離群檢查(唯一面板級規則,個體 AI3)。
-       對每個(銀行,分類)時間序列:
-         ① 已通過但偏離鄰期中位 > PANEL_JUMP_REL → 標 _needs_review + _panel_outlier(不改數字)
-         ② 未通過但有 recon、且落在鄰期帶內、且(internal_ok 或 note 源) → 弱錨採信(面板救援)
+    """跨期離群檢查(唯一面板級規則,個體 AI3;v3-P1:拿掉救援寫回,只留唯讀離群標註)。
+       對每個(銀行,分類)時間序列:已通過但偏離鄰期中位 > PANEL_JUMP_REL → 標 _needs_review +
+       _panel_outlier(不改數字)。不再把 fail 翻成 pass——那是 ±40% 啟發式蓋掉精確對帳的棘輪
+       (見 docs/plan_refactor_v3.md D7),精確自證的錨才是唯一的接受依據。
        回標註摘要列表。"""
     # 只看個體:合併是季度軸,不跟個體半年軸混
     keys = sorted(k for k in results if k.endswith("_AI3"))
@@ -88,15 +88,6 @@ def panel_validate(results):
                 r["_panel_outlier"] = True
                 r["_panel_note"] = f"偏離鄰期中位 {rel:.0%}(中位={med})"
                 notes.append(f"~ {period}|{bank} {cls}: 離群 {rel:.0%} → 待複核")
-            elif (not r.get("_pass") and rel <= PANEL_JUMP_REL
-                  and (r.get("_internal_ok") or r.get("_source") == "note")):
-                # fail 但落在鄰期帶內 → 面板救援(弱錨採信)
-                r["_pass"] = True
-                r["_weak_anchor"] = True
-                r["_needs_review"] = True
-                r["_panel_rescue"] = True
-                r["_panel_note"] = f"對帳失敗但落在鄰期帶內(偏離 {rel:.0%},中位={med}),弱錨採信"
-                notes.append(f"+ {period}|{bank} {cls}: 面板救援(偏離 {rel:.0%})")
     return notes
 
 

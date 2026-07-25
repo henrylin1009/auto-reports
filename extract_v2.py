@@ -228,17 +228,6 @@ def locate_notes_all(pages, path=None):
     return _NOTES_CACHE[key]
 
 
-def locate_bs(pages):
-    """BS 定位:掃全文前段 grep『資產總計/合計』(便宜);命中→單頁+『可靠錨』。
-       grep 落空(掃描圖/無文字層/BS 不在前 15 頁)→ 退影像餵前 15 頁,並標記錨『不可靠』:
-       下游 validate/extract_from_note 遇到『自洽明細表對不上此錨』時,判為錨可疑(弱錨採信),
-       而不是靜默誤殺明細表。回 (pages, reliable)。"""
-    n = len(pages)
-    for i in range(min(40, n)):              # BS 必在前段;掃到 40 頁(純文字運算,便宜,不再死線 15)
-        t = re.sub(r"\s", "", pages[i])
-        if ("資產總計" in t or "資產合計" in t) and "金融資產" in t:
-            return [i], True                 # 文字命中:單頁,省 token,錨可靠
-    return list(range(min(15, n))), False    # 落空:退影像餵前 15 頁,錨標『不可靠』
 
 
 def locate_note(pages, cls, path=None):
@@ -398,9 +387,9 @@ def is_halfyear(path):
     return doc_meta(path)["is_halfyear"]
 
 
-def extract_from_note(cls, note_sub, bs, bs_reliable=True):
+def extract_from_note(cls, note_sub, bs):
     """半年報路由(F):主附註各桶小計 → 正規化成與明細表相同的對帳輸入 → 走同一條 reconcile。
-       cost=NA(附註通常無取得成本欄)。"""
+       cost=NA(附註通常無取得成本欄)。逐列 vs 印出合計自證:sum(subtotals)==printed_total。"""
     if not note_sub or not note_sub.get("subtotals"):
         return {"_pass": False, "_error": "半年報主附註讀不到小計", "_source": "note"}
     nsub = {}
@@ -409,8 +398,9 @@ def extract_from_note(cls, note_sub, bs, bs_reliable=True):
     buckets = {b: {"成本": None, "值": v} for b, v in nsub.items() if b != "調整項"}
     printed = note_sub.get("printed_total")
     recon = printed if printed else sum(nsub.values())
-    # 主附註無「逐列 vs 印出合計」兩獨立數字 → internal_ok=None(不擋);對帳全靠 BS / 錨可疑規則
-    out = reconcile(recon_fair=recon, bs_anchor=bs, bs_reliable=bs_reliable,
+    # 主附註無獨立逐列/合計兩來源自證(printed_total 本身就是唯一輸入)→ internal_ok=None(不擋);
+    # 對帳全靠 BS 錨。note 的自證化是 P3 範圍(BASIS 統一 + 共用 reconcile 路徑),P1 不動。
+    out = reconcile(recon_fair=recon, bs_anchor=bs,
                     internal_ok=None, buckets=buckets, bucket_cost=None,
                     deriv_fair=nsub.get("調整項", 0), cost_total=None, value_total=recon,
                     source="note")
@@ -444,34 +434,82 @@ def read_note_subtotals(path, pages_idx, cls):
     return json.loads(resp.text)
 
 
-# ── 合併讀:資產負債表一次回三類錨(取代每類讀一次)──
-_BSALL_SCHEMA = {"type": "object", "properties": {
-    "Trading": {"type": "integer", "nullable": True},
-    "OCI": {"type": "integer", "nullable": True},
-    "AC": {"type": "integer", "nullable": True},
-    "total_assets": {"type": "integer", "nullable": True},   # 資產總計(給下游當錨的上界/可疑偵測)
-    "detail": {"type": "string"}}, "required": ["Trading", "OCI", "AC"]}
-_BSALL_PROMPT = """以下是台灣銀行個體財報的前段頁面(可能不只一頁,含目錄/會計師報告等)。
-請先從中找出『資產負債表』那一頁(掃描圖也要看),再讀出【資產側】三個科目的當期(日期最新那欄)金額,單位仟元:
-- Trading:透過損益按公允價值衡量之金融資產
-- OCI:透過其他綜合損益按公允價值衡量之金融資產
-- AC:按攤銷後成本衡量之債務工具投資
-重要(逐條遵守):
-- 這三個科目是資產負債表上【分開的三列】,名稱相近但互不重疊:『透過損益』≠『透過其他綜合損益』(只差「其他綜合」四字)≠『按攤銷後成本』。各報各列自己的當期金額,【絕不可把某一科目的數字加進另一科目】。
-- 僅當【同一科目】被拆成流動(代碼 11xxxx)+非流動(12xxxx)兩列時,才把【那同一科目的兩列】相加;不同科目之間永不相加。
-- 只取【資產側】,排除權益區同名項;只取當期(日期最新那欄);數字後小整數是百分比不是金額。
-- 另讀『資產總計』填 total_assets;檢查 Trading+OCI+AC 不得超過資產總計,若超過表示你把某列重複計了,請重讀更正。
-讀不到的科目給 null。detail 簡述各科目取自哪一列、有無流動+非流動相加。只回 JSON。"""
+# ── 資產負債表:讀【整欄】而非三個孤立數字,讓自己能自證(v3-P1)──
+# 一個孤立錨(舊版三數字)讀錯跟讀對長得一模一樣,沒有算術能查。整欄有:
+# sum(rows) == 資產總計,精確相等才收;抓錯表/抓錯期/抓到合併報表,加總幾乎必不會平。
+_BS_ROWS_SCHEMA = {"type": "object", "properties": {
+    "rows": {"type": "array", "items": {"type": "object", "properties": {
+        "name": {"type": "string"}, "amount": {"type": "integer"}},
+        "required": ["name", "amount"]}},
+    "total_assets": {"type": "integer", "nullable": True},
+    "detail": {"type": "string"}}, "required": ["rows"]}
+_BS_ROWS_PROMPT = """以下是台灣銀行個體財報的一頁(可能是資產負債表,也可能不是——先判斷)。
+若這頁是『資產負債表』:逐列讀出【資產側】每一個科目列(每列一筆 name+amount),只取當期(日期最新那欄),
+單位仟元。不要挑,**整個資產側全部列都要**(現金、拆存、金融資產各科目、放款、不動產…全部),
+這樣才能用『全列相加 == 資產總計』自我檢查。
+最後讀出『資產總計』填 total_assets。
+若同一科目被拆成流動(11xxxx)+非流動(12xxxx)兩列,兩列都各自列出(不要先加好)。
+只取個體(不取合併)資產負債表那頁;若這頁不是資產負債表,rows 給空陣列、total_assets 給 null。
+數字後小整數是百分比不是金額,不要誤讀進 amount。只回 JSON。"""
 
 
 def read_bs_all(path, pages_idx):
     from google.genai import types
     pdf = slice_pdf(path, pages_idx)
     resp = _gen(
-        model=MODEL, contents=[types.Part.from_bytes(data=pdf, mime_type="application/pdf"), _BSALL_PROMPT],
+        model=MODEL, contents=[types.Part.from_bytes(data=pdf, mime_type="application/pdf"), _BS_ROWS_PROMPT],
         config=types.GenerateContentConfig(temperature=0, response_mime_type="application/json",
-                                           response_schema=_BSALL_SCHEMA))
+                                           response_schema=_BS_ROWS_SCHEMA))
     return json.loads(resp.text)
+
+
+def _verify_bs_rows(raw):
+    """自證條件:資產側全列相加 == 印出的資產總計(精確)。"""
+    rows = raw.get("rows") or []
+    ta = raw.get("total_assets")
+    if not rows or ta is None:
+        return False
+    return sum(r.get("amount") or 0 for r in rows) == ta
+
+
+def _classify_bs_row(name):
+    """依科目名把一列歸到 Trading/OCI/AC 其一(互斥、不重疊);判不到回 None。"""
+    n = re.sub(r"\s", "", name or "")
+    if "透過其他綜合損益" in n:
+        return "OCI"
+    if "透過損益" in n:
+        return "Trading"
+    if "攤銷後成本" in n:
+        return "AC"
+    return None
+
+
+def read_bs_verified(path, pages):
+    """定位+讀值+自證合一(取代舊版 locate_bs + check_bs_anchors)。
+       grep 命中頁優先試一次讀值自證;沒命中或沒自證 → 逐頁(前 15 頁)個別餵圖直到某頁自證。
+       只有『自證過』的頁才拿三類錨,否則三類一律 None(無錨,不是猜的錨)。"""
+    n = len(pages)
+    order = []
+    for i in range(min(40, n)):
+        t = re.sub(r"\s", "", pages[i])
+        if ("資產總計" in t or "資產合計" in t) and "金融資產" in t:
+            order.append(i)
+            break
+    order += [i for i in range(min(15, n)) if i not in order]
+    for i in order:
+        try:
+            raw = read_bs_all(path, [i])
+        except Exception:
+            continue
+        if _verify_bs_rows(raw):
+            out = {"Trading": None, "OCI": None, "AC": None}
+            for r in raw.get("rows", []):
+                cls = _classify_bs_row(r.get("name"))
+                if cls:
+                    out[cls] = (out[cls] or 0) + (r.get("amount") or 0)
+            out["total_assets"] = raw.get("total_assets")
+            return out, [i]
+    return {"Trading": None, "OCI": None, "AC": None, "total_assets": None}, []
 
 
 # ── 合併讀:主附註連頁整塊一次回三類逐桶小計 ──
@@ -550,15 +588,14 @@ def _is_adj(bucket, name):
     return any(w in name for w in _ADJ_WORDS) or bucket == "調整項"
 
 
-def reconcile(*, recon_fair, bs_anchor, bs_reliable=True, internal_ok=None,
+def reconcile(*, recon_fair, bs_anchor, internal_ok=None,
               buckets=None, bucket_cost=None, deriv_fair=0,
               cost_total=None, value_total=None, cost_internal_ok=None, source="detail"):
-    """單一對帳規則(detail / note 共用)。
+    """單一對帳規則(detail / note 共用,v3-P1)。
        訊號:internal(逐列==印出合計)、cross(recon==BS)。
-       僵局:internal 自洽(或 note 無 internal)卻對不上『不可靠』錨 → 錨可疑、弱錨採信,不誤殺。
-       可靠錨對不上 → 真 fail(保護鎖錯表)。"""
+       BS 錨若存在,一定是已自證過的(見 read_bs_verified);沒有『不可靠錨』這回事了——
+       錨不是 None 就是已驗證過的數字,對不上就是真的對不上,不再猜誰錯。"""
     buckets = buckets or {}
-    anchor_doubt = False
     if bs_anchor is None:
         cross_ok = None
         weak = True
@@ -566,26 +603,19 @@ def reconcile(*, recon_fair, bs_anchor, bs_reliable=True, internal_ok=None,
         passed = bool(internal_ok) if internal_ok is not None else False
     else:
         cross_ok = _tie(recon_fair, bs_anchor)
-        self_ok = (internal_ok is True) or (internal_ok is None and source == "note")
-        if not cross_ok and self_ok and not bs_reliable:
-            # 自洽讀數 vs 不可靠錨 → 採信讀數
-            anchor_doubt = True
-            weak = True
-            passed = True
-        else:
-            weak = False
-            passed = bool(cross_ok) if internal_ok is None else bool(internal_ok and cross_ok)
+        weak = False
+        passed = bool(cross_ok) if internal_ok is None else bool(internal_ok and cross_ok)
     return {
         "buckets": buckets,
         "recon_fair": recon_fair, "bucket_cost": bucket_cost, "deriv_fair": deriv_fair,
         "bs_anchor": bs_anchor, "cost_total": cost_total, "value_total": value_total,
         "_internal_ok": internal_ok, "_cost_internal_ok": cost_internal_ok,
         "_cross_ok": cross_ok, "_weak_anchor": weak, "_needs_review": weak,
-        "_anchor_doubt": anchor_doubt, "_source": source, "_pass": passed,
+        "_source": source, "_pass": passed,
     }
 
 
-def validate(cls, det, bs_anchor, bs_reliable=True):
+def validate(cls, det, bs_anchor):
     """明細表對帳:從 rows 算出全選合計/分桶 → 交給 reconcile。"""
     rows = det.get("rows", [])
     # 對帳「全選」:所有列相加(不挑不排除)= 印出合計 = BS。衍生/調整自然含在內。
@@ -609,7 +639,7 @@ def validate(cls, det, bs_anchor, bs_reliable=True):
     ct, vt = det.get("cost_total"), det.get("value_total")
     recon_fair = vt if vt is not None else sum_all_fair
     return reconcile(
-        recon_fair=recon_fair, bs_anchor=bs_anchor, bs_reliable=bs_reliable,
+        recon_fair=recon_fair, bs_anchor=bs_anchor,
         internal_ok=_tie(sum_all_fair, vt),
         buckets={b: {"成本": c["成本"], "值": c["值"]} for b, c in buckets.items()},
         bucket_cost=bucket_cost, deriv_fair=deriv_fair,
@@ -617,22 +647,6 @@ def validate(cls, det, bs_anchor, bs_reliable=True):
         cost_internal_ok=(ct is None or _tie(sum_all_cost, ct)),
         source="detail",
     )
-
-
-def check_bs_anchors(bs_all):
-    """錨上界自檢:Trading+OCI+AC 不得超過資產總計(容差內)。
-       超過 → 必有一條灌水(典型:掃描圖把相鄰科目併進來)→ 整組錨降為不可靠。
-       回 (bs_reliable_override_or_None, note)。None = 不改動 locate_bs 的判定。"""
-    ta = bs_all.get("total_assets")
-    if not ta:
-        return None, None
-    parts = [bs_all.get(c) for c in ("Trading", "OCI", "AC")]
-    if any(p is None for p in parts):
-        return None, None
-    s = sum(parts)
-    if s > ta + _tol(ta):
-        return False, f"BS錨合計 {s} > 資產總計 {ta}(灌水指紋),降為不可靠錨"
-    return None, None
 
 
 # ═══════════ 逐桶成本證人(plan_v2 第2級:分桶獨立防線)═══════════
@@ -664,13 +678,13 @@ def bucket_cost_witness(cls, det_buckets, note_sub):
 
 
 # ═══════════ 端到端 ═══════════
-def _note_cls(path, pages, cls, bs, note_sub, bs_reliable=True):
+def _note_cls(path, pages, cls, bs, note_sub):
     """從主附註抽某類。note_sub=None(年報 fallback)時自行定位讀。
-       不再做『同頁重讀』:temperature=0 下無新資訊,只燒配額;救錯靠錨可疑/面板驗證。"""
+       不再做『同頁重讀』:temperature=0 下無新資訊,只燒配額。"""
     if note_sub is None:
         np0 = locate_note(pages, cls, path)
         note_sub = read_note_subtotals(path, np0, cls) if np0 else None
-    return extract_from_note(cls, note_sub, bs, bs_reliable)
+    return extract_from_note(cls, note_sub, bs)
 
 
 def extract_all(path, pages=None, loc=None):
@@ -684,13 +698,8 @@ def extract_all(path, pages=None, loc=None):
     # 不分半年報/年報一律走主附註路徑。AI3(個體)不受影響,既有分流邏輯不動。
     if doc_meta(path)["kind"] == "AI1":
         half = True
-    # 共用讀(各一次)
-    bs_pages, bs_reliable = locate_bs(pages)   # reliable=False → 錨取自掃描圖影像退路,不可盲信
-    bs_all = read_bs_all(path, bs_pages) if bs_pages else {}
-    # 錨上界:Trading+OCI+AC > 資產總計 → 整組錨灌水,強制降為不可靠(治因一落地)
-    override, ta_note = check_bs_anchors(bs_all)
-    if override is False:
-        bs_reliable = False
+    # 共用讀(各一次):BS 整欄讀值+自證(v3-P1)。沒有頁自證得過 → 該文件所有類均無錨。
+    bs_all, bs_pages = read_bs_verified(path, pages)
     # 主附註只在半年報當正源才整塊預讀;年報只有 fallback 到某類時才個別讀
     if half:
         note_pages = locate_note_block(pages, path)
@@ -710,10 +719,9 @@ def extract_all(path, pages=None, loc=None):
         bs = bs_all.get(cls)
         # 半年報路由(F):無本行整體明細表 → 主附註當輸出來源,cost=NA
         if half:
-            res = _note_cls(path, pages, cls, bs, sub_all.get(cls), bs_reliable)
+            res = _note_cls(path, pages, cls, bs, sub_all.get(cls))
             res["_meta"] = {"det_pages": None, "bs_pages": bs_pages, "note_pages": note_pages,
-                            "bs_reliable": bs_reliable, "total_assets": bs_all.get("total_assets"),
-                            "bs_cap_note": ta_note}
+                            "total_assets": bs_all.get("total_assets")}
             out[cls] = res
             continue
         # 年報:BS 導向候選(D+E)——列候選、逐個讀到表尾、對 BS 選/湊
@@ -725,14 +733,14 @@ def extract_all(path, pages=None, loc=None):
         if det is None:
             out[cls] = {"_pass": False, "_error": "候選都讀不出明細"}
             continue
-        res = validate(cls, det, bs, bs_reliable)
+        res = validate(cls, det, bs)
         # 同頁重讀(temperature=0)無新資訊 → 不做。有新資訊的唯一 fallback=關鍵字重掃擴候選。
         if not res.get("_pass") and bs is not None:
             extra = [p for p in rescan_detail_pages(pages, cls) if p not in candidates]
             if extra:
                 det3, mode3 = select_detail(path, sorted(set(candidates) | set(extra)), cls, bs, n_pages=n)
                 if det3 is not None:
-                    r3 = validate(cls, det3, bs, bs_reliable)
+                    r3 = validate(cls, det3, bs)
                     if r3.get("_pass"):        # 只在重掃後真的對上 BS 才採用,否則保留原判(仍 fail 標人工)
                         det, res, mode = det3, r3, mode3 + "+rescan"
         res["_source"] = "detail"; res["_select_mode"] = mode
@@ -747,27 +755,8 @@ def extract_all(path, pages=None, loc=None):
                 res["_needs_review"] = True
         res["_meta"] = {"det_pages": det.get("_pages"), "bs_pages": bs_pages,
                         "note_pages": note_pages, "header": det.get("header"),
-                        "bs_reliable": bs_reliable, "total_assets": bs_all.get("total_assets"),
-                        "bs_cap_note": ta_note}
+                        "total_assets": bs_all.get("total_assets")}
         out[cls] = res
-    # ── 錨可疑事後救援(治本):仍 fail 的類,若其 BS 錨 ≈ 本類實讀 + 另一類實讀
-    #    (掃描圖把相鄰科目整列吞進來的『吞列指紋』,誤差 <1%)→ 判錨可疑,採信自洽明細為弱錨待複核。
-    #    只在明細表『自洽』(_internal_ok)時救援;非自洽的壞讀不救(維持 fail)。
-    recons = {c: (out.get(c) or {}).get("recon_fair") for c in ("Trading", "OCI", "AC")}
-    for cls in ("Trading", "OCI", "AC"):
-        r = out.get(cls, {})
-        if r.get("_pass") or r.get("_cross_ok") is not False or not r.get("_internal_ok"):
-            continue
-        bs, rc = r.get("bs_anchor"), recons.get(cls)
-        if bs is None or rc is None:
-            continue
-        for other in ("Trading", "OCI", "AC"):
-            ro = recons.get(other)
-            if other != cls and ro is not None and _tie(bs, rc + ro):
-                r["_pass"] = True; r["_weak_anchor"] = True
-                r["_needs_review"] = True; r["_anchor_doubt"] = True
-                r["_anchor_doubt_note"] = f"BS錨≈本類+{other}實讀(吞列指紋),採信明細"
-                break
     return out, loc
 
 
@@ -782,7 +771,7 @@ if __name__ == "__main__":
         r = out.get(cls, {})
         p = "✅PASS" if r.get("_pass") else "❌"
         if r.get("_weak_anchor"):
-            p = "~錨可疑採信(待複核)" if r.get("_anchor_doubt") else "~弱錨(待複核)"
+            p = "~弱錨(待複核)"
         print(f"\n[{cls}] {p}  頁{r.get('_meta',{}).get('det_pages')}")
         if "_error" in r:
             print("   ", r["_error"]); continue
