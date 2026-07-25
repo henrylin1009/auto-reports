@@ -558,7 +558,7 @@ renderBankChips();
 _IX_IDS = ["A_catwrap", "A_by_b", "A_by_c", "A_amt", "A_pct", "A_c", "A_lg", "A_bars",
            "ix_drill", "ix_kpi", "ix_concl", "bankchips", "inclQuick",
            "B_from", "B_to", "B_c", "B_b", "B_lg", "B_cv", "B_mcross", "B_msingle", "B_cwrap",
-           "G_p", "barinfo"]
+           "G_p", "barinfo", "inclbox"]
 
 # 美國10年期公債殖利率(期末,%)— render-only 內建參考值;2020–2024為市場實績,2025為估計待校正
 US10Y={"2020H1":0.66,"2020H2":0.93,"2021H1":1.45,"2021H2":1.52,
