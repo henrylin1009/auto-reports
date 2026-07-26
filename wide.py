@@ -20,6 +20,7 @@
 from config import (BUCKET_MAP, WIDE_BUCKETS, DERIVATIVE, VALUATION_ADJ,
                     BOOK_COLS, COST_COLS)
 import buckets
+import transcribe
 
 #: 恆等式是**三段**的:`sum(wide 7 桶) + 衍生 + 評價調整 == 類別合計`。
 #: 衍生與評價調整刻意不進 7 桶 —— 塞進「其他」之後就再也拆不開,而兩者
@@ -76,7 +77,17 @@ def pick(recs, basis):
     成本有兩條路,而且**都必須驗得到合計**:附註逐項本身就是成本(合計 == 錨),
     或明細表的取得成本欄**有抄下欄合計**(`printed_totals`,第 6 道驗過)。
     沒抄欄合計的明細表成本欄一律不採用 —— 驗不到的數字不准送上網。
+
+    ⚠️ **含跨桶合併列的 record 先排除**(`transcribe.coarse`)。富邦 202404 附註
+    的「其他」吃掉了政府公債與公司債,拿它分桶會三個桶同時錯而總額照樣對 ——
+    這一步排除的正是「六道檢查全綠但每一桶都錯」那種形狀。
     """
+    bad = transcribe.coarse(recs, buckets)
+    recs = [r for r in recs if r["source_page"] not in bad]
+    if not recs:
+        # **不准退回去用它。** 全部來源都把跨桶科目併成一列 = 這格的逐桶在文件裡
+        # 不存在,跟兆豐半年報的帳面同一種情形,正確輸出是 null 不是勉強湊一個。
+        return None, f"唯一來源含跨桶合併列(p{sorted(bad)}),逐桶分不出來"
     if basis == "帳面":
         for r in recs:
             for c in BOOK_COLS:

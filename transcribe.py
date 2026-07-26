@@ -141,18 +141,28 @@ def check_buckets(rec, bk):
 
 
 def _amounts(rec, col=None, skip=None):
-    """{金額: [原名…]}。0 排除 —— 一方揭露「-」、另一方整列省略是常見的,不是矛盾。
+    """{金額: [列…]}。0 排除 —— 一方揭露「-」、另一方整列省略是常見的,不是矛盾。
 
     `col=None` 用 record 自己的合計欄;指定欄名時,**沒有該欄的列直接略過**
-    (明細表的衍生只揭露公允、不揭露取得成本 —— 那是缺欄,不是金額為 0)。"""
+    (明細表的衍生只揭露公允、不揭露取得成本 —— 那是缺欄,不是金額為 0)。
+
+    ⚠️ **裝整列不是只裝名字。** 舊版只留 `name`,下游一律 `bucket({"name": n})`
+    —— `group` 在這裡被丟掉,通稱就分不出段落了。富邦 202404 Trading 實測:
+    「其他」在有價證券段與衍生段各一次,舊版把兩者都算成「其他」桶,兩邊
+    加總自然對不上,報成 7 筆金額對不上,而真正的差異只有一筆。
+    """
     out = {}
     for r in rec["rows"]:
         if skip and skip(r):
             continue
         v = r["cols"].get(col or rec["total_col"])
         if v:
-            out.setdefault(v, []).append(r["name"])
+            out.setdefault(v, []).append(r)
     return out
+
+
+def _names(rows):
+    return tuple(r["name"] for r in rows)
 
 
 def align(recs, basis_of, is_adj):
@@ -222,17 +232,17 @@ def check_cross(recs, bk=None):
         # 「名字↔金額配對」的檢查。實測(2026-07-26 注入錯誤)確認過這個洞。
         # 所以同一筆金額在兩邊掛的名字,**桶必須一致**;桶認不得(None)也算失敗。
         for v in sorted(hit) if bucket else ():
-            ba = {bucket({"name": n}) for n in base[v]}
-            bb = {bucket({"name": n}) for n in cur[v]}
+            ba = {bucket(r) for r in base[v]}
+            bb = {bucket(r) for r in cur[v]}
             if ba != bb:
                 out.append(f"金額對不上 — {v:,} 兩邊的桶不同:"
-                           f"p{ref['source_page']}{base[v]}→{sorted(map(str, ba))} vs "
-                           f"p{rec['source_page']}{cur[v]}→{sorted(map(str, bb))}")
+                           f"p{ref['source_page']}{_names(base[v])}→{sorted(map(str, ba))} vs "
+                           f"p{rec['source_page']}{_names(cur[v])}→{sorted(map(str, bb))}")
             elif None in ba:
                 # 兩邊講的是同一件事,只是**都**不認得 → 這道驗不了配對,不是配對錯了。
                 # 訊息要講對:玉山「國外機構發行債券」兩表同名同額,舊寫法會印
                 # 「兩邊的桶不同:None vs None」,把待人審誤報成抄錯,人會去查錯地方。
-                out.append(f"金額對不上 — {v:,} 兩邊都對不到桶({base[v]}),"
+                out.append(f"金額對不上 — {v:,} 兩邊都對不到桶({_names(base[v])}),"
                            f"這道驗不了它的配對")
         rest_a = {v: n for v, n in base.items() if v not in hit}
         rest_b = {v: n for v, n in cur.items() if v not in hit}
@@ -241,11 +251,17 @@ def check_cross(recs, bk=None):
         #  → 明細表 1 列)。桶層加總相等 = 名字仍然歸對了,只是切法不同。
         # ⚠️ 這是**降級不是通過**:逐列比才驗得到單一名字的配對,桶層比驗不到。
         deg, bad = _by_bucket(rest_a, rest_b, bucket)
-        if bad:
+        m = _merged(bad, rest_a, rest_b)
+        if m:
+            v, rows, parts = m
+            out.append(f"{'/'.join(_names(rows))} {v:,} 是合併列"
+                       f"(對面 {len(parts)} 列相加相等):"
+                       + "、".join(f"{'/'.join(_names(n))} {a:,}" for a, n in parts))
+        elif bad:
             out.append("金額對不上 — " + "; ".join(
-                f"{v:,} 只在 p{(rec if v in rest_b else ref)['source_page']}({n})"
-                for v, n in bad))
-        elif deg:
+                f"{v:,} 只在 p{(rec if v in rest_b else ref)['source_page']}({_names(n)})"
+                for v, n in sorted(bad.items())))
+        if deg:
             out.append(f"{len(hit)} 項逐列對上,{len(deg)} 個桶只在桶層對上:"
                        + "、".join(f"{b} {s:,}" for b, s in deg))
     if any(o.startswith("金額對不上") for o in out):
@@ -255,24 +271,75 @@ def check_cross(recs, bk=None):
     return None
 
 
+def _merged(bad, a, b):
+    """一邊只剩**一列**、另一邊剩下的加起來剛好等於它 ⇒ 那一列是**合併列**。
+
+    富邦 202404 Trading 實測:附註「其他 16,378,254」= 明細表
+    政府公債 1,799,570 + 公司債 3,565,242 + 其他 11,013,442
+    (明細表自己註明「各項金額皆未超過本項目百分之五」故併列)。
+
+    ⚠️ **不做子集搜尋。** 一對多是唯一解,不需要試組合;多對多有多組解,
+    猜哪一組配哪一組就是在製造沒人驗得到的錯,一律回 None 讓它報失敗。
+    """
+    ba = {v: r for v, r in bad.items() if v in a}
+    bb = {v: r for v, r in bad.items() if v in b}
+    for one, many in ((ba, bb), (bb, ba)):
+        if len(one) == 1 and len(many) > 1:
+            (v, rows), = one.items()
+            if sum(many) == v:
+                return v, rows, sorted(many.items())
+    return None
+
+
+def coarse(recs, bk=None):
+    """哪幾份 record 含**跨桶的合併列** → 回傳它們的 `source_page` 集合。
+
+    這種 record **不准拿來分桶**。富邦 202404 附註把 政府公債 + 公司債 併進
+    「其他」:照抄會讓三個桶同時錯(公債少 179 萬仟元、公司債整個消失、
+    其他多出 536 萬仟元),而總額仍然等於錨 —— **六道檢查會全綠**。
+    只有跨桶才排除;同桶的合併(定存單拆兩列)加總後桶是對的,照用無妨。
+    """
+    if len(recs) < 2 or bk is None:
+        return set()
+    cols = align(recs, bk.basis_of, bk.is_adj)
+    if cols is None:
+        return set()
+    cross = len({bk.basis_of(r) for r in recs}) > 1
+    skip = (lambda row: bk.is_adj(row)
+            or (cross and bk.bucket(row) == DERIVATIVE))
+    out = set()
+    ref, *rest = recs
+    base = _amounts(ref, cols[id(ref)], skip)
+    for rec in rest:
+        cur = _amounts(rec, cols[id(rec)], skip)
+        hit = set(base) & set(cur)
+        ra = {v: n for v, n in base.items() if v not in hit}
+        rb = {v: n for v, n in cur.items() if v not in hit}
+        _, bad = _by_bucket(ra, rb, bk.bucket)
+        m = _merged(bad, ra, rb)
+        if m and len({bk.bucket(r) for _, ns in m[2] for r in ns}) > 1:
+            out.add((ref if m[0] in ra else rec)["source_page"])
+    return out
+
+
 def _by_bucket(a, b, bucket):
     """兩邊剩下對不上的金額,改用桶層加總比。回傳 (降級的桶, 真的對不上的)。"""
     if bucket is None:
         return [], sorted({**a, **b}.items())
     sa, sb = {}, {}
     for src, dst in ((a, sa), (b, sb)):
-        for v, names in src.items():
-            for n in names:
-                dst.setdefault(bucket({"name": n}), []).append(v)
-    deg, bad = [], []
+        for v, rows in src.items():
+            for r in rows:
+                dst.setdefault(bucket(r), []).append(v)
+    deg, bad = [], {}
     for k in set(sa) | set(sb):
         va, vb = sum(sa.get(k, ())), sum(sb.get(k, ()))
         if k is not None and va == vb:
             deg.append((k, va))
         else:                                    # 桶認不得(None)或加總不等 → 真的有問題
-            bad += [(v, tuple(a[v])) for v in sa.get(k, ())]
-            bad += [(v, tuple(b[v])) for v in sb.get(k, ())]
-    return sorted(deg), sorted(set(bad))
+            bad.update({v: a[v] for v in sa.get(k, ())})
+            bad.update({v: b[v] for v in sb.get(k, ())})
+    return sorted(deg), bad
 
 
 # 「同金額不同名 → 同義詞候選」原本在這裡,已搬到 `synonyms.py`(S6)。
