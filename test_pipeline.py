@@ -39,6 +39,30 @@ def case_escalates():
     yield ("抄不出來最終拒收,不會無限擴張", (not out.ok) and out.reason, repr(out))
 
 
+def case_two_layer():
+    """主附註加總剛好 = 錨,但沒有明細 → **必須照樣擴張**。
+
+    這是原本測不出來的死角:舊的假 transcriber 一律回 None,所以「抄得出東西、
+    前四道還全綠、但產出是廢的」這條路徑從來沒被走過。實跑才撞到(玉山 p23)。
+    """
+    main_note = [{
+        "doc": DOC, "class": CLS, "source_page": 23, "source_kind": "附註",
+        "total_col": "110年6月30日", "printed_total": 287711177,
+        "rows": [{"name": "透過其他綜合損益按公允價值衡量之權益工具投資",
+                  "cols": {"110年6月30日": 16018428}},
+                 {"name": "透過其他綜合損益按公允價值衡量之債務工具投資",
+                  "cols": {"110年6月30日": 271692749}}]}]
+    seen = []
+
+    def only_main_note(prompt):
+        seen.append(_pages_in(prompt))
+        return main_note                 # 每輪都只交得出主附註
+    out = pipeline.drive(DOC, CLS, only_main_note)
+    yield ("主附註湊得出錨也不算過(第 5 道擋下)", len(seen) > 1, f"輪數={len(seen)}")
+    yield ("擴張後看得到子附註 p24", any(24 in p for p in seen[1:]), f"各輪={seen}")
+    yield ("始終交不出明細 → 拒收", not out.ok, repr(out))
+
+
 def case_stops_early():
     """第 1 輪就對上 → 不准再擴張(擴張是有成本的,不是免費保險)。"""
     recs = json.load(open("scratchpad/rows_r2.json", encoding="utf-8"))["202404_5835_AI3|OCI"]
@@ -61,7 +85,7 @@ def case_no_anchor():
 
 def main():
     bad = 0
-    for case in (case_escalates, case_stops_early, case_no_anchor):
+    for case in (case_escalates, case_two_layer, case_stops_early, case_no_anchor):
         print(f"\n{case.__doc__.splitlines()[0]}")
         for label, ok, detail in case():
             bad += not ok

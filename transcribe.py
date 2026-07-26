@@ -103,8 +103,8 @@ def check_buckets(rec, bk):
     if not bad:
         return None
     # 分開講:待人審是**已知擴張補不了**的,再擴幾次都一樣,直接進佇列不要空轉。
-    wait = [n for n in bad if n in bk.PENDING]
-    rest = [n for n in bad if n not in bk.PENDING]
+    wait = [n for n in bad if bk.pending({"name": n})]
+    rest = [n for n in bad if not bk.pending({"name": n})]
     parts = []
     if rest:
         parts.append(f"{len(rest)} 列對不到桶(可能是小計,明細在別頁):{rest}")

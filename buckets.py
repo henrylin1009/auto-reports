@@ -35,7 +35,10 @@ SYN = {
     "評價調整": VALUATION_ADJ, "金融資產評價調整": VALUATION_ADJ,
     # 玉山半年報子附註(202102_5847 p24)。純機械同義詞,零判斷。
     "上市（櫃）股票": "股票", "未上市（櫃）股票": "股票",
-    "可轉讓定期存單": "可轉讓定存單",
+    # 富邦 202304 Trading p38。三者的歸屬 config.BUCKET_RULES 已明文寫死
+    # (「短期票券——…商業本票」/「公司債:含可轉換公司債」/「衍生:…換匯換利」),
+    # 這裡只是把那段散文變成查得動的表,不是新的判斷。
+    "商業本票": "貨幣市場", "可轉換公司債": "公司債", "外匯換匯合約": DERIVATIVE,
 }
 
 #: **待人審佇列。** 這些名字不是「還沒收錄」,是**收錄不了** —— 需要真人決定。
@@ -51,14 +54,52 @@ PENDING = {
 }
 
 
-def pending(row):
-    """這列是不是卡在人審佇列(≠ 單純沒收錄)。"""
-    return PENDING.get(row["name"])
+#: 段落標題 → 桶。**只在名字本身是通稱時才用**(見 bucket)。
+#: 富邦 202304 Trading p38 實測:同一份附註裡「其他」出現兩次 ——
+#: 有價證券段 5,891,015、衍生金融資產段 4,826,250。名字一樣、桶不一樣,
+#: **只有段落標題分得出來**。所以 rows 要帶 `group`(表上印的段落原名)。
+GROUP_SYN = {
+    "衍生金融資產": DERIVATIVE, "衍生金融負債": DERIVATIVE, "衍生工具": DERIVATIVE,
+}
+
+#: 通稱:自己不帶會計意義,靠所在段落決定。**不要往裡面加東西** ——
+#: 「公司債」不是通稱,它在哪一段都是公司債;會誤判的只有真正的萬用詞。
+GENERIC = {"其他", "其他項目"}
+
+
+def norm(s):
+    """機械正規化:去空白、統一全半形括號。**零判斷**(plan_v3_2_flow.md §3 第 1 步)。
+
+    PDF 抽出來的文字常常字間帶空格(「公 司 債」「其 他」),那是排版不是名稱差異。
+    正規化只做這種一定不會錯的事;真正的名稱差異走 SYN(同義詞,判斷層)。
+    """
+    return (s.replace(" ", "").replace("　", "")
+             .replace("（", "(").replace("）", ")"))
+
+
+_SYN_N = {norm(k): v for k, v in SYN.items()}
 
 
 def bucket(row):
-    """rows 的一列 → 桶名,認不得回 None。"""
-    return SYN.get(row["name"])
+    """rows 的一列 → 桶名,認不得回 None。
+
+    通稱(「其他」)看所在段落;其餘一律看名字 —— 段落**不准覆蓋**具名科目,
+    否則衍生段裡的「政府公債」會被整段吃掉。
+    """
+    n = norm(row["name"])
+    if n in GENERIC:
+        g = GROUP_SYN.get(norm(row.get("group") or ""))
+        if g:
+            return g
+    return _SYN_N.get(n)
+
+
+_PEND_N = {norm(k) for k in PENDING}
+
+
+def pending(row):
+    """這列是不是卡在人審佇列(≠ 單純沒收錄)。"""
+    return norm(row["name"]) in _PEND_N
 
 
 def is_adj(row):
