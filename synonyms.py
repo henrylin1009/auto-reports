@@ -21,6 +21,7 @@
     python3 synonyms.py scratchpad/rows_v3.json --check  # 有衝突就 exit 1(回歸用)
 """
 import buckets
+import rules
 import transcribe
 
 #: 候選的四種下場。`衝突` 是**失敗**,其餘三種是資訊。
@@ -121,7 +122,12 @@ def main(path, check=False):
 
     print("\n未涵蓋的名字(按金額;要嘛補進 SYN,要嘛它根本不是葉列)")
     for (name, state), v in uncovered(cells):
-        print(f"    {v:>15,}  {name}  ({state})")
+        # 規則層的提案。**不會自動生效** —— 貼進 SYN 是人的動作,git diff 就是審核介面。
+        # 提不出來的才是真的要想:規則裡沒寫,代表這是新判斷。
+        b, why = (None, "待人審,規則不得代決") if state == "待人審" \
+            else rules.propose(buckets.norm(name))
+        tail = f'→ 建議 "{name}": "{b}",   ({why})' if b else f"→ {why}"
+        print(f"    {v:>15,}  {name}  ({state})\n        {tail}")
     if check and res.get(CONFLICT):
         print(f"\n{len(res[CONFLICT])} 組衝突 —— 分桶表或抄列有一邊是錯的")
         return 1
