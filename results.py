@@ -22,6 +22,7 @@ import json
 import os
 
 import buckets
+import holdout
 import locate
 import transcribe
 import wide
@@ -74,8 +75,16 @@ def summary(verdict, audit):
             print(f"  ✗ {k} —— {'; '.join(bad)}")
 
 
-def main(path, write=True):
+def main(path, write=True, use_holdout=False):
     cells = json.load(open(path, encoding="utf-8"))
+    train, leak = holdout.split(cells)
+    if leak and not use_holdout:
+        # 擋在這裡而不是只印警告:保留集一旦混進日常回歸,它就悄悄變成訓練資料了,
+        # 而且沒有人會發現 —— 那正是保留集要防的事情本身。
+        print(f"✗ 保留集有 {len(leak)} 格混進來:{sorted(leak)}")
+        print("  保留集只能用一次,而且用完要作廢換新的。真的要用請加 --holdout。")
+        return 1
+    cells = cells if use_holdout else train
     rows, verdict, audit = build(cells)
     summary(verdict, audit)
     if not write:
@@ -93,4 +102,5 @@ if __name__ == "__main__":
     if len(sys.argv) < 2:
         print(__doc__.rsplit("跑法:", 1)[-1])
         raise SystemExit(2)
-    raise SystemExit(main(sys.argv[1], "--print" not in sys.argv))
+    raise SystemExit(main(sys.argv[1], "--print" not in sys.argv,
+                          "--holdout" in sys.argv))
