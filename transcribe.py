@@ -36,8 +36,19 @@ def context(loc, cls, page=None):
     if not pages:
         raise ValueError(f"{loc.name} {cls}:無候選頁,此格走拒收")
 
+    return context_pages(loc, cls, pages)
+
+
+def context_pages(loc, cls, pages):
+    """指定頁碼清單的版本。pipeline 擴張後會給比 loc.pages[cls] 更多的頁。"""
+    extra = [i for i in pages if i not in loc.pages[cls]]
     out = [f"# {loc.name}  類別={cls}  錨(BS 合計)={loc.anchors[cls]:,} 仟元",
            f"# 候選頁:{loc.pages[cls]}(0-based;BS 頁 p{loc.bs_page} 已排除)"]
+    if extra:
+        # 講明白多出來的頁是怎麼來的:上一輪 sum(葉列) != 錨,所以擴張鄰頁。
+        # agent 要知道自己在補抓,而不是以為這些頁本來就印著錨。
+        out.append(f"# ⚠ 上一輪對不上,已擴張加入鄰頁 {extra} —— "
+                   f"這些頁不印錨值,要找的是能補足差額的小計或子附註")
     for i in pages:
         out.append(f"\n===== page {i} =====\n{loc.text(i)}")
     return "\n".join(out)
