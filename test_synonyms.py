@@ -88,13 +88,24 @@ def case_ambiguous_amount():
 
 
 def case_pending_not_guessed():
-    """人審佇列裡的名字,**不准**被金額配對自動推定掉。"""
+    """人審佇列裡的名字,**不准**被金額配對自動推定掉。
+
+    ⚠️ 用臨時塞的假名字,**不准拿真的待審名目當測資** —— 第一版拿了
+    「國外機構發行債券」,結果那個決定一做完(2026-07-26 判為公債)這條就綠著
+    失效了。測的是機制,綁到會被解決的資料上等於幫自己裝了一個定時失效的檢查。
+    """
     a = {"doc": "x", "class": "OCI", "source_page": 1, "total_col": "c",
          "printed_total": 100, "rows": [{"name": "金融債", "cols": {"c": 100}}]}
     b = copy.deepcopy(a)
     b["source_page"] = 2
-    b["rows"] = [{"name": "國外機構發行債券", "cols": {"c": 100}}]
-    res = synonyms.scan({"fake": [a, b]})
+    b["rows"] = [{"name": "某個分不出來的債券", "cols": {"c": 100}}]
+    buckets.PENDING["某個分不出來的債券"] = "測試用"
+    buckets._PEND_N.add(buckets.norm("某個分不出來的債券"))
+    try:
+        res = synonyms.scan({"fake": [a, b]})
+    finally:
+        buckets.PENDING.pop("某個分不出來的債券")
+        buckets._PEND_N.discard(buckets.norm("某個分不出來的債券"))
     yield ("待人審的名字不會被推定", not res.get(synonyms.PROPOSE), f"{res}")
     yield ("而是留在人審", len(res.get(synonyms.HUMAN, [])) == 1, f"{res}")
 
