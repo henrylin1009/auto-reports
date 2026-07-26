@@ -61,40 +61,48 @@ class Located:
             if c in self.anchors:
                 yield c, self.anchors[c], self.pages[c]
 
-    def expand(self, cls):
+    def expand(self, cls, level=1):
         """第 1 層抄完 `sum(葉列) != 錨` 時才呼叫:擴張候選頁。
 
-        **由算術驅動,不是由版型驅動。** 對不上就繼續找,對上就停,
+        **由算術驅動,不是由版型驅動。** 對不上就擴,對上就停,
         所以不需要分辨遇到的是哪一種漏抓 —— 實測有三種,同一招都治:
 
           子附註在另一頁  富邦 202402_5836 OCI p38→p39;玉山 202502_5847 OCI p23→p24
           表格跨頁        國泰 202102_5835 Trading p34→p33;中信 202502_5841 OCI p17→p16
           同頁多段小計    富邦 202304_5836 Trading(108,284,903+31,162,445+492,897=錨)
 
-        擴張兩路,都不設門檻:
-          1. 鄰頁(跨頁表的另一半通常就在隔壁)
-          2. 第 1 層頁上**任一數字**所在的頁(子附註的合計 = 主附註的某一列)
+        **分級,便宜的先來**(level 1→3 逐級放寬,對上就不必往下走):
+          1. 鄰頁 ±1        —— EXPAND_TRUTH 11 格全中,平均 2.2 頁
+          2. 鄰頁 ±2        —— 平均 4.4 頁
+          3. 再加子錨 grep  —— 第 1 層頁上任一數字所在的頁,平均 8.7 頁
+
+        level 3 目前**沒有任何一格用得上**(11 格的正確頁全是鄰頁),留著是因為
+        「子附註不在隔壁」在原理上可能發生,但**沒有實例前不要預設開啟** ——
+        它的雜訊來源是短數字:中信合併那格 56 個子錨裡,`7,400` 中 5 頁、`3,200` 中 4 頁,
+        把 15 個無關頁拉進來,而正確頁 p17 是靠鄰頁規則找到的,不是靠它。
 
         ⚠️ **試過的較窄判準都失敗,不要退回去**(2026-07-26 實測):
           - 「子錨須標著小計/合計」→ 玉山 p24 合計列是光禿禿的
             `$ 292,943,799 $ ...`,沒有「合計」二字 → 漏抓
           - 「數字須 ≥ N 才當子錨」→ MIN_GROUPS=2 有雜訊、=3 直接歸零
             (小計 144,508,936 只有兩個逗號)。**沒有安全區間 = 判準本身錯**
-          雜訊由抄列時 `sum(葉列) == 子錨` 濾掉,寧可寬進嚴驗。
+          雜訊由抄列時 `sum(葉列) == 錨` 濾掉,寧可寬進嚴驗 —— 但也不要無謂地寬。
         """
         l1 = self.pages.get(cls) or []
         if not l1:
             return []
         out = set()
         for i in l1:
-            out |= {i - 1, i + 1}
-        subs = set()
-        for i in l1:
-            subs |= set(_NUM.findall(self.text(i)))
-        subs.discard(f"{self.anchors[cls]:,}")
-        for i, t in enumerate(self.texts):
-            if any(s in t for s in subs):
-                out.add(i)
+            for d in range(1, (2 if level >= 2 else 1) + 1):
+                out |= {i - d, i + d}
+        if level >= 3:
+            subs = set()
+            for i in l1:
+                subs |= set(_NUM.findall(self.text(i)))
+            subs.discard(f"{self.anchors[cls]:,}")
+            for i, t in enumerate(self.texts):
+                if any(s in t for s in subs):
+                    out.add(i)
         return sorted(i for i in out
                       if 0 <= i < len(self.texts) and i not in l1 and i != self.bs_page)
 
@@ -165,17 +173,24 @@ def _main():
     paths = a.paths or sorted(glob.glob("pdf_cache/*.pdf"))
 
     if a.expand:
-        hit, sizes = 0, []
-        for doc, cls, need in EXPAND_TRUTH:
-            loc = locate(f"pdf_cache/{doc}.pdf")
-            got = loc.expand(cls)
-            sizes.append(len(got))
-            ok = need in got or need in loc.pages[cls]
-            hit += ok
-            print(f"  {'✓' if ok else '✗'} {doc} {cls:<8} 需 p{need}  擴張後 {len(got)} 頁")
-        print(f"命中 {hit}/{len(EXPAND_TRUTH)}  候選頁 平均 {sum(sizes)/len(sizes):.1f} "
-              f"最多 {max(sizes)}")
-        return 0 if hit == len(EXPAND_TRUTH) else 1
+        # level 1 必須就全中。若哪天新增的真值要靠 level 2/3 才中,
+        # 那是行為改變,要在這裡看見,不准默默調高預設等級。
+        rc = 0
+        for lv in (1, 2, 3):
+            hit, sizes = 0, []
+            for doc, cls, need in EXPAND_TRUTH:
+                loc = locate(f"pdf_cache/{doc}.pdf")
+                got = loc.expand(cls, lv)
+                sizes.append(len(got))
+                ok = need in got or need in loc.pages[cls]
+                hit += ok
+                if lv == 1 and not ok:
+                    print(f"  ✗ {doc} {cls:<8} 需 p{need}  得 {got}")
+            print(f"  level {lv}: 命中 {hit}/{len(EXPAND_TRUTH)}  "
+                  f"候選頁 平均 {sum(sizes)/len(sizes):.1f} 最多 {max(sizes)}")
+            if lv == 1 and hit != len(EXPAND_TRUTH):
+                rc = 1
+        return rc
 
     if not a.census:
         for p in paths:
