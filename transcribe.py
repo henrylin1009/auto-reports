@@ -197,10 +197,16 @@ def check_cross(recs, bk=None):
         for v in sorted(hit) if bucket else ():
             ba = {bucket({"name": n}) for n in base[v]}
             bb = {bucket({"name": n}) for n in cur[v]}
-            if None in ba | bb or ba != bb:
+            if ba != bb:
                 out.append(f"金額對不上 — {v:,} 兩邊的桶不同:"
                            f"p{ref['source_page']}{base[v]}→{sorted(map(str, ba))} vs "
                            f"p{rec['source_page']}{cur[v]}→{sorted(map(str, bb))}")
+            elif None in ba:
+                # 兩邊講的是同一件事,只是**都**不認得 → 這道驗不了配對,不是配對錯了。
+                # 訊息要講對:玉山「國外機構發行債券」兩表同名同額,舊寫法會印
+                # 「兩邊的桶不同:None vs None」,把待人審誤報成抄錯,人會去查錯地方。
+                out.append(f"金額對不上 — {v:,} 兩邊都對不到桶({base[v]}),"
+                           f"這道驗不了它的配對")
         rest_a = {v: n for v, n in base.items() if v not in hit}
         rest_b = {v: n for v, n in cur.items() if v not in hit}
         # 對不上的餘額退一步比**桶層**:顆粒度本來就會兩邊不同,而且兩個方向都會
