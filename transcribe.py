@@ -242,21 +242,10 @@ def _by_bucket(a, b, bucket):
     return sorted(deg), sorted(set(bad))
 
 
-def synonyms(recs):
-    """同金額、不同名 → 同義詞候選(S6 的原料)。**不是錯誤。**
-
-    只在年報成立:配對需要一份文件裡有 2 份以上表述,半年報只有附註一份。
-    → 表從年報長、套用到半年報。"""
-    if len(recs) < 2:
-        return []
-    ref, *rest = recs
-    base = _amounts(ref)
-    out = []
-    for rec in rest:
-        for v, names in _amounts(rec).items():
-            if v in base and set(names) != set(base[v]):
-                out.append((v, sorted(set(base[v]) | set(names))))
-    return sorted(out)
+# 「同金額不同名 → 同義詞候選」原本在這裡,已搬到 `synonyms.py`(S6)。
+# 搬走的理由不是整理:舊版拿各自的 `total_col` 比,口徑不同的格子(兆豐)會配出
+# 成本 ↔ 公允的假同義詞,而且沒有「金額在該欄唯一」的守門 —— 兩邊各有兩列同額時
+# 誰對誰是猜的。新版共用第 3 道的 `align()`,守門與注入測試在 `test_synonyms.py`。
 
 
 def verify(recs, loc):
@@ -282,8 +271,6 @@ def report(recs, loc):
                 else "△" if v.startswith(PARTIAL) else "✗")
         print(f"  {mark} {k}"
               + (f"  {v}" if v else ""))
-    for v, names in synonyms(recs):
-        print(f"  ◆ 同義詞候選 {v:,}: {' / '.join(names)}")
     print(f"  → {'通過' if ok else '拒收'}")
     return ok
 
