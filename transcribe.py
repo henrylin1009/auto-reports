@@ -24,6 +24,8 @@ from config import COST_COLS, DERIVATIVE
 #: 「不適用」必須跟「通過」分開顯示 —— 把不適用畫成綠燈就是恆真閘門(§1 D1 的老毛病)。
 NA_SINGLE = "N/A(單一來源頁)"
 NA_BASIS = "N/A(兩表口徑不同,逐列不可比)"
+#: 沒抄欄合計 → 這道不存在。**不准當成通過** —— 漏抄與驗過在畫面上要分得開。
+NA_NO_COL_TOTAL = "N/A(未抄逐欄合計)"
 #: 降級:桶層對上但逐列對不上。**不准畫成綠燈** —— 逐列比才驗得到單一名字的配對。
 PARTIAL = "△(部分只到桶層)"
 
@@ -68,6 +70,31 @@ def check_identity(rec):
         return (f"列相加 {s:,} != 印出合計 {rec['printed_total']:,}"
                 f"(差 {rec['printed_total'] - s:,})")
     return None
+
+
+def check_col_totals(rec):
+    """第 6 道:`printed_totals` 宣告的每一欄,都要**列相加 == 印出的欄合計**。
+
+    為什麼要有這道:明細表的「取得成本」欄是文件裡唯一的逐桶成本來源,但
+    `printed_total` 一格只存一個數(公允那欄的合計)→ 成本欄**驗不到**。
+    驗不到的數字不准送上網,所以在補這道之前,國泰/富邦/玉山/兆豐的 wide_cost
+    全是 null,而文件裡明明有。
+
+    ⚠️ **沒有該欄的列要略過,不是當 0。** 兆豐明細表的衍生只有「選擇權」揭露
+    取得成本,其餘 5 種缺欄 —— 那是未揭露,不是零。實測 7 列有取得成本,
+    相加 44,631,513 == 印出的欄合計。
+
+    ⚠️ 這道**只在 agent 有抄下欄合計時才存在**,漏抄就是不適用而不是通過 ——
+    所以它不能當成「成本口徑一定驗過了」的保證,要看 wide 那邊有沒有取到值。
+    """
+    declared = rec.get("printed_totals") or {}
+    bad = []
+    for col, want in declared.items():
+        got = sum(r["cols"][col] for r in rec["rows"] if col in r["cols"])
+        if got != want:
+            n = sum(col in r["cols"] for r in rec["rows"])
+            bad.append(f"「{col}」{n} 列相加 {got:,} != 印出 {want:,}(差 {want - got:,})")
+    return "; ".join(bad) if bad else None
 
 
 def check_anchor(rec, loc):
@@ -262,9 +289,12 @@ def verify(recs, loc):
         res[f"①②列相加@{tag}"] = check_identity(rec)
         res[f"④合計==錨@{tag}"] = check_anchor(rec, loc)
         res[f"⑤列皆可分桶@{tag}"] = check_buckets(rec, buckets)
+        res[f"⑥逐欄合計@{tag}"] = (check_col_totals(rec) if rec.get("printed_totals")
+                                    else NA_NO_COL_TOTAL)
     res["③雙表互對"] = check_cross(recs, buckets) if len(recs) >= 2 else NA_SINGLE
     hard = [v for v in res.values()
-            if v and v not in (NA_SINGLE, NA_BASIS) and not v.startswith(PARTIAL)]
+            if v and v not in (NA_SINGLE, NA_BASIS, NA_NO_COL_TOTAL)
+            and not v.startswith(PARTIAL)]
     return not hard, res
 
 
@@ -273,7 +303,7 @@ def report(recs, loc):
     print(f"{loc.name} {recs[0]['class']}  來源頁 {[r['source_page'] for r in recs]}"
           f"  葉列 {[len(r['rows']) for r in recs]}")
     for k, v in res.items():
-        mark = ("✓" if v is None else "–" if v in (NA_SINGLE, NA_BASIS)
+        mark = ("✓" if v is None else "–" if v in (NA_SINGLE, NA_BASIS, NA_NO_COL_TOTAL)
                 else "△" if v.startswith(PARTIAL) else "✗")
         print(f"  {mark} {k}"
               + (f"  {v}" if v else ""))
