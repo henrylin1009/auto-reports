@@ -14,7 +14,7 @@ import os
 
 sys.path.insert(0, os.getcwd())
 from config import BUCKET_MAP, WIDE_BUCKETS, DERIVATIVE, VALUATION_ADJ, BOOK_COLS
-from buckets import SYN, basis_of
+from buckets import bucket, basis_of, pending
 
 #: ⚠️ `rec["basis"]` 這個欄位**已停用,不要再讀它,也不要再叫 agent 填**。
 #: 它是自由敘述(兆豐 p125 填的是「逐列雙欄:取得成本 + 公允價值總額」,一句話裡
@@ -53,13 +53,14 @@ def run(path):
         side = {DERIVATIVE: 0, VALUATION_ADJ: 0}     # 不進 wide 的兩段
         unknown = []
         for row in rec["rows"]:
-            b = SYN.get(row["name"])
+            b = bucket(row)
             if b in side:
                 side[b] += row["cols"][col]
                 continue
             wb = BUCKET_MAP.get(b)
             if wb is None:
-                tag = row["name"] + (f"[桶{b}無 wide 對應]" if b else "")
+                tag = row["name"] + (f"[桶{b}無 wide 對應]" if b
+                                     else "[待人審]" if pending(row) else "")
                 unknown.append((tag, row["cols"][col]))
                 continue
             book[wb] += row["cols"][col]
