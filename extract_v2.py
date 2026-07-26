@@ -4,8 +4,13 @@
 自帶 slice_pdf/_load_env/_client;無外部 reader 依賴(vision_reader/schema 已退役)。"""
 import io, json, os, re, time
 import pdfplumber
-from config import (MODEL, MIN_GAP, MAX_EXPAND, TOL, TOL_REL,
-                    BUCKETS, BUCKET_RULES, CLS_TITLE, CLS_NAME)
+from config import (MODEL, MIN_GAP, MAX_EXPAND, TOL, TOL_REL, CLS_TITLE, CLS_NAME,
+                    # 本檔用**凍結**的舊桶名(含「調整項」),不跟 v3 的 BUCKETS 走。
+                    # v3 把「調整項」拆成 衍生 / 評價調整;若共用,LLM 會回傳本檔
+                    # 認不得的桶名,而 L398/L588 靠 `!= "調整項"` 濾非桶列 →
+                    # 調整項會被當成真桶加進去,線上網站數字直接壞掉。
+                    # R5 刪本檔時,config 那兩個 LEGACY_* 一起刪。
+                    LEGACY_BUCKETS as BUCKETS, LEGACY_BUCKET_RULES as BUCKET_RULES)
 
 
 def _load_env(path=".env"):
