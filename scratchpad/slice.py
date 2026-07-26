@@ -13,45 +13,8 @@ import sys
 import os
 
 sys.path.insert(0, os.getcwd())
-from config import BUCKET_MAP, WIDE_BUCKETS, DERIVATIVE, VALUATION_ADJ
-
-# 只為這 3 格手寫。原名 → 桶名(config.BUCKETS)。
-SYN = {
-    "政府公債": "公債", "政府債券": "公債", "國庫券": "貨幣市場",
-    "可轉讓定期存單": "可轉讓定存單", "可轉讓定存單": "可轉讓定存單",
-    "公司債": "公司債", "公司債券": "公司債",
-    "金融債": "金融債", "金融債券": "金融債",
-    "資產基礎證券": "資產基礎", "資產基礎債券": "資產基礎", "證券化商品": "資產基礎",
-    "其他證券及債券": "其他", "其他": "其他",
-    "上市櫃公司股票": "股票", "興櫃公司股票": "股票", "非上市、上櫃、興櫃股票": "股票",
-    "國內上市櫃股票": "股票", "國內興櫃股票": "股票", "國外股票": "股票",
-    "國內未上市櫃股票": "股票", "股票": "股票", "受益憑證": "股票",
-    # 衍生與評價調整各自成桶,不進 wide 7 桶(見 config.BUCKET_MAP 上方註解)
-    "衍生工具": DERIVATIVE, "利率交換合約": DERIVATIVE, "貨幣交換": DERIVATIVE,
-    "遠期外匯合約": DERIVATIVE, "信用違約交換": DERIVATIVE, "選擇權": DERIVATIVE,
-    "資產交換合約": DERIVATIVE,
-    "評價調整": VALUATION_ADJ, "金融資產評價調整": VALUATION_ADJ,
-}
-
-BOOK_COLS = ("公允價值總額", "帳面金額")
-
-
-def basis_of(rec):
-    """由**表自己**判這份 record 的逐項口徑,回傳 "成本" 或 "公允"。
-
-    ⚠️ **不讀 agent 宣告的 `rec["basis"]`。** 舊寫法是
-    `if "成本" not in (rec.get("basis") or "")` —— 漏填就當公允放行,
-    「偷懶 = 變綠」,跟 D1 恆真閘門同一種病。實測後果:中信 2023H1
-    OCI_GB = 61,640,884 是成本卻被當帳面用,精準重現已發布的那個 bug。
-
-    判準是一行算術(見 memory/oracle-basis-mismatch):
-        有評價調整列 → 逐項是【成本】,那列就是補到公允的差額
-        沒有         → 逐項本身已是【公允】
-    不看銀行、不看年報/半年報、不看附註或明細表、不看檔名。
-    """
-    return "成本" if any(SYN.get(r["name"]) == VALUATION_ADJ
-                        for r in rec["rows"]) else "公允"
-
+from config import BUCKET_MAP, WIDE_BUCKETS, DERIVATIVE, VALUATION_ADJ, BOOK_COLS
+from buckets import SYN, basis_of
 
 #: ⚠️ `rec["basis"]` 這個欄位**已停用,不要再讀它,也不要再叫 agent 填**。
 #: 它是自由敘述(兆豐 p125 填的是「逐列雙欄:取得成本 + 公允價值總額」,一句話裡
