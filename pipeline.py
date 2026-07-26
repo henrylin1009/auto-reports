@@ -87,6 +87,16 @@ def run(doc, cls):
         pages = sorted(set(loc.pages[cls]) | set(more))
 
 
+def prompt_at(doc, cls, level=0):
+    """直接取某一級的 prompt。給「agent 就是我」的手動流程用 —— run() 的
+    generator 協定在互動式抄列時很難用,但兩者算的是同一組頁,不會分岔。"""
+    loc = locate.locate(f"pdf_cache/{doc}.pdf")
+    pages = list(loc.pages[cls])
+    if level:
+        pages = sorted(set(pages) | set(loc.expand(cls, level)))
+    return transcribe.context_pages(loc, cls, pages)
+
+
 def drive(doc, cls, transcriber):
     """把 generator 協定包起來。`transcriber(prompt) -> recs`(抄不出來回 None)。"""
     gen = run(doc, cls)
@@ -96,3 +106,12 @@ def drive(doc, cls, transcriber):
             prompt = gen.send(transcriber(prompt))
     except StopIteration as e:
         return e.value
+
+
+if __name__ == "__main__":
+    import sys
+    if len(sys.argv) < 3:
+        print("用法: python3 pipeline.py <檔名(不含.pdf)> <Trading|OCI|AC> [擴張級數]")
+        raise SystemExit(2)
+    print(prompt_at(sys.argv[1], sys.argv[2],
+                    int(sys.argv[3]) if len(sys.argv) > 3 else 0))

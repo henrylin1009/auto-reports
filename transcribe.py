@@ -81,6 +81,38 @@ def check_anchor(rec, loc):
     return None if rec["printed_total"] == a else f"印出合計 {rec['printed_total']:,} != 錨 {a:,}"
 
 
+def check_buckets(rec, bk):
+    """第 5 道:每一葉列都要對得到桶。**對不到桶的列就不是葉列。**
+
+    為什麼需要這道:`sum(葉列) == 錨` 擋不住**兩層附註**。玉山 2021H1 OCI 的
+    主附註 p23 只有兩列 ——「權益工具投資 16,018,428 / 債務工具投資 271,692,749」,
+    相加剛好 = 錨 287,711,177,前四道**全綠通過**,而這份 record 一個債種明細
+    都沒有(明細在子附註 p24)。四道全過、產出是廢的 —— 恆真閘門等級的洞。
+
+    這兩列不是資料列,是指向子附註的小計。而「它是小計」這件事,分桶表自己會說:
+    「透過其他綜合損益按公允價值衡量之債務工具投資」對不到任何一個債種桶。
+    → 所以判準不是認標題、不是認縮排,是**對不到桶就往下挖**(pipeline 會擴張)。
+
+    ⚠️ 這道**只會讓通過變困難**,不會讓失敗變通過。真的新名目(玉山「國外機構
+    發行債券」那種)也會落在這裡 —— 那正是要的:擴張若補不上,就拒收進人審佇列,
+    而不是猜一個桶或丟進「其他」。
+    """
+    if bk is None:
+        return None
+    bad = [r["name"] for r in rec["rows"] if bk.bucket(r) is None]
+    if not bad:
+        return None
+    # 分開講:待人審是**已知擴張補不了**的,再擴幾次都一樣,直接進佇列不要空轉。
+    wait = [n for n in bad if n in bk.PENDING]
+    rest = [n for n in bad if n not in bk.PENDING]
+    parts = []
+    if rest:
+        parts.append(f"{len(rest)} 列對不到桶(可能是小計,明細在別頁):{rest}")
+    if wait:
+        parts.append(f"{len(wait)} 列待人審:{wait}")
+    return ";".join(parts)
+
+
 def _amounts(rec, col=None, skip=None):
     """{金額: [原名…]}。0 排除 —— 一方揭露「-」、另一方整列省略是常見的,不是矛盾。
 
@@ -234,6 +266,7 @@ def verify(recs, loc):
         tag = f"p{rec['source_page']}"
         res[f"①②列相加@{tag}"] = check_identity(rec)
         res[f"④合計==錨@{tag}"] = check_anchor(rec, loc)
+        res[f"⑤列皆可分桶@{tag}"] = check_buckets(rec, buckets)
     res["③雙表互對"] = check_cross(recs, buckets) if len(recs) >= 2 else NA_SINGLE
     hard = [v for v in res.values()
             if v and v not in (NA_SINGLE, NA_BASIS) and not v.startswith(PARTIAL)]
