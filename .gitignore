@@ -21,6 +21,10 @@ _圖2.png
 pdf_cache/
 # 衍生產物,facts/ 一改就重算,不進 git
 results/
+# fill.py 的工作檔:work/pending.json、work/current.json 都是暫存的,重跑就重建。
+# work/rejected/ 是人審佇列,例外要進 git。
+work/*
+!work/rejected/
 # bridge_v2.py 每次執行自動備份的 data.json 快照,不需入庫
 data.json.pre_bridge
 golden/*.bak

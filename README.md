@@ -52,6 +52,35 @@ Taiwan-based machine, and a **render-only** step that runs in the cloud:
 | **`銀行債券_完整報表.xlsx`** (wide table + native Excel charts) | Anyone who needs the file | `python3 build_report.py` |
 | **Double-click desktop tool** (`.exe` / `.app`) | Non-technical users | Packaged by GitHub Actions, downloaded from Artifacts |
 
+## Quickstart — running the transcription loop (`/fill`)
+
+The pipeline's remaining bottleneck is **transcribing** bank-report tables into
+structured `facts/` records. That step is done by Claude Code itself, driven by
+the `fill` skill — no model API is called by any script in this repo.
+
+```bash
+git clone <this repo> && cd auto-reports
+pip install -r requirements.txt
+python3 resolve.py          # fetch the ~89 report PDFs into pdf_cache/ (needs Taiwan network access)
+```
+
+Then, inside Claude Code, run:
+
+```
+/fill
+```
+
+This repeats `python3 fill.py next` → transcribe the table → `python3 fill.py submit
+work/current.json` until it prints `ALL DONE`. Progress lives entirely in files
+(`facts/`, `work/`), so the loop can be interrupted and resumed from a fresh session,
+a fresh machine, or a different person — nothing needs to be remembered. Run
+`python3 fill.py status` any time for a one-line progress summary.
+
+If `pdf_cache/` is empty, `fill.py next` says so explicitly and tells you to run
+`python3 resolve.py` — it does not print `ALL DONE` in that case, since "nothing to
+do because there's nothing to fetch from" and "everything is finished" are different
+states.
+
 ## Usage
 
 ### A. Build the report locally
