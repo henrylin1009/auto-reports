@@ -10,6 +10,10 @@ import copy
 
 import facts
 
+#: 事實庫格數的下限(不是等於)。抄列只會讓它變大;變小代表有格子掉了。
+#: 22 = T0 搬進來的 19 格 + T3 驗收跑出的 202504_5835_AI3 三格。
+FLOOR = 22
+
 GOOD_KEY = "202404_5843_AI3|Trading"
 GOOD_REC = {
     "doc": "202404_5843_AI3", "class": "Trading",
@@ -64,9 +68,14 @@ def case_unknown_field():
 
 
 def case_existing_facts_pass():
-    """現有 19 格全部通過。"""
+    """現有事實庫全部通過。
+
+    ⚠️ **不要把格數寫死。** 事實庫會隨 `/fill` 長大,寫死格數等於每抄一格就紅一次,
+    而這個案例要驗的是「現有資料乾淨」,不是「現在有幾格」。只守一個下限:
+    抄過的格子不該憑空消失。
+    """
     cells = facts.load()
-    yield ("19 格", len(cells) == 19, f"len={len(cells)}")
+    yield (f"至少 {FLOOR} 格(實際 {len(cells)})", len(cells) >= FLOOR, f"len={len(cells)}")
     problems = facts.validate(cells)
     yield ("現有事實庫零問題", not problems, problems)
 

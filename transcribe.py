@@ -90,9 +90,18 @@ def check_col_totals(rec):
     declared = rec.get("printed_totals") or {}
     bad = []
     for col, want in declared.items():
+        n = sum(col in r["cols"] for r in rec["rows"])
+        if n == 0:
+            # 宣告的欄一列都沒有 → 不是「相加起來不對」,是**key 根本不是欄名**。
+            # 舊訊息印「0 列相加 0 != 印出 X」,讀起來像資料對不上,會讓人去查表。
+            # 實測(國泰 202504 AC):agent 把備抵損失前的中間小計「小計」當成欄名填進來,
+            # 因而被誤判成「兩表口徑不同所以逐列不可比」—— 指錯了檢查,查錯了地方。
+            bad.append(f"「{col}」不存在於任何一列的 cols —— printed_totals 的 key "
+                       f"必須是欄名(cols 裡出現過的);表上的中間小計不要放這裡,"
+                       f"沒有逐欄合計就整個省略")
+            continue
         got = sum(r["cols"][col] for r in rec["rows"] if col in r["cols"])
         if got != want:
-            n = sum(col in r["cols"] for r in rec["rows"])
             bad.append(f"「{col}」{n} 列相加 {got:,} != 印出 {want:,}(差 {want - got:,})")
     return "; ".join(bad) if bad else None
 
