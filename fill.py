@@ -22,6 +22,7 @@ import json
 import os
 import sys
 
+import buckets
 import facts
 import locate
 import pipeline
@@ -30,6 +31,8 @@ import transcribe
 WORK_DIR = "work"
 PENDING = f"{WORK_DIR}/pending.json"
 REJECTED_DIR = f"{WORK_DIR}/rejected"
+BLOCKED_DIR = f"{WORK_DIR}/blocked"
+PROPOSALS = f"{WORK_DIR}/proposals.jsonl"
 INDEX = f"{WORK_DIR}/index.json"
 
 RULES = """## 事實層規矩(違反會被退回)
@@ -71,12 +74,68 @@ def _all_docs():
     return sorted(os.path.basename(p)[:-4] for p in glob.glob("pdf_cache/*.pdf"))
 
 
-def _rejected_keys():
+def _marked_keys(d):
     keys = set()
-    for p in glob.glob(f"{REJECTED_DIR}/*.json"):
+    for p in glob.glob(f"{d}/*.json"):
         doc, cls = os.path.basename(p)[:-5].rsplit("__", 1)
         keys.add(_key(doc, cls))
     return keys
+
+
+def _rejected_keys():
+    return _marked_keys(REJECTED_DIR) | _marked_keys(BLOCKED_DIR)
+
+
+def _taxonomy_gap(recs, loc):
+    """只差「分類表沒收錄」時回傳提案清單,否則 None —— **擴頁永遠修不好這種失敗。**
+
+    第 5 道「列皆可分桶」有兩種失敗,長得一樣但處置相反:
+
+      (a) 兩層附註的小計列 —— 名字對不到桶,但**擴頁修得好**。
+          玉山 2021H1 OCI 實測:主附註兩列「權益工具投資 / 債務工具投資」相加剛好 == 錨,
+          前四道全綠,而明細在子附註 p24。這種一定要擴。
+      (b) 分類表缺口 —— 真的新科目名,**擴頁永遠修不好**。
+          國泰 202504 Trading 實測:「基金受益憑證」兩表同名同額,擴到 8 頁仍卡住,
+          白燒約 8 輪(level 2 的頁文字是 level 0 的 4.7 倍,每輪重讀一次)。
+
+    判準是**模擬**,不是比對錯誤訊息:每一個對不到桶的名字都有 `rules.propose()` 的提案,
+    而且**假裝把提案收錄進去之後這一格會通過**,才算分類表缺口。
+
+    ⚠️ 一開始寫成「唯一的 hard failure 是第 5 道」,用真實資料一測就破:
+       未收錄的名字會讓第 3 道也跟著報「兩邊都對不到桶」(國泰 202504 Trading 實測,
+       附註 p35 + 明細表 p135 兩份 record 都有那個名字)。那是**同一個根因的第二個症狀**,
+       不是另一個問題 —— 照訊息比對會漏判,而漏判等於這個修完全沒作用。
+       模擬則直接回答對的問題:「收錄之後還過不過?」
+
+    ⚠️ 判錯的後果是可回復的:提案會送到人眼前,看到不像科目名的東西就退掉再 requeue。
+       **人審就是這裡的安全網**,所以寧可短路得積極一點,也不要白燒擴頁。
+    """
+    import rules
+
+    unknown = {row["name"] for rec in recs for row in rec["rows"]
+               if buckets.bucket(row) is None}
+    if not unknown:
+        return None
+
+    props = []
+    for name in sorted(unknown):
+        if buckets.pending({"name": name}):
+            return None              # 已在人審佇列 —— 規則不得代決
+        b, why = rules.propose(buckets.norm(name))
+        if b is None:
+            return None              # 提不出來 → 可能是小計,交給擴張
+        props.append({"name": name, "bucket": b, "why": why})
+
+    # 模擬收錄後重驗。**只在這個判斷裡暫時生效,不寫進 buckets.SYN** ——
+    # 收錄是人的動作,git diff 就是審核介面(見 buckets.py 開頭)。
+    saved = dict(buckets._SYN_N)
+    try:
+        buckets._SYN_N.update({buckets.norm(p["name"]): p["bucket"] for p in props})
+        ok, _ = transcribe.verify(recs, loc)
+    finally:
+        buckets._SYN_N.clear()
+        buckets._SYN_N.update(saved)
+    return props if ok else None
 
 
 def _pdf_signature():
@@ -197,7 +256,7 @@ def cmd_submit(path):
 
     loc = locate.locate(f"pdf_cache/{doc}.pdf")
 
-    ok, reason = False, "抄不出來(records 為空)"
+    ok, reason, res, problems = False, "抄不出來(records 為空)", {}, None
     if recs:
         problems = facts.validate({_key(doc, cls): recs})
         if problems:
@@ -218,6 +277,32 @@ def cmd_submit(path):
         os.remove(PENDING)
         print(f"PASS      已歸檔進 facts/{doc}.json({cls})。")
         print("下一步:python3 fill.py next")
+        return
+
+    # 擴頁前先問:這是不是「擴頁永遠修不好」的那一種?
+    gap = _taxonomy_gap(recs, loc) if recs and not problems else None
+    if gap:
+        os.makedirs(BLOCKED_DIR, exist_ok=True)
+        json.dump({"doc": doc, "cls": cls, "reason": reason, "level": level,
+                   "proposals": gap, "submitted": data},
+                  open(f"{BLOCKED_DIR}/{doc}__{cls}.json", "w", encoding="utf-8"),
+                  ensure_ascii=False, indent=1, sort_keys=True)
+        seen = set()
+        if os.path.exists(PROPOSALS):
+            seen = {json.loads(l)["name"] for l in open(PROPOSALS, encoding="utf-8") if l.strip()}
+        with open(PROPOSALS, "a", encoding="utf-8") as f:
+            for g in gap:
+                if g["name"] not in seen:
+                    seen.add(g["name"])
+                    f.write(json.dumps({**g, "key": _key(doc, cls), "at": _now()},
+                                       ensure_ascii=False) + "\n")
+        os.remove(PENDING)
+        print(f"BLOCKED   這格卡在**分類表缺口**,不是你抄錯 —— 擴頁修不好這種失敗,所以不擴了。")
+        for g in gap:
+            print(f"          未收錄:「{g['name']}」→ 建議「{g['bucket']}」({g['why']})")
+        print(f"          提案已寫入 {PROPOSALS},請使用者審核後收錄進 buckets.SYN,")
+        print(f"          再跑 python3 fill.py requeue 把這格放回佇列。")
+        print("下一步:python3 fill.py next(先做別格,不要停在這裡)")
         return
 
     level += 1
@@ -248,26 +333,47 @@ def cmd_submit(path):
     _render(doc, cls, loc, new_pages)
 
 
+def cmd_requeue():
+    """把 BLOCKED / REJECT 的格子放回待抄佇列 —— 分類表更新後用。
+
+    只刪標記檔,不動 `facts/`:那些格子從來沒被歸檔過,重跑一次是乾淨的。
+    """
+    n = 0
+    for d, label in ((BLOCKED_DIR, "分類表缺口"), (REJECTED_DIR, "拒收")):
+        for p in glob.glob(f"{d}/*.json"):
+            print(f"  放回({label}):{os.path.basename(p)[:-5]}")
+            os.remove(p)
+            n += 1
+    print(f"{n} 格放回佇列。" if n else "沒有可放回的格子。")
+    print("下一步:python3 fill.py next")
+
+
 def cmd_status():
     cells = facts.load()
-    rejected = _rejected_keys()
+    rejected = _marked_keys(REJECTED_DIR)
+    blocked = _marked_keys(BLOCKED_DIR)
     total = 0
     for doc in _all_docs():
         loc = locate.locate(f"pdf_cache/{doc}.pdf")
         total += sum(1 for _, _, pages in loc.cells() if pages)
-    todo = max(total - len(cells) - len(rejected), 0)
-    print(f"已完成 {len(cells)} / 待抄 {todo} / 人審佇列 {len(rejected)}")
+    todo = max(total - len(cells) - len(rejected) - len(blocked), 0)
+    print(f"已完成 {len(cells)} / 待抄 {todo} / 分類表缺口 {len(blocked)} / 人審佇列 {len(rejected)}")
+    if blocked:
+        print(f"  ⚠ {len(blocked)} 格卡在分類表缺口 —— 審核 {PROPOSALS} 收錄後跑 "
+              f"python3 fill.py requeue")
 
 
 def _main():
-    if len(sys.argv) < 2 or sys.argv[1] not in ("next", "submit", "status"):
-        print("用法: python3 fill.py next | submit <path> | status")
+    if len(sys.argv) < 2 or sys.argv[1] not in ("next", "submit", "status", "requeue"):
+        print("用法: python3 fill.py next | submit <path> | status | requeue")
         return 2
     cmd = sys.argv[1]
     if cmd == "next":
         cmd_next()
     elif cmd == "status":
         cmd_status()
+    elif cmd == "requeue":
+        cmd_requeue()
     else:
         if len(sys.argv) < 3:
             print("用法: python3 fill.py submit <path>")
