@@ -381,12 +381,16 @@ def report(recs, loc):
 if __name__ == "__main__":
     import sys
     import locate
-    if len(sys.argv) < 3:
+    if len(sys.argv) < 2 or (sys.argv[1] != "--verify" and len(sys.argv) < 3):
         print("用法: python3 transcribe.py <檔名(不含.pdf)> <Trading|OCI|AC> [頁碼]")
-        print("      python3 transcribe.py --verify <rows.json>")
+        print("      python3 transcribe.py --verify [rows.json]   # 省略走 facts.load()")
         raise SystemExit(2)
     if sys.argv[1] == "--verify":
-        data = json.load(open(sys.argv[2], encoding="utf-8"))
+        if len(sys.argv) > 2:
+            data = json.load(open(sys.argv[2], encoding="utf-8"))
+        else:
+            import facts
+            data = facts.load()
         allok = True
         for key, recs in data.items():
             loc = locate.locate(f"pdf_cache/{recs[0]['doc']}.pdf")

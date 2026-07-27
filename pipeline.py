@@ -98,12 +98,12 @@ def prompt_at(doc, cls, level=0):
 
 
 def drive(doc, cls, transcriber):
-    """把 generator 協定包起來。`transcriber(prompt) -> recs`(抄不出來回 None)。"""
+    """把 generator 協定包起來。`transcriber(doc, cls, prompt) -> recs`(抄不出來回 None)。"""
     gen = run(doc, cls)
     try:
         prompt = next(gen)
         while True:
-            prompt = gen.send(transcriber(prompt))
+            prompt = gen.send(transcriber(doc, cls, prompt))
     except StopIteration as e:
         return e.value
 

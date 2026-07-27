@@ -174,8 +174,9 @@ def report(key, recs):
 if __name__ == "__main__":
     import json
     import sys
-    path = sys.argv[1] if len(sys.argv) > 1 else "scratchpad/rows_v3.json"
-    data = json.load(open(path, encoding="utf-8"))
+    import facts
+    path = sys.argv[1] if len(sys.argv) > 1 else None
+    data = json.load(open(path, encoding="utf-8")) if path else facts.load()
     bad = [k for k, recs in data.items()
            if not any(v.ok for v in report(k, data[k]).values())]
     print(f"\n{len(data)} 格,{len(data) - len(bad)} 格至少一個口徑可用")

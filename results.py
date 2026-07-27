@@ -22,6 +22,7 @@ import json
 import os
 
 import buckets
+import facts
 import holdout
 import locate
 import transcribe
@@ -31,7 +32,7 @@ OUT = "results"
 
 
 def build(cells):
-    """{格: recs} → (rows, verdict, audit)。"""
+    """{格: recs} → (verdict, audit)。rows 是 facts/,不是這裡的產物。"""
     verdict, audit = {}, {}
     for key, recs in cells.items():
         loc = locate.locate(f"pdf_cache/{recs[0]['doc']}.pdf")
@@ -58,7 +59,7 @@ def build(cells):
             "unknown": [{"name": n, "amount": a, "why": w}
                         for v in views.values() for n, a, w in v.unknown],
         }
-    return cells, verdict, audit
+    return verdict, audit
 
 
 def summary(verdict, audit):
@@ -75,8 +76,8 @@ def summary(verdict, audit):
             print(f"  ✗ {k} —— {'; '.join(bad)}")
 
 
-def main(path, write=True, use_holdout=False):
-    cells = json.load(open(path, encoding="utf-8"))
+def main(path=None, write=True, use_holdout=False):
+    cells = json.load(open(path, encoding="utf-8")) if path else facts.load()
     train, leak = holdout.split(cells)
     if leak and not use_holdout:
         # 擋在這裡而不是只印警告:保留集一旦混進日常回歸,它就悄悄變成訓練資料了,
@@ -85,12 +86,12 @@ def main(path, write=True, use_holdout=False):
         print("  保留集只能用一次,而且用完要作廢換新的。真的要用請加 --holdout。")
         return 1
     cells = cells if use_holdout else train
-    rows, verdict, audit = build(cells)
+    verdict, audit = build(cells)
     summary(verdict, audit)
     if not write:
         return 0
     os.makedirs(OUT, exist_ok=True)
-    for name, obj in (("rows", rows), ("verdict", verdict), ("audit", audit)):
+    for name, obj in (("verdict", verdict), ("audit", audit)):
         p = f"{OUT}/{name}.json"
         json.dump(obj, open(p, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
         print(f"  → {p}")
@@ -99,8 +100,6 @@ def main(path, write=True, use_holdout=False):
 
 if __name__ == "__main__":
     import sys
-    if len(sys.argv) < 2:
-        print(__doc__.rsplit("跑法:", 1)[-1])
-        raise SystemExit(2)
-    raise SystemExit(main(sys.argv[1], "--print" not in sys.argv,
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    raise SystemExit(main(args[0] if args else None, "--print" not in sys.argv,
                           "--holdout" in sys.argv))

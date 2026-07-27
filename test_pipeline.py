@@ -26,7 +26,7 @@ def case_escalates():
     """對不上 → 必須擴張,而且新 prompt 要包含手動驗過的正確頁。"""
     seen = []
 
-    def never_matches(prompt):
+    def never_matches(doc, cls, prompt):
         seen.append(_pages_in(prompt))
         return None                      # agent 抄不出來 → 逼迴圈升級
     out = pipeline.drive(DOC, CLS, never_matches)
@@ -54,7 +54,7 @@ def case_two_layer():
                   "cols": {"110年6月30日": 271692749}}]}]
     seen = []
 
-    def only_main_note(prompt):
+    def only_main_note(doc, cls, prompt):
         seen.append(_pages_in(prompt))
         return main_note                 # 每輪都只交得出主附註
     out = pipeline.drive(DOC, CLS, only_main_note)
@@ -68,7 +68,7 @@ def case_stops_early():
     recs = json.load(open("scratchpad/rows_r2.json", encoding="utf-8"))["202404_5835_AI3|OCI"]
     n = []
 
-    def good(prompt):
+    def good(doc, cls, prompt):
         n.append(_pages_in(prompt))
         return recs
     out = pipeline.drive("202404_5835_AI3", "OCI", good)
@@ -79,7 +79,8 @@ def case_stops_early():
 def case_no_anchor():
     """錨讀不到的格子不該假裝試過 —— 連 prompt 都不該產生。"""
     called = []
-    out = pipeline.drive("201802_5835_AI3", "Trading", lambda p: called.append(p))
+    out = pipeline.drive("201802_5835_AI3", "Trading",
+                          lambda doc, cls, p: called.append(p))
     yield ("錨讀不到 → 直接拒收,不叫 agent", (not out.ok) and not called, repr(out))
 
 

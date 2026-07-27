@@ -107,9 +107,10 @@ def scan(cells):
     return out
 
 
-def main(path, check=False):
+def main(path=None, check=False):
     import json
-    cells = json.load(open(path, encoding="utf-8"))
+    import facts
+    cells = json.load(open(path, encoding="utf-8")) if path else facts.load()
     res = scan(cells)
     dual = sum(len(r) > 1 for r in cells.values())
     print(f"{len(cells)} 格,其中 {dual} 格有雙來源頁(只有這些長得出同義詞)")
@@ -136,7 +137,5 @@ def main(path, check=False):
 
 if __name__ == "__main__":
     import sys
-    if len(sys.argv) < 2:
-        print(__doc__.rsplit("跑法:", 1)[-1])
-        raise SystemExit(2)
-    raise SystemExit(main(sys.argv[1], "--check" in sys.argv))
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    raise SystemExit(main(args[0] if args else None, "--check" in sys.argv))

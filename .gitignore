@@ -19,6 +19,8 @@ _圖1.png
 _圖2.png
 # PDF 快取:可選。想加速首次 CI 可保留;預設不入庫(CI 會自動抓)
 pdf_cache/
+# 衍生產物,facts/ 一改就重算,不進 git
+results/
 # bridge_v2.py 每次執行自動備份的 data.json 快照,不需入庫
 data.json.pre_bridge
 golden/*.bak
