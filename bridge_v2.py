@@ -53,7 +53,21 @@ def doc_period_consol(key):
     return f"{yr}{_Q[per]}"
 
 
+#: **Phase 1 寫入防護(2026-07-27)。** `data.json` 現在是 `build.py` 的建置產物,
+#: 唯一寫入者只有它。這支的輸出已凍結為 `snapshots/v2_frozen_*.json`。
+#: 程式碼刻意不刪 —— 它仍是那份快照的來源說明,而且 v2 退場前可能要重跑對照。
+#: 要解除防護必須有明確理由(見 docs/plan_phase1_build.md §2)。
+FROZEN = ("data.json 已改由 build.py 建置(唯一寫入者)。\n"
+          "  這支的輸出已凍結:snapshots/v2_frozen_*.json\n"
+          "  下一步:python3 build.py            # dry-run,寫 preview/\n"
+          "  規格:docs/plan_phase1_build.md")
+
+
 def main():
+    raise SystemExit("✗ bridge_v2 已停止寫入 data.json。\n  " + FROZEN)
+
+
+def _main_frozen():
     src = json.load(open(SRC, encoding="utf-8"))
     d = json.load(open(DATA, encoding="utf-8"))
     shutil.copy(DATA, DATA + ".pre_bridge")

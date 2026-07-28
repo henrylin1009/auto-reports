@@ -77,8 +77,15 @@ def new_rule(scope, norm_name, mapping, taxonomy_dir="taxonomy") -> str:
     不因為呼叫端是 B4 就破例(鐵則 2,§2.5)。呼叫端接著自己叫 `ratify_rule()`
     把它升級,兩步分開是為了讓「建了什麼」與「誰批准了它」各自留痕。
 
-    **idempotent**:`rule_id` 已存在就直接回傳,不重複新增、不覆寫既有內容——
-    否則同一個 review entry 重複處置兩次會讓 taxonomy 長出重複列。
+    **idempotent,但只在 mapping 相同時才是「什麼都沒變」**:`rule_id` 已存在
+    且 mapping 跟這次要收錄的一致 → 直接回傳,不重複新增。**若已存在但 mapping
+    不同 → raise,不准靜靜沿用舊值。**
+
+    這條防的是一個真實踩到的坑:review 佇列裡的名字可能剛好對到 taxonomy 裡
+    早就有的 rule(例如某個名字本來就是 PROVISIONAL,只是還沒被批准)。
+    如果這裡靜靜跳過、讓呼叫端接著 `ratify_rule()` 把舊 mapping 升成
+    CONFIRMED,使用者在表單填的桶名會被無聲丟掉,而使用者會誤以為自己
+    確認的是自己填的那個桶——這比報錯危險得多。
 
     `norm_name` 呼叫端要先 `buckets.norm()` 過;本函式不做正規化,
     因為正規化規則只有一份(`buckets.norm`),不在這裡另抄一份。
@@ -88,11 +95,18 @@ def new_rule(scope, norm_name, mapping, taxonomy_dir="taxonomy") -> str:
     rule_id = {"name": f"tax:{norm_name}",
               "group": f"tax:group:{norm_name}",
               "generic": f"tax:generic:{norm_name}"}[scope]
+    want_mapping = mapping if scope != "generic" else None
 
     rules_path = _rules_path(taxonomy_dir)
     rules = _load_json(rules_path)
     for r in rules:
         if r["rule_id"] == rule_id:
+            if r["mapping"] != want_mapping:
+                raise ValueError(
+                    f"new_rule: {rule_id!r} 在 taxonomy 裡已存在,mapping 是 "
+                    f"{r['mapping']!r},與這次要收錄的 {want_mapping!r} 不同——"
+                    f"不准靜靜沿用舊值蓋掉使用者的輸入。若要修改既有 rule 的 "
+                    f"mapping,那是另一個動作,不是『收錄成新科目』。")
             return rule_id
 
     from core.decisions import make_rule

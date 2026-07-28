@@ -85,7 +85,19 @@ def write(verdict, data):
                 "衍生與評價調整不進 7 桶,見 others_v3 與 results/audit.json"}
 
 
+#: **Phase 1 寫入防護(2026-07-27)。** 這支有一個結構性缺陷:它 `json.load` 落地的
+#: `results/verdict.json`,而那個檔的新鮮度沒有任何保證 —— 實測曾落後 25 小時、
+#: 缺 22 格,且是在分類表已知有 bug 的時候算出來的。按下 `--write` 就會把它發布。
+#: 職責已由 `build.py` 接手(當次由 facts/ 重建,不讀落地檔)。
+#: `cell_of()` / `to_yi()` 仍被 `build.py` 引用,所以檔案不刪。
+FROZEN = ("data.json 已改由 build.py 建置(唯一寫入者,當次重建不讀落地 verdict)。\n"
+          "  下一步:python3 build.py            # dry-run,寫 preview/\n"
+          "  規格:docs/plan_phase1_build.md")
+
+
 def main(do_write=False):
+    if do_write:
+        raise SystemExit("✗ bridge_v3 已停止寫入 data.json。\n  " + FROZEN)
     verdict = json.load(open(SRC, encoding="utf-8"))
     data = json.load(open(DATA, encoding="utf-8"))
     diff = apply(verdict, data)

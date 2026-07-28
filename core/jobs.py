@@ -104,12 +104,12 @@ def _fp_decide(workspace):
 
 
 def _fp_reconcile(workspace):
-    # ⚠️ 也直接讀 taxonomy,**不能只靠 decisions/**:B2 之前 `decide` 步驟
-    # 還只是佔位指令,不會真的把結果寫進 decisions/ ——指紋鏈若只走
-    # decisions/ 就會斷在這裡(實測驗過:改 taxonomy 之後 decide 正確重跑,
-    # 但 decisions/ 沒東西可比對變化,reconcile 因此被誤判成可以跳過)。
-    # B2 把 decide 真正接上、開始寫 decisions/ 之後,這裡可以只留
-    # decisions 的 hash;在那之前,taxonomy 是安全網,不准拿掉。
+    # ⚠️ 也直接讀 taxonomy,**不能只靠 decisions/**——即使 `decide` 步驟現在
+    # 真的會寫 decisions/(`core.ingest.backfill_decisions`),它**只補缺的**,
+    # 不會在 taxonomy 改變時重算已經存在的紀錄(那是刻意的:不能覆蓋掉已經
+    # 走過 B2 supersede/rebind 的歷史)。所以改 taxonomy 不保證 decisions/
+    # 的內容跟著變,指紋鏈若只走 decisions/ 一樣會斷在這裡——taxonomy 這道
+    # 安全網因此是永久性的,不是「等 decide 接上就能拿掉」的過渡措施。
     return fingerprint({
         "facts": _tree_sha(os.path.join(workspace, "facts")),
         "taxonomy": _tree_sha(os.path.join(workspace, "taxonomy")),
@@ -172,10 +172,11 @@ _STEP_ARGV = {
     "ingest": [sys.executable, "-c",
                "print('ingest: no batch ingest job yet, placeholder step')"],
     "decide": [sys.executable, "-c",
-               "import facts, buckets\n"
+               "import facts\n"
+               "from core import ingest\n"
                "cells = facts.load()\n"
-               "n = sum(len(r['rows']) for recs in cells.values() for r in recs)\n"
-               "print(f'decide: {len(cells)} 格 / {n} 列(占位:目前直接沿用 buckets.bucket 等價)')"],
+               "n = ingest.backfill_decisions(cells)\n"
+               "print(f'decide: {len(cells)} 格,補了 {n} 格新的 Decision(其餘沿用既有紀錄)')"],
     "reconcile": [sys.executable, "-c",
                   "import facts\n"
                   "from core import reconcile\n"

@@ -98,6 +98,38 @@ def _decide_rows(key, recs, taxonomy_dir="taxonomy"):
     return out
 
 
+def backfill_decisions(cells, decisions_dir=None, taxonomy_dir="taxonomy", review_path=None):
+    """對**還沒有 decisions/ 紀錄**的既有 facts 格,補算一次 Decision + review 佇列。
+
+    B2 上線前就已經在 `facts/` 裡的格子(今天是全部 36 格)從沒被 `apply_outcome`
+    處理過,`decisions/` 裡沒有它們的紀錄——不是因為它們特別,只是因為 B2/ingest
+    這套機制在它們被抄錄的當下還不存在。這支把缺口補上,讓 `core/jobs.py` 的
+    `decide` 步驟與 `core/workbench.py` 的 Review 頁對它們有意義。
+
+    **只補沒有的,不重算已有的**——已經有 decisions 紀錄的格,可能經過 B2 的
+    supersede/rebind 流程,這支不准覆蓋掉那段歷史。要更新既有格的 Decision,
+    走 ingest 正常流程(重抄 + apply_outcome),不是這支。
+
+    回傳補了幾格。
+    """
+    existing = decision_store.load(decisions_dir)
+    dcells = dict(existing)
+    review_entries = []
+    filled = 0
+    for key, recs in cells.items():
+        if key in existing:
+            continue
+        decs = _decide_rows(key, recs, taxonomy_dir)
+        dcells[key] = decs
+        review_entries += [{"cell_key": key, "decision": d} for d in decs
+                           if d.get("state") != decisions_mod.CONFIRMED]
+        filled += 1
+    if filled:
+        decision_store.save(dcells, decisions_dir)
+        decision_store.append_review(review_entries, review_path)
+    return filled
+
+
 def _supersede_old(key, old_recs, facts_dir):
     """把被覆寫的舊 record 移進 `facts/_superseded/{doc}__{cls}__{n}.json`,
     **不刪**——`plan_phaseB.md` §4.3 的覆寫保護,不得因分類未知或重抄而丟失
