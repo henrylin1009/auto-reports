@@ -1,0 +1,28 @@
+{
+ "version": "20260727",
+ "path": "snapshots/v2_frozen_20260727.json",
+ "sha256": "c8f0d9c4ffe0d23c10869540a99e9e29ba2eabe0d79d58ead76ac28a6ef2b410",
+ "frozen_at": "2026-07-27T21:04:19",
+ "source": {
+  "produced_by": "bridge_v2.py",
+  "from": "extract_v2_results.json",
+  "cells_declared": 50,
+  "data_json_mtime": "2026-07-24T08:13:57"
+ },
+ "contents": {
+  "periods": 14,
+  "banks": 5,
+  "wide_metrics": 21,
+  "data": 70,
+  "wide": 70,
+  "wide_cost": 57,
+  "_bridge": 8,
+  "wide_consol": 12,
+  "wide_cost_consol": 12,
+  "banks_consol": 1,
+  "periods_consol": 12,
+  "review": 5,
+  "review_consol": 0
+ },
+ "note": "唯讀。build.py 的保底輸入。任何情況下不得被覆寫;要更新請新增一個版本,不要改這個檔。"
+}

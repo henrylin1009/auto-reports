@@ -1,0 +1,31 @@
+{
+ "bs_page": 6,
+ "cells": {
+  "AC": {
+   "amount": 575027841,
+   "pages": [
+    38,
+    39,
+    93,
+    134
+   ]
+  },
+  "OCI": {
+   "amount": 328713904,
+   "pages": [
+    37,
+    133
+   ]
+  },
+  "Trading": {
+   "amount": 261380653,
+   "pages": [
+    35,
+    132
+   ]
+  }
+ },
+ "doc": "202404_5835_AI3",
+ "located_by": "locate.locate",
+ "pdf_sha256": "b16412a432bf3319bea70bd8cb24676cdd3168c66f0b0bb25ca4f1984748b0b9"
+}

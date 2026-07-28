@@ -29,3 +29,10 @@ work/*
 data.json.pre_bridge
 golden/*.bak
 golden/run_*.json
+# 衍生產物,重建指令都在旁邊,不進 git:
+#   preview/  ← python3 build.py(dry-run)
+#   out/      ← core/report.py::write(),test_report.py 也會寫
+preview/
+out/
+# /fill skill 的權威位置是 .claude/skills/fill/,.agents/ 底下那份是本機重複副本
+.agents/
