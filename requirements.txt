@@ -3,4 +3,3 @@ pypdfium2>=4.30   # locate.py / bs_anchor.py 讀 PDF 文字層用
 openpyxl>=3.1
 requests>=2.31
 matplotlib>=3.8   # 僅網頁版 make_web.py 需要(伺服器cron版可不裝)
-streamlit>=1.60   # 複核台(workbench_app.py)用,run.sh 排程不需要
