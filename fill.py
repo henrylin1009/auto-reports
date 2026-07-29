@@ -188,11 +188,13 @@ def _build_index():
     """對每份 PDF 跑一次 locate(),快取「哪個類別有候選頁」。這是唯一的 O(n) 全掃,
     之後 next() 只查表,只對選中的那一格重新 locate() 一次(要拿頁文字)。"""
     sig = _pdf_signature()
-    cells = {}
+    cells, basis = {}, {}
     for doc in _all_docs():
         loc = locate.locate(f"pdf_cache/{doc}.pdf")
         cells[doc] = {cls: bool(pages) for cls, _, pages in loc.cells()}
-    idx = {"sig": sig, "cells": cells}
+        # 口徑順便一起判:這裡本來就要讀完整份的頁文字,再開一次檔純屬浪費。
+        basis[doc] = loc.basis
+    idx = {"sig": sig, "cells": cells, "basis": basis}
     os.makedirs(WORK_DIR, exist_ok=True)
     json.dump(idx, open(INDEX, "w", encoding="utf-8"))
     return idx
@@ -202,7 +204,9 @@ def _load_index():
     sig = _pdf_signature()
     if os.path.exists(INDEX):
         idx = json.load(open(INDEX, encoding="utf-8"))
-        if [tuple(x) for x in idx.get("sig", [])] == sig:
+        # `basis` 是後加的欄位。簽章相同但缺這欄 = 舊版快取,要重建 ——
+        # 否則下游拿到的是「所有文件口徑未知」,而那看起來跟真的判不出來一樣。
+        if [tuple(x) for x in idx.get("sig", [])] == sig and "basis" in idx:
             return idx
     return _build_index()
 

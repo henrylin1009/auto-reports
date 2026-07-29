@@ -13,7 +13,7 @@
 //    畫面上顯示才 +1。不要在別的地方偷偷換算。
 
 const S = { ov: null, buckets: [], cell: null, page: null, rowIdx: 0,
-            pending: [], todo: [] };
+            pending: [], todo: [], basis: null };
 
 const $ = (h) => { const t = document.createElement("template"); t.innerHTML = h.trim(); return t.content.firstElementChild; };
 const esc = (s) => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -26,6 +26,7 @@ const post = (p, b) => fetch("/api/" + p, {
 
 async function boot() {
   [S.ov, S.buckets] = await Promise.all([api("overview"), api("buckets")]);
+  S.basis = S.ov.basis;
   addEventListener("hashchange", route);
   addEventListener("keydown", onKey);
   route();
@@ -52,12 +53,16 @@ const SBAR = { done: "g", todo: "miss", blocked: "w", na: "miss" };
 
 // ── 總覽:期別(列) × 銀行+代碼(欄),一格一份檔 ─────────────────────────
 async function viewMatrix() {
-  S.ov = await api("overview");
-  const { periods, cols, grid, stats } = S.ov;
+  S.ov = await api("overview" + (S.basis ? "?basis=" + encodeURIComponent(S.basis) : ""));
+  S.basis = S.ov.basis;
+  const { periods, cols, grid, stats, bases } = S.ov;
   nav("matrix");
 
   const el = $(`<div>
-    <h1>總覽 · 2023 起</h1>
+    <h1>總覽 · 2023 起
+      <span class="bsw">${bases.map(b =>
+        `<button data-b="${esc(b)}" class="${b === S.basis ? "pri" : ""}">${esc(b)}</button>`).join("")}</span>
+    </h1>
     <div class="stats">
       <div class="stat"><b>${stats.done}</b><span>已抄</span></div>
       <div class="stat"><b>${stats.todo}</b><span>待抄</span></div>
@@ -78,8 +83,16 @@ async function viewMatrix() {
     <div class="scroll"><table class="mx"><tbody></tbody></table></div>
     <p class="hint">一格 = 一份財報檔的三個類別(AC / OCI / Trading)。
       大字是抄到幾類,細條依序是三類的狀態(綠=已抄、黃=卡在分類、灰=還沒抄)。
-      空白代表那期沒有這份檔 —— 是沒有檔,不是沒抄。</p>
+      空白代表那期沒有這份檔 —— 是沒有檔,不是沒抄。
+      口徑從**封面**判(個體/合併),不從檔名推:檔名裡的 AI 編號在抓檔時已被統一改寫,
+      不再帶有意義。</p>
   </div>`);
+
+  // 口徑切換。**跨行比較只用個體**(2026-07-29 裁示),合併另外一組 ——
+  // 兩者期別不同(個體只有 02/04,合併有四季),分開畫才不會滿是空欄。
+  el.querySelectorAll(".bsw button").forEach(b => {
+    b.onclick = () => { S.basis = b.dataset.b; viewMatrix(); };
+  });
 
   wireAutofill(el);
 

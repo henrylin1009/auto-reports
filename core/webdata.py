@@ -49,28 +49,41 @@ def cell_status(cells, blocked_keys, index, doc, cls):
     return "na"
 
 
-def overview():
-    """矩陣:期別(列) × 銀行+代碼(欄)。**代碼集合從資料推導,不寫死列舉** ——
-    寫死過兩次,兩次都讓某一份檔無聲消失(先漏 AI1、修完又漏 AI2)。"""
+def overview(basis=None):
+    """矩陣:期別(列) × 銀行(欄)。**代碼集合從資料推導,不寫死列舉** ——
+    寫死過兩次,兩次都讓某一份檔無聲消失(先漏 AI1、修完又漏 AI2)。
+
+    `basis` = 個體 / 合併,**口徑分開畫兩張表**(使用者 2026-07-29 裁示)。
+    兩者的期別本來就不同(個體只有半年報 02 / 年報 04,合併有四季),
+    混在同一個網格會長出一整排永遠空著的季報欄。跨行比較只用個體。
+
+    欄名用**銀行代碼**,不再串 AI 編號:`resolve.download()` 一律把檔改名存成
+    `_AI3`(resolve.py:37),AI 編號已經不帶意義。口徑改由封面判(`locate.basis_of`)。
+    """
     cells = facts_mod.load()
     blocked_keys = set(queue_mod.by_cell())
     index = fill._load_index()
-    docs = docs_in_scope()
+    bmap = index.get("basis") or {}
+    basis = basis or locate.SOLO
+
+    docs = [d for d in docs_in_scope() if bmap.get(d) == basis]
 
     periods = sorted({split_doc(d)[0] for d in docs}, reverse=True)
-    cols = sorted({split_doc(d)[1] + " " + split_doc(d)[2] for d in docs})
+    cols = sorted({split_doc(d)[1] for d in docs})
 
     grid, stats = {}, {"done": 0, "todo": 0, "blocked": 0, "na": 0}
     for doc in docs:
-        period, bank, code = split_doc(doc)
+        period, bank, _code = split_doc(doc)
         states = {}
         for cls in locate.CLASSES:
             s = cell_status(cells, blocked_keys, index, doc, cls)
             states[cls] = s
             stats[s] += 1
-        grid[f"{period}|{bank} {code}"] = {"doc": doc, "classes": states}
+        grid[f"{period}|{bank}"] = {"doc": doc, "classes": states}
 
-    return {"periods": periods, "cols": cols, "grid": grid, "stats": stats}
+    avail = sorted({bmap.get(d) for d in docs_in_scope()} - {None, locate.UNKNOWN})
+    return {"periods": periods, "cols": cols, "grid": grid, "stats": stats,
+            "basis": basis, "bases": avail}
 
 
 def cell_detail(key):

@@ -52,6 +52,11 @@ class Located:
         self.pages = pages              # {類別: [候選頁 0-based]},已排除 BS 頁
         self.texts = texts              # 全文,index 對應頁碼
 
+    @property
+    def basis(self):
+        """報表口徑(個體/合併),從封面判 —— 見 `basis_of`。"""
+        return basis_of(self.texts[0] if self.texts else "")
+
     def text(self, i):
         return self.texts[i]
 
@@ -109,6 +114,27 @@ class Located:
     def __repr__(self):
         got = " ".join(f"{c}:{len(p)}頁" for c, _, p in self.cells())
         return f"<Located {self.name} bs=p{self.bs_page} {got or '無錨'}>"
+
+
+#: 報表口徑。**從封面讀,不從檔名推。**
+#: `resolve.download()` 一律把抓到的檔改名存成 `_AI3`(resolve.py:37),所以檔名裡的
+#: AI 代碼已經不帶任何意義 —— 舊資料裡 `_AI1` 剛好是合併、`_AI2`/`_AI3` 是個體,
+#: 那是舊腳本留下的巧合,不是規律。實測 202404_5841:AI1 錨 1,017,934,513(合併)
+#: vs AI3 錨 950,762,131(個體),是兩份不同的報表。
+#: 兩種口徑的期別本來就不同(個體只有半年報/年報,合併有四季),混在同一個網格
+#: 才會長出一堆永遠空著的欄。
+SOLO, CONSOLIDATED, UNKNOWN = "個體", "合併", "?"
+
+
+def basis_of(text):
+    """從封面文字判口徑。**合併優先比對** —— 合併報告封面印「及子公司…合併財務報告」,
+    個體報告印「個體財務報告」;兩者都含「財務報告」四字,順序寫反會誤判。"""
+    head = (text or "")[:400]
+    if "合併財務報告" in head or "及子公司" in head:
+        return CONSOLIDATED
+    if "個體財務報告" in head:
+        return SOLO
+    return UNKNOWN
 
 
 def locate(path):

@@ -163,7 +163,7 @@ class Handler(SimpleHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(png)
         elif route == "/api/overview":
-            self._json(webdata.overview())
+            self._json(webdata.overview(q.get("basis")))
         elif route == "/api/buckets":
             import config
             self._json(config.BUCKETS)
