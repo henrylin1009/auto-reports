@@ -14,12 +14,19 @@
 """
 import os
 import re
+import threading
 
 import pypdfium2 as pdf
 
 import bs_anchor
 
 CLASSES = ("Trading", "OCI", "AC")
+
+#: pypdfium2 包的 PDFium 不是 thread-safe 的 —— server.py 用 ThreadingHTTPServer,
+#: 一個文件頁面同時打出 /api/doc、/page.png、加上背景輪詢,並發開檔會讓整個
+#: process 直接死掉(不是丟例外,是 C 層級崩潰),連帶讓所有路由跟著斷線。
+#: 所有 pdfium 呼叫(這裡跟 server.render_png)共用同一把鎖,序列化存取。
+PDFIUM_LOCK = threading.Lock()
 
 #: 千分位數字。expand() 用它取子錨 —— 只認格式,不認金額大小。
 _NUM = re.compile(r"\d{1,3}(?:,\d{3})+")
@@ -139,13 +146,16 @@ def basis_of(text):
 
 def locate(path):
     """回傳 Located。錨完全讀不到時 anchors 為空,pages 亦然。"""
-    doc = pdf.PdfDocument(path)
-    try:
-        texts = [(doc[i].get_textpage().get_text_range() or "") for i in range(len(doc))]
-    finally:
-        doc.close()
+    with PDFIUM_LOCK:
+        doc = pdf.PdfDocument(path)
+        try:
+            texts = [(doc[i].get_textpage().get_text_range() or "") for i in range(len(doc))]
+        finally:
+            doc.close()
+        # bs_anchor.read() 也開同一份 PDF —— 併在同一段鎖裡,不要放開鎖再搶第二次
+        # (bs_anchor 只有這裡呼叫,不會有其他呼叫者需要獨立拿鎖)。
+        anchors, bs_page = bs_anchor.read(path)
 
-    anchors, bs_page = bs_anchor.read(path)
     pages = {}
     for c, v in anchors.items():
         s = f"{v:,}"

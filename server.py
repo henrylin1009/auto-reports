@@ -26,6 +26,7 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import fill
+import locate
 from core import webdata
 
 HOST = "127.0.0.1"
@@ -167,8 +168,12 @@ def render_png(doc, page):
     if hit:
         return hit
     import pypdfium2 as pdf
-    d = pdf.PdfDocument(f"pdf_cache/{doc}.pdf")
-    img = d[page].render(scale=1.6).to_pil()
+    # 跟 locate.locate() 共用同一把鎖(見 locate.py):pdfium 不是 thread-safe,
+    # 這支常常跟 /api/doc 同時被前端打(文件頁一開就兩個一起發),不鎖會讓
+    # process 直接崩潰,不是丟例外。
+    with locate.PDFIUM_LOCK:
+        d = pdf.PdfDocument(f"pdf_cache/{doc}.pdf")
+        img = d[page].render(scale=1.6).to_pil()
     buf = io.BytesIO()
     img.save(buf, format="PNG")
     out = buf.getvalue()
