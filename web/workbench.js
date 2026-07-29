@@ -167,19 +167,19 @@ async function showFetchLog() {
 
 // 沒有檔的格子。**三種「沒有」要分開** —— 混成一個「—」的話,
 // 「還沒抓」和「這期根本沒申報」長得一模一樣,使用者只能猜。
-const FETCH_LABEL = { missing: "抓這期", absent: "無申報", failed: "重試" };
+//
+// `absent` **仍然可以按**(2026-07-29 使用者裁示):TWSE 清單今天沒有不代表
+// 以後不會有 —— 銀行晚一點才申報是常態,不是例外。原本設計成不可按、
+// 靠某個「該多久重問一次」的規則自動放行,但那個規則要猜多久才合理沒有
+// 客觀答案;讓使用者自己決定「現在想不想再問一次」,比系統代猜可靠。
+const FETCH_LABEL = { missing: "抓這期", absent: "查無,再試", failed: "重試" };
 
 function fetchCell(g, stats) {
   const st = g.fetch;
-  if (st === "absent") {
-    // 已經問過 TWSE,答案是沒有。灰掉且不可按 —— 再按也只是重問一次同樣的問題。
-    const d = $(`<div class="cell none"><span class="k">無申報</span></div>`);
-    d.title = `${g.period} ${g.code}:TWSE 清單上沒有這期的個體檔`;
-    return d;
-  }
   const b = $(`<button class="cell ${st === "failed" ? "bad" : "miss"}">
     <span class="k">${FETCH_LABEL[st] || st}</span>
     <span class="s">${esc(g.period)}</span></button>`);
+  if (st === "absent") b.title = `${g.period} ${g.code}:上次問 TWSE 是「沒有」,按下去會重問一次`;
   b.disabled = !S.ov.can_fetch;
   if (!S.ov.can_fetch) b.title = "只支援抓個體財報,合併要另外處理";
   b.onclick = () => runFetch([{ period: g.period, code: g.code }], true);
