@@ -25,8 +25,9 @@ results/
 # work/rejected/ 是人審佇列,例外要進 git。
 work/*
 !work/rejected/
-# bridge_v2.py 每次執行自動備份的 data.json 快照,不需入庫
+# bridge_v2.py / build.py 每次執行自動備份的 data.json 快照,不需入庫
 data.json.pre_bridge
+data.json.pre_build
 golden/*.bak
 golden/run_*.json
 # 衍生產物,重建指令都在旁邊,不進 git:

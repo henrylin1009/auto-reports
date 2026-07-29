@@ -27,6 +27,7 @@ const post = (p, b) => fetch("/api/" + p, {
 async function boot() {
   [S.ov, S.buckets] = await Promise.all([api("overview"), api("buckets")]);
   S.basis = S.ov.basis;
+  document.getElementById("rebuildBtn").onclick = runRebuild;
   addEventListener("hashchange", route);
   addEventListener("keydown", onKey);
   route();
@@ -45,7 +46,21 @@ function route() {
   nav(r);
   if (r === "buckets") viewBuckets();
   else if (r === "doc") viewDoc(decodeURIComponent(parts[1] || ""));
+  else if (r === "analysis") viewAnalysis();
   else viewMatrix();
+}
+
+// ── 前台:分析頁本體(make_web.py 的產出)用 iframe 掛進來 ────────────────
+// 不是真融合 —— 前台的 JS 跟這裡是兩個世界,互相看不到對方的變數。
+// 換到這個好處是分析頁完全不用改,壞處是「點前台某格跳到後台去改」做不到,
+// 見 docs/plan_ui_unify.md 步驟 5。
+function viewAnalysis() {
+  nav("analysis");
+  const el = $(`<div style="margin:-16px;height:calc(100vh - 42px)">
+    <iframe src="/analysis" title="分析頁"
+      style="width:100%;height:100%;border:0;display:block"></iframe>
+  </div>`);
+  document.getElementById("app").replaceChildren(el);
 }
 
 const CLS = ["AC", "OCI", "Trading"];
@@ -199,6 +214,34 @@ async function runFetch(targets, thenFill) {
     if (s.running) return;
     clearInterval(t);
     viewMatrix();
+  }, 1500);
+}
+
+// ── 重建:facts/ → data.json → site/,讓前台看到後台剛改的東西 ───────────
+// 跟抄列共用同一個後端工作槽(server._JOB),所以進度輪詢也走同一支
+// /api/autofill/status —— 不是偷懶,是兩者本來就不准同時跑(都會動 facts/)。
+async function runRebuild() {
+  const btn = document.getElementById("rebuildBtn");
+  const stat = document.getElementById("rebuildstat");
+  if (!confirm("重建會用 facts/ 現有資料重跑 build.py --write + make_web.py,"
+    + "直接覆蓋本機的 data.json 與 site/。\n\n"
+    + "不會 push、不會發布到 GitHub Pages —— 那一步仍要你自己 git push。\n\n"
+    + "確定要重建嗎?")) return;
+  const r = await post("rebuild", {});
+  if (!r.started) { stat.textContent = r.why; return; }
+  btn.disabled = true; btn.textContent = "重建中…";
+  stat.textContent = "跑 build.py + make_web.py…";
+  const t = setInterval(async () => {
+    const s = await api("autofill/status");
+    if (s.lines.length) stat.textContent = s.lines[s.lines.length - 1].slice(0, 50);
+    if (s.running) return;
+    clearInterval(t);
+    btn.disabled = false; btn.textContent = "⟳ 重建";
+    if (s.error) { stat.textContent = "重建失敗 —— 詳見伺服器終端機。"; return; }
+    stat.textContent = "重建完成 · " + new Date().toLocaleTimeString("zh-TW", { hour12: false });
+    // 如果目前正看著前台,重新整理 iframe,不必自己按重新整理才看得到新數字。
+    const ifr = document.querySelector("#app iframe");
+    if (ifr) ifr.src = ifr.src;
   }, 1500);
 }
 

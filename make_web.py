@@ -9,6 +9,8 @@ from matplotlib import font_manager as fm
 from config import BANK_COLORS
 
 SITE=Path("site"); SITE.mkdir(exist_ok=True)
+# 唯一設定源:web/tokens.css(複核台用 <link> 讀同一份)。GitHub Pages 要單檔可攜,這裡內嵌。
+TOKENS_CSS=open("web/tokens.css", encoding="utf-8").read()
 D=json.load(open("data.json")); PERIODS=D["periods"]; BANKS=D["banks"]; DATA=D["data"]
 # 合併報表(AI1):獨立分頁用,不進主要 wide/banks(口徑範圍比個體大,混比會失真)
 # 合併有季報,時間軸用季度(periods_consol,如 2023Q1…2025Q4),與個體的半年軸(periods)分開
@@ -115,7 +117,6 @@ def interactive_html(prefix="", banks=None, wide=None, periods=None, review=None
     payload=json.dumps({"periods":_p,"banks":banks,"wide":wide_data,"review":_rev}, ensure_ascii=False)
     css="""<style>
 .ix{font-family:inherit}
-.ix-sub{font-weight:400;color:#8a919e;font-size:12px;margin-left:8px}
 .ix-kpihead{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px}
 .ix-cfg{position:relative;display:inline-block}
 .ix-cfg>summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-size:13px;color:#5f6672;border:1px solid #e0e3e8;border-radius:9px;padding:8px 12px;background:#fff;user-select:none}
@@ -135,9 +136,6 @@ def interactive_html(prefix="", banks=None, wide=None, periods=None, review=None
 .ix-ctl label{font-size:12px;color:#8a919e;margin-left:6px}
 .ix-ctl select{height:34px;border:1px solid #e0e3e8;border-radius:8px;padding:0 8px;background:#fff;color:#111827;font-size:13px;outline:none}
 .ix-ctl select:hover{border-color:#c6cbd4}
-.ix-seg{display:inline-flex;background:#eef0f3;border-radius:8px;padding:2px}
-.ix-seg button{border:none;background:transparent;font-size:12px;padding:6px 12px;cursor:pointer;color:#5f6672;border-radius:6px}
-.ix-seg button.on{background:#fff;color:#111827;font-weight:600;box-shadow:0 1px 2px rgba(16,24,40,.08)}
 .ix-kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:24px}
 .ix-kcard{background:#fff;border:1px solid #e9ebef;border-radius:12px;padding:14px 16px}
 .ix-klabel{font-size:12px;color:#8a919e;margin-bottom:8px}
@@ -781,54 +779,7 @@ html=f"""<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{{--ink:#111827;--sub:#5f6672;--mut:#8a919e;--line:#e9ebef;--bg:#f5f6f8;--accent:#4f46e5}}
-*{{box-sizing:border-box}}
-body{{font-family:Inter,-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;margin:0;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}}
-header{{background:#fff;border-bottom:1px solid var(--line);padding:18px 28px;position:sticky;top:0;z-index:10;display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}}
-header h1{{margin:0;font-size:16px;font-weight:600;letter-spacing:-.01em}}
-header .upd{{color:var(--mut);font-size:12px;white-space:nowrap}}
-header p{{margin:3px 0 0;color:var(--mut);font-size:12px}}
-.wrap{{max-width:1100px;margin:0 auto;padding:28px 20px 60px}}
-.card{{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 1px 2px rgba(16,24,40,.04);padding:22px 24px;margin:0 0 20px}}
-.card h2{{margin:0 0 16px;font-size:14px;font-weight:600;color:var(--sub);text-transform:none;letter-spacing:.01em}}
-img{{width:100%;height:auto;border-radius:8px}}
-details.card{{padding:0}}
-details.card>summary{{cursor:pointer;list-style:none;padding:18px 24px;font-size:14px;font-weight:600;color:var(--sub);display:flex;align-items:center;gap:8px}}
-details.card>summary::before{{content:"▸";color:var(--mut);transition:transform .15s}}
-details.card[open]>summary::before{{transform:rotate(90deg)}}
-details.card>.inner{{padding:0 24px 22px}}
-.note{{font-size:13px;color:var(--sub);line-height:1.8}}
-.ov-stats{{display:flex;gap:36px;flex-wrap:wrap;margin-bottom:18px}}
-.ov-n{{font-size:24px;font-weight:600;color:var(--ink);letter-spacing:-.02em;line-height:1.1}}
-.ov-l{{font-size:12px;color:var(--mut);margin-top:4px}}
-.ov-filter{{display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:16px}}
-.ov-fl{{font-size:12px;color:var(--mut)}}
-#bankchips{{display:flex;gap:10px;flex-wrap:wrap}}
-.ov-chip{{display:inline-flex;flex-direction:column;align-items:flex-start;gap:6px;font-size:13px;padding:9px 13px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--mut);cursor:pointer}}
-.ov-chip .top{{display:flex;align-items:center;gap:6px}}
-.ov-chip .cnt{{font-size:11px;color:var(--mut);font-weight:400;margin-left:2px}}
-.ov-chip .ticks{{display:flex;gap:2px}}
-.ov-chip .tk{{width:6px;height:6px;border-radius:2px}}
-.ov-chip .ix-sw{{opacity:.35}}
-.ov-chip.on{{border-color:#c6cbd4;color:var(--ink);font-weight:500}}
-.ov-chip.on .ix-sw{{opacity:1}}
-.ov-chip:not(.on) .ticks{{opacity:.4}}
-.rev-badge{{font-size:10px;font-weight:600;color:#9a3412;background:#ffedd5;border:1px solid #fdba74;border-radius:6px;padding:1px 6px;margin-left:4px}}
-.foot{{margin:4px 2px 0}}
-.foot>summary{{list-style:none;cursor:pointer;font-size:12px;color:var(--mut);user-select:none}}
-.foot>summary::-webkit-details-marker{{display:none}}
-.foot>summary::before{{content:"▸ ";color:var(--mut)}}
-.foot[open]>summary::before{{content:"▾ "}}
-.foot-in{{font-size:12px;color:var(--mut);line-height:1.9;padding:8px 2px 0}}
-#pagetabs{{flex:none}}
-.tblwrap{{overflow-x:auto;border:1px solid var(--line);border-radius:10px}}
-table.wide{{border-collapse:collapse;font-size:12px;white-space:nowrap;width:100%}}
-table.wide th,table.wide td{{border-bottom:1px solid var(--line);padding:6px 10px;text-align:right}}
-table.wide thead th{{background:#f8f9fb;color:var(--sub);font-weight:600;text-align:center;position:sticky;top:0}}
-table.wide th.rowh{{background:#f8f9fb;text-align:left;position:sticky;left:0;z-index:1;color:var(--ink);font-weight:500}}
-table.wide tbody tr:hover td{{background:#fafbfc}}
-@media print{{header{{position:static}}.card{{box-shadow:none;break-inside:avoid}}details.card{{display:none}}}}
-</style></head><body>
+{TOKENS_CSS}</style></head><body>
 <header><h1>銀行債券投資債種分析</h1>
 <span class="ix-seg" id="pagetabs"><button id="tab1" class="on">個體報表</button>{'<button id="tab3">合併報表</button>' if HAS_CONSOL else ''}<button id="tab2">個體更多(估值與獲利)</button></span>
 <span class="upd">更新 {now}</span></header>

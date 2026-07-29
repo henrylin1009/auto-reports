@@ -1,0 +1,59 @@
+/* 共用設計 token —— 唯一設定源。
+   分析頁(site/index.html)建置時把本檔內容內嵌(GitHub Pages 要單檔可攜,不能外連);
+   複核台(web/workbench.html)直接 <link> 進來。改色/改字一律改這裡,不要各寫一份。
+   前半段抽自 make_web.py 產出的最外層 <style>;後段 .ix-seg/.ix-sub 抽自
+   interactive_html() 的 <style>(複核台的按鈕也要用同一套分段控制語彙)。
+   2026-07-29 建,見 docs/plan_ui_unify.md。 */
+:root{--ink:#111827;--sub:#5f6672;--mut:#8a919e;--line:#e9ebef;--bg:#f5f6f8;--accent:#4f46e5}
+*{box-sizing:border-box}
+body{font-family:Inter,-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;margin:0;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
+header{background:#fff;border-bottom:1px solid var(--line);padding:18px 28px;position:sticky;top:0;z-index:10;display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+header h1{margin:0;font-size:16px;font-weight:600;letter-spacing:-.01em}
+header .upd{color:var(--mut);font-size:12px;white-space:nowrap}
+header p{margin:3px 0 0;color:var(--mut);font-size:12px}
+.wrap{max-width:1100px;margin:0 auto;padding:28px 20px 60px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 1px 2px rgba(16,24,40,.04);padding:22px 24px;margin:0 0 20px}
+.card h2{margin:0 0 16px;font-size:14px;font-weight:600;color:var(--sub);text-transform:none;letter-spacing:.01em}
+img{width:100%;height:auto;border-radius:8px}
+details.card{padding:0}
+details.card>summary{cursor:pointer;list-style:none;padding:18px 24px;font-size:14px;font-weight:600;color:var(--sub);display:flex;align-items:center;gap:8px}
+details.card>summary::before{content:"▸";color:var(--mut);transition:transform .15s}
+details.card[open]>summary::before{transform:rotate(90deg)}
+details.card>.inner{padding:0 24px 22px}
+.note{font-size:13px;color:var(--sub);line-height:1.8}
+.ov-stats{display:flex;gap:36px;flex-wrap:wrap;margin-bottom:18px}
+.ov-n{font-size:24px;font-weight:600;color:var(--ink);letter-spacing:-.02em;line-height:1.1}
+.ov-l{font-size:12px;color:var(--mut);margin-top:4px}
+.ov-filter{display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:16px}
+.ov-fl{font-size:12px;color:var(--mut)}
+#bankchips{display:flex;gap:10px;flex-wrap:wrap}
+.ov-chip{display:inline-flex;flex-direction:column;align-items:flex-start;gap:6px;font-size:13px;padding:9px 13px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--mut);cursor:pointer}
+.ov-chip .top{display:flex;align-items:center;gap:6px}
+.ov-chip .cnt{font-size:11px;color:var(--mut);font-weight:400;margin-left:2px}
+.ov-chip .ticks{display:flex;gap:2px}
+.ov-chip .tk{width:6px;height:6px;border-radius:2px}
+.ov-chip .ix-sw{opacity:.35}
+.ov-chip.on{border-color:#c6cbd4;color:var(--ink);font-weight:500}
+.ov-chip.on .ix-sw{opacity:1}
+.ov-chip:not(.on) .ticks{opacity:.4}
+.rev-badge{font-size:10px;font-weight:600;color:#9a3412;background:#ffedd5;border:1px solid #fdba74;border-radius:6px;padding:1px 6px;margin-left:4px}
+.foot{margin:4px 2px 0}
+.foot>summary{list-style:none;cursor:pointer;font-size:12px;color:var(--mut);user-select:none}
+.foot>summary::-webkit-details-marker{display:none}
+.foot>summary::before{content:"▸ ";color:var(--mut)}
+.foot[open]>summary::before{content:"▾ "}
+.foot-in{font-size:12px;color:var(--mut);line-height:1.9;padding:8px 2px 0}
+#pagetabs{flex:none}
+.tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+table.wide{border-collapse:collapse;font-size:12px;white-space:nowrap;width:100%}
+table.wide th,table.wide td{border-bottom:1px solid var(--line);padding:6px 10px;text-align:right}
+table.wide thead th{background:#f8f9fb;color:var(--sub);font-weight:600;text-align:center;position:sticky;top:0}
+table.wide th.rowh{background:#f8f9fb;text-align:left;position:sticky;left:0;z-index:1;color:var(--ink);font-weight:500}
+table.wide tbody tr:hover td{background:#fafbfc}
+@media print{header{position:static}.card{box-shadow:none;break-inside:avoid}details.card{display:none}}
+
+/* .ix-seg 分段控制、.ix-sub 副標 —— 跨頁共用(互動儀表板 + 複核台皆用) */
+.ix-sub{font-weight:400;color:#8a919e;font-size:12px;margin-left:8px}
+.ix-seg{display:inline-flex;background:#eef0f3;border-radius:8px;padding:2px}
+.ix-seg button{border:none;background:transparent;font-size:12px;padding:6px 12px;cursor:pointer;color:#5f6672;border-radius:6px;font-family:inherit}
+.ix-seg button.on{background:#fff;color:#111827;font-weight:600;box-shadow:0 1px 2px rgba(16,24,40,.08)}

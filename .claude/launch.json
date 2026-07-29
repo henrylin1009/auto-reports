@@ -6,6 +6,12 @@
       "runtimeExecutable": ".venv/bin/python",
       "runtimeArgs": ["server.py"],
       "port": 8765
+    },
+    {
+      "name": "workbench-preview",
+      "runtimeExecutable": ".venv/bin/python",
+      "runtimeArgs": ["server.py", "8766"],
+      "port": 8766
     }
   ]
 }
