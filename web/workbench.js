@@ -1,10 +1,12 @@
 "use strict";
 // 複核台前端:零框架、零 CDN。只跟 /api/* 說話,不自己算業務邏輯。
 //
-// 三個畫面(2026-07-29 重構,原本五個):
-//   #/matrix     總覽矩陣(期別 × 銀行+代碼)
+// 四個畫面(2026-07-29 重構,原本五個;同日再加「分析」):
+//   #/analysis   分析 —— 前台本體(make_web.py 的產出)用 iframe 掛進來
+//   #/matrix     資料 —— 總覽矩陣(期別 × 銀行+代碼),nav 上的預設頁
 //   #/doc/DOC    文件頁 —— 一份財報,三類攤開;已抄的核對、沒抄的一顆按鈕
-//   #/buckets    分桶 —— 十個桶 × 收進去的名字,拖曳改判
+//   #/buckets    分桶 —— 十個桶 × 收進去的名字,拖曳改判;入口是「資料」頁
+//                的連結,不在 nav 上(nav 只放 分析/資料 兩個常駐頁)
 //
 // 「核對 / 抄列 / 裁示」三頁退場:前兩者是同一個畫面的兩個狀態(左數字右頁圖,
 // 只差有沒有資料),裁示則被分桶檢視取代(一次看全部,不是一次問一個名字)。
@@ -50,9 +52,9 @@ function route() {
   else viewMatrix();
 }
 
-// ── 前台:分析頁本體(make_web.py 的產出)用 iframe 掛進來 ────────────────
-// 不是真融合 —— 前台的 JS 跟這裡是兩個世界,互相看不到對方的變數。
-// 換到這個好處是分析頁完全不用改,壞處是「點前台某格跳到後台去改」做不到,
+// ── 分析:前台本體(make_web.py 的產出)用 iframe 掛進來 ──────────────────
+// 不是真融合 —— 分析頁的 JS 跟這裡是兩個世界,互相看不到對方的變數。
+// 換到這個好處是分析頁完全不用改,壞處是「點分析頁某格跳到後台去改」做不到,
 // 見 docs/plan_ui_unify.md 步驟 5。
 function viewAnalysis() {
   nav("analysis");
@@ -66,7 +68,7 @@ function viewAnalysis() {
 const CLS = ["AC", "OCI", "Trading"];
 const SBAR = { done: "g", todo: "miss", blocked: "w", na: "miss" };
 
-// ── 總覽:期別(列) × 銀行+代碼(欄),一格一份檔 ─────────────────────────
+// ── 資料:期別(列) × 銀行+代碼(欄),一格一份檔 ─────────────────────────
 async function viewMatrix() {
   S.ov = await api("overview" + (S.basis ? "?basis=" + encodeURIComponent(S.basis) : ""));
   S.basis = S.ov.basis;
@@ -74,9 +76,10 @@ async function viewMatrix() {
   nav("matrix");
 
   const el = $(`<div>
-    <h1>總覽 · 2023 起
+    <h1>資料 · 2023 起
       <span class="bsw">${bases.map(b =>
         `<button data-b="${esc(b)}" class="${b === S.basis ? "pri" : ""}">${esc(b)}</button>`).join("")}</span>
+      <a href="#/buckets" class="tag" style="text-decoration:none;margin-left:8px">分桶檢視</a>
     </h1>
     <div class="stats">
       <div class="stat"><b>${stats.done}</b><span>已抄</span></div>
@@ -217,7 +220,7 @@ async function runFetch(targets, thenFill) {
   }, 1500);
 }
 
-// ── 重建:facts/ → data.json → site/,讓前台看到後台剛改的東西 ───────────
+// ── 重建:facts/ → data.json → site/,讓分析頁看到後台剛改的東西 ─────────
 // 跟抄列共用同一個後端工作槽(server._JOB),所以進度輪詢也走同一支
 // /api/autofill/status —— 不是偷懶,是兩者本來就不准同時跑(都會動 facts/)。
 async function runRebuild() {
@@ -239,7 +242,7 @@ async function runRebuild() {
     btn.disabled = false; btn.textContent = "⟳ 重建";
     if (s.error) { stat.textContent = "重建失敗 —— 詳見伺服器終端機。"; return; }
     stat.textContent = "重建完成 · " + new Date().toLocaleTimeString("zh-TW", { hour12: false });
-    // 如果目前正看著前台,重新整理 iframe,不必自己按重新整理才看得到新數字。
+    // 如果目前正看著分析頁,重新整理 iframe,不必自己按重新整理才看得到新數字。
     const ifr = document.querySelector("#app iframe");
     if (ifr) ifr.src = ifr.src;
   }, 1500);
@@ -254,7 +257,9 @@ async function viewBuckets() {
   nav("buckets");
   const t = v.tally;
   const el = $(`<div>
-    <h1>分桶 · 每個桶收了哪些科目名</h1>
+    <h1>分桶 · 每個桶收了哪些科目名
+      <a href="#/matrix" class="tag" style="text-decoration:none;margin-left:8px">← 資料</a>
+    </h1>
     <div class="stats">
       <div class="stat"><b>${t.confirmed}</b><span>已確認</span></div>
       <div class="stat ${t.provisional ? "w" : ""}"><b>${t.provisional}</b><span>提案待確認</span></div>
@@ -314,7 +319,7 @@ async function moveBucket(name, from, to) {
 
 // ── 自動抄列:按鈕 + 輪詢進度 ──────────────────────────────────────────
 // 後端一次只准跑一個(server._JOB),這裡不自己再管一份狀態 —— 兩份狀態遲早會不一致。
-// 跑完自動重畫總覽,因為 stats 已經變了。
+// 跑完自動重畫資料頁,因為 stats 已經變了。
 function wireAutofill(el) {
   const btn = el.querySelector("#autogo");
   const log = el.querySelector("#autolog");
@@ -335,7 +340,7 @@ function wireAutofill(el) {
     if (s.running) return;
     clearInterval(timer); timer = null;
     hint.textContent = s.error ? "出錯了，詳見下方訊息。"
-                               : "跑完了。重畫總覽…";
+                               : "跑完了。重畫資料頁…";
     if (!s.error) setTimeout(viewMatrix, 1200);
   };
 
@@ -348,7 +353,7 @@ function wireAutofill(el) {
     timer = setInterval(poll, 1500);
   };
 
-  // 跑完會重畫總覽,重畫就把紀錄洗掉了 —— 但那正是你要看「剛剛發生什麼」的時候。
+  // 跑完會重畫資料頁,重畫就把紀錄洗掉了 —— 但那正是你要看「剛剛發生什麼」的時候。
   // 後端的 lines 還在,所以有紀錄就畫出來,不是只有 running 才畫。
   api("autofill/status").then(s => {
     if (s.lines.length) paint(s);
@@ -375,7 +380,7 @@ async function viewDoc(doc) {
   const el = $(`<div>
     <div class="bar">
       <h1 style="margin:0">${esc(doc)}</h1>
-      <a href="#/matrix" class="tag" style="text-decoration:none">← 總覽</a>
+      <a href="#/matrix" class="tag" style="text-decoration:none">← 資料</a>
       <span class="tag" id="jobtag" hidden></span>
     </div>
     <div class="two">
@@ -488,7 +493,7 @@ function clsTodo(doc, cls, f) {
   return card;
 }
 
-// 抄單格 —— 跟總覽那顆按鈕走同一個後端工作,所以一次只准跑一個。
+// 抄單格 —— 跟資料頁那顆按鈕走同一個後端工作,所以一次只准跑一個。
 async function runCell(doc, cls) {
   const r = await post("autofill", { cell: `${doc}|${cls}` });
   const tag = document.getElementById("jobtag");
