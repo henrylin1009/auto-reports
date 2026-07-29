@@ -55,7 +55,7 @@ const SBAR = { done: "g", todo: "miss", blocked: "w", na: "miss" };
 async function viewMatrix() {
   S.ov = await api("overview" + (S.basis ? "?basis=" + encodeURIComponent(S.basis) : ""));
   S.basis = S.ov.basis;
-  const { periods, cols, grid, stats, bases } = S.ov;
+  const { periods, cols, grid, stats, bases, fetch_stats } = S.ov;
   nav("matrix");
 
   const el = $(`<div>
@@ -70,6 +70,8 @@ async function viewMatrix() {
       <div class="stat"><b>${stats.na}</b><span>無候選頁</span></div>
     </div>
     <div class="auto">
+      <button id="fetchgo"${stats && fetch_stats.missing ? "" : " disabled"}>抓最新(${fetch_stats.missing} 期)</button>
+      <button id="fetchlogbtn">抓檔紀錄</button>
       <button class="pri" id="autogo">自動抄列</button>
       <select id="autolim">
         <option value="3">先跑 3 格</option>
@@ -94,6 +96,18 @@ async function viewMatrix() {
     b.onclick = () => { S.basis = b.dataset.b; viewMatrix(); };
   });
 
+  el.querySelector("#fetchlogbtn").onclick = showFetchLog;
+
+  const fg = el.querySelector("#fetchgo");
+  if (fg) fg.onclick = () => {
+    const targets = Object.values(grid)
+      .filter(g => g.fetch === "missing").map(g => ({ period: g.period, code: g.code }));
+    if (!targets.length) return;
+    if (!confirm(`抓 ${targets.length} 期,抓到的接著自動抄列。\n\n`
+      + `TWSE 對連續請求會擋,這會慢慢跑。`)) return;
+    runFetch(targets, true);
+  };
+
   wireAutofill(el);
 
   const tb = el.querySelector("tbody");
@@ -106,6 +120,7 @@ async function viewMatrix() {
       const g = grid[`${p}|${c}`];
       const td = $("<td></td>");
       if (!g) td.appendChild($(`<div class="cell none"><span class="k">—</span></div>`));
+      else if (!g.doc) td.appendChild(fetchCell(g, stats));
       else {
         const st = CLS.map(x => g.classes[x]);
         const done = st.filter(x => x === "done").length;
@@ -124,6 +139,67 @@ async function viewMatrix() {
     tb.appendChild(tr);
   }
   document.getElementById("app").replaceChildren(el);
+}
+
+// 抓檔紀錄面板 —— **不必再開終端機或問我**,每一筆都是實際問過 TWSE 的答案。
+const FETCH_STATUS_LABEL = { ok: "抓到了", absent: "無申報", failed: "失敗" };
+async function showFetchLog() {
+  const rows = await api("fetchlog");
+  const body = rows.length
+    ? rows.map(r => `<div class="fl-row fl-${r.status}">
+        <span class="fl-k">${esc(r.key)}</span>
+        <span class="fl-s">${FETCH_STATUS_LABEL[r.status] || r.status}</span>
+        <span class="fl-t">${esc(r.at || "")}</span>
+        ${r.why ? `<span class="fl-w">${esc(r.why)}</span>` : ""}
+      </div>`).join("")
+    : `<p class="muted">還沒抓過任何一期。</p>`;
+  const el = $(`<div class="card" id="fetchlogpanel">
+    <div class="bar" style="margin:0 0 8px">
+      <b>抓檔紀錄</b><span class="muted">${rows.length} 筆,新到舊</span>
+      <button style="margin-left:auto" id="fetchlogclose">關閉</button>
+    </div>
+    <div style="max-height:320px;overflow:auto">${body}</div>
+  </div>`);
+  el.querySelector("#fetchlogclose").onclick = () => el.remove();
+  document.getElementById("fetchlogpanel")?.remove();
+  document.querySelector(".auto").insertAdjacentElement("afterend", el);
+}
+
+// 沒有檔的格子。**三種「沒有」要分開** —— 混成一個「—」的話,
+// 「還沒抓」和「這期根本沒申報」長得一模一樣,使用者只能猜。
+const FETCH_LABEL = { missing: "抓這期", absent: "無申報", failed: "重試" };
+
+function fetchCell(g, stats) {
+  const st = g.fetch;
+  if (st === "absent") {
+    // 已經問過 TWSE,答案是沒有。灰掉且不可按 —— 再按也只是重問一次同樣的問題。
+    const d = $(`<div class="cell none"><span class="k">無申報</span></div>`);
+    d.title = `${g.period} ${g.code}:TWSE 清單上沒有這期的個體檔`;
+    return d;
+  }
+  const b = $(`<button class="cell ${st === "failed" ? "bad" : "miss"}">
+    <span class="k">${FETCH_LABEL[st] || st}</span>
+    <span class="s">${esc(g.period)}</span></button>`);
+  b.disabled = !S.ov.can_fetch;
+  if (!S.ov.can_fetch) b.title = "只支援抓個體財報,合併要另外處理";
+  b.onclick = () => runFetch([{ period: g.period, code: g.code }], true);
+  return b;
+}
+
+// 抓檔與抄列共用同一個背景工作槽(server.start_autofill),所以進度也共用同一支輪詢。
+async function runFetch(targets, thenFill) {
+  const r = await post("fetch", { targets, then_fill: !!thenFill });
+  if (!r.started) { alert(r.why); return; }
+  const log = document.getElementById("autolog");
+  const hint = document.getElementById("autohint");
+  if (hint) hint.textContent = `抓 ${targets.length} 期中…抓到的會接著自動抄列。`;
+  const t = setInterval(async () => {
+    const s = await api("autofill/status");
+    if (log) { log.hidden = !s.lines.length; log.textContent = s.lines.join("\n"); log.scrollTop = log.scrollHeight; }
+    if (s.running) return;
+    clearInterval(t);
+    viewMatrix();
+  }, 1500);
 }
 
 // ── 分桶檢視:十個桶 × 收進去的名字 ────────────────────────────────────

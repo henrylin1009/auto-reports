@@ -4,17 +4,21 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>工作台</title>
+<link rel="stylesheet" href="/tokens.css">
 <style>
+/* 複核台專屬 —— 變數沿用分析頁的視覺語言(見 web/tokens.css),
+   值改成同一組色階(白底/淺灰/靛紫),名字維持不變是為了不用改動下面每一條規則。
+   見 docs/plan_ui_unify.md 步驟 3。 */
 :root{
-  --bg:#0b0d10; --panel:#14171b; --panel2:#1a1e24; --line:#2a2d33;
-  --fg:#e5e7eb; --dim:#9ca3af; --mute:#6b7280;
-  --ok:#4ade80; --warn:#facc15; --accent:#60a5fa; --danger:#f87171;
+  --bg:#f5f6f8; --panel:#fff; --panel2:#eef0f3; --line:#e9ebef;
+  --fg:#111827; --dim:#5f6672; --mute:#8a919e;
+  --ok:#15803d; --warn:#b45309; --accent:#4f46e5; --danger:#b91c1c;
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);
   font:14px/1.5 -apple-system,"Noto Sans TC",sans-serif}
 nav{display:flex;align-items:center;gap:2px;background:var(--panel);
-  border-bottom:1px solid var(--line);padding:0 12px}
+  border-bottom:1px solid var(--line);padding:0 12px;position:sticky;top:0;z-index:10}
 nav a{padding:11px 16px;color:var(--dim);text-decoration:none;font-size:13px;
   border-bottom:2px solid transparent}
 nav a.on{color:var(--fg);border-bottom-color:var(--accent)}
@@ -25,8 +29,8 @@ h1{font-size:17px;font-weight:500;margin:0 0 12px}
 h2{font-size:14px;font-weight:500;margin:0}
 button,select{background:var(--panel2);color:var(--fg);border:1px solid var(--line);
   border-radius:6px;padding:5px 10px;font-size:13px;font-family:inherit;cursor:pointer}
-button:hover{border-color:#3d424a}
-button.pri{background:#1d4ed8;border-color:#1d4ed8}
+button:hover{border-color:#c6cbd4}
+button.pri{background:var(--accent);border-color:var(--accent);color:#fff}
 button.dan{color:var(--danger)}
 .bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px}
 .bar label{font-size:12px;color:var(--dim)}
@@ -44,18 +48,19 @@ button.dan{color:var(--danger)}
 .cell .k{font-size:12px}
 .cell .s{font-size:10px;color:var(--mute)}
 .cell{width:120px}
-.cell.pend{border-color:#4a3f18}
-.cell.bad{border-color:#4a2020}
-.cell.none{opacity:.28;cursor:default;background:transparent}
+.cell.pend{border-color:var(--warn)}
+.cell.bad{border-color:var(--danger)}
+.cell.none{opacity:.4;cursor:default;background:transparent}
 .cell .s.warn{color:var(--warn)}
 .bars{display:flex;gap:3px;margin-top:3px}
 .bars i{height:3px;flex:1;border-radius:2px;background:var(--line)}
 .bars i.g{background:var(--ok)} .bars i.w{background:var(--warn)}
-.bars i.r{background:var(--danger)} .bars i.miss{background:#33373d}
+.bars i.r{background:var(--danger)} .bars i.miss{background:#d8dbe1}
 
 /* 複核 */
 .two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px;
+  box-shadow:0 1px 2px rgba(16,24,40,.04)}
 .rows{margin:0}
 .sec{position:sticky;top:0;background:var(--panel);z-index:1;display:flex;gap:8px;
   align-items:center;padding:7px 8px 5px;margin-top:6px;font-size:13px;
@@ -64,7 +69,7 @@ button.dan{color:var(--danger)}
 .blk{font-size:11px;color:var(--mute);padding:8px 8px 3px}
 .row{display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:6px;cursor:pointer}
 .row:hover{background:var(--panel2)}
-.row.cur{background:#1b2431;outline:1px solid var(--accent)}
+.row.cur{background:#eef0fd;outline:1px solid var(--accent)}
 .row .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}
 .row .vl{font-variant-numeric:tabular-nums;font-size:12px;color:var(--dim)}
 .row .bk{font-size:11px;color:var(--ok);min-width:66px;text-align:right}
@@ -74,8 +79,8 @@ button.dan{color:var(--danger)}
 .bks button{font-size:12px;padding:4px 9px}
 .bks button b{color:var(--mute);font-weight:400;margin-right:4px}
 .pg{width:100%;border:1px solid var(--line);border-radius:6px;background:#fff;display:block}
-.pgwrap{max-height:460px;overflow:auto;border-radius:6px}
-.tr{background:#0f1216;border:1px solid var(--line);border-radius:6px;padding:8px 10px;
+.pgwrap{max-height:460px;overflow:auto;border-radius:6px;border:1px solid var(--line)}
+.tr{background:#f8f9fb;border:1px solid var(--line);border-radius:6px;padding:8px 10px;
   margin-top:8px;font-size:11px;color:var(--dim);white-space:pre-wrap;font-family:ui-monospace,monospace}
 .tag{font-size:10px;padding:1px 6px;border-radius:4px;border:1px solid var(--line);color:var(--mute)}
 .demo{border:1px dashed var(--warn);color:var(--warn);font-size:11px;padding:2px 7px;border-radius:4px}
@@ -91,13 +96,24 @@ code{background:var(--panel2);border-radius:3px;padding:1px 4px;font-size:12px;
 .stat b{display:block;font-size:22px;font-weight:500;font-variant-numeric:tabular-nums}
 .stat span{font-size:11px;color:var(--mute)}
 .stat.w b{color:var(--warn)}
-.cell.ok{border-color:#1f3d2a}
+.cell.ok{border-color:var(--ok)}
 
 /* 抄列的 JSON 編輯器 */
-textarea{width:100%;height:430px;background:#0f1216;color:var(--fg);
+textarea{width:100%;height:430px;background:#f8f9fb;color:var(--fg);
   border:1px solid var(--line);border-radius:7px;padding:10px;resize:vertical;
   font:12px/1.55 ui-monospace,SFMono-Regular,monospace;tab-size:2}
 textarea:focus{outline:none;border-color:var(--accent)}
+.fl-row{display:flex;gap:10px;align-items:baseline;padding:5px 8px;border-bottom:1px solid var(--line);font-size:12px}
+.fl-row .fl-k{font-variant-numeric:tabular-nums;min-width:120px}
+.fl-row .fl-s{min-width:52px;color:var(--dim)}
+.fl-row.fl-absent .fl-s{color:var(--mute)}
+.fl-row.fl-failed .fl-s{color:var(--danger)}
+.fl-row .fl-t{color:var(--mute);min-width:120px}
+.fl-row .fl-w{color:var(--mute);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cell.miss{border-style:dashed;color:var(--dim);background:transparent}
+.cell.miss:hover{border-style:solid;border-color:var(--accent);color:var(--fg)}
+.cell.miss:disabled{opacity:.35;cursor:default}
+.cell.bad{border-color:var(--danger);color:var(--danger)}
 .bsw{display:inline-flex;gap:4px;margin-left:10px;vertical-align:middle}
 .bsw button{font-size:12px;padding:3px 11px}
 .bkcols{display:flex;gap:10px;overflow-x:auto;padding-bottom:10px;align-items:flex-start}
@@ -109,14 +125,14 @@ textarea:focus{outline:none;border-color:var(--accent)}
 .bkcol h3 span{color:var(--mute);font-weight:400;font-size:11px}
 .chip{background:var(--panel2);border:1px solid var(--line);border-radius:5px;
   padding:5px 7px;margin-bottom:5px;font-size:12px;line-height:1.35;cursor:grab}
-.chip.prov{border-color:#8a6d1f;background:#221c0d}
-.chip.uncl{border-color:var(--danger);background:#2a1315}
+.chip.prov{border-color:var(--warn);background:#fff7ec}
+.chip.uncl{border-color:var(--danger);background:#fdecec}
 .chip.drag{opacity:.4}
 .chip b{font-weight:400;color:var(--mute);font-size:11px;margin-left:4px}
 .bkcol.over{border-color:var(--accent);background:var(--panel2)}
 .auto{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:14px 0 8px}
 .auto .hint{margin:0;flex:1;min-width:240px}
-.autolog{background:#0c0e12;border:1px solid var(--line);border-radius:6px;
+.autolog{background:#f8f9fb;border:1px solid var(--line);border-radius:6px;
   padding:10px 12px;margin:0 0 14px;max-height:260px;overflow:auto;
   font-size:12px;line-height:1.55;white-space:pre-wrap;color:var(--dim)}
 </style>

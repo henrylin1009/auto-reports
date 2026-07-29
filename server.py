@@ -40,7 +40,35 @@ _PNG = {}
 _JOB = {"running": False, "lines": [], "done": None, "error": None}
 
 
-def _job_run(limit, reader, cell=None):
+def _fetch_run(targets, then_fill, reader):
+    """抓一批檔,抓到的接著抄。**抓完一定重建 index** —— 新 PDF 不進 index,
+    矩陣就還是看不到它,使用者會以為抓失敗了。"""
+    import contextlib
+
+    import fill
+    import fill_auto
+    from core import acquire
+
+    ok = []
+    for n, t in enumerate(targets, 1):
+        print(f"[{n}/{len(targets)}] 抓 {t['period']} {t['code']} ...", end=" ")
+        r = acquire.fetch_one(t["period"], t["code"])
+        print(r["status"] + ("" if r["status"] == "ok" else f"({r.get('why', '')})"))
+        if r["status"] == "ok":
+            ok.append(acquire.doc_name(t["period"], t["code"]))
+
+    if ok:
+        print(f"\n抓到 {len(ok)} 份,重建索引…")
+        fill._build_index()
+        if then_fill:
+            print("接著抄列:")
+            for doc in ok:
+                for cls in ("Trading", "OCI", "AC"):
+                    fill_auto.run_key(f"{doc}|{cls}", reader)
+    print(f"\n完成:{len(ok)}/{len(targets)} 抓到。")
+
+
+def _job_run(limit, reader, cell=None, fetch=None, then_fill=False):
     import contextlib
 
     import fill_auto
@@ -58,7 +86,9 @@ def _job_run(limit, reader, cell=None):
 
     try:
         with contextlib.redirect_stdout(_Tee()):
-            if cell:
+            if fetch:
+                _fetch_run(fetch, then_fill, reader)
+            elif cell:
                 fill_auto.run_key(cell, reader)
             else:
                 fill_auto.run_queue(reader, limit)
@@ -70,12 +100,16 @@ def _job_run(limit, reader, cell=None):
         _JOB["running"] = False
 
 
-def start_autofill(limit=None, reader="gemini", cell=None):
+def start_autofill(limit=None, reader="gemini", cell=None,
+                   fetch=None, then_fill=False):
+    """抓檔與抄列**共用同一個背景工作槽**。不是偷懶:兩者都會動 pdf_cache/index/
+    facts,同時跑就是誰贏看時序 —— 一個槽就是一道天然的互斥。"""
     import threading
     if _JOB["running"]:
         return {"started": False, "why": "已經有一個在跑了"}
     _JOB.update(running=True, lines=[], done=None, error=None)
-    threading.Thread(target=_job_run, args=(limit, reader, cell), daemon=True).start()
+    threading.Thread(target=_job_run, args=(limit, reader, cell, fetch, then_fill),
+                     daemon=True).start()
     return {"started": True}
 
 
@@ -179,6 +213,8 @@ class Handler(SimpleHTTPRequestHandler):
             self._json(webdata.doc_detail(q["doc"]))
         elif route == "/api/bucketview":
             self._json(webdata.bucket_view())
+        elif route == "/api/fetchlog":
+            self._json(webdata.fetch_log())
         elif route == "/api/autofill/status":
             self._json({"running": _JOB["running"], "lines": _JOB["lines"],
                         "done": _JOB["done"], "error": _JOB["error"]})
@@ -198,6 +234,10 @@ class Handler(SimpleHTTPRequestHandler):
             elif route == "/api/rebucket":
                 self._json(webdata.rebucket(b["name"], b["to"],
                                             bool(b.get("global"))))
+            elif route == "/api/fetch":
+                self._json(start_autofill(reader=b.get("reader") or "gemini",
+                                          fetch=b["targets"],
+                                          then_fill=bool(b.get("then_fill"))))
             elif route == "/api/autofill":
                 self._json(start_autofill(b.get("limit"),
                                           b.get("reader") or "gemini",

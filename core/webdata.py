@@ -19,6 +19,7 @@ import config
 import facts as facts_mod
 import fill
 import locate
+from core import acquire
 from core import queue as queue_mod
 
 #: 只做 2023+。≤2022 那些四大表被掃成影像、文字層沒有科目代碼,定位不到,
@@ -67,23 +68,54 @@ def overview(basis=None):
     basis = basis or locate.SOLO
 
     docs = [d for d in docs_in_scope() if bmap.get(d) == basis]
+    present = set(docs)
 
-    periods = sorted({split_doc(d)[0] for d in docs}, reverse=True)
-    cols = sorted({split_doc(d)[1] for d in docs})
+    # **列與欄來自日曆規則,不是來自現有檔案。** 原本兩者都由 pdf_cache 反推,
+    # 所以新年度那一列根本不會出現,使用者沒有地方可以說「這期我要」。
+    # 現有檔案現在只決定每格的狀態,不決定格子存不存在。
+    periods = acquire.expected_periods(basis)
+    cols = acquire.expected_banks(basis, present)
+    # 已經抓到但不在預期清單裡的(例如手動放進來的舊檔)仍要看得到 —— 補進去,
+    # 不然它會從畫面上無聲消失,那正是「寫死列舉」踩過兩次的坑。
+    for d in docs:
+        p, b, _ = split_doc(d)
+        if p not in periods:
+            periods.append(p)
+        if b not in cols:
+            cols.append(b)
+    periods.sort(reverse=True)
+    cols.sort()
 
-    grid, stats = {}, {"done": 0, "todo": 0, "blocked": 0, "na": 0}
-    for doc in docs:
-        period, bank, _code = split_doc(doc)
-        states = {}
-        for cls in locate.CLASSES:
-            s = cell_status(cells, blocked_keys, index, doc, cls)
-            states[cls] = s
-            stats[s] += 1
-        grid[f"{period}|{bank}"] = {"doc": doc, "classes": states}
+    # (期別, 代碼) → 實際檔名。**不准用 `acquire.doc_name()` 組出來的名字反查現有檔**:
+    # 那個函式回的一律是 `_AI3`(抓檔存檔用),但合併的舊檔叫 `_AI1`,
+    # 組名比對會讓整張合併矩陣變成「一份都沒有」(2026-07-29 實測踩過)。
+    by_pos = {(split_doc(d)[0], split_doc(d)[1]): d for d in docs}
+
+    log = acquire.load_log()
+    grid = {}
+    stats = {"done": 0, "todo": 0, "blocked": 0, "na": 0}
+    fetch_stats = {"missing": 0, "absent": 0, "failed": 0}
+    for period in periods:
+        for bank in cols:
+            doc = by_pos.get((period, bank))
+            if doc:
+                states = {}
+                for cls in locate.CLASSES:
+                    s = cell_status(cells, blocked_keys, index, doc, cls)
+                    states[cls] = s
+                    stats[s] += 1
+                grid[f"{period}|{bank}"] = {"doc": doc, "classes": states,
+                                            "fetch": None}
+                continue
+            st = acquire.cell_fetch_state(period, bank, present, log)
+            fetch_stats[st] = fetch_stats.get(st, 0) + 1
+            grid[f"{period}|{bank}"] = {"doc": None, "classes": None,
+                                        "fetch": st, "period": period, "code": bank}
 
     avail = sorted({bmap.get(d) for d in docs_in_scope()} - {None, locate.UNKNOWN})
     return {"periods": periods, "cols": cols, "grid": grid, "stats": stats,
-            "basis": basis, "bases": avail}
+            "fetch_stats": fetch_stats, "basis": basis, "bases": avail,
+            "can_fetch": basis == locate.SOLO}
 
 
 def cell_detail(key):
@@ -255,6 +287,16 @@ def bucket_view():
         tally[g["state"].lower()] += g["n"]
     return {"buckets": config.BUCKETS,
             "cols": cols, "unclassified": loose, "tally": tally}
+
+
+def fetch_log():
+    """抓檔紀錄,新到舊。**給網頁看的**,不必再問我或開終端機 ——
+    每一筆都是 acquire.fetch_one() 實際問過 TWSE 之後記下的答案
+    (ok / absent / failed),不是猜的。"""
+    log = acquire.load_log()
+    return sorted(
+        ({"key": k, **v} for k, v in log.items()),
+        key=lambda e: e.get("at", ""), reverse=True)
 
 
 def rebucket(name, to, global_=False, approved_by="henrylin", today=None):
