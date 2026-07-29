@@ -150,7 +150,7 @@ def _supersede_old(key, old_recs, facts_dir):
 
 def _write_facts_and_decisions(key, recs, retries, level, facts_dir=None,
                                 decisions_dir=None, review_path=None,
-                                taxonomy_dir="taxonomy"):
+                                taxonomy_dir="taxonomy", via="claude-code"):
     """B2 核心:寫 facts/(含覆寫保護 + 重綁)+ decisions/ + review 佇列。
 
     PASS 與 FILED **共用這段**——兩者差別只在 Gate 2(分類/互對)是否全過,
@@ -163,8 +163,10 @@ def _write_facts_and_decisions(key, recs, retries, level, facts_dir=None,
         cells = facts.load()
         old_recs = cells.get(key)
         for r in recs:
+            # `via` 是**誰抄的**,不是裝飾:人工(claude-code)與自動(gemini/claude-p)
+            # 混在 facts/ 裡卻分不開,之後就沒辦法回答「模型抄的那批品質如何」。
             r["_by"] = {"at": _now(), "retries": retries, "level": level,
-                        "via": "claude-code"}
+                        "via": via}
 
         if old_recs:
             # 重抄覆寫:先存歷史,再用 record_fp/row_fp 五步協定重綁(§2.2)。
@@ -350,7 +352,8 @@ def classify_outcome(doc, cls, recs, loc, level, pages, retries, max_level,
 
 
 def apply_outcome(outcome, data, pending_path, facts_dir=None, work_dir="work",
-                  decisions_dir=None, review_path=None, taxonomy_dir="taxonomy"):
+                  decisions_dir=None, review_path=None, taxonomy_dir="taxonomy",
+                  via="claude-code"):
     """把 `classify_outcome` 的結論落地。**呼叫端負責決定要不要呼叫這個
     函式**——測試只驗 `classify_outcome` 時完全不必碰檔案系統。
 
@@ -375,7 +378,7 @@ def apply_outcome(outcome, data, pending_path, facts_dir=None, work_dir="work",
         result = _write_facts_and_decisions(
             _key(doc, cls), outcome["recs"], outcome["retries"], outcome["level"],
             facts_dir=facts_dir, decisions_dir=decisions_dir,
-            review_path=review_path, taxonomy_dir=taxonomy_dir)
+            review_path=review_path, taxonomy_dir=taxonomy_dir, via=via)
         if os.path.exists(pending_path):
             os.remove(pending_path)
         print(outcome["message"])

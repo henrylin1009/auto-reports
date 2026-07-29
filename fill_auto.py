@@ -287,7 +287,9 @@ def run_cell(doc, cls, loc, reader, max_level, verbose=True):
         out = ingest.classify_outcome(doc, cls, recs, loc, level, pages, retries,
                                       max_level, use_policy=True)
         if out["outcome"] != "RETRY":
-            ingest.apply_outcome(out, {"records": recs or []}, fill.PENDING)
+            # via 記下**是哪個 reader 抄的** —— 之後才分得出人工格與自動格。
+            ingest.apply_outcome(out, {"records": recs or []}, fill.PENDING,
+                                 via=f"fill_auto/{reader}")
             return out
         if verbose:
             print(f"        RETRY level={out['level']} 加頁 {out['added']}"
