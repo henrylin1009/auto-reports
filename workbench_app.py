@@ -267,7 +267,7 @@ def page_transcribe():
     with col_form:
         st.caption("直接編輯 JSON(格式同 fill.py 印出的規矩),對應 work/current.json。")
         template = json.dumps(
-            {"records": [{"source_page": pages[0] + 1, "source_kind": "附註",
+            {"records": [{"source_page": pages[0], "source_kind": "附註",
                           "total_col": "", "printed_total": anchor,
                           "rows": [{"name": "", "group": "", "cols": {}}]}]},
             ensure_ascii=False, indent=1)
@@ -283,6 +283,65 @@ def _render_page(doc, page_i):
     d = pdf.PdfDocument(f"pdf_cache/{doc}.pdf")
     page = d[page_i]
     return page.render(scale=1.6).to_pil()
+
+
+# -------------------------------------------------------------- 核對 ----
+def page_check():
+    """已抄好的格子:左邊列印 rows 的名字與數字,右邊印來源頁圖,點頁碼跳頁核對。
+    對應舊 site/workbench.js 的「複核」畫面(左表右頁),那份是零後端的純前端
+    demo,這裡接的是真資料(facts.load()),讀寫都走既有模組。"""
+    cells = facts_mod.load()
+    docs = _2023_docs()
+    done_keys = sorted(k for k in cells if k.split("|")[0] in docs)
+    if not done_keys:
+        st.info("2023+ 範圍內還沒有抄好的格子。")
+        return
+
+    key = st.selectbox("選一格(已抄)", done_keys)
+    doc, cls = key.split("|", 1)
+    recs = cells[key]
+    loc = locate.locate(f"pdf_cache/{doc}.pdf")
+    anchor = loc.anchors.get(cls)
+
+    all_pages = sorted({r["source_page"] for r in recs})  # facts 裡存的就是 0-based
+                                                            # (實測與 loc.pages 候選頁直接對應)
+    if "check_page" not in st.session_state or st.session_state.get("check_key") != key:
+        st.session_state["check_page"] = all_pages[0]
+        st.session_state["check_key"] = key
+
+    st.info(f"錨(BS 合計)= {anchor:,} 仟元" if anchor is not None else "")
+
+    col_rows, col_img = st.columns([1, 1])
+
+    with col_rows:
+        for rec in recs:
+            st.markdown(f"**{rec['source_kind']} · p.{rec['source_page']}**"
+                        f"　總計欄「{rec['total_col']}」= {rec['printed_total']:,}")
+            last_group = None
+            for i, row in enumerate(rec["rows"]):
+                if row.get("group") != last_group:
+                    if row.get("group"):
+                        st.caption(row["group"])
+                    last_group = row.get("group")
+                val = row["cols"].get(rec["total_col"])
+                val_s = f"{val:,}" if isinstance(val, int) else "—"
+                c1, c2, c3 = st.columns([3, 2, 1])
+                c1.write(row["name"])
+                c2.write(val_s)
+                if c3.button("→頁", key=f"jump_{key}_{rec['source_page']}_{i}"):
+                    st.session_state["check_page"] = rec["source_page"]
+                    st.rerun()
+            st.divider()
+
+    with col_img:
+        page_i = st.selectbox("頁面", all_pages, format_func=lambda p: f"p.{p + 1}",
+                              index=all_pages.index(st.session_state["check_page"])
+                              if st.session_state["check_page"] in all_pages else 0,
+                              key=f"pagesel_{key}")
+        st.session_state["check_page"] = page_i
+        img = _render_page(doc, page_i)
+        st.image(img, use_container_width=True)
+        st.caption("頁層級核對,不畫框——點左邊「→頁」按鈕跳到那筆資料的來源頁。")
 
 
 def _submit(doc, cls, pages, raw):
@@ -317,16 +376,18 @@ def _submit(doc, cls, pages, raw):
 
 # ---------------------------------------------------------------- main ----
 def main():
+    nav_options = ["總覽", "裁示台", "抄列台", "核對"]
     nav_default = st.session_state.get("nav", "總覽")
-    page = st.sidebar.radio("畫面", ["總覽", "裁示台", "抄列台"],
-                             index=["總覽", "裁示台", "抄列台"].index(nav_default))
+    page = st.sidebar.radio("畫面", nav_options, index=nav_options.index(nav_default))
     st.session_state["nav"] = page
     if page == "總覽":
         page_overview()
     elif page == "裁示台":
         page_dispose()
-    else:
+    elif page == "抄列台":
         page_transcribe()
+    else:
+        page_check()
 
 
 if __name__ == "__main__":
