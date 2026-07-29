@@ -1,11 +1,13 @@
 "use strict";
 // 複核台前端:零框架、零 CDN。只跟 /api/* 說話,不自己算業務邏輯。
 //
-// 四個畫面,對應 docs/plan_ui_redesign.md 的 S1-S3 加上核對:
-//   #/matrix        總覽矩陣(期別 × 銀行+代碼)
-//   #/review/KEY    核對 —— 已抄好的格:左邊數字、右邊來源頁圖
-//   #/dispose       裁示 —— 分桶對不到的科目名
-//   #/fill/KEY      抄列 —— 還沒抄的格:左邊填 JSON、右邊頁圖
+// 三個畫面(2026-07-29 重構,原本五個):
+//   #/matrix     總覽矩陣(期別 × 銀行+代碼)
+//   #/doc/DOC    文件頁 —— 一份財報,三類攤開;已抄的核對、沒抄的一顆按鈕
+//   #/buckets    分桶 —— 十個桶 × 收進去的名字,拖曳改判
+//
+// 「核對 / 抄列 / 裁示」三頁退場:前兩者是同一個畫面的兩個狀態(左數字右頁圖,
+// 只差有沒有資料),裁示則被分桶檢視取代(一次看全部,不是一次問一個名字)。
 //
 // ⚠️ 頁碼一律 0-based(與 facts 的 source_page、locate 的候選頁同制)。
 //    畫面上顯示才 +1。不要在別的地方偷偷換算。
@@ -41,9 +43,7 @@ function route() {
   const r = parts[0] || "matrix";
   nav(r);
   if (r === "buckets") viewBuckets();
-  else if (r === "review") viewReview(decodeURIComponent(parts[1] || ""));
-  else if (r === "dispose") viewDispose();
-  else if (r === "fill") viewFill(decodeURIComponent(parts[1] || ""));
+  else if (r === "doc") viewDoc(decodeURIComponent(parts[1] || ""));
   else viewMatrix();
 }
 
@@ -103,7 +103,7 @@ async function viewMatrix() {
           <span class="bars">${CLS.map((x, i) =>
             `<i class="${SBAR[st[i]]}" title="${x}:${st[i]}"></i>`).join("")}</span>
         </button>`);
-        btn.onclick = () => openCell(g.doc, g.classes);
+        btn.onclick = () => { S.page = null; S.rowIdx = 0; location.hash = `#/doc/${encodeURIComponent(g.doc)}`; };
         td.appendChild(btn);
       }
       tr.appendChild(td);
@@ -224,64 +224,78 @@ function wireAutofill(el) {
   });
 }
 
-// 點一格 → 去它最該去的地方:有卡住先裁示,其次待抄,再其次核對。
-function openCell(doc, classes) {
-  for (const c of CLS) if (classes[c] === "blocked") return location.hash = "#/dispose";
-  for (const c of CLS) if (classes[c] === "todo") return location.hash = `#/fill/${encodeURIComponent(doc + "|" + c)}`;
-  for (const c of CLS) if (classes[c] === "done") return location.hash = `#/review/${encodeURIComponent(doc + "|" + c)}`;
-}
+// ── 文件頁:一份財報,三類攤開 ──────────────────────────────────────────
+// 取代舊的「核對 / 抄列 / 裁示」三頁(2026-07-29 裁示)。工作單位是**一份文件**,
+// 不是一個 doc|cls 格子 —— 你是在處理這份財報,三類本來就要一起看。
+//
+// 版面:左邊三類堆疊(已抄=逐列、沒抄=一顆按鈕),右邊一張共用頁圖。
+// 點左邊任一列,右邊翻到那列的來源頁 —— 三類共用同一個檢視器,因為它們的
+// 來源頁常常就在鄰近幾頁。
+async function viewDoc(doc) {
+  if (!doc) return location.hash = "#/matrix";
+  const d = await api("doc?doc=" + encodeURIComponent(doc));
+  nav("doc");
+  S.doc = d;
 
-// ── 核對:左邊已抄好的數字、右邊來源頁圖 ────────────────────────────────
-async function viewReview(key) {
-  if (!key) {
-    const ov = S.ov;
-    const first = Object.values(ov.grid).find(g => CLS.some(c => g.classes[c] === "done"));
-    if (!first) return document.getElementById("app").replaceChildren(
-      $(`<p class="muted">還沒有抄好的格子。</p>`));
-    key = first.doc + "|" + CLS.find(c => first.classes[c] === "done");
-    return location.hash = `#/review/${encodeURIComponent(key)}`;
-  }
-
-  const d = await api("cell?key=" + encodeURIComponent(key));
-  if (!d) return document.getElementById("app").replaceChildren(
-    $(`<p class="muted">這格還沒抄。</p>`));
-  S.cell = d;
   const page = S.page != null && d.pages.includes(S.page) ? S.page : d.pages[0];
   S.page = page;
 
-  const done = [];
-  Object.values(S.ov.grid).forEach(g => CLS.forEach(c => {
-    if (g.classes[c] === "done") done.push(g.doc + "|" + c);
-  }));
-  done.sort();
-
   const el = $(`<div>
     <div class="bar">
-      <h1 style="margin:0">核對</h1>
-      <select id="pick">${done.map(k =>
-        `<option value="${esc(k)}"${k === key ? " selected" : ""}>${esc(k)}</option>`).join("")}</select>
-      <span class="tag">錨 ${num(d.anchor)} 仟元</span>
-      <span class="tag">${d.pages.length} 頁證據</span>
+      <h1 style="margin:0">${esc(doc)}</h1>
+      <a href="#/matrix" class="tag" style="text-decoration:none">← 總覽</a>
+      <span class="tag" id="jobtag" hidden></span>
     </div>
     <div class="two">
-      <div class="card" style="max-height:660px;overflow:auto"><div class="rows" id="rows"></div></div>
+      <div id="cls" style="display:flex;flex-direction:column;gap:12px"></div>
       <div>
         <div class="card">
           <div class="bar" style="margin:0 0 8px">
             <span class="muted">來源頁</span>
             <span id="pgs" style="display:flex;gap:4px;flex-wrap:wrap"></span>
           </div>
-          <div class="pgwrap"><img class="pg" src="/page.png?doc=${encodeURIComponent(d.doc)}&page=${page}" alt=""></div>
-          <div class="hint">頁層級核對,不畫框。點左邊任一列,右邊翻到那列的來源頁。
-            <kbd>j</kbd>/<kbd>k</kbd> 上下換列。</div>
+          <div class="pgwrap"><img class="pg" src="/page.png?doc=${encodeURIComponent(doc)}&page=${page}" alt=""></div>
+          <div class="hint">頁層級核對,不畫框。點左邊任一列,右邊翻到那列的來源頁。</div>
         </div>
       </div>
     </div>
   </div>`);
 
-  const rows = el.querySelector("#rows");
+  const host = el.querySelector("#cls");
   const flat = [];
-  d.records.forEach(rec => {
+  for (const cls of CLS) {
+    const v = d.classes[cls];
+    if (v.status === "na") continue;
+    host.appendChild(v.cell ? clsDone(doc, cls, v.cell, flat) : clsTodo(doc, cls, v.fill));
+  }
+  S._flat = flat;
+
+  const pgs = el.querySelector("#pgs");
+  d.pages.forEach(p => {
+    const b = $(`<button style="padding:2px 8px${p === page ? ";border-color:var(--accent);color:var(--accent)" : ""}">p.${p + 1}</button>`);
+    b.onclick = () => { S.page = p; viewDoc(doc); };
+    pgs.appendChild(b);
+  });
+
+  document.getElementById("app").replaceChildren(el);
+  const c = host.querySelector(".row.cur");
+  if (c) c.scrollIntoView({ block: "nearest" });
+}
+
+// 已抄的一類:逐列 + 桶。未收錄的列標紅,因為那是要你處理的東西。
+function clsDone(doc, cls, cell, flat) {
+  const bad = cell.records.reduce((n, r) => n + r.rows.filter(x => !x.bucket).length, 0);
+  const card = $(`<div class="card">
+    <div class="bar" style="margin:0 0 8px">
+      <b>${cls}</b>
+      <span class="tag">錨 ${num(cell.anchor)}</span>
+      ${bad ? `<span class="tag w">${bad} 列未收錄</span>` : `<span class="tag">已抄</span>`}
+      <button class="dan" style="margin-left:auto" data-re>重抄</button>
+    </div>
+    <div class="rows" style="max-height:340px;overflow:auto"></div>
+  </div>`);
+  const rows = card.querySelector(".rows");
+  cell.records.forEach(rec => {
     rows.appendChild($(`<div class="sec">${esc(rec.source_kind)} · p.${rec.source_page + 1}
       <span class="bk">${esc(rec.total_col)} = ${num(rec.printed_total)}</span></div>`));
     let lastG = null;
@@ -296,173 +310,77 @@ async function viewReview(key) {
         <span class="nm">${esc(r.name)}</span>
         <span class="vl">${num(r.value)}</span>
         <span class="bk">${r.bucket ? esc(r.bucket) : "未收錄"}</span></div>`);
-      div.onclick = () => { S.rowIdx = n; S.page = rec.source_page; viewReview(key); };
+      div.onclick = () => { S.rowIdx = n; S.page = rec.source_page; viewDoc(doc); };
       rows.appendChild(div);
     });
   });
-  S._flat = flat;
-
-  const pgs = el.querySelector("#pgs");
-  d.pages.forEach(p => {
-    const b = $(`<button style="padding:2px 8px${p === page ? ";border-color:var(--accent);color:var(--accent)" : ""}">p.${p + 1}</button>`);
-    b.onclick = () => { S.page = p; viewReview(key); };
-    pgs.appendChild(b);
-  });
-  el.querySelector("#pick").onchange = e => {
-    S.page = null; S.rowIdx = 0; location.hash = `#/review/${encodeURIComponent(e.target.value)}`;
+  card.querySelector("[data-re]").onclick = async () => {
+    if (!confirm(`重抄 ${doc} ${cls}?\n現有內容會被覆蓋(舊版存進歷史)。`)) return;
+    await runCell(doc, cls);
   };
-
-  document.getElementById("app").replaceChildren(el);
-  const c = rows.querySelector(".row.cur");
-  if (c) c.scrollIntoView({ block: "nearest" });
+  return card;
 }
 
-// ── 裁示:分桶對不到的科目名 ────────────────────────────────────────────
-async function viewDispose() {
-  S.pending = await api("pending");
-  const app = document.getElementById("app");
-  if (!S.pending.length) {
-    return app.replaceChildren($(`<div><h1>裁示</h1><p class="muted">沒有待裁示的科目名。</p></div>`));
-  }
-  const byCell = {};
-  S.pending.forEach(e => (byCell[e.cell_key] = byCell[e.cell_key] || []).push(e));
-
-  const el = $(`<div><h1>裁示 · 分桶對不到</h1>
-    <p class="hint">桶只能從 config.BUCKETS 這 10 個選,沒有自由輸入 ——
-      打錯字會變成一個永遠對不到的新桶。送出後寫進 buckets.SYN,
-      仍要 <code>git diff</code> 審過再 commit。</p>
-    <div id="cells"></div></div>`);
-  const box = el.querySelector("#cells");
-
-  Object.entries(byCell).forEach(([cellKey, entries]) => {
-    const card = $(`<div class="card" style="margin-bottom:14px">
-      <div class="bar" style="margin-bottom:10px">
-        <h2>${esc(cellKey)}</h2><span class="tag">${entries.length} 個名字</span>
-        <button id="rq" style="margin-left:auto">全部裁完了 → 放回待抄</button>
-      </div><div id="list"></div></div>`);
-    const list = card.querySelector("#list");
-
-    entries.forEach(e => {
-      const item = $(`<div style="padding:10px 0;border-top:1px solid var(--line)">
-        <div class="bar" style="margin-bottom:6px">
-          <b style="font-size:14px">${esc(e.name)}</b>
-          <span class="tag">${e.suggested ? "提案 " + esc(e.suggested) : "無提案"}</span>
-          <span class="muted">${esc(e.why)}</span>
-        </div><div class="bks"></div></div>`);
-      const bks = item.querySelector(".bks");
-      S.buckets.forEach((b, i) => {
-        const on = b === e.suggested;
-        const btn = $(`<button${on ? ' style="border-color:var(--accent);color:var(--accent)"' : ""}>
-          <b>${i < 9 ? i + 1 : "·"}</b>${esc(b)}</button>`);
-        btn.onclick = async () => {
-          if (!confirm(`把「${e.name}」歸到「${b}」?\n\n會寫進 buckets.py 的 SYN。`)) return;
-          const r = await post("dispose", { name: e.name, bucket: b, reason: e.why });
-          if (r.error) return alert("失敗:\n" + r.error);
-          viewDispose();
-        };
-        bks.appendChild(btn);
-      });
-      list.appendChild(item);
-    });
-
-    card.querySelector("#rq").onclick = async () => {
-      if (!confirm(`把 ${cellKey} 放回待抄佇列?`)) return;
-      await post("requeue", { cell_key: cellKey });
-      S.ov = await api("overview");
-      location.hash = "#/matrix";
-    };
-    box.appendChild(card);
-  });
-  document.getElementById("app").replaceChildren(el);
-}
-
-// ── 抄列:左邊填 JSON、右邊頁圖 ─────────────────────────────────────────
-async function viewFill(key) {
-  S.todo = await api("todo");
-  if (!S.todo.length) return document.getElementById("app").replaceChildren(
-    $(`<div><h1>抄列</h1><p class="muted">2023+ 範圍內沒有待抄的格子了。</p></div>`));
-  if (!key || !S.todo.some(t => t.key === key)) key = S.todo[0].key;
-
-  const [doc, cls] = key.split("|");
-  const f = await api(`fill?doc=${encodeURIComponent(doc)}&cls=${encodeURIComponent(cls)}`);
-  const page = S.page != null && f.pages.includes(S.page) ? S.page : f.pages[0];
-  S.page = page;
-
-  const el = $(`<div>
-    <div class="bar">
-      <h1 style="margin:0">抄列</h1>
-      <select id="pick">${S.todo.map(t =>
-        `<option value="${esc(t.key)}"${t.key === key ? " selected" : ""}>${esc(t.key)}</option>`).join("")}</select>
-      <span class="tag">錨 ${num(f.anchor)} 仟元</span>
-      <span class="tag">${S.todo.length} 格待抄</span>
-      <button id="rules" style="margin-left:auto">抄列規矩</button>
+// 還沒抄的一類:一顆按鈕,不必跳到另一頁。手動貼 JSON 收在摺疊裡 ——
+// 自動抄列是常態,手動是例外,版面要照這個比例。
+function clsTodo(doc, cls, f) {
+  const card = $(`<div class="card">
+    <div class="bar" style="margin:0 0 8px">
+      <b>${cls}</b>
+      <span class="tag">錨 ${num(f.anchor)}</span>
+      <span class="tag">${f.pages.length} 個候選頁</span>
+      <button class="pri" style="margin-left:auto" data-go>抄這格</button>
     </div>
-    <pre id="rulebox" class="tr" style="display:none;max-height:300px;overflow:auto"></pre>
-    <div class="two">
-      <div class="card">
-        <div class="bar" style="margin:0 0 8px">
-          <span class="muted">來源頁</span>
-          <span id="pgs" style="display:flex;gap:4px;flex-wrap:wrap"></span>
-        </div>
-        <div class="pgwrap" style="max-height:600px">
-          <img class="pg" src="/page.png?doc=${encodeURIComponent(doc)}&page=${page}" alt="">
-        </div>
+    <p class="hint" style="margin:0">用 Gemini 抄,六道檢查照跑;對不上會自動擴頁重試。</p>
+    <details style="margin-top:8px">
+      <summary class="muted" style="cursor:pointer;font-size:12px">手動貼 JSON</summary>
+      <textarea data-ed spellcheck="false" style="margin-top:6px"></textarea>
+      <div class="bar" style="margin:8px 0 0">
+        <button data-sub>送出(六道檢查照跑)</button>
+        <span class="muted">驗收不過會退回,不會寫進 facts/</span>
       </div>
-      <div class="card">
-        <div class="muted" style="margin-bottom:6px">records JSON(格式同左邊規矩;
-          source_page 是 0-based)</div>
-        <textarea id="ed" spellcheck="false"></textarea>
-        <div class="bar" style="margin:10px 0 0">
-          <button class="pri" id="go">送出(六道檢查照跑)</button>
-          <span class="muted">驗收不過會退回,不會寫進 facts/</span>
-        </div>
-        <pre id="out" class="tr" style="display:none;max-height:260px;overflow:auto"></pre>
-      </div>
-    </div>
+      <pre data-out class="tr" style="display:none;max-height:220px;overflow:auto"></pre>
+    </details>
   </div>`);
-
-  el.querySelector("#rulebox").textContent = f.rules;
-  el.querySelector("#rules").onclick = () => {
-    const b = el.querySelector("#rulebox");
-    b.style.display = b.style.display === "none" ? "block" : "none";
+  card.querySelector("[data-go]").onclick = () => runCell(doc, cls);
+  card.querySelector("[data-ed]").value = JSON.stringify(f.template, null, 1);
+  card.querySelector("[data-sub]").onclick = async () => {
+    const out = card.querySelector("[data-out]");
+    let body;
+    try { body = JSON.parse(card.querySelector("[data-ed]").value); }
+    catch (err) { out.style.display = "block"; out.textContent = "JSON 解析失敗:" + err.message; return; }
+    const r = await post("submit", { doc, cls, pages: f.pages, records: body.records });
+    out.style.display = "block"; out.textContent = r.output || r.error || "";
+    if (r.status === "PASS") setTimeout(() => viewDoc(doc), 900);
   };
-  el.querySelector("#ed").value = JSON.stringify(f.template, null, 1);
+  return card;
+}
 
-  const pgs = el.querySelector("#pgs");
-  f.pages.forEach(p => {
-    const b = $(`<button style="padding:2px 8px${p === page ? ";border-color:var(--accent);color:var(--accent)" : ""}">p.${p + 1}</button>`);
-    b.onclick = () => { S.page = p; viewFill(key); };
-    pgs.appendChild(b);
-  });
-  el.querySelector("#pick").onchange = e => {
-    S.page = null; location.hash = `#/fill/${encodeURIComponent(e.target.value)}`;
-  };
-
-  el.querySelector("#go").onclick = async () => {
-    const out = el.querySelector("#out");
-    let data;
-    try { data = JSON.parse(el.querySelector("#ed").value); }
-    catch (ex) { out.style.display = "block"; out.textContent = "JSON 格式錯:" + ex.message; return; }
-    out.style.display = "block"; out.textContent = "送出中…";
-    const r = await post("submit", { doc, cls, pages: f.pages, records: data });
-    out.textContent = r.output || r.error || JSON.stringify(r);
-    if (r.status === "PASS") {
-      S.ov = await api("overview");
-      S.page = null;
-      setTimeout(() => { location.hash = "#/fill/"; viewFill(null); }, 900);
-    }
-  };
-  document.getElementById("app").replaceChildren(el);
+// 抄單格 —— 跟總覽那顆按鈕走同一個後端工作,所以一次只准跑一個。
+async function runCell(doc, cls) {
+  const r = await post("autofill", { cell: `${doc}|${cls}` });
+  const tag = document.getElementById("jobtag");
+  if (!r.started) { alert(r.why); return; }
+  if (tag) { tag.hidden = false; tag.textContent = `抄列中… ${cls}`; }
+  const t = setInterval(async () => {
+    const s = await api("autofill/status");
+    if (tag) tag.textContent = "抄列中… " + (s.lines[s.lines.length - 1] || "").slice(0, 60);
+    if (s.running) return;
+    clearInterval(t);
+    S.page = null; S.rowIdx = 0;
+    viewDoc(doc);
+  }, 1500);
 }
 
 // ── 鍵盤 ────────────────────────────────────────────────────────────────
 function onKey(e) {
   if (e.metaKey || e.ctrlKey || /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
   const h = location.hash;
-  if (h.startsWith("#/review")) {
+  if (h.startsWith("#/doc")) {
     const f = S._flat || [];
-    if (e.key === "j" && S.rowIdx < f.length - 1) { S.rowIdx++; S.page = f[S.rowIdx].page; viewReview(S.cell.key); }
-    else if (e.key === "k" && S.rowIdx > 0) { S.rowIdx--; S.page = f[S.rowIdx].page; viewReview(S.cell.key); }
+    const doc = S.doc && S.doc.doc;
+    if (e.key === "j" && S.rowIdx < f.length - 1) { S.rowIdx++; S.page = f[S.rowIdx].page; viewDoc(doc); }
+    else if (e.key === "k" && S.rowIdx > 0) { S.rowIdx--; S.page = f[S.rowIdx].page; viewDoc(doc); }
   }
 }
 

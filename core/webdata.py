@@ -144,6 +144,35 @@ def fill_context(doc, cls):
     }
 
 
+def doc_detail(doc):
+    """**一份文件的三類一起給**。這是使用者實際的工作單位 —— 你是「處理這份
+    財報」,不是「處理 202504_5847_AI3|OCI 這一格」(2026-07-29 裁示)。
+
+    每類的形狀依狀態而定,前端不必再自己判斷要打哪支 API:
+      done  → `cell`(逐列 + 桶),核對用
+      todo  → `fill`(錨、候選頁、模板),抄列用
+      na    → 兩個都 None
+    `pages` 一律拉到最上層,因為三類共用同一個頁圖檢視器。
+    """
+    cells = facts_mod.load()
+    blocked = {os.path.basename(p)[:-5].replace("__", "|")
+               for p in glob.glob(f"{fill.BLOCKED_DIR}/*.json")}
+    index = fill._load_index()
+
+    out, pages = {}, []
+    for cls in locate.CLASSES:
+        st = cell_status(cells, blocked, index, doc, cls)
+        d = {"status": st, "cell": None, "fill": None}
+        if st == "done":
+            d["cell"] = cell_detail(f"{doc}|{cls}")
+            pages += d["cell"]["pages"]
+        elif st in ("todo", "blocked"):
+            d["fill"] = fill_context(doc, cls)
+            pages += d["fill"]["pages"]
+        out[cls] = d
+    return {"doc": doc, "classes": out, "pages": sorted(set(pages))}
+
+
 def pending_entries():
     """待人裁示的科目名。合流兩個佇列,見 `core/queue.py`。"""
     return queue_mod.pending()

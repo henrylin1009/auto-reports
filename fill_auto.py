@@ -297,6 +297,23 @@ def run_cell(doc, cls, loc, reader, max_level, verbose=True):
         pages, level, retries = out["pages"], out["level"], out["retries"]
 
 
+def run_key(cell_key, reader, max_level=None):
+    """只抄指定的一格 —— 文件頁上「抄這格」按鈕用。
+
+    走的是與 `run_queue` **同一支** `run_cell`,不是另一條捷徑:
+    擴頁重試、Gate1/Gate2、落地路徑全部一樣。
+    """
+    import pipeline
+    doc, cls = cell_key.split("|", 1)
+    loc = locate.locate(f"pdf_cache/{doc}.pdf")
+    if cls not in loc.anchors:
+        print(f"{cell_key}:錨讀不到,這格不是能抄的格子。")
+        return None
+    print(f"{cell_key} ...")
+    out = run_cell(doc, cls, loc, reader, max_level or pipeline.MAX_LEVEL)
+    return out
+
+
 def run_queue(reader, limit=None, max_level=None):
     import pipeline
     max_level = max_level or pipeline.MAX_LEVEL

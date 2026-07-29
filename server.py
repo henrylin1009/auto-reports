@@ -40,7 +40,7 @@ _PNG = {}
 _JOB = {"running": False, "lines": [], "done": None, "error": None}
 
 
-def _job_run(limit, reader):
+def _job_run(limit, reader, cell=None):
     import contextlib
 
     import fill_auto
@@ -58,7 +58,10 @@ def _job_run(limit, reader):
 
     try:
         with contextlib.redirect_stdout(_Tee()):
-            fill_auto.run_queue(reader, limit)
+            if cell:
+                fill_auto.run_key(cell, reader)
+            else:
+                fill_auto.run_queue(reader, limit)
         _JOB["done"] = True
     except Exception:
         _JOB["error"] = traceback.format_exc()
@@ -67,12 +70,12 @@ def _job_run(limit, reader):
         _JOB["running"] = False
 
 
-def start_autofill(limit=None, reader="gemini"):
+def start_autofill(limit=None, reader="gemini", cell=None):
     import threading
     if _JOB["running"]:
         return {"started": False, "why": "已經有一個在跑了"}
     _JOB.update(running=True, lines=[], done=None, error=None)
-    threading.Thread(target=_job_run, args=(limit, reader), daemon=True).start()
+    threading.Thread(target=_job_run, args=(limit, reader, cell), daemon=True).start()
     return {"started": True}
 
 
@@ -172,6 +175,8 @@ class Handler(SimpleHTTPRequestHandler):
             self._json(webdata.todo_cells())
         elif route == "/api/fill":
             self._json(webdata.fill_context(q["doc"], q["cls"]))
+        elif route == "/api/doc":
+            self._json(webdata.doc_detail(q["doc"]))
         elif route == "/api/bucketview":
             self._json(webdata.bucket_view())
         elif route == "/api/autofill/status":
@@ -195,7 +200,8 @@ class Handler(SimpleHTTPRequestHandler):
                                             bool(b.get("global"))))
             elif route == "/api/autofill":
                 self._json(start_autofill(b.get("limit"),
-                                          b.get("reader") or "gemini"))
+                                          b.get("reader") or "gemini",
+                                          b.get("cell")))
             elif route == "/api/submit":
                 self._json(submit(b["doc"], b["cls"], b["pages"], b["records"]))
             else:

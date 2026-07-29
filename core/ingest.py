@@ -200,32 +200,18 @@ def _write_facts_and_decisions(key, recs, retries, level, facts_dir=None,
 
 
 def _taxonomy_gap(recs, loc):
-    """搬自 `fill._taxonomy_gap`(平行實作,不是 import)。行為逐字相同 ——
-    見 fill.py 內同名函式的完整說明,這裡不重複貼落落長的註解。"""
-    import rules
+    """**直接委派給 `fill._taxonomy_gap`,不再留第二份實作。**
 
-    unknown = {row["name"] for rec in recs for row in rec["rows"]
-               if buckets.bucket(row) is None}
-    if not unknown:
-        return None
+    這裡原本是一份「行為逐字相同」的複製品。它後來漂移了:`fill` 那份改成
+    「只要**至少一個**名字生得出提案就判缺口」(混合情況,見 fill.py 的說明),
+    這份還停在舊的「任一個生不出就回 None」。註解仍宣稱兩份相同,所以沒人發現 ——
+    直到 2026-07-29 新歸檔的 202304_5836_AI3|AC 同時含有生得出與生不出提案的名字,
+    E5 等價性閘門才報出 old=BLOCKED / new=RETRY。
 
-    props = []
-    for name in sorted(unknown):
-        if buckets.pending({"name": name}):
-            return None
-        b, why = rules.propose(buckets.norm(name))
-        if b is None:
-            return None
-        props.append({"name": name, "bucket": b, "why": why})
-
-    saved = dict(buckets._SYN_N)
-    try:
-        buckets._SYN_N.update({buckets.norm(p["name"]): p["bucket"] for p in props})
-        ok, _ = transcribe.verify(recs, loc)
-    finally:
-        buckets._SYN_N.clear()
-        buckets._SYN_N.update(saved)
-    return props if ok else None
+    平行實作要靠「有人記得同步兩邊」才成立,而那個假設已經被實測推翻一次。
+    """
+    import fill
+    return fill._taxonomy_gap(recs, loc)
 
 
 def _structured_checks(recs, loc, pages):
@@ -305,7 +291,18 @@ def classify_outcome(doc, cls, recs, loc, level, pages, retries, max_level,
                 "level": level, "retries": retries, "res": res,
                 "message": f"PASS      已歸檔進 facts/{doc}.json({cls})。"}
 
-    gap = _taxonomy_gap(recs, loc) if recs and not problems else None
+    # `use_policy=True` 不再短路成 BLOCKED(使用者 2026-07-29 裁示,方案 B)。
+    # 理由不是嫌它煩:`expand_policy` 檔頭早就裁定「分類未知一律走 facts 歸檔 +
+    # review queue」,BLOCKED 是更早期留下的、與該裁定不一致的第二條路。
+    # 分類未知擋住整格不歸檔,跟「PROVISIONAL 可以發布」也是矛盾的。
+    #
+    # `test_gap` 擔心的「兩層附註小計被當成缺口」在這裡不會發生:那種情況
+    # **算術也對不上**(①② sum(葉列) != printed_total),而算術在 TRIGGERS 裡,
+    # 照樣會擴頁。只有純分類失敗(僅 ⑤)才會落到 FILED。
+    #
+    # `use_policy=False` 保持原樣 —— 那是 `fill.cmd_submit` 的等價性閘門
+    # (test_ingest_equiv 的 E5),動它等於偷偷改掉人工那條路。
+    gap = _taxonomy_gap(recs, loc) if recs and not problems and not use_policy else None
     if gap:
         return {"outcome": "BLOCKED", "doc": doc, "cls": cls, "reason": reason,
                 "level": level, "gap": gap, "retries": retries, "data": None,
