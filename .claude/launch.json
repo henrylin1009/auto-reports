@@ -6,6 +6,13 @@
       "runtimeExecutable": "python3",
       "runtimeArgs": ["-m", "http.server", "8799", "--directory", "site"],
       "port": 8799
+    },
+    {
+      "name": "workbench",
+      "runtimeExecutable": ".venv/bin/streamlit",
+      "runtimeArgs": ["run", "workbench_app.py", "--server.port", "8501",
+                      "--server.headless", "true"],
+      "port": 8501
     }
   ]
 }
