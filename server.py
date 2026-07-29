@@ -33,6 +33,48 @@ SITE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "web")
 #: 頁面圖快取。render 一頁約 0.3s,同一頁會被反覆看,不快取會很鈍。
 _PNG = {}
 
+# ── 自動抄列的背景工作 ────────────────────────────────────────────────
+# **一次只准跑一個**。兩份 `fill_auto` 同時跑會同時改 facts/ 與 work/pending.json,
+# 誰贏看時序 —— 這裡用 `_JOB["running"]` 擋掉,不是為了介面好看。
+# 業務邏輯仍然不在這層:這裡只負責「開執行緒、收 stdout、回進度」。
+_JOB = {"running": False, "lines": [], "done": None, "error": None}
+
+
+def _job_run(limit, reader):
+    import contextlib
+
+    import fill_auto
+
+    buf = io.StringIO()
+
+    class _Tee(io.TextIOBase):
+        """邊收邊給前端看 —— 全部跑完才吐一次的話,幾十分鐘畫面是死的。"""
+        def write(self, s):
+            buf.write(s)
+            for line in s.splitlines():
+                if line.strip():
+                    _JOB["lines"].append(line)
+            return len(s)
+
+    try:
+        with contextlib.redirect_stdout(_Tee()):
+            fill_auto.run_queue(reader, limit)
+        _JOB["done"] = True
+    except Exception:
+        _JOB["error"] = traceback.format_exc()
+        _JOB["lines"].append("ERROR " + traceback.format_exc().splitlines()[-1])
+    finally:
+        _JOB["running"] = False
+
+
+def start_autofill(limit=None, reader="gemini"):
+    import threading
+    if _JOB["running"]:
+        return {"started": False, "why": "已經有一個在跑了"}
+    _JOB.update(running=True, lines=[], done=None, error=None)
+    threading.Thread(target=_job_run, args=(limit, reader), daemon=True).start()
+    return {"started": True}
+
 
 def render_png(doc, page):
     """PDF 的一頁 → PNG bytes。`page` 是 0-based,與 facts 的 source_page 同制。"""
@@ -130,6 +172,9 @@ class Handler(SimpleHTTPRequestHandler):
             self._json(webdata.todo_cells())
         elif route == "/api/fill":
             self._json(webdata.fill_context(q["doc"], q["cls"]))
+        elif route == "/api/autofill/status":
+            self._json({"running": _JOB["running"], "lines": _JOB["lines"],
+                        "done": _JOB["done"], "error": _JOB["error"]})
         else:
             self._json({"error": "no such endpoint"}, 404)
 
@@ -143,6 +188,9 @@ class Handler(SimpleHTTPRequestHandler):
                     b["name"], b["bucket"], b.get("reason") or ""))
             elif route == "/api/requeue":
                 self._json(webdata.requeue(b["cell_key"]))
+            elif route == "/api/autofill":
+                self._json(start_autofill(b.get("limit"),
+                                          b.get("reader") or "gemini"))
             elif route == "/api/submit":
                 self._json(submit(b["doc"], b["cls"], b["pages"], b["records"]))
             else:

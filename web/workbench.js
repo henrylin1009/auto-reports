@@ -63,11 +63,24 @@ async function viewMatrix() {
       <div class="stat ${stats.blocked ? "w" : ""}"><b>${stats.blocked}</b><span>卡在分類</span></div>
       <div class="stat"><b>${stats.na}</b><span>無候選頁</span></div>
     </div>
+    <div class="auto">
+      <button class="pri" id="autogo">自動抄列</button>
+      <select id="autolim">
+        <option value="3">先跑 3 格</option>
+        <option value="10">跑 10 格</option>
+        <option value="">跑完全部待抄(${stats.todo} 格)</option>
+      </select>
+      <span class="hint" id="autohint">用 Gemini 抄，六道檢查照跑；對不上的會自動擴頁重試，
+        仍過不了就進「卡住」不會寫進事實庫。</span>
+    </div>
+    <pre class="autolog" id="autolog" hidden></pre>
     <div class="scroll"><table class="mx"><tbody></tbody></table></div>
     <p class="hint">一格 = 一份財報檔的三個類別(AC / OCI / Trading)。
       大字是抄到幾類,細條依序是三類的狀態(綠=已抄、黃=卡在分類、灰=還沒抄)。
       空白代表那期沒有這份檔 —— 是沒有檔,不是沒抄。</p>
   </div>`);
+
+  wireAutofill(el);
 
   const tb = el.querySelector("tbody");
   tb.appendChild($(`<tr><th></th>${cols.map(c => `<th>${esc(c)}</th>`).join("")}</tr>`));
@@ -97,6 +110,50 @@ async function viewMatrix() {
     tb.appendChild(tr);
   }
   document.getElementById("app").replaceChildren(el);
+}
+
+// ── 自動抄列:按鈕 + 輪詢進度 ──────────────────────────────────────────
+// 後端一次只准跑一個(server._JOB),這裡不自己再管一份狀態 —— 兩份狀態遲早會不一致。
+// 跑完自動重畫總覽,因為 stats 已經變了。
+function wireAutofill(el) {
+  const btn = el.querySelector("#autogo");
+  const log = el.querySelector("#autolog");
+  const hint = el.querySelector("#autohint");
+  let timer = null;
+
+  const paint = (s) => {
+    log.hidden = !s.lines.length;
+    log.textContent = s.lines.join("\n");
+    log.scrollTop = log.scrollHeight;
+    btn.disabled = s.running;
+    btn.textContent = s.running ? "抄列中…" : "自動抄列";
+  };
+
+  const poll = async () => {
+    const s = await api("autofill/status");
+    paint(s);
+    if (s.running) return;
+    clearInterval(timer); timer = null;
+    hint.textContent = s.error ? "出錯了，詳見下方訊息。"
+                               : "跑完了。重畫總覽…";
+    if (!s.error) setTimeout(viewMatrix, 1200);
+  };
+
+  btn.onclick = async () => {
+    const v = el.querySelector("#autolim").value;
+    const r = await post("autofill", { limit: v ? Number(v) : null });
+    if (!r.started) { hint.textContent = r.why; return; }
+    btn.disabled = true; btn.textContent = "抄列中…";
+    hint.textContent = "跑起來了。Gemini 每格約 3 秒，擴頁重試會多幾輪。";
+    timer = setInterval(poll, 1500);
+  };
+
+  // 跑完會重畫總覽,重畫就把紀錄洗掉了 —— 但那正是你要看「剛剛發生什麼」的時候。
+  // 後端的 lines 還在,所以有紀錄就畫出來,不是只有 running 才畫。
+  api("autofill/status").then(s => {
+    if (s.lines.length) paint(s);
+    if (s.running) timer = setInterval(poll, 1500);
+  });
 }
 
 // 點一格 → 去它最該去的地方:有卡住先裁示,其次待抄,再其次核對。

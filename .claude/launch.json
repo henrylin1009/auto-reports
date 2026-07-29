@@ -2,15 +2,9 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "site",
-      "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "8799", "--directory", "site"],
-      "port": 8799
-    },
-    {
       "name": "workbench",
-      "runtimeExecutable": "python3",
-      "runtimeArgs": ["server.py", "8765"],
+      "runtimeExecutable": ".venv/bin/python",
+      "runtimeArgs": ["server.py"],
       "port": 8765
     }
   ]
