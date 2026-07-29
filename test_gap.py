@@ -3,8 +3,13 @@
 
 兩者的症狀一模一樣(第 5 道「列皆可分桶」失敗),處置卻相反:
 
-    分類表缺口 → 擴頁永遠修不好,要短路成 BLOCKED 並產提案
+    分類表缺口 → 擴頁永遠修不好,要短路產提案(混合情況也算,見 case_mixed)
     兩層附註小計 → 擴頁正好修得好,不准短路
+
+⚠️ 2026-07-29:BLOCKED 出口在 `use_policy=True` 已經退場(方案 B,見
+core.ingest.classify_outcome)——「短路」現在的意思是「產出提案、FILED 歸檔、
+進 review 佇列」,不再是「整格擋著不歸檔」。`_taxonomy_gap` 本身回不回
+`None` 的判準沒變,這裡只是把過時的措辭改掉。
 
 判錯任一邊都有代價:把小計當缺口 → 那格的明細永遠抓不到;
 把缺口當小計 → 白燒擴頁(level 2 的頁文字是 level 0 的 4.7 倍)。
@@ -63,11 +68,28 @@ def case_two_layer_subtotal():
 
 
 def case_mixed():
-    """一個提得出、一個提不出 → 保守起見走擴張,不短路。"""
+    """一個提得出、一個提不出 → **仍判為缺口**,不是保守走擴張。
+
+    fill.py 的說明明確寫著:提不出來的那個不代表是小計,也可能是既有科目
+    沒收錄的註腳變體(實測玉山 202504 AC:「國外機構發行債券（註二）」propose
+    不出來,但它就是「國外機構發行債券」本身)。只要**至少一個**名字生得出
+    提案,整組就判定缺口;生不出提案的名字 bucket=None,一併送人審。
+
+    這條原本的斷言是「gap is None」,鎖的是舊行為(2026-07-29 之前)。
+    fill.py 已經明確改掉且寫了理由,測試沒跟上 —— 這正是 core.ingest 那份
+    複製品悄悄漂移、被 test_ingest_equiv 的 E5 抓到的同一個根因。"""
     gap = fill._taxonomy_gap(
         _rename({"基金受益憑證": "基金收益憑證",
                  "公司債": "透過其他綜合損益按公允價值衡量之債務工具投資"}), _LOC)
-    yield ("混合時不短路", gap is None, gap)
+    yield ("混合時判為缺口(至少一個提得出提案)", gap is not None, gap)
+    if gap:
+        names = {p["name"] for p in gap}
+        yield ("兩個名字都在提案裡", names == {
+            "基金收益憑證", "透過其他綜合損益按公允價值衡量之債務工具投資"}, gap)
+        resolved = {p["name"]: p["bucket"] for p in gap}
+        yield ("提得出的那個有桶", resolved["基金收益憑證"] == "股票", gap)
+        yield ("提不出的那個 bucket=None(送人審,不是猜)",
+               resolved["透過其他綜合損益按公允價值衡量之債務工具投資"] is None, gap)
 
 
 def case_amount_broken_too():
