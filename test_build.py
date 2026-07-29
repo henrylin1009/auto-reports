@@ -58,7 +58,14 @@ def t2_no_null_overwrite():
     check("沒有任何 v2 的非 null 值被抹成 null", not lost,
           f"{len(lost)} 筆被抹掉" if lost else "0 筆")
 
-    check("已知 8 處衝突全部被偵測並保留 v2", len(man["conflicts"]) == 8,
+    # 這個數字是**普查值**,不是常數:抄列覆蓋率一變它就會動,所以每次動都要
+    # 說得出是哪一格、為什麼。改動記錄:
+    #   8 → 6(2026-07-28):國泰 202504 的 OCI 與 Trading 成本原本判 null,
+    #     不是文件沒有 —— 明細表印了取得成本合計(OCI 334,180,171 / Trading
+    #     小計 309,538,344),抄列漏抄 printed_totals,且 OCI 權益 4 列的取得成本
+    #     被抄進「總面額」欄。補正後兩格成本成立,兩處 v2/v3 衝突消失。
+    # 剩下的 6 處都是「文件真的只有一個口徑」而 v2 有數字 —— 待使用者裁示是否抹 null。
+    check("已知 6 處衝突全部被偵測並保留 v2", len(man["conflicts"]) == 6,
           f"實測 {len(man['conflicts'])} 處")
     for c in man["conflicts"]:
         u = prov.get(c["unit"])

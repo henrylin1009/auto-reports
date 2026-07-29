@@ -22,7 +22,8 @@ import socketserver
 import urllib.parse
 
 import facts as facts_mod
-from core import decision_store, ingest, jobs, publish_gate, report as report_mod, review
+from core import (decision_store, ingest, jobs, publish_gate,
+                  queue as queue_mod, report as report_mod, review)
 
 HOST = "127.0.0.1"
 DEFAULT_PORT = 8765
@@ -73,13 +74,19 @@ def _e(s):
 def page_dashboard():
     cells = facts_mod.load()
     status = publish_gate.status_all(cells)
-    review_count = len(decision_store.load_review())
+    # **不准只數 review/queue.jsonl**——那個檔在真實 workspace 裡根本不存在,
+    # 卡住的格子全在 work/blocked/。只讀一邊就會報出「待審 0」的假綠燈。
+    todo = queue_mod.pending()
+    n_blocked = sum(1 for e in todo if e["source"] == "blocked")
+    n_review = len(todo) - n_blocked
     resolved_count = len(decision_store.load_review(decision_store.RESOLVED_LOG))
     body = f"""
 <h1>Dashboard</h1>
 <div class="stat">{status['archived']}<small>已存檔</small></div>
 <div class="stat">{status['publishable']}<small>可發布</small></div>
-<div class="stat">{review_count}<small>待審(review 佇列)</small></div>
+<div class="stat">{len(todo)}<small>待人裁示(合流)</small></div>
+<div class="stat">{n_blocked}<small>其中卡在分類表缺口</small></div>
+<div class="stat">{n_review}<small>其中 review 佇列</small></div>
 <div class="stat">{resolved_count}<small>已處置(歷史)</small></div>
 <p class="muted">「已存檔」與「可發布」的差不是退步——not confirmed 的格子
 照樣進報表,只是標成待審。見 <a href="/results" style="color:#60a5fa">Results</a>。</p>

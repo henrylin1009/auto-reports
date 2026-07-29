@@ -131,6 +131,15 @@ def _taxonomy_gap(recs, loc):
 
     ⚠️ 判錯的後果是可回復的:提案會送到人眼前,看到不像科目名的東西就退掉再 requeue。
        **人審就是這裡的安全網**,所以寧可短路得積極一點,也不要白燒擴頁。
+
+    ⚠️ 混合情況:對不到桶的名字裡,有的生得出提案、有的生不出來,不代表「提不出來的
+       那個」就是小計 —— 也可能是既有科目的新註腳變體,規則只是沒收錄它的完整字串
+       (實測玉山 202504 AC p127:「可轉讓定期存單（註三）」「政府公債（註四）」都
+       propose 得出來,「國外機構發行債券（註二）」propose 不出來,但它就是無註腳版
+       「國外機構發行債券」的同一個科目,不是小計)。只要**至少一個**名字生得出提案,
+       整組就判定為缺口,生不出提案的名字一併送人審、標 bucket=None —— 不強求模擬
+       全數通過,因為本來就少一條規則才過不了,那正是要等人審的東西。
+       只有**全部**都生不出提案時,才交給擴張(這才是小計/分頁遺漏的訊號)。
     """
     import rules
 
@@ -139,25 +148,34 @@ def _taxonomy_gap(recs, loc):
     if not unknown:
         return None
 
-    props = []
+    props, resolved = [], {}
     for name in sorted(unknown):
         if buckets.pending({"name": name}):
             return None              # 已在人審佇列 —— 規則不得代決
         b, why = rules.propose(buckets.norm(name))
         if b is None:
-            return None              # 提不出來 → 可能是小計,交給擴張
-        props.append({"name": name, "bucket": b, "why": why})
+            props.append({"name": name, "bucket": None,
+                           "why": "BUCKET_RULES 沒有任何關鍵字命中,需要人工新增規則"})
+        else:
+            props.append({"name": name, "bucket": b, "why": why})
+            resolved[buckets.norm(name)] = b
 
-    # 模擬收錄後重驗。**只在這個判斷裡暫時生效,不寫進 buckets.SYN** ——
-    # 收錄是人的動作,git diff 就是審核介面(見 buckets.py 開頭)。
+    if not resolved:
+        return None                  # 一個提案都生不出來 → 可能是小計,交給擴張
+
+    # 模擬收錄「生得出提案的那些」後重驗。**只在這個判斷裡暫時生效,不寫進
+    # buckets.SYN** —— 收錄是人的動作,git diff 就是審核介面(見 buckets.py 開頭)。
     saved = dict(buckets._SYN_N)
     try:
-        buckets._SYN_N.update({buckets.norm(p["name"]): p["bucket"] for p in props})
+        buckets._SYN_N.update(resolved)
         ok, _ = transcribe.verify(recs, loc)
     finally:
         buckets._SYN_N.clear()
         buckets._SYN_N.update(saved)
-    return props if ok else None
+
+    if ok or len(resolved) < len(unknown):
+        return props
+    return None
 
 
 def _pdf_signature():
@@ -321,7 +339,10 @@ def cmd_submit(path):
         os.remove(PENDING)
         print(f"BLOCKED   這格卡在**分類表缺口**,不是你抄錯 —— 擴頁修不好這種失敗,所以不擴了。")
         for g in gap:
-            print(f"          未收錄:「{g['name']}」→ 建議「{g['bucket']}」({g['why']})")
+            if g["bucket"] is None:
+                print(f"          未收錄:「{g['name']}」→ 沒有規則命中,需要人工判斷({g['why']})")
+            else:
+                print(f"          未收錄:「{g['name']}」→ 建議「{g['bucket']}」({g['why']})")
         print(f"          提案已寫入 {PROPOSALS},請使用者審核後收錄進 buckets.SYN,")
         print(f"          再跑 python3 fill.py requeue 把這格放回佇列。")
         print("下一步:python3 fill.py next(先做別格,不要停在這裡)")
