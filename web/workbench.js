@@ -40,7 +40,8 @@ function route() {
   const parts = location.hash.replace(/^#\//, "").split("/");
   const r = parts[0] || "matrix";
   nav(r);
-  if (r === "review") viewReview(decodeURIComponent(parts[1] || ""));
+  if (r === "buckets") viewBuckets();
+  else if (r === "review") viewReview(decodeURIComponent(parts[1] || ""));
   else if (r === "dispose") viewDispose();
   else if (r === "fill") viewFill(decodeURIComponent(parts[1] || ""));
   else viewMatrix();
@@ -110,6 +111,73 @@ async function viewMatrix() {
     tb.appendChild(tr);
   }
   document.getElementById("app").replaceChildren(el);
+}
+
+// ── 分桶檢視:十個桶 × 收進去的名字 ────────────────────────────────────
+// 看的是 Decision(這一列實際落在哪),不是 buckets.SYN(規則)。
+// 顏色 = 狀態:白=CONFIRMED、黃=PROVISIONAL(機械/LLM 提案,沒人確認過)、
+// 紅=UNCLASSIFIED(提不出桶)。拖一張卡到別欄就是改它的桶。
+async function viewBuckets() {
+  const v = await api("bucketview");
+  nav("buckets");
+  const t = v.tally;
+  const el = $(`<div>
+    <h1>分桶 · 每個桶收了哪些科目名</h1>
+    <div class="stats">
+      <div class="stat"><b>${t.confirmed}</b><span>已確認</span></div>
+      <div class="stat ${t.provisional ? "w" : ""}"><b>${t.provisional}</b><span>提案待確認</span></div>
+      <div class="stat ${t.unclassified ? "w" : ""}"><b>${t.unclassified}</b><span>還沒有桶</span></div>
+    </div>
+    <div class="bkcols"></div>
+    <p class="hint">一張卡 = 一個科目名在一個桶裡（×N 是出現在幾列）。
+      黃卡是提案、還沒人確認；紅卡是提不出桶。拖到別欄可以改桶。
+      <b>同名不同桶是正常的</b> —— 同一份附註裡「其他」可能一個在有價證券段、一個在衍生段。</p>
+  </div>`);
+
+  const wrap = el.querySelector(".bkcols");
+  const mkChip = (g) => {
+    const cls = g.state === "PROVISIONAL" ? "prov" : g.state === "UNCLASSIFIED" ? "uncl" : "";
+    const c = $(`<div class="chip ${cls}" draggable="true">${esc(g.name)}<b>×${g.n}</b></div>`);
+    c.title = `${g.state}\n出現在 ${g.cells.length} 格:\n` + g.cells.join("\n");
+    c.ondragstart = (e) => {
+      e.dataTransfer.setData("text/plain", JSON.stringify({ name: g.name, from: g.bucket }));
+      c.classList.add("drag");
+    };
+    c.ondragend = () => c.classList.remove("drag");
+    return c;
+  };
+
+  const mkCol = (title, list, loose) => {
+    const col = $(`<div class="bkcol ${loose ? "loose" : ""}">
+      <h3>${esc(title)}<span>${list.length}</span></h3></div>`);
+    list.forEach(g => col.appendChild(mkChip(g)));
+    col.ondragover = (e) => { e.preventDefault(); col.classList.add("over"); };
+    col.ondragleave = () => col.classList.remove("over");
+    col.ondrop = async (e) => {
+      e.preventDefault(); col.classList.remove("over");
+      if (loose) return;                       // 不准拖回「還沒有桶」——那不是一個桶
+      const d = JSON.parse(e.dataTransfer.getData("text/plain"));
+      if (d.from === title) return;
+      await moveBucket(d.name, d.from, title);
+    };
+    return col;
+  };
+
+  if (v.unclassified.length) wrap.appendChild(mkCol("還沒有桶", v.unclassified, true));
+  for (const b of v.buckets) wrap.appendChild(mkCol(b, v.cols[b] || false));
+  document.getElementById("app").replaceChildren(el);
+}
+
+// 拖曳落地 —— 選項 C:預設只改「這個名字目前所有出現處的 Decision」,
+// 要不要立成全域規則(buckets.SYN)是**另一個動作**,因為那會影響所有文件。
+async function moveBucket(name, from, to) {
+  const global = confirm(
+    `把「${name}」從「${from || "還沒有桶"}」改成「${to}」\n\n` +
+    `確定 = 同時立成全域規則(寫進 buckets.SYN,影響所有文件)\n` +
+    `取消 = 只改現有這些列的分類紀錄`);
+  const r = await post("rebucket", { name, to, global });
+  if (r.error) { alert(r.error); return; }
+  viewBuckets();
 }
 
 // ── 自動抄列:按鈕 + 輪詢進度 ──────────────────────────────────────────

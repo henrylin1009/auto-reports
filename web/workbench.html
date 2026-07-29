@@ -98,6 +98,20 @@ textarea{width:100%;height:430px;background:#0f1216;color:var(--fg);
   border:1px solid var(--line);border-radius:7px;padding:10px;resize:vertical;
   font:12px/1.55 ui-monospace,SFMono-Regular,monospace;tab-size:2}
 textarea:focus{outline:none;border-color:var(--accent)}
+.bkcols{display:flex;gap:10px;overflow-x:auto;padding-bottom:10px;align-items:flex-start}
+.bkcol{flex:0 0 190px;background:var(--panel);border:1px solid var(--line);
+  border-radius:8px;padding:8px}
+.bkcol.loose{border-color:var(--danger)}
+.bkcol h3{margin:0 0 7px;font-size:12px;font-weight:600;display:flex;
+  justify-content:space-between;align-items:baseline;gap:6px}
+.bkcol h3 span{color:var(--mute);font-weight:400;font-size:11px}
+.chip{background:var(--panel2);border:1px solid var(--line);border-radius:5px;
+  padding:5px 7px;margin-bottom:5px;font-size:12px;line-height:1.35;cursor:grab}
+.chip.prov{border-color:#8a6d1f;background:#221c0d}
+.chip.uncl{border-color:var(--danger);background:#2a1315}
+.chip.drag{opacity:.4}
+.chip b{font-weight:400;color:var(--mute);font-size:11px;margin-left:4px}
+.bkcol.over{border-color:var(--accent);background:var(--panel2)}
 .auto{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:14px 0 8px}
 .auto .hint{margin:0;flex:1;min-width:240px}
 .autolog{background:#0c0e12;border:1px solid var(--line);border-radius:6px;
@@ -109,6 +123,7 @@ textarea:focus{outline:none;border-color:var(--accent)}
 <nav>
   <a href="#/matrix" data-r="matrix">總覽</a>
   <a href="#/review" data-r="review">核對</a>
+  <a href="#/buckets" data-r="buckets">分桶</a>
   <a href="#/dispose" data-r="dispose">裁示</a>
   <a href="#/fill" data-r="fill">抄列</a>
   <span class="sp" id="navstat"></span>

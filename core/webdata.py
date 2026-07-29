@@ -174,6 +174,100 @@ def confirm_bucket(name, bucket_name, reason, today=None, path="buckets.py"):
     return {"written": True}
 
 
+def bucket_view():
+    """十個桶 × 收進去的科目名。**看的是 Decision 不是 buckets.SYN** ——
+    SYN 是規則,Decision 是「這一列實際落在哪」,兩者可能不同(規則改過、
+    人裁示過單一格)。畫面要呈現的是後者,否則你看到的是應然不是實然。
+
+    同名不同桶是**真的會發生**的(富邦 202304 Trading 同一份附註裡「其他」
+    出現兩次、桶不同),所以聚合鍵是 (bucket, name),不是 name。
+
+    `state` 取該組裡**最弱**的一個:只要有一列還沒 CONFIRMED,整組就不算確認 ——
+    「大部分確認了」在這裡等於沒確認。
+    """
+    from core import decision_store
+
+    RANK = {"UNCLASSIFIED": 0, "PROVISIONAL": 1, "CONFIRMED": 2}
+    groups = {}
+    for cell_key, decs in decision_store.load().items():
+        for d in decs:
+            k = (d.get("mapping"), d["name"])
+            g = groups.setdefault(k, {"bucket": d.get("mapping"), "name": d["name"],
+                                      "n": 0, "state": "CONFIRMED", "cells": set()})
+            g["n"] += 1
+            g["cells"].add(cell_key)
+            if RANK[d["state"]] < RANK[g["state"]]:
+                g["state"] = d["state"]
+
+    cols = {b: [] for b in config.BUCKETS}
+    loose = []                       # mapping is None → 還沒有桶可以放
+    for g in groups.values():
+        g["cells"] = sorted(g["cells"])
+        (cols[g["bucket"]] if g["bucket"] in cols else loose).append(g)
+    for v in cols.values():
+        v.sort(key=lambda g: (g["state"] != "UNCLASSIFIED", g["state"] != "PROVISIONAL", -g["n"]))
+    loose.sort(key=lambda g: -g["n"])
+
+    tally = {"confirmed": 0, "provisional": 0, "unclassified": 0}
+    for g in list(groups.values()):
+        tally[g["state"].lower()] += g["n"]
+    return {"buckets": config.BUCKETS,
+            "cols": cols, "unclassified": loose, "tally": tally}
+
+
+def rebucket(name, to, global_=False, approved_by="henrylin", today=None):
+    """把「一個科目名」改判到 `to` 桶 —— 分桶檢視拖曳的落地。
+
+    **兩個動作分開,這是刻意的**(使用者 2026-07-29 裁示的選項 C):
+      · 預設:立一條 taxonomy rule 並更新現有 Decision。改的是**分類紀錄**。
+      · `global_`:額外寫進 `buckets.SYN`。那是**原始碼層的同義詞表**,
+        會影響往後每一次抄列與每一份文件 —— 所以要另外點頭。
+
+    CONFIRMED 不是隨便標的:`I3a` 要求指到一條 CONFIRMED 的 rule,`I3b` 要求
+    那條 rule 至少有一條 `kind=="human"` 的依據。這裡兩條都補齊,不然
+    `validate_decision` 會當場抓到。
+    """
+    from core import decision_store
+    from core import decisions as dmod
+
+    if to not in config.BUCKETS:
+        raise ValueError(f"「{to}」不是 config.BUCKETS 裡的桶")
+    today = today or datetime.datetime.now().isoformat(timespec="seconds")
+    norm = buckets.norm(name)
+    rule_id = f"tax:{norm}"
+
+    path = os.path.join("taxonomy", "rules.json")
+    rules = json.load(open(path, encoding="utf-8"))
+    ref = dmod.make_reference(
+        "human", f"分桶檢視拖曳:「{name}」→「{to}」 (by {approved_by})", today)
+    hit = next((r for r in rules if r["rule_id"] == rule_id), None)
+    if hit:
+        hit.update(mapping=to, state=dmod.CONFIRMED,
+                   approved_by=approved_by, approved_at=today)
+        hit["references"] = list(hit.get("references") or []) + [ref]
+    else:
+        rules.append(dmod.make_rule(rule_id, "name", to, dmod.CONFIRMED, [ref],
+                                    approved_by=approved_by, approved_at=today))
+    json.dump(rules, open(path, "w", encoding="utf-8"),
+              ensure_ascii=False, indent=1, sort_keys=True)
+
+    cells = decision_store.load()
+    touched = 0
+    for decs in cells.values():
+        for d in decs:
+            if buckets.norm(d["name"]) != norm:
+                continue
+            d.update(mapping=to, state=dmod.CONFIRMED, taxonomy_ref=rule_id,
+                     at=today, by="rebucket")
+            touched += 1
+    decision_store.save(cells)
+
+    syn = None
+    if global_:
+        syn = confirm_bucket(name, to, f"分桶檢視拖曳(by {approved_by})")
+    return {"rows": touched, "rule": rule_id, "syn": syn}
+
+
 def requeue(cell_key):
     """把卡住的格放回待抄佇列 —— 只刪標記檔,不動 `facts/`
     (那些格從沒歸檔過,重跑一次是乾淨的,同 `fill.py requeue`)。"""

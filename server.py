@@ -172,6 +172,8 @@ class Handler(SimpleHTTPRequestHandler):
             self._json(webdata.todo_cells())
         elif route == "/api/fill":
             self._json(webdata.fill_context(q["doc"], q["cls"]))
+        elif route == "/api/bucketview":
+            self._json(webdata.bucket_view())
         elif route == "/api/autofill/status":
             self._json({"running": _JOB["running"], "lines": _JOB["lines"],
                         "done": _JOB["done"], "error": _JOB["error"]})
@@ -188,6 +190,9 @@ class Handler(SimpleHTTPRequestHandler):
                     b["name"], b["bucket"], b.get("reason") or ""))
             elif route == "/api/requeue":
                 self._json(webdata.requeue(b["cell_key"]))
+            elif route == "/api/rebucket":
+                self._json(webdata.rebucket(b["name"], b["to"],
+                                            bool(b.get("global"))))
             elif route == "/api/autofill":
                 self._json(start_autofill(b.get("limit"),
                                           b.get("reader") or "gemini"))
