@@ -12,6 +12,7 @@
 普查基準(2026-07-26,89 份 × 3 類 = 267 槽):
     錨讀不到 96(全部 ≤2022,2023+ 為 0) / 錨有但無候選頁 2 / 可進 agent 169
 """
+import collections
 import os
 import re
 import threading
@@ -144,8 +145,38 @@ def basis_of(text):
     return UNKNOWN
 
 
-def locate(path):
-    """回傳 Located。錨完全讀不到時 anchors 為空,pages 亦然。"""
+#: `locate()` 的結果快取。**純粹是效能,語意不變** —— key 帶 (mtime, size),
+#: 檔案一換就自動失效,所以抓到新 PDF 不會拿到舊結果。
+#:
+#: 為什麼需要:一次 `/api/doc` 會對同一份檔呼叫 `locate()` 三次(三個類別各一次),
+#: 每次 1.8s 全花在重抽 170 頁的文字 —— 實測 doc_detail 5.4s 裡 100% 是這個。
+#:
+#: **有界**(而且很小):`Located` 抓著全文(一份約 0.3 MB),而
+#: `fill._build_index()` 會一口氣掃過 89 份檔 —— 無上限的話那一趟就把全部吞進記憶體。
+#: 工作台一次只看一份文件,4 份的窗口已經足夠。
+_CACHE = collections.OrderedDict()
+_CACHE_MAX = 4
+
+
+def locate(path, _cache=True):
+    """回傳 Located。錨完全讀不到時 anchors 為空,pages 亦然。
+
+    回傳值**視為唯讀** —— 快取會把同一個物件交給多個呼叫者(現況全是讀取)。
+    """
+    st = os.stat(path)
+    key = (os.path.abspath(path), st.st_mtime_ns, st.st_size)
+    if _cache and key in _CACHE:
+        _CACHE.move_to_end(key)
+        return _CACHE[key]
+    got = _locate_uncached(path)
+    if _cache:
+        _CACHE[key] = got
+        while len(_CACHE) > _CACHE_MAX:
+            _CACHE.popitem(last=False)
+    return got
+
+
+def _locate_uncached(path):
     with PDFIUM_LOCK:
         doc = pdf.PdfDocument(path)
         try:

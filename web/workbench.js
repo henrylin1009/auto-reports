@@ -47,7 +47,8 @@ function route() {
   const r = parts[0] || "matrix";
   nav(r);
   if (r === "buckets") viewBuckets();
-  else if (r === "doc") viewDoc(decodeURIComponent(parts[1] || ""));
+  // 從網址進來(或 hashchange)算一次新的導覽 —— 重拉,免得看到過期的內容。
+  else if (r === "doc") viewDoc(decodeURIComponent(parts[1] || ""), { reload: true });
   else if (r === "analysis") viewAnalysis();
   else viewMatrix();
 }
@@ -368,11 +369,18 @@ function wireAutofill(el) {
 // 版面:左邊三類堆疊(已抄=逐列、沒抄=一顆按鈕),右邊一張共用頁圖。
 // 點左邊任一列,右邊翻到那列的來源頁 —— 三類共用同一個檢視器,因為它們的
 // 來源頁常常就在鄰近幾頁。
-async function viewDoc(doc) {
+//
+// ⚠️ `reload` 預設 **false**:點一列、翻一頁都只是換「看哪裡」,資料沒變,
+//    不必重打 /api/doc。那支要 1.8s(後端得抽完整份 PDF 的文字),每點一列
+//    重來一次的話,畫面就是每次點都卡兩秒 —— 這正是使用者回報的症狀。
+//    **只有資料真的可能變了才傳 reload:true**(抄完一格、送出成功、換文件)。
+async function viewDoc(doc, { reload = false } = {}) {
   if (!doc) return location.hash = "#/matrix";
-  const d = await api("doc?doc=" + encodeURIComponent(doc));
+  if (reload || !S.doc || S.doc.doc !== doc) {
+    S.doc = await api("doc?doc=" + encodeURIComponent(doc));
+  }
+  const d = S.doc;
   nav("doc");
-  S.doc = d;
 
   const page = S.page != null && d.pages.includes(S.page) ? S.page : d.pages[0];
   S.page = page;
@@ -488,7 +496,7 @@ function clsTodo(doc, cls, f) {
     catch (err) { out.style.display = "block"; out.textContent = "JSON 解析失敗:" + err.message; return; }
     const r = await post("submit", { doc, cls, pages: f.pages, records: body.records });
     out.style.display = "block"; out.textContent = r.output || r.error || "";
-    if (r.status === "PASS") setTimeout(() => viewDoc(doc), 900);
+    if (r.status === "PASS") setTimeout(() => viewDoc(doc, { reload: true }), 900);
   };
   return card;
 }
@@ -505,7 +513,7 @@ async function runCell(doc, cls) {
     if (s.running) return;
     clearInterval(t);
     S.page = null; S.rowIdx = 0;
-    viewDoc(doc);
+    viewDoc(doc, { reload: true });        // 剛抄完,facts/ 變了,一定要重拉
   }, 1500);
 }
 
