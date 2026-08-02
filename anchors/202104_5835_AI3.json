@@ -1,0 +1,23 @@
+{
+ "bs_page": 6,
+ "cells": {
+  "AC": {
+   "amount": 570526304,
+   "pages": [
+    37,
+    92,
+    134
+   ]
+  },
+  "OCI": {
+   "amount": 281577371,
+   "pages": [
+    36,
+    133
+   ]
+  }
+ },
+ "doc": "202104_5835_AI3",
+ "located_by": "locate.locate",
+ "pdf_sha256": "b011dab3673f788f7aa5a5edb08de713e4c925c8a2231172234d93ddf81a896f"
+}
