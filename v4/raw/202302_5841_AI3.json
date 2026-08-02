@@ -1,0 +1,233 @@
+{
+ "doc": "202302_5841_AI3",
+ "model": "claude",
+ "n_pages": 179,
+ "prompt_chars": 175695,
+ "elapsed_s": 75.9,
+ "raw_text": "```json\n{\"basis\":\"個體\",\n \"bs_date\":\"112/06/30\",\n \"Trading\":{\n   \"book\":{\n     \"total\":289475201,\n     \"printed_subtotal\":289475201,\n     \"bs_anchor\":289475201,\n     \"page\":28,\n     \"rows\":[\n       {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"商業本票\",\"amount\":193683382},\n       {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"可轉讓定期存單\",\"amount\":16189484},\n       {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"政府公債\",\"amount\":1479617},\n       {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"公司債\",\"amount\":3949389},\n       {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"金融債券\",\"amount\":1264172},\n       {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"股票\",\"amount\":1909070},\n       {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"衍生金融資產\",\"amount\":71021012},\n       {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"金融資產評價調整\",\"amount\":-20925}\n     ]\n   },\n   \"cost\":{\"total\":null,\"page\":null,\"rows\":[]},\n   \"cost_note\":\"本文件為112年第二季(半年)財務報告,僅有財務報表附註六(三)之帳面公允價值明細,無「重要會計項目明細表」揭露取得成本,故cost全數填null\",\n   \"checks\":{\n     \"check_rowsum\":{\"status\":\"OK\",\"diff\":0},\n     \"check_anchor\":{\"status\":\"OK\",\"diff\":0},\n     \"check_cost\":{\"status\":\"no_witness\",\"diff\":0}\n   }\n },\n \"OCI\":{\n   \"book\":{\n     \"total\":209334435,\n     \"printed_subtotal\":209334435,\n     \"bs_anchor\":209334435,\n     \"page\":30,\n     \"rows\":[\n       {\"group\":\"透過其他綜合損益按公允價值衡量之債務工具\",\"name\":\"可轉讓定期存單\",\"amount\":3215329},\n       {\"group\":\"透過其他綜合損益按公允價值衡量之債務工具\",\"name\":\"國庫券\",\"amount\":9319124},\n       {\"group\":\"透過其他綜合損益按公允價值衡量之債務工具\",\"name\":\"政府公債\",\"amount\":61640884},\n       {\"group\":\"透過其他綜合損益按公允價值衡量之債務工具\",\"name\":\"公司債\",\"amount\":10152522},\n       {\"group\":\"透過其他綜合損益按公允價值衡量之債務工具\",\"name\":\"金融債券\",\"amount\":92931701},\n       {\"group\":\"透過其他綜合損益按公允價值衡量之債務工具\",\"name\":\"資產基礎證券\",\"amount\":16931901},\n       {\"group\":\"透過其他綜合損益按公允價值衡量之債務工具\",\"name\":\"其他證券及債券\",\"amount\":9952704},\n       {\"group\":\"透過其他綜合損益按公允價值衡量之債務工具\",\"name\":\"金融資產評價調整\",\"amount\":-6899196},\n       {\"group\":\"透過其他綜合損益按公允價值衡量之權益工具\",\"name\":\"股票\",\"amount\":10973251},\n       {\"group\":\"透過其他綜合損益按公允價值衡量之權益工具\",\"name\":\"金融資產評價調整\",\"amount\":1116215}\n     ]\n   },\n   \"cost\":{\"total\":null,\"page\":null,\"rows\":[]},\n   \"cost_note\":\"本文件為112年第二季(半年)財務報告,僅有財務報表附註六(四)之帳面公允價值明細,無「重要會計項目明細表」揭露取得成本,故cost全數填null\",\n   \"checks\":{\n     \"check_rowsum\":{\"status\":\"OK\",\"diff\":0},\n     \"check_anchor\":{\"status\":\"OK\",\"diff\":0},\n     \"check_cost\":{\"status\":\"no_witness\",\"diff\":0}\n   }\n },\n \"AC\":{\n   \"book\":{\n     \"total\":846796020,\n     \"printed_subtotal\":846796020,\n     \"bs_anchor\":846796020,\n     \"page\":31,\n     \"rows\":[\n       {\"group\":\"\",\"name\":\"可轉讓定期存單\",\"amount\":314321000},\n       {\"group\":\"\",\"name\":\"國庫券\",\"amount\":13966872},\n       {\"group\":\"\",\"name\":\"政府公債\",\"amount\":274890198},\n       {\"group\":\"\",\"name\":\"公司債\",\"amount\":79693221},\n       {\"group\":\"\",\"name\":\"金融債券\",\"amount\":54700057},\n       {\"group\":\"\",\"name\":\"資產基礎證券\",\"amount\":71507754},\n       {\"group\":\"\",\"name\":\"其他\",\"amount\":37754459},\n       {\"group\":\"\",\"name\":\"減：備抵損失\",\"amount\":-37541}\n     ]\n   },\n   \"cost\":{\"total\":null,\"page\":null,\"rows\":[]},\n   \"cost_note\":\"本文件為112年第二季(半年)財務報告,僅有財務報表附註六(五)之帳面攤銷後成本明細,無「重要會計項目明細表」揭露取得成本,故cost全數填null\",\n   \"checks\":{\n     \"check_rowsum\":{\"status\":\"OK\",\"diff\":0},\n     \"check_anchor\":{\"status\":\"OK\",\"diff\":0},\n     \"check_cost\":{\"status\":\"no_witness\",\"diff\":0}\n   }\n }\n}\n```\n",
+ "parsed": {
+  "basis": "個體",
+  "bs_date": "112/06/30",
+  "Trading": {
+   "book": {
+    "total": 289475201,
+    "printed_subtotal": 289475201,
+    "bs_anchor": 289475201,
+    "page": 28,
+    "rows": [
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "商業本票",
+      "amount": 193683382
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "可轉讓定期存單",
+      "amount": 16189484
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "政府公債",
+      "amount": 1479617
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "公司債",
+      "amount": 3949389
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "金融債券",
+      "amount": 1264172
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "股票",
+      "amount": 1909070
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "衍生金融資產",
+      "amount": 71021012
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "金融資產評價調整",
+      "amount": -20925
+     }
+    ]
+   },
+   "cost": {
+    "total": null,
+    "page": null,
+    "rows": []
+   },
+   "cost_note": "本文件為112年第二季(半年)財務報告,僅有財務報表附註六(三)之帳面公允價值明細,無「重要會計項目明細表」揭露取得成本,故cost全數填null",
+   "checks": {
+    "check_rowsum": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_anchor": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_cost": {
+     "status": "no_witness",
+     "diff": 0
+    }
+   }
+  },
+  "OCI": {
+   "book": {
+    "total": 209334435,
+    "printed_subtotal": 209334435,
+    "bs_anchor": 209334435,
+    "page": 30,
+    "rows": [
+     {
+      "group": "透過其他綜合損益按公允價值衡量之債務工具",
+      "name": "可轉讓定期存單",
+      "amount": 3215329
+     },
+     {
+      "group": "透過其他綜合損益按公允價值衡量之債務工具",
+      "name": "國庫券",
+      "amount": 9319124
+     },
+     {
+      "group": "透過其他綜合損益按公允價值衡量之債務工具",
+      "name": "政府公債",
+      "amount": 61640884
+     },
+     {
+      "group": "透過其他綜合損益按公允價值衡量之債務工具",
+      "name": "公司債",
+      "amount": 10152522
+     },
+     {
+      "group": "透過其他綜合損益按公允價值衡量之債務工具",
+      "name": "金融債券",
+      "amount": 92931701
+     },
+     {
+      "group": "透過其他綜合損益按公允價值衡量之債務工具",
+      "name": "資產基礎證券",
+      "amount": 16931901
+     },
+     {
+      "group": "透過其他綜合損益按公允價值衡量之債務工具",
+      "name": "其他證券及債券",
+      "amount": 9952704
+     },
+     {
+      "group": "透過其他綜合損益按公允價值衡量之債務工具",
+      "name": "金融資產評價調整",
+      "amount": -6899196
+     },
+     {
+      "group": "透過其他綜合損益按公允價值衡量之權益工具",
+      "name": "股票",
+      "amount": 10973251
+     },
+     {
+      "group": "透過其他綜合損益按公允價值衡量之權益工具",
+      "name": "金融資產評價調整",
+      "amount": 1116215
+     }
+    ]
+   },
+   "cost": {
+    "total": null,
+    "page": null,
+    "rows": []
+   },
+   "cost_note": "本文件為112年第二季(半年)財務報告,僅有財務報表附註六(四)之帳面公允價值明細,無「重要會計項目明細表」揭露取得成本,故cost全數填null",
+   "checks": {
+    "check_rowsum": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_anchor": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_cost": {
+     "status": "no_witness",
+     "diff": 0
+    }
+   }
+  },
+  "AC": {
+   "book": {
+    "total": 846796020,
+    "printed_subtotal": 846796020,
+    "bs_anchor": 846796020,
+    "page": 31,
+    "rows": [
+     {
+      "group": "",
+      "name": "可轉讓定期存單",
+      "amount": 314321000
+     },
+     {
+      "group": "",
+      "name": "國庫券",
+      "amount": 13966872
+     },
+     {
+      "group": "",
+      "name": "政府公債",
+      "amount": 274890198
+     },
+     {
+      "group": "",
+      "name": "公司債",
+      "amount": 79693221
+     },
+     {
+      "group": "",
+      "name": "金融債券",
+      "amount": 54700057
+     },
+     {
+      "group": "",
+      "name": "資產基礎證券",
+      "amount": 71507754
+     },
+     {
+      "group": "",
+      "name": "其他",
+      "amount": 37754459
+     },
+     {
+      "group": "",
+      "name": "減：備抵損失",
+      "amount": -37541
+     }
+    ]
+   },
+   "cost": {
+    "total": null,
+    "page": null,
+    "rows": []
+   },
+   "cost_note": "本文件為112年第二季(半年)財務報告,僅有財務報表附註六(五)之帳面攤銷後成本明細,無「重要會計項目明細表」揭露取得成本,故cost全數填null",
+   "checks": {
+    "check_rowsum": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_anchor": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_cost": {
+     "status": "no_witness",
+     "diff": 0
+    }
+   }
+  }
+ },
+ "parse_ok": true
+}

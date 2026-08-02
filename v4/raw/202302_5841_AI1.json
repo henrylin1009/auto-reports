@@ -1,0 +1,248 @@
+{
+ "doc": "202302_5841_AI1",
+ "model": "claude",
+ "n_pages": 154,
+ "prompt_chars": 170120,
+ "elapsed_s": 69.5,
+ "raw_text": "```json\n{\"basis\":\"合併\",\n \"bs_date\":\"112/06/30\",\n \"Trading\":{\n   \"book\":{\n     \"total\":298426753,\n     \"printed_subtotal\":298426753,\n     \"bs_anchor\":298426753,\n     \"page\":31,\n     \"rows\":[\n       {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"商業本票\",\"amount\":193683382},\n       {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"可轉讓定期存單\",\"amount\":16189484},\n       {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"國庫券\",\"amount\":842835},\n       {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"政府公債\",\"amount\":2969481},\n       {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"公司債\",\"amount\":3949389},\n       {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"金融債券\",\"amount\":1264172},\n       {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"股票\",\"amount\":2180206},\n       {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"受益憑證\",\"amount\":324283},\n       {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"衍生金融資產\",\"amount\":77042789},\n       {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"金融資產評價調整\",\"amount\":-19268}\n     ]\n   },\n   \"cost\":{\"total\":null,\"page\":null,\"rows\":[]},\n   \"cost_note\":\"本文件為民國112年第二季(半年報)合併財務報告,僅有財務報表附註六(三)揭露帳面公允價值,並無年報才有的『重要會計項目明細表』取得成本欄,故cost填null\",\n   \"checks\":{\n     \"check_rowsum\":{\"status\":\"OK\",\"diff\":0},\n     \"check_anchor\":{\"status\":\"OK\",\"diff\":0},\n     \"check_cost\":{\"status\":\"no_witness\",\"diff\":0}\n   }\n },\n \"OCI\":{\n   \"book\":{\n     \"total\":282387806,\n     \"printed_subtotal\":282387806,\n     \"bs_anchor\":282387806,\n     \"page\":32,\n     \"rows\":[\n       {\"group\":\"透過其他綜合損益按公允價值衡量之債務工具\",\"name\":\"可轉讓定期存單\",\"amount\":3215329},\n       {\"group\":\"透過其他綜合損益按公允價值衡量之債務工具\",\"name\":\"國庫券\",\"amount\":9624523},\n       {\"group\":\"透過其他綜合損益按公允價值衡量之債務工具\",\"name\":\"政府公債\",\"amount\":96451190},\n       {\"group\":\"透過其他綜合損益按公允價值衡量之債務工具\",\"name\":\"公司債\",\"amount\":16230442},\n       {\"group\":\"透過其他綜合損益按公允價值衡量之債務工具\",\"name\":\"金融債券\",\"amount\":92931702},\n       {\"group\":\"透過其他綜合損益按公允價值衡量之債務工具\",\"name\":\"資產基礎證券\",\"amount\":31960759},\n       {\"group\":\"透過其他綜合損益按公允價值衡量之債務工具\",\"name\":\"其他證券及債券\",\"amount\":16360000},\n       {\"group\":\"透過其他綜合損益按公允價值衡量之債務工具\",\"name\":\"金融資產評價調整\",\"amount\":-9832668},\n       {\"group\":\"透過其他綜合損益按公允價值衡量之權益工具\",\"name\":\"股票\",\"amount\":11893532},\n       {\"group\":\"透過其他綜合損益按公允價值衡量之權益工具\",\"name\":\"受益憑證\",\"amount\":19532033},\n       {\"group\":\"透過其他綜合損益按公允價值衡量之權益工具\",\"name\":\"金融資產評價調整\",\"amount\":-5979036}\n     ]\n   },\n   \"cost\":{\"total\":null,\"page\":null,\"rows\":[]},\n   \"cost_note\":\"本文件為半年報,僅財務報表附註六(四)揭露帳面公允價值,無年報才有的重要會計項目明細表取得成本欄,故cost填null\",\n   \"checks\":{\n     \"check_rowsum\":{\"status\":\"OK\",\"diff\":0},\n     \"check_anchor\":{\"status\":\"OK\",\"diff\":0},\n     \"check_cost\":{\"status\":\"no_witness\",\"diff\":0}\n   }\n },\n \"AC\":{\n   \"book\":{\n     \"total\":891810602,\n     \"printed_subtotal\":891810602,\n     \"bs_anchor\":891810602,\n     \"page\":34,\n     \"rows\":[\n       {\"group\":\"\",\"name\":\"可轉讓定期存單\",\"amount\":314321000},\n       {\"group\":\"\",\"name\":\"國庫券\",\"amount\":13966872},\n       {\"group\":\"\",\"name\":\"政府公債\",\"amount\":286976683},\n       {\"group\":\"\",\"name\":\"公司債\",\"amount\":86211092},\n       {\"group\":\"\",\"name\":\"金融債券\",\"amount\":54700057},\n       {\"group\":\"\",\"name\":\"資產基礎證券\",\"amount\":97081840},\n       {\"group\":\"\",\"name\":\"其他\",\"amount\":38606464},\n       {\"group\":\"\",\"name\":\"減：備抵損失\",\"amount\":-53406}\n     ]\n   },\n   \"cost\":{\"total\":null,\"page\":null,\"rows\":[]},\n   \"cost_note\":\"本文件為半年報,僅財務報表附註六(五)揭露帳面攤銷後成本(已扣備抵損失),無年報才有的重要會計項目明細表取得成本欄,故cost填null\",\n   \"checks\":{\n     \"check_rowsum\":{\"status\":\"OK\",\"diff\":0},\n     \"check_anchor\":{\"status\":\"OK\",\"diff\":0},\n     \"check_cost\":{\"status\":\"no_witness\",\"diff\":0}\n   }\n }\n}\n```\n",
+ "parsed": {
+  "basis": "合併",
+  "bs_date": "112/06/30",
+  "Trading": {
+   "book": {
+    "total": 298426753,
+    "printed_subtotal": 298426753,
+    "bs_anchor": 298426753,
+    "page": 31,
+    "rows": [
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "商業本票",
+      "amount": 193683382
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "可轉讓定期存單",
+      "amount": 16189484
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "國庫券",
+      "amount": 842835
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "政府公債",
+      "amount": 2969481
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "公司債",
+      "amount": 3949389
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "金融債券",
+      "amount": 1264172
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "股票",
+      "amount": 2180206
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "受益憑證",
+      "amount": 324283
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "衍生金融資產",
+      "amount": 77042789
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "金融資產評價調整",
+      "amount": -19268
+     }
+    ]
+   },
+   "cost": {
+    "total": null,
+    "page": null,
+    "rows": []
+   },
+   "cost_note": "本文件為民國112年第二季(半年報)合併財務報告,僅有財務報表附註六(三)揭露帳面公允價值,並無年報才有的『重要會計項目明細表』取得成本欄,故cost填null",
+   "checks": {
+    "check_rowsum": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_anchor": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_cost": {
+     "status": "no_witness",
+     "diff": 0
+    }
+   }
+  },
+  "OCI": {
+   "book": {
+    "total": 282387806,
+    "printed_subtotal": 282387806,
+    "bs_anchor": 282387806,
+    "page": 32,
+    "rows": [
+     {
+      "group": "透過其他綜合損益按公允價值衡量之債務工具",
+      "name": "可轉讓定期存單",
+      "amount": 3215329
+     },
+     {
+      "group": "透過其他綜合損益按公允價值衡量之債務工具",
+      "name": "國庫券",
+      "amount": 9624523
+     },
+     {
+      "group": "透過其他綜合損益按公允價值衡量之債務工具",
+      "name": "政府公債",
+      "amount": 96451190
+     },
+     {
+      "group": "透過其他綜合損益按公允價值衡量之債務工具",
+      "name": "公司債",
+      "amount": 16230442
+     },
+     {
+      "group": "透過其他綜合損益按公允價值衡量之債務工具",
+      "name": "金融債券",
+      "amount": 92931702
+     },
+     {
+      "group": "透過其他綜合損益按公允價值衡量之債務工具",
+      "name": "資產基礎證券",
+      "amount": 31960759
+     },
+     {
+      "group": "透過其他綜合損益按公允價值衡量之債務工具",
+      "name": "其他證券及債券",
+      "amount": 16360000
+     },
+     {
+      "group": "透過其他綜合損益按公允價值衡量之債務工具",
+      "name": "金融資產評價調整",
+      "amount": -9832668
+     },
+     {
+      "group": "透過其他綜合損益按公允價值衡量之權益工具",
+      "name": "股票",
+      "amount": 11893532
+     },
+     {
+      "group": "透過其他綜合損益按公允價值衡量之權益工具",
+      "name": "受益憑證",
+      "amount": 19532033
+     },
+     {
+      "group": "透過其他綜合損益按公允價值衡量之權益工具",
+      "name": "金融資產評價調整",
+      "amount": -5979036
+     }
+    ]
+   },
+   "cost": {
+    "total": null,
+    "page": null,
+    "rows": []
+   },
+   "cost_note": "本文件為半年報,僅財務報表附註六(四)揭露帳面公允價值,無年報才有的重要會計項目明細表取得成本欄,故cost填null",
+   "checks": {
+    "check_rowsum": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_anchor": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_cost": {
+     "status": "no_witness",
+     "diff": 0
+    }
+   }
+  },
+  "AC": {
+   "book": {
+    "total": 891810602,
+    "printed_subtotal": 891810602,
+    "bs_anchor": 891810602,
+    "page": 34,
+    "rows": [
+     {
+      "group": "",
+      "name": "可轉讓定期存單",
+      "amount": 314321000
+     },
+     {
+      "group": "",
+      "name": "國庫券",
+      "amount": 13966872
+     },
+     {
+      "group": "",
+      "name": "政府公債",
+      "amount": 286976683
+     },
+     {
+      "group": "",
+      "name": "公司債",
+      "amount": 86211092
+     },
+     {
+      "group": "",
+      "name": "金融債券",
+      "amount": 54700057
+     },
+     {
+      "group": "",
+      "name": "資產基礎證券",
+      "amount": 97081840
+     },
+     {
+      "group": "",
+      "name": "其他",
+      "amount": 38606464
+     },
+     {
+      "group": "",
+      "name": "減：備抵損失",
+      "amount": -53406
+     }
+    ]
+   },
+   "cost": {
+    "total": null,
+    "page": null,
+    "rows": []
+   },
+   "cost_note": "本文件為半年報,僅財務報表附註六(五)揭露帳面攤銷後成本(已扣備抵損失),無年報才有的重要會計項目明細表取得成本欄,故cost填null",
+   "checks": {
+    "check_rowsum": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_anchor": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_cost": {
+     "status": "no_witness",
+     "diff": 0
+    }
+   }
+  }
+ },
+ "parse_ok": true
+}

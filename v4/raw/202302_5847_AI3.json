@@ -1,0 +1,248 @@
+{
+ "doc": "202302_5847_AI3",
+ "model": "claude",
+ "n_pages": 138,
+ "prompt_chars": 130333,
+ "elapsed_s": 102.1,
+ "raw_text": "```json\n{\"basis\":\"個體\",\n \"bs_date\":\"112/06/30\",\n \"Trading\":{\"book\":{\"total\":290426827,\"printed_subtotal\":290426827,\"bs_anchor\":290426827,\"page\":22,\n            \"rows\":[\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"可轉讓定期存單\",\"amount\":26617137},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"商業本票\",\"amount\":87859629},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"國庫券\",\"amount\":6898200},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"公司債\",\"amount\":54960201},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"金融債券\",\"amount\":46049832},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"國外機構發行債券\",\"amount\":10549113},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"上市（櫃）股票\",\"amount\":1176245},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"外匯換匯合約\",\"amount\":30468041},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"利率交換合約\",\"amount\":22718600},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"外匯選擇權合約\",\"amount\":1580789},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"遠期外匯合約\",\"amount\":720159},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"期貨交易保證金－自有資金\",\"amount\":118745},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"無本金交割遠期外匯合約\",\"amount\":612240},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"金屬商品交換合約\",\"amount\":144},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"換匯換利合約\",\"amount\":97752},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"信用違約交換合約\",\"amount\":0}\n            ]},\n            \"cost\":{\"total\":null,\"page\":null,\"rows\":[]},\n            \"cost_note\":\"半年報無重要會計項目明細表(該表僅年報揭露),本節僅列公允價值,無取得成本欄位\",\n            \"checks\":{\"check_rowsum\":{\"status\":\"OK\",\"diff\":0},\n                      \"check_anchor\":{\"status\":\"OK\",\"diff\":0},\n                      \"check_cost\":{\"status\":\"no_witness\",\"diff\":0}}},\n \"OCI\":{\"book\":{\"total\":341931240,\"printed_subtotal\":341931240,\"bs_anchor\":341931240,\"page\":24,\n            \"rows\":[\n              {\"group\":\"權益工具投資\",\"name\":\"上市（櫃）及興櫃股票\",\"amount\":12923373},\n              {\"group\":\"權益工具投資\",\"name\":\"未上市（櫃）股票\",\"amount\":1324749},\n              {\"group\":\"債務工具投資\",\"name\":\"金融債券\",\"amount\":151679528},\n              {\"group\":\"債務工具投資\",\"name\":\"政府公債\",\"amount\":54021240},\n              {\"group\":\"債務工具投資\",\"name\":\"公司債\",\"amount\":108513624},\n              {\"group\":\"債務工具投資\",\"name\":\"國外機構發行債券\",\"amount\":13157296},\n              {\"group\":\"債務工具投資\",\"name\":\"可轉讓定期存單\",\"amount\":311430}\n            ]},\n            \"cost\":{\"total\":null,\"page\":null,\"rows\":[]},\n            \"cost_note\":\"半年報無重要會計項目明細表(該表僅年報揭露),本節僅列公允價值,無取得成本欄位\",\n            \"checks\":{\"check_rowsum\":{\"status\":\"OK\",\"diff\":0},\n                      \"check_anchor\":{\"status\":\"OK\",\"diff\":0},\n                      \"check_cost\":{\"status\":\"no_witness\",\"diff\":0}}},\n \"AC\":{\"book\":{\"total\":440829468,\"printed_subtotal\":440854122,\"bs_anchor\":440829468,\"page\":25,\n            \"rows\":[\n              {\"group\":\"\",\"name\":\"國外機構發行債券\",\"amount\":38596458},\n              {\"group\":\"\",\"name\":\"金融債券\",\"amount\":48759351},\n              {\"group\":\"\",\"name\":\"公司債\",\"amount\":21580910},\n              {\"group\":\"\",\"name\":\"可轉讓定期存單\",\"amount\":309994560},\n              {\"group\":\"\",\"name\":\"政府公債\",\"amount\":21922843},\n              {\"group\":\"\",\"name\":\"證券化商品\",\"amount\":0}\n            ]},\n            \"cost\":{\"total\":null,\"page\":null,\"rows\":[]},\n            \"cost_note\":\"半年報無重要會計項目明細表(該表僅年報揭露),本節僅列面額及帳面金額(攤銷後成本),無取得成本欄位;printed_subtotal為扣除備抵損失前之小計440,854,122,total為扣除備抵損失24,654後之帳列金額440,829,468(與資產負債表相符)\",\n            \"checks\":{\"check_rowsum\":{\"status\":\"OK\",\"diff\":0},\n                      \"check_anchor\":{\"status\":\"OK\",\"diff\":0},\n                      \"check_cost\":{\"status\":\"no_witness\",\"diff\":0}}}}\n```\n",
+ "parsed": {
+  "basis": "個體",
+  "bs_date": "112/06/30",
+  "Trading": {
+   "book": {
+    "total": 290426827,
+    "printed_subtotal": 290426827,
+    "bs_anchor": 290426827,
+    "page": 22,
+    "rows": [
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "可轉讓定期存單",
+      "amount": 26617137
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "商業本票",
+      "amount": 87859629
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "國庫券",
+      "amount": 6898200
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "公司債",
+      "amount": 54960201
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "金融債券",
+      "amount": 46049832
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "國外機構發行債券",
+      "amount": 10549113
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "上市（櫃）股票",
+      "amount": 1176245
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "外匯換匯合約",
+      "amount": 30468041
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "利率交換合約",
+      "amount": 22718600
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "外匯選擇權合約",
+      "amount": 1580789
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "遠期外匯合約",
+      "amount": 720159
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "期貨交易保證金－自有資金",
+      "amount": 118745
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "無本金交割遠期外匯合約",
+      "amount": 612240
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "金屬商品交換合約",
+      "amount": 144
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "換匯換利合約",
+      "amount": 97752
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "信用違約交換合約",
+      "amount": 0
+     }
+    ]
+   },
+   "cost": {
+    "total": null,
+    "page": null,
+    "rows": []
+   },
+   "cost_note": "半年報無重要會計項目明細表(該表僅年報揭露),本節僅列公允價值,無取得成本欄位",
+   "checks": {
+    "check_rowsum": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_anchor": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_cost": {
+     "status": "no_witness",
+     "diff": 0
+    }
+   }
+  },
+  "OCI": {
+   "book": {
+    "total": 341931240,
+    "printed_subtotal": 341931240,
+    "bs_anchor": 341931240,
+    "page": 24,
+    "rows": [
+     {
+      "group": "權益工具投資",
+      "name": "上市（櫃）及興櫃股票",
+      "amount": 12923373
+     },
+     {
+      "group": "權益工具投資",
+      "name": "未上市（櫃）股票",
+      "amount": 1324749
+     },
+     {
+      "group": "債務工具投資",
+      "name": "金融債券",
+      "amount": 151679528
+     },
+     {
+      "group": "債務工具投資",
+      "name": "政府公債",
+      "amount": 54021240
+     },
+     {
+      "group": "債務工具投資",
+      "name": "公司債",
+      "amount": 108513624
+     },
+     {
+      "group": "債務工具投資",
+      "name": "國外機構發行債券",
+      "amount": 13157296
+     },
+     {
+      "group": "債務工具投資",
+      "name": "可轉讓定期存單",
+      "amount": 311430
+     }
+    ]
+   },
+   "cost": {
+    "total": null,
+    "page": null,
+    "rows": []
+   },
+   "cost_note": "半年報無重要會計項目明細表(該表僅年報揭露),本節僅列公允價值,無取得成本欄位",
+   "checks": {
+    "check_rowsum": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_anchor": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_cost": {
+     "status": "no_witness",
+     "diff": 0
+    }
+   }
+  },
+  "AC": {
+   "book": {
+    "total": 440829468,
+    "printed_subtotal": 440854122,
+    "bs_anchor": 440829468,
+    "page": 25,
+    "rows": [
+     {
+      "group": "",
+      "name": "國外機構發行債券",
+      "amount": 38596458
+     },
+     {
+      "group": "",
+      "name": "金融債券",
+      "amount": 48759351
+     },
+     {
+      "group": "",
+      "name": "公司債",
+      "amount": 21580910
+     },
+     {
+      "group": "",
+      "name": "可轉讓定期存單",
+      "amount": 309994560
+     },
+     {
+      "group": "",
+      "name": "政府公債",
+      "amount": 21922843
+     },
+     {
+      "group": "",
+      "name": "證券化商品",
+      "amount": 0
+     }
+    ]
+   },
+   "cost": {
+    "total": null,
+    "page": null,
+    "rows": []
+   },
+   "cost_note": "半年報無重要會計項目明細表(該表僅年報揭露),本節僅列面額及帳面金額(攤銷後成本),無取得成本欄位;printed_subtotal為扣除備抵損失前之小計440,854,122,total為扣除備抵損失24,654後之帳列金額440,829,468(與資產負債表相符)",
+   "checks": {
+    "check_rowsum": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_anchor": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_cost": {
+     "status": "no_witness",
+     "diff": 0
+    }
+   }
+  }
+ },
+ "parse_ok": true
+}
