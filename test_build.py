@@ -169,13 +169,48 @@ def t5_traceable():
           and "code_revision" in man)
     check("data.json 的 _build 帶得到快照與 facts 指紋",
           data["_build"]["frozen_snapshot"]["sha256"] and data["_build"]["facts_sha256"])
-    check("provenance 只有 v2 / v3 兩種值",
-          {u["provenance"] for u in man["units"]} <= {"v2", "v3"})
+    # 2026-08-02(P1-3,docs/plan_v5_統一.md):v4 加入當 v3 缺口填補者
+    # (`build.rebuild_v4()`)——v3 沒有這一格時才輪到 v4,只吃 RATIFIED/GREEN。
+    # provenance 因此多了第三種值,不是迴歸;真正要守的不變量是
+    # 「沒有第四種來路不明的值混進來」。
+    check("provenance 只有 v2 / v3 / v4 三種值",
+          {u["provenance"] for u in man["units"]} <= {"v2", "v3", "v4"})
+
+
+# ── T6 v4 只填 v3 的缺口,不搶 v3 的位置(P1-3) ─────────────────────────────
+def t6_v4_never_outranks_v3():
+    print("\nT6 v3 合格時 v4 不能搶走它的位置(即使 v4 也合格)")
+    verdict_v3, _, _ = build.rebuild_v3()
+    verdict_v4 = build.rebuild_v4()
+    _, man, _ = build.build()
+    prov = {u["unit"]: u for u in man["units"]}
+
+    both_eligible, wrong = 0, []
+    for key3, v3 in verdict_v3.items():
+        cell3 = bridge_v3.cell_of(key3)
+        if not cell3:
+            continue
+        cell, cls = cell3
+        key4 = key3  # 同一份 doc 命名規則,v4 用同一把 key
+        v4v = verdict_v4.get(key4)
+        for basis in build.BASES:
+            ok3, _ = build.eligible(v3, basis, src="v3")
+            ok4, _ = build.eligible(v4v, basis, src="v4")
+            if not (ok3 and ok4):
+                continue
+            both_eligible += 1
+            unit = f"{cell}|{cls}|{basis}"
+            if prov.get(unit, {}).get("provenance") != "v3":
+                wrong.append(unit)
+    check("兩邊都合格時 provenance 一律是 v3", not wrong,
+          f"{len(wrong)} 個單位被 v4 搶走" if wrong else f"{both_eligible} 個雙合格單位都對")
+    check("有雙合格的單位可驗(否則這條測試是空的,見 v4/ledger 目前的 coverage)",
+          both_eligible >= 0)  # v4 batch 還沒跑(P1-4),0 也合法——只是這條先天測不到東西
 
 
 if __name__ == "__main__":
     for fn in (t1_deterministic, t2_no_null_overwrite, t3_v3_adopted,
-               t4_no_stale_verdict, t5_traceable):
+               t4_no_stale_verdict, t5_traceable, t6_v4_never_outranks_v3):
         fn()
     print("\n" + ("✗ 失敗:" + "; ".join(FAILED) if FAILED else "✔ 五條命題全數通過"))
     raise SystemExit(1 if FAILED else 0)

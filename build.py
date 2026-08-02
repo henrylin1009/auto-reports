@@ -102,19 +102,62 @@ def rebuild_v3():
     return verdict, _sha(*glob.glob("facts/*.json")), len(train)
 
 
-def eligible(v, basis):
-    """單位是否有 v3 發布資格。回傳 (bool, 原因)。**保守:任一不成立即回退。**"""
+def eligible(v, basis, src="v3"):
+    """單位是否有發布資格。回傳 (bool, 原因)。**保守:任一不成立即回退。**
+    `src` 只影響訊息文字("v3"/"v4"),判準兩邊共用同一套(pass + 七桶齊全)。
+    """
     if v is None:
-        return False, "v3 沒有這一格(facts/ 尚未抄錄)"
+        return False, f"{src} 沒有這一格"
     if not v.get("pass"):
-        return False, "v3 該格六道檢查未通過"
+        return False, f"{src} 該格檢查未通過"
     book = v.get(basis)
     if book is None:
-        return False, f"v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)"
+        return False, f"{src} 該口徑為 null(該口徑在文件裡不存在或視圖不成立)"
     missing = [b for b in WIDE_BUCKETS if b not in book]
     if missing:
-        return False, f"v3 七桶不齊,缺 {missing}"
-    return True, "v3 合格"
+        return False, f"{src} 七桶不齊,缺 {missing}"
+    return True, f"{src} 合格"
+
+
+# ── v4 當次重建 ────────────────────────────────────────────────────────────
+# docs/plan_v5_統一.md P1-3。**只當 v3 的缺口填補者,不搶 v3 的位置**——
+# v4 目前只跑過 2 份文件(P1-4 批次還沒跑),coverage 遠低於 v3 的 62~123 個
+# 合格單位,若讓 v4 優先於 v3,今天會直接讓大部分已發布的 v3 數字消失。
+# 要等 P2(拿 facts/ 156 格真值逐桶比對)證明 v4 不比 v3 差,才會反過來。
+
+def rebuild_v4():
+    """**當次**由 `v4/ledger` 重算 verdict,形狀跟 `rebuild_v3()` 一樣方便共用
+    `eligible()`。只吃 RATIFIED / GREEN——RED/GREY 一律不算數,交回 v3 或 v2。
+    """
+    from v4 import adapter, ledger
+
+    verdict = {}
+    for doc_entry in ledger.load_all():
+        doc = doc_entry["doc"]
+        for cls, c in doc_entry["cells"].items():
+            passed = c.get("status") in ("RATIFIED", "GREEN")
+            book_raw = c.get("book") or {}
+            wide_book = None
+            if passed and book_raw.get("rows") is not None:
+                agg = adapter.aggregate(book_raw["rows"], book_raw.get("printed_subtotal"))
+                if agg.ok:
+                    wide_book = agg.book
+            # RATIFIED 的 book 是 `v4.ledger.ratify()` 凍結進帳本的那份,沒有連帶
+            # 存 cost(`ratify()` 簽名只收 book,見 v4/ledger.py)——RATIFIED 的
+            # wide_cost 目前一律留 None,是既有帳本結構的限制,不是這裡漏接。
+            cost_raw = c.get("cost") or {}
+            wide_cost = None
+            if passed and cost_raw.get("rows") is not None:
+                agg_c = adapter.aggregate(cost_raw["rows"], cost_raw.get("total"))
+                if agg_c.ok:
+                    wide_cost = agg_c.book
+            verdict[f"{doc}|{cls}"] = {
+                "doc": doc, "class": cls,
+                "pass": passed and wide_book is not None,
+                "wide": wide_book, "wide_cost": wide_cost,
+                "anchor": book_raw.get("bs_anchor"),
+            }
+    return verdict
 
 
 # ── 建置 ────────────────────────────────────────────────────────────────────
@@ -123,6 +166,7 @@ def build():
     """回傳 (data, manifest, diff)。`data` 是新的發布 payload;`diff` 是與快照的差異。"""
     snap, snap_man = load_snapshot()
     verdict, facts_sha, n_cells = rebuild_v3()
+    verdict_v4 = rebuild_v4()
 
     data = json.loads(json.dumps(snap))          # 深拷貝,快照本身不動
     data.pop("_bridge_v3", None)                 # 舊的 bridge_v3 遺物,不再使用
@@ -133,6 +177,14 @@ def build():
         got = bridge_v3.cell_of(key)
         if got:
             by_cell[got] = (key, v)
+    # v4 用同一把 `bridge_v3.cell_of`(doc 命名規則相同,函式名字沒改是因為
+    # 它本質是「解析 doc key」不是「v3 專用」)。**只在 v3 沒有這一格時才查**,
+    # 見下面迴圈 —— v4 目前只跑過少數文件,絕不能搶 v3 已經覆蓋的格。
+    by_cell_v4 = {}
+    for key, v in verdict_v4.items():
+        got = bridge_v3.cell_of(key)
+        if got:
+            by_cell_v4[got] = (key, v)
 
     units, diff, conflicts = [], {}, []
     for basis in BASES:
@@ -148,7 +200,15 @@ def build():
             for cls in ("Trading", "OCI", "AC"):
                 cur = table[cell]
                 key, v = by_cell.get((cell, cls), (None, None))
-                ok, why = eligible(v, basis)
+                ok, why = eligible(v, basis, src="v3")
+                src = "v3"
+                if not ok:
+                    # v3 沒有這一格(或不合格)才問 v4 —— v3 永遠優先,理由見
+                    # `rebuild_v4()` 檔頭:v4 batch 還沒跑,coverage 遠小於 v3。
+                    key4, v4v = by_cell_v4.get((cell, cls), (None, None))
+                    ok4, why4 = eligible(v4v, basis, src="v4")
+                    if ok4:
+                        ok, why, key, v, src = ok4, why4, key4, v4v, "v4"
                 unit = f"{bank_period}|{cls}|{basis}"
                 had = {b: cur.get(f"{cls}_{b}") for b in WIDE_BUCKETS}
                 has_v2 = any(x is not None for x in had.values())
@@ -163,7 +223,7 @@ def build():
                         table[cell][f"{cls}_{b}"] = new
                     if changed:
                         diff[unit] = changed
-                    units.append({"unit": unit, "provenance": "v3", "reason": why,
+                    units.append({"unit": unit, "provenance": src, "reason": why,
                                   "facts_key": key})
                 else:
                     # 鐵則 4:**不寫任何東西**。快照的值原封不動留著。
@@ -204,6 +264,7 @@ def build():
         },
         "counts": {
             "v3": sum(1 for u in units if u["provenance"] == "v3"),
+            "v4": sum(1 for u in units if u["provenance"] == "v4"),
             "v2": sum(1 for u in units if u["provenance"] == "v2"),
             "changed_units": len(diff),
             "conflicts": len(conflicts),
@@ -224,7 +285,8 @@ def dump(obj, path):
 
 def report(manifest, diff):
     c = manifest["counts"]
-    print(f"發布單位:v3 {c['v3']} / v2 {c['v2']}   有變動 {c['changed_units']} 個單位")
+    print(f"發布單位:v3 {c['v3']} / v4 {c['v4']} / v2 {c['v2']}   "
+          f"有變動 {c['changed_units']} 個單位")
     print(f"輸入:facts {manifest['inputs']['facts']['cells']} 格 "
           f"· 快照 {manifest['inputs']['frozen_snapshot']['path']}")
     if diff:

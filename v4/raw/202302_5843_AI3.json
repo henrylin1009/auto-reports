@@ -1,0 +1,255 @@
+{
+ "doc": "202302_5843_AI3",
+ "model": "deepseek",
+ "n_pages": 145,
+ "prompt_chars": 143191,
+ "elapsed_s": 18.9,
+ "raw_text": "```json\n{\n  \"basis\": \"個體\",\n  \"bs_date\": \"112/6/30\",\n  \"Trading\": {\n    \"book\": {\n      \"total\": 55717136,\n      \"printed_subtotal\": 55717136,\n      \"bs_anchor\": 55717136,\n      \"page\": 23,\n      \"rows\": [\n        { \"name\": \"上市櫃公司股票\", \"amount\": 6446266 },\n        { \"name\": \"興櫃公司股票\", \"amount\": 1170019 },\n        { \"name\": \"非上市、上櫃、興櫃股票\", \"amount\": 6483679 },\n        { \"name\": \"證券化商品\", \"amount\": 8495 },\n        { \"name\": \"受益憑證\", \"amount\": 156640 },\n        { \"name\": \"衍生工具\", \"amount\": 7990421 },\n        { \"name\": \"政府債券\", \"amount\": 217397 },\n        { \"name\": \"公司債券\", \"amount\": 22205798 },\n        { \"name\": \"金融債券\", \"amount\": 5059113 },\n        { \"name\": \"小計\", \"amount\": 49737828 },\n        { \"name\": \"評價調整\", \"amount\": 5979308 },\n        { \"name\": \"合計\", \"amount\": 55717136 }\n      ]\n    },\n    \"cost\": {\n      \"total\": null,\n      \"page\": null,\n      \"rows\": []\n    },\n    \"cost_note\": \"半年報無『重要會計項目明細表』，故無取得成本資料。附註六(三)僅揭露帳面金額(公允價值)明細，無取得成本欄位。\",\n    \"checks\": {\n      \"check_rowsum\": {\n        \"status\": \"OK\",\n        \"diff\": 0\n      },\n      \"check_anchor\": {\n        \"status\": \"OK\",\n        \"diff\": 0\n      },\n      \"check_cost\": {\n        \"status\": \"no_witness\",\n        \"diff\": 0\n      }\n    }\n  },\n  \"OCI\": {\n    \"book\": {\n      \"total\": 417413028,\n      \"printed_subtotal\": 417413028,\n      \"bs_anchor\": 417413028,\n      \"page\": 24,\n      \"rows\": [\n        { \"name\": \"公司債券\", \"amount\": 137983851 },\n        { \"name\": \"金融債券\", \"amount\": 95214789 },\n        { \"name\": \"政府債券\", \"amount\": 85471881 },\n        { \"name\": \"證券化商品\", \"amount\": 63295653 },\n        { \"name\": \"定存單\", \"amount\": 13698791 },\n        { \"name\": \"小計\", \"amount\": 395664965 },\n        { \"name\": \"評價調整\", \"amount\": -18110978 },\n        { \"name\": \"淨額\", \"amount\": 377553987 },\n        { \"name\": \"上市櫃公司股票\", \"amount\": 21255064 },\n        { \"name\": \"非上市、上櫃、興櫃股票\", \"amount\": 4805626 },\n        { \"name\": \"受益憑證\", \"amount\": 302258 },\n        { \"name\": \"小計\", \"amount\": 26362948 },\n        { \"name\": \"評價調整\", \"amount\": 13496093 },\n        { \"name\": \"淨額\", \"amount\": 39859041 },\n        { \"name\": \"合計\", \"amount\": 417413028 }\n      ]\n    },\n    \"cost\": {\n      \"total\": null,\n      \"page\": null,\n      \"rows\": []\n    },\n    \"cost_note\": \"半年報無『重要會計項目明細表』，故無取得成本資料。附註六(四)僅揭露帳面金額(公允價值)明細，無取得成本欄位。\",\n    \"checks\": {\n      \"check_rowsum\": {\n        \"status\": \"OK\",\n        \"diff\": 0\n      },\n      \"check_anchor\": {\n        \"status\": \"OK\",\n        \"diff\": 0\n      },\n      \"check_cost\": {\n        \"status\": \"no_witness\",\n        \"diff\": 0\n      }\n    }\n  },\n  \"AC\": {\n    \"book\": {\n      \"total\": 646185857,\n      \"printed_subtotal\": 646185857,\n      \"bs_anchor\": 646185857,\n      \"page\": 26,\n      \"rows\": [\n        { \"name\": \"央行定期存單\", \"amount\": 338845627 },\n        { \"name\": \"短期票券\", \"amount\": 214414479 },\n        { \"name\": \"銀行定期存單\", \"amount\": 7808141 },\n        { \"name\": \"金融債券\", \"amount\": 23937090 },\n        { \"name\": \"政府債券\", \"amount\": 22901920 },\n        { \"name\": \"公司債券\", \"amount\": 9823158 },\n        { \"name\": \"證券化商品\", \"amount\": 24335466 },\n        { \"name\": \"國庫券\", \"amount\": 4181884 },\n        { \"name\": \"小計\", \"amount\": 646247765 },\n        { \"name\": \"累計減損\", \"amount\": -61908 },\n        { \"name\": \"合計\", \"amount\": 646185857 }\n      ]\n    },\n    \"cost\": {\n      \"total\": null,\n      \"page\": null,\n      \"rows\": []\n    },\n    \"cost_note\": \"半年報無『重要會計項目明細表』，故無取得成本資料。附註六(五)僅揭露帳面金額(攤銷後成本)明細，無取得成本欄位。\",\n    \"checks\": {\n      \"check_rowsum\": {\n        \"status\": \"OK\",\n        \"diff\": 0\n      },\n      \"check_anchor\": {\n        \"status\": \"OK\",\n        \"diff\": 0\n      },\n      \"check_cost\": {\n        \"status\": \"no_witness\",\n        \"diff\": 0\n      }\n    }\n  }\n}\n```",
+ "parsed": {
+  "basis": "個體",
+  "bs_date": "112/6/30",
+  "Trading": {
+   "book": {
+    "total": 55717136,
+    "printed_subtotal": 55717136,
+    "bs_anchor": 55717136,
+    "page": 23,
+    "rows": [
+     {
+      "name": "上市櫃公司股票",
+      "amount": 6446266
+     },
+     {
+      "name": "興櫃公司股票",
+      "amount": 1170019
+     },
+     {
+      "name": "非上市、上櫃、興櫃股票",
+      "amount": 6483679
+     },
+     {
+      "name": "證券化商品",
+      "amount": 8495
+     },
+     {
+      "name": "受益憑證",
+      "amount": 156640
+     },
+     {
+      "name": "衍生工具",
+      "amount": 7990421
+     },
+     {
+      "name": "政府債券",
+      "amount": 217397
+     },
+     {
+      "name": "公司債券",
+      "amount": 22205798
+     },
+     {
+      "name": "金融債券",
+      "amount": 5059113
+     },
+     {
+      "name": "小計",
+      "amount": 49737828
+     },
+     {
+      "name": "評價調整",
+      "amount": 5979308
+     },
+     {
+      "name": "合計",
+      "amount": 55717136
+     }
+    ]
+   },
+   "cost": {
+    "total": null,
+    "page": null,
+    "rows": []
+   },
+   "cost_note": "半年報無『重要會計項目明細表』，故無取得成本資料。附註六(三)僅揭露帳面金額(公允價值)明細，無取得成本欄位。",
+   "checks": {
+    "check_rowsum": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_anchor": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_cost": {
+     "status": "no_witness",
+     "diff": 0
+    }
+   }
+  },
+  "OCI": {
+   "book": {
+    "total": 417413028,
+    "printed_subtotal": 417413028,
+    "bs_anchor": 417413028,
+    "page": 24,
+    "rows": [
+     {
+      "name": "公司債券",
+      "amount": 137983851
+     },
+     {
+      "name": "金融債券",
+      "amount": 95214789
+     },
+     {
+      "name": "政府債券",
+      "amount": 85471881
+     },
+     {
+      "name": "證券化商品",
+      "amount": 63295653
+     },
+     {
+      "name": "定存單",
+      "amount": 13698791
+     },
+     {
+      "name": "小計",
+      "amount": 395664965
+     },
+     {
+      "name": "評價調整",
+      "amount": -18110978
+     },
+     {
+      "name": "淨額",
+      "amount": 377553987
+     },
+     {
+      "name": "上市櫃公司股票",
+      "amount": 21255064
+     },
+     {
+      "name": "非上市、上櫃、興櫃股票",
+      "amount": 4805626
+     },
+     {
+      "name": "受益憑證",
+      "amount": 302258
+     },
+     {
+      "name": "小計",
+      "amount": 26362948
+     },
+     {
+      "name": "評價調整",
+      "amount": 13496093
+     },
+     {
+      "name": "淨額",
+      "amount": 39859041
+     },
+     {
+      "name": "合計",
+      "amount": 417413028
+     }
+    ]
+   },
+   "cost": {
+    "total": null,
+    "page": null,
+    "rows": []
+   },
+   "cost_note": "半年報無『重要會計項目明細表』，故無取得成本資料。附註六(四)僅揭露帳面金額(公允價值)明細，無取得成本欄位。",
+   "checks": {
+    "check_rowsum": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_anchor": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_cost": {
+     "status": "no_witness",
+     "diff": 0
+    }
+   }
+  },
+  "AC": {
+   "book": {
+    "total": 646185857,
+    "printed_subtotal": 646185857,
+    "bs_anchor": 646185857,
+    "page": 26,
+    "rows": [
+     {
+      "name": "央行定期存單",
+      "amount": 338845627
+     },
+     {
+      "name": "短期票券",
+      "amount": 214414479
+     },
+     {
+      "name": "銀行定期存單",
+      "amount": 7808141
+     },
+     {
+      "name": "金融債券",
+      "amount": 23937090
+     },
+     {
+      "name": "政府債券",
+      "amount": 22901920
+     },
+     {
+      "name": "公司債券",
+      "amount": 9823158
+     },
+     {
+      "name": "證券化商品",
+      "amount": 24335466
+     },
+     {
+      "name": "國庫券",
+      "amount": 4181884
+     },
+     {
+      "name": "小計",
+      "amount": 646247765
+     },
+     {
+      "name": "累計減損",
+      "amount": -61908
+     },
+     {
+      "name": "合計",
+      "amount": 646185857
+     }
+    ]
+   },
+   "cost": {
+    "total": null,
+    "page": null,
+    "rows": []
+   },
+   "cost_note": "半年報無『重要會計項目明細表』，故無取得成本資料。附註六(五)僅揭露帳面金額(攤銷後成本)明細，無取得成本欄位。",
+   "checks": {
+    "check_rowsum": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_anchor": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_cost": {
+     "status": "no_witness",
+     "diff": 0
+    }
+   }
+  }
+ },
+ "parse_ok": true
+}
