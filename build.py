@@ -138,9 +138,15 @@ def build():
     for basis in BASES:
         table = data.setdefault(basis, {})
         for cell in sorted(table):
+            # 快照裡這一格本身可能是 `None`(尚無任何 v2 數字,例如 2020H1/2026 那些
+            # 還沒出報表或還沒抓到的期別)——`setdefault` 只在**鍵不存在**時才給預設值,
+            # 鍵存在但值是 None 時它會原封不動回傳 None,下面 `[...] = new` 就會對
+            # `None` 做 item assignment 而炸掉。這裡先正規化一次。
+            if table.get(cell) is None:
+                table[cell] = {}
             bank_period = cell
             for cls in ("Trading", "OCI", "AC"):
-                cur = table.get(cell) or {}
+                cur = table[cell]
                 key, v = by_cell.get((cell, cls), (None, None))
                 ok, why = eligible(v, basis)
                 unit = f"{bank_period}|{cls}|{basis}"
@@ -154,7 +160,7 @@ def build():
                         new = bridge_v3.to_yi(book[b])
                         if had[b] != new:
                             changed[f"{cls}_{b}"] = (had[b], new)
-                        table.setdefault(cell, {})[f"{cls}_{b}"] = new
+                        table[cell][f"{cls}_{b}"] = new
                     if changed:
                         diff[unit] = changed
                     units.append({"unit": unit, "provenance": "v3", "reason": why,

@@ -64,6 +64,12 @@ button.dan{color:var(--danger)}
 
 /* 複核 */
 .two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}
+/* 右欄(來源頁對照圖)固定在畫面上,左欄(逐列核對)自己滾——2026-07-30 使用者
+   實測抓到:左欄一長,對到後面的列就把右邊的圖也捲走了,核對變成「捲上去看
+   一眼、捲下來對數字」來回跑。sticky 讓右欄留在原地,左欄滾多遠都對得到圖。
+   `top` 貼著 nav 底部(nav 實測 44.5px 高),`max-height`/`overflow` 讓右欄
+   自己內容太長時(來源頁按鈕一多)也不會超出視窗高度。*/
+.two .side{position:sticky;top:52px;max-height:calc(100vh - 60px);overflow:auto}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px;
   box-shadow:0 1px 2px rgba(16,24,40,.04)}
 .rows{margin:0}
@@ -72,6 +78,12 @@ button.dan{color:var(--danger)}
   border-bottom:1px solid var(--line)}
 .sec .bk{margin-left:auto;font-size:11px}
 .blk{font-size:11px;color:var(--mute);padding:8px 8px 3px}
+/* 一格常常有 2~3 份 record(明細表二/三/四,各自一頁)。原本三份直接上下
+   疊成一長條,人要捲很久才知道自己在看哪一張表 —— 改成分頁:一次只顯示
+   一份,上面一排按鈕切換,切換同時右邊跳到那份的來源頁。*/
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 8px}
+.tabs button{font-size:12px;padding:4px 10px}
+.tabs button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
 .row{display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:6px;cursor:pointer}
 .row:hover{background:var(--panel2)}
 .row.cur{background:#eef0fd;outline:1px solid var(--accent)}
@@ -88,6 +100,7 @@ button.dan{color:var(--danger)}
 .tr{background:#f8f9fb;border:1px solid var(--line);border-radius:6px;padding:8px 10px;
   margin-top:8px;font-size:11px;color:var(--dim);white-space:pre-wrap;font-family:ui-monospace,monospace}
 .tag{font-size:10px;padding:1px 6px;border-radius:4px;border:1px solid var(--line);color:var(--mute)}
+.tag.w{border-color:var(--warn);color:var(--warn)}
 .demo{border:1px dashed var(--warn);color:var(--warn);font-size:11px;padding:2px 7px;border-radius:4px}
 .hint{font-size:11px;color:var(--mute);margin-top:10px}
 kbd{background:var(--panel2);border:1px solid var(--line);border-radius:3px;padding:0 4px;font-size:10px}
@@ -140,12 +153,36 @@ textarea:focus{outline:none;border-color:var(--accent)}
 .autolog{background:#f8f9fb;border:1px solid var(--line);border-radius:6px;
   padding:10px 12px;margin:0 0 14px;max-height:260px;overflow:auto;
   font-size:12px;line-height:1.55;white-space:pre-wrap;color:var(--dim)}
+
+/* v4 複核頁元件 */
+.badge{font-size:11px;padding:2px 7px;border-radius:4px;border:1px solid;display:inline-block}
+.badge.RED{color:var(--danger);border-color:var(--danger);background:#fff8f8}
+.badge.GREY{color:var(--dim);border-color:var(--line);background:#f5f6f8}
+.badge.GREEN{color:var(--ok);border-color:var(--ok);background:#f0fdf4}
+.mdsel{display:inline-flex;gap:4px}
+.mdsel button{padding:4px 13px;border-radius:6px;font-size:13px}
+.mdsel button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.wcard{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin-bottom:8px}
+.wcard h3{margin:0 0 8px;font-size:13px;font-weight:500}
+.w{display:flex;align-items:center;gap:6px;padding:3px 0;font-size:12px}
+.w .name{color:var(--dim);min-width:140px}
+.w.OK .st{color:var(--ok);font-weight:500}
+.w.MISMATCH .st{color:var(--danger);font-weight:500}
+.w.no_witness .st{color:var(--mute)}
+.w .diff{font-size:11px;color:var(--warn);font-variant-numeric:tabular-nums}
+.w .wn{font-size:11px;color:var(--mute);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.v4q-row{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:7px;
+  background:var(--panel);border:1px solid var(--line);margin-bottom:6px;cursor:pointer}
+.v4q-row:hover{border-color:var(--accent)}
+.v4q-row .doc{font-size:11px;color:var(--mute);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
 </style>
 </head>
 <body>
 <nav>
   <a href="#/analysis" data-r="analysis">分析</a>
   <a href="#/matrix" data-r="matrix">資料</a>
+  <a href="#/v4run" data-r="v4run">v4 讀取</a>
+  <a href="#/v4review" data-r="v4review">v4 複核</a>
   <button id="rebuildBtn" class="pri">⟳ 重建</button>
   <span class="muted" id="rebuildstat"></span>
   <span class="sp" id="navstat"></span>
