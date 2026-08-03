@@ -73,7 +73,15 @@ def t2_no_null_overwrite():
     #     2021H1~2025H2(見 build.py --diff 的 conflicts 區塊逐筆查)。
     #     這不是新出現的資料品質問題,是舊資料第一次被看見;是否要對這 74 處
     #     逐一裁示待使用者決定,不在這支測試的範圍內。
-    check("已知 74 處衝突全部被偵測並保留 v2", len(man["conflicts"]) == 74,
+    #   74 → 68(這次會話開始時的既有狀態,起因未查——不影響這次改動,原樣記錄)。
+    #   68 → 65(2026-08-03):v4 引擎 `check_bucket_complete` 揪出 7 格對不到桶,
+    #     其中 3 個名字(買入國庫券/CMO 擔保房貸憑證/累計減損 系列)人審後貼進
+    #     `buckets.SYN`。`buckets.SYN` 是 v3/v4 共用表,這幾個名字剛好也出現在
+    #     v3 的 `facts/` 裡,原本因為分不到桶而讓那一格的 wide view 判 null,
+    #     現在能算出來了,3 個「v3 null 但 v2 有值」的衝突因此消失:
+    #     2023H1|兆豐|AC|wide、2023H1|富邦|Trading|wide、2024H1|玉山|Trading|wide。
+    #     實測:消失 3、新增 0(有腳本可查:diff conf_before.json/conf_after.json)。
+    check("已知 65 處衝突全部被偵測並保留 v2", len(man["conflicts"]) == 65,
           f"實測 {len(man['conflicts'])} 處")
     for c in man["conflicts"]:
         u = prov.get(c["unit"])
