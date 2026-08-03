@@ -16,7 +16,7 @@
 import re
 
 import buckets
-from config import WIDE_BUCKETS
+from config import VALUATION_ADJ, WIDE_BUCKETS
 
 SIDE = ("衍生", "評價調整")
 #: 這幾個詞是加總列,不是投資標的。P1-1 已經把「別把合計列塞進 rows」寫進
@@ -63,6 +63,18 @@ def normalize_rows(raw_rows):
         rows.append({"name": name, "group": (r.get("group") or "").strip(),
                       "amount": r.get("amount")})
     return rows, dropped
+
+
+def is_adjustment_row(row):
+    """這一列是不是「評價調整/備抵損失」這種橋接列(而不是持有的標的)。
+
+    **一定要走 `bucket_row()`,不可以直接呼叫 `buckets.is_adj()`。**
+    模型有時會把段落黏進名字(`債務工具-評價調整`),`bucket_row()` 會先整條查、
+    查不到再拆前綴,`buckets.is_adj()` 不會 —— 實測 `202504_5843_AI3|OCI`
+    兩條路徑對同一列給出相反答案,害口徑判成「公允」、七桶(成本)被當帳面發布。
+    這是「同一件事有兩套判斷」的老毛病,收斂成這一支。
+    """
+    return bucket_row(row) == VALUATION_ADJ
 
 
 def bucket_row(row):
@@ -113,7 +125,7 @@ def aggregate(raw_rows, printed_subtotal):
     # 公允的差額。這件事一定要在這裡算:呼叫端拿到七桶之後就分不出它是成本還是帳面了,
     # 而兩者在網站上是兩個不同欄位(wide / wide_cost),放錯就是發布錯的數字
     # ——實測 20 格踩過(兆豐 Trading 差 11.82%),見 docs/plan_v5_統一.md。
-    basis = "成本" if any(buckets.is_adj(r) for r in rows) else "公允"
+    basis = "成本" if any(is_adjustment_row(r) for r in rows) else "公允"
 
     book = {wb: 0 for wb in WIDE_BUCKETS}
     side = {k: 0 for k in SIDE}

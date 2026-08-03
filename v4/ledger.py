@@ -44,8 +44,10 @@ def _basis_of_book(book):
     回傳 "成本" / "公允",book 形狀不對時回 None(不猜)。"""
     if not isinstance(book, dict) or not isinstance(book.get("rows"), list):
         return None
+    from v4 import adapter
     return "成本" if any(
-        buckets.is_adj({"name": r.get("name") or "", "group": r.get("group") or ""})
+        adapter.is_adjustment_row({"name": r.get("name") or "",
+                                    "group": r.get("group") or ""})
         for r in book["rows"] if isinstance(r, dict)) else "公允"
 
 

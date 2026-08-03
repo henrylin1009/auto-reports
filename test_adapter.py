@@ -139,12 +139,17 @@ def a9_cost_basis_must_not_publish_as_wide():
     ⚠️ **判「這格是成本」時不准呼叫 `adapter.aggregate().basis`** —— 那樣寫的話
     adapter 一壞,這條測試會跟著用同一個壞掉的判斷,永遠自我一致、永遠綠。
     (實測:第一版就是這樣寫的,注入 bug 之後 T8 紅了、T9 照樣綠。)
-    這裡直接用 `buckets.is_adj` 從原始 rows 獨立判定。
+
+    ⚠️ 但也**不可以直接用 `buckets.is_adj`** —— 第二版是那樣寫的,結果對
+    `債務工具-評價調整`(段落黏進名字)判 False,跟真正的分桶路徑相反,
+    測試自己也跟著漏掉 `202504_5843_AI3|OCI`。獨立不等於可以用比較弱的判準。
+    這裡用 `adapter.bucket_row()`(分桶真正走的那支原語,與 basis 的計算分開)。
     """
     import json
     import os
 
-    import buckets
+    from config import VALUATION_ADJ
+
     import build
     v4v = build.rebuild_v4()
     wrong = []
@@ -160,8 +165,8 @@ def a9_cost_basis_must_not_publish_as_wide():
         if not isinstance(book, dict) or book.get("rows") is None:
             continue
         # 獨立判定:原始 rows 裡有沒有評價調整/備抵損失列
-        is_cost = any(buckets.is_adj({"name": r.get("name") or "",
-                                       "group": r.get("group") or ""})
+        is_cost = any(adapter.bucket_row({"name": r.get("name") or "",
+                                           "group": r.get("group") or ""}) == VALUATION_ADJ
                       for r in book["rows"] if isinstance(r, dict))
         if is_cost and v["wide"] is not None:
             wrong.append(key)
