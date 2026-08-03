@@ -128,7 +128,13 @@ def classify(doc):
         with open(ledger_path, encoding="utf-8") as f:
             frozen = json.load(f)
 
-    checks_all = witness.run_witness(doc) or {}
+    # 三類都 ratify 過就不必重抽 PDF 重算 witness——docstring 講的「帳本本身
+    # 就是快取」原本沒兌現(這裡以前無條件先跑 run_witness),ratify 越多格
+    # 越沒省到。全 reader.pages_text() 有 LRU 保底,這裡是再省一次全跳過。
+    if all(cls in frozen for cls in CLASSES):
+        checks_all = {}
+    else:
+        checks_all = witness.run_witness(doc) or {}
     out = {}
     for cls in CLASSES:
         if cls in frozen:

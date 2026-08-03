@@ -17,6 +17,7 @@
   且讓最大的 5 份富邦(原 200~213k)都退回 200k context 以下,不需要切片。
 """
 import argparse
+import collections
 import glob
 import json
 import os
@@ -34,6 +35,17 @@ OUT_DIR = "v4/raw"
 CLASSES = ("Trading", "OCI", "AC")
 CLAUDE_TIMEOUT_S = 600  # 實測 2:53~3:43;富邦最大份留雙倍餘裕
 
+#: `witness.run_witness()` 每次都對同一份 PDF 重抽全文——實測 review_queue()
+#: 14 份文件、42 格,單次請求花 20.15s/20.34s 全在這裡(cProfile)。跟
+#: `locate._CACHE`(commit e2f6ce0)同一個坑、同一個藥方:有界 LRU,
+#: 鍵含 mtime/size 所以檔案換了會自動失效,不必手動清快取。
+#: **必須 >= 一次 review_queue() 觸及的文件數**,否則同一輪內就會把前面
+#: 的檔案擠出去,快取變成「幾乎總是 miss」(實測踩過:設 8、14 份文件跑一輪,
+#: 第二輪還是 20s 沒有變快)。89 份全讀完之後每份約 0.3MB 文字,上限訂
+#: 32(> 目前 14 份實測範圍,且遠低於 `fill._build_index()` 掃全部 89 份的量級)。
+_CACHE = collections.OrderedDict()
+_CACHE_MAX = 32
+
 
 # ─────────────────────────── 抽文字 + 去空白 ───────────────────────────
 
@@ -48,12 +60,22 @@ def slim_line(line):
     return _CJK_GAP.sub("", _WS.sub(" ", line)).strip()
 
 
-def pages_text(path):
+def pages_text(path, _cache=True):
+    st = os.stat(path)
+    key = (os.path.abspath(path), st.st_mtime_ns, st.st_size)
+    if _cache and key in _CACHE:
+        _CACHE.move_to_end(key)
+        return _CACHE[key]
     d = pdf.PdfDocument(path)
     try:
-        return [d[i].get_textpage().get_text_range() for i in range(len(d))]
+        got = [d[i].get_textpage().get_text_range() for i in range(len(d))]
     finally:
         d.close()
+    if _cache:
+        _CACHE[key] = got
+        while len(_CACHE) > _CACHE_MAX:
+            _CACHE.popitem(last=False)
+    return got
 
 
 def dump_text(path):

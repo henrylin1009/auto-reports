@@ -21,10 +21,18 @@ CLASSES = ("Trading", "OCI", "AC")
 
 # ─────────────────────────────── W1 ───────────────────────────────
 def check_rowsum(book):
-    """Σrows == 財報印出的小計。跟模型自己的 check_rowsum 無關,重算一次。"""
+    """Σrows == 財報印出的小計。跟模型自己的 check_rowsum 無關,重算一次。
+
+    ⚠️ 「row」要跟 `adapter.aggregate()` 是同一個定義,否則兩道 witness 會
+    對同一格吵架:實測 `202302_5843_AI3|Trading` 這裡濾掉合計列前把
+    小計/合計/淨額都當資料列加了進去(逐列加總 161,172,100 vs 印出小計
+    55,717,136),而 `adapter.normalize_rows()` 早就把這幾個詞濾掉了、加總
+    起來是對的。兩套「什麼算一列」不一致不是嚴謹,是各驗各的、誰先跑誰決定
+    這格死活——所以在這裡直接借用 adapter 那份唯一的定義。"""
     if not book or book.get("rows") is None or book.get("printed_subtotal") is None:
         return {"status": "no_witness", "diff": None}
-    total = sum(r["amount"] for r in book["rows"] if r.get("amount") is not None)
+    rows, _dropped = adapter.normalize_rows(book["rows"])
+    total = sum(r["amount"] for r in rows if r.get("amount") is not None)
     diff = total - book["printed_subtotal"]
     return {"status": "OK" if diff == 0 else "MISMATCH", "diff": diff}
 
