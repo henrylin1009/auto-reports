@@ -47,6 +47,24 @@ def _v4_verdict():
     return build.rebuild_v4()
 
 
+def _anchor_diffs():
+    """{(doc, cls): check_anchor 的 diff} —— 只收 MISMATCH 的。
+
+    為什麼要交叉比對:實測第一版報告「不一致率 5.6%」看起來像「v4 整體不如 v3」,
+    但兩筆不一致的七桶總差**剛好都等於該格 check_anchor 的 diff**
+    (63,649 與 48,937),也就是 100% 的分歧都是 anchor 早就舉手的格子。
+    光報一個百分比會把這件事藏起來,所以在報告裡直接標出來。
+    """
+    from v4 import ledger
+    out = {}
+    for e in ledger.load_all():
+        for cls, c in e["cells"].items():
+            w = (c.get("witnesses") or {}).get("check_anchor") or {}
+            if w.get("status") == "MISMATCH" and w.get("diff") is not None:
+                out[(e["doc"], cls)] = w["diff"]
+    return out
+
+
 def compare():
     """→ (rows, stats)。`rows` 每筆是一個「格 × 口徑」的比對結果。"""
     v3, v4 = _v3_verdict(), _v4_verdict()
@@ -69,6 +87,22 @@ def compare():
             rows.append({"key": key, "basis": basis,
                          "verdict": "相同" if not diffs else "不一致",
                          "diffs": diffs})
+
+    # 每筆不一致都去問一次 check_anchor:七桶總差 == anchor diff 的話,
+    # 這筆分歧不是「兩套管線各說各話」,是 anchor 已經指出來的同一件事。
+    anchors = _anchor_diffs()
+    for r in rows:
+        r["anchor_diff"] = None
+        r["anchor_explains"] = False
+        if r["verdict"] != "不一致":
+            continue
+        doc, cls = r["key"].split("|")
+        ad = anchors.get((doc, cls))
+        r["anchor_diff"] = ad
+        total = sum((y - x) for x, y in r["diffs"].values()
+                    if isinstance(x, int) and isinstance(y, int))
+        r["anchor_explains"] = ad is not None and ad == total
+
     stats = collections.Counter(r["verdict"] for r in rows)
     return rows, stats
 
@@ -93,13 +127,22 @@ def report(rows, stats):
 
     bad = [r for r in rows if r["verdict"] == "不一致"]
     if bad:
+        expl = [r for r in bad if r["anchor_explains"]]
         print(f"\n不一致明細({len(bad)} 筆):")
         for r in bad:
-            print(f"  {r['key']} · {r['basis']}")
+            tag = ("  ★ 七桶總差 == check_anchor diff,v3 對得上錨、v4 對不上"
+                   if r["anchor_explains"] else "")
+            print(f"  {r['key']} · {r['basis']}{tag}")
             for wb, (x, y) in r["diffs"].items():
                 d = (y - x) if isinstance(x, int) and isinstance(y, int) else None
                 print(f"      {wb:8} v3 {x!s:>16}  v4 {y!s:>16}"
                       + (f"   差 {d:,}" if d is not None else ""))
+        if expl:
+            print(f"\n★ {len(expl)}/{len(bad)} 筆不一致由 check_anchor 完全解釋 ——"
+                  " 這些不是「兩套管線各說各話」,是 v4 對不上資產負債表錨而 v3 對得上。")
+            if len(expl) == len(bad):
+                print("  **全部**不一致都是這一類:這個百分比實際上在量 check_anchor 的覆蓋,"
+                      "不是在量 v4 的整體品質。")
 
 
 def to_md(rows, stats):
@@ -124,11 +167,28 @@ def to_md(rows, stats):
            ""]
     bad = [r for r in rows if r["verdict"] == "不一致"]
     if bad:
-        out += ["## 不一致明細", "", "| 格 | 口徑 | 桶 | v3 | v4 | 差 |", "|---|---|---|---|---|---|"]
+        expl = [r for r in bad if r["anchor_explains"]]
+        if expl:
+            out += ["## ⚠ 先看這個:不一致率不等於 v4 的品質", ""]
+            out.append(f"{len(expl)}/{len(bad)} 筆不一致的**七桶總差,剛好等於該格 "
+                       "`check_anchor` 的 diff** —— 也就是 v4 對不上資產負債表錨、"
+                       "而 v3 對得上。這些不是「兩套管線各說各話」,是同一件已經被 "
+                       "witness 舉手的事。")
+            out.append("")
+            if len(expl) == len(bad):
+                out.append("**全部**不一致都屬於這一類,所以上面那個百分比實際上在量 "
+                           "`check_anchor` 抓到什麼,不是在量 v4 的整體正確性。"
+                           "要降低它,該做的是把 anchor 對不上的格修好(或擋住),"
+                           "不是重新評估 v4。")
+                out.append("")
+        out += ["## 不一致明細", "",
+                "| 格 | 口徑 | 桶 | v3 | v4 | 差 | anchor 解釋? |",
+                "|---|---|---|---|---|---|---|"]
         for r in bad:
+            mark = f"★ diff {r['anchor_diff']:,}" if r["anchor_explains"] else "—"
             for wb, (x, y) in r["diffs"].items():
                 d = f"{y - x:,}" if isinstance(x, int) and isinstance(y, int) else "—"
-                out.append(f"| {r['key']} | {r['basis']} | {wb} | {x} | {y} | {d} |")
+                out.append(f"| {r['key']} | {r['basis']} | {wb} | {x} | {y} | {d} | {mark} |")
         out.append("")
     only3 = [r for r in rows if r["verdict"] == "只有 v3"]
     if only3:
