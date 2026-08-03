@@ -8,6 +8,11 @@ const esc = (s) => (s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;","
 const api = (p) => fetch("/api/v4/" + p).then(r => { if (!r.ok) throw new Error(r.statusText); return r.json(); });
 const post = (p, b) => fetch("/api/v4/" + p, { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify(b) })
   .then(async r => { const j = await r.json(); if (!r.ok) throw new Error(j.error || r.statusText); return j; });
+// 發布走的是共用端點(不掛 /api/v4/ 前綴)—— 跟 workbench.js 的 runRebuild
+// 是同一支 build.py --write + make_web.py,兩個頁面本來就不准同時跑。
+const rootApi = (p) => fetch("/api/" + p).then(r => { if (!r.ok) throw new Error(r.statusText); return r.json(); });
+const rootPost = (p, b) => fetch("/api/" + p, { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify(b || {}) })
+  .then(async r => { const j = await r.json(); if (!r.ok) throw new Error(j.error || r.statusText); return j; });
 
 async function route() {
   document.querySelectorAll("nav a[data-r]").forEach(a => a.classList.remove("on"));
@@ -27,6 +32,43 @@ async function route() {
 }
 window.addEventListener("hashchange", route);
 route();
+
+// ── 發布狀態列 + 重建鈕 —— plan_v5_統一.md P4-1,跟 workbench.js 共用同一顆
+// 後端按鈕(/api/rebuild),這裡是 v4 這側原本完全沒有的入口。
+document.getElementById("rebuildBtn").onclick = async () => {
+  const btn = document.getElementById("rebuildBtn");
+  const stat = document.getElementById("rebuildstat");
+  if (!confirm("重建會用 facts/ + v4 帳本現有資料重跑 build.py --write + make_web.py,"
+    + "直接覆蓋本機的 data.json 與 site/。\n\n"
+    + "不會 push、不會發布到 GitHub Pages —— 那一步仍要你自己 git push。\n\n"
+    + "確定要重建嗎?")) return;
+  const r = await rootPost("rebuild").catch(e => ({ started: false, why: e.message }));
+  if (!r.started) { stat.textContent = r.why; return; }
+  btn.disabled = true; btn.textContent = "重建中…";
+  stat.textContent = "跑 build.py + make_web.py…";
+  const t = setInterval(async () => {
+    const s = await rootApi("autofill/status").catch(() => null);
+    if (!s) return;
+    if (s.lines.length) stat.textContent = s.lines[s.lines.length - 1].slice(0, 50);
+    if (s.running) return;
+    clearInterval(t);
+    btn.disabled = false; btn.textContent = "⟳ 重建";
+    stat.textContent = s.error
+      ? "重建失敗 —— 詳見伺服器終端機。"
+      : "重建完成 · " + new Date().toLocaleTimeString("zh-TW", { hour12: false });
+  }, 1500);
+};
+
+(async () => {
+  const stat = document.getElementById("rebuildstat");
+  try {
+    const s = await rootApi("publish_status");
+    if (s.stale) {
+      stat.textContent = `⚠ ${s.newer_than_data.join("、")} 比網站新,按重建才會發布`;
+      stat.style.color = "var(--danger)";
+    }
+  } catch (e) { /* 提示而已,不擋主流程 */ }
+})();
 
 // ─────────────────────────── 複核佇列 ───────────────────────────
 
