@@ -879,3 +879,30 @@ def requeue(cell_key):
             os.remove(p)
             removed = True
     return {"removed": removed}
+
+
+def publish_status():
+    """網站是不是比手上的資料舊 —— `plan_v5_統一.md` P4-1「永遠在的發布狀態列」,
+    目前完全沒有這個訊號(2026-08 實測:facts/ 改到 07-31、v4/raw 改到 08-02,
+    網站的 data.json 停在 07-29,畫面上沒有任何地方講)。
+
+    只看 mtime,不重跑 build——這支要快到能常駐在 nav 上。
+    """
+    def _latest(pattern):
+        paths = glob.glob(pattern)
+        return max((os.path.getmtime(p) for p in paths), default=None)
+
+    data_mtime = os.path.getmtime("data.json") if os.path.exists("data.json") else None
+    sources = {
+        "facts": _latest("facts/*.json"),
+        "v4_raw": _latest("v4/raw/*.json"),      # GREEN 直接來自這裡,不必等 ratify
+        "v4_ledger": _latest("v4/ledger/*.json"),  # RATIFIED 的凍結結果
+    }
+    newer = {k: v for k, v in sources.items() if v is not None and
+             (data_mtime is None or v > data_mtime)}
+    return {
+        "data_mtime": data_mtime,
+        "sources": sources,
+        "stale": bool(newer),
+        "newer_than_data": list(newer),
+    }

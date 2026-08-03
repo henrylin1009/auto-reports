@@ -371,6 +371,8 @@ class Handler(SimpleHTTPRequestHandler):
             self._json({"running": _JOB["running"], "lines": _JOB["lines"],
                         "done": _JOB["done"], "error": _JOB["error"],
                         "cancel": _JOB["cancel"]})
+        elif route == "/api/publish_status":
+            self._json(webdata.publish_status())
         elif route == "/api/v4/overview":
             from v4 import ledger
             self._json(ledger.load_all())
