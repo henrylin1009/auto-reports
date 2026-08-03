@@ -1,7 +1,19 @@
 # -*- coding: utf-8 -*-
-"""L2 —— 六道 witness,全部是純函數,零 LLM。
+"""L2 —— witness,全部是純函數,零 LLM。
 
 每道都是「同一個數字的兩個獨立來源必須相等」(docs/plan_v4_dump.md §五)。
+
+**2026-08-03 收斂:五道 → 四道,其中只有兩道是硬閘門。**
+判準是「人拿原始頁對得出來的,不必當閘門」——最終把關是人對著頁面影像複核,
+機器的價值在補上人看不到的那一類(見 `v4/ledger.py:HARD_GATES`):
+
+    提示   check_rowsum / check_anchor / check_page_ref
+           抄錯數字、引錯頁、對不上 BS —— 人翻到那一頁就看得到,不判 RED
+    硬閘門 check_bucket_complete  有列對不到桶 → 錢從七桶無聲消失
+           check_basis            附註成本 vs 明細表取得成本逐桶互證
+           兩者都是「每一列都跟紙上一樣、但產出是錯的」,人對圖看不出來
+
+`check_cross_period`(W4)已整支移除,理由見下方 W4 段落。
 輸入是 `v4/reader.py` 存的 raw record(`v4/raw/{doc}.json`),輸出是覆寫過的
 checks —— **一律不信模型自報的 status**,這裡重算,模型算對算錯都用程式再驗一次。
 
@@ -76,77 +88,17 @@ def check_page_ref(book, pages):
     return {"status": "OK" if found else "MISMATCH", "diff": None}
 
 
-# ─────────────────────────────── W4 ───────────────────────────────
-# 跨文件互證:本期的合計 == 前一期同份文件的合計(另一次 LLM 呼叫、另一份 PDF)。
-# plan_v4_dump.md §五 W4:「本期的前期欄 == 前一份的當期欄 —— 另一份 PDF、另一次呼叫」。
+# ─────────────────────────────── W4(已移除)─────────────────────────
+# `check_cross_period` 於 2026-08-03 整支刪除。它原本要做跨期互證(本期的前期欄
+# == 前一份的當期欄),但完整版需要 prompt 回報 `prior_total`,在那之前程式**每一條
+# 路徑都只回 no_witness** —— 實測 42/42 全是 no_witness,一次都沒有生效過。
 #
-# 實作策略:不改 prompt(不要重跑既有 2 份 raw),改用程式路徑:
-#   doc 格式 `YYYYMM_CODE_KIND` → 按 YYYYMM 排序 → 找同 CODE+KIND 的前一份 doc,
-#   確認其存在(no_witness 若無前一期)。
-# 當 prompt 加入 prior_total 欄之後,這裡改為比對具體數值。
-# 現階段:有前一期 → no_witness + note(避免誤判 GREEN);無前一期 → no_witness。
-# 這樣能正確把「只有三道 witness、前期尚無資料」的格歸 GREY,不混進 GREEN。
-
-def _all_docs_sorted():
-    """v4/raw/ 裡所有已讀過的 doc,依 YYYYMM 昇序。"""
-    paths = sorted(glob.glob(f"{reader.OUT_DIR}/*.json"))
-    return [os.path.basename(p)[:-5] for p in paths]
-
-
-def _prior_doc(doc):
-    """同 CODE_KIND 前一期的 doc 名。找不到回 None。
-    doc 格式:YYYYMM_CODE_KIND(如 202504_5843_AI3)。
-    以 _ 切,取 [0]=期別、[1]=銀行代碼、[2..]=報表類型 組成 identity key。
-    """
-    parts = doc.split("_")
-    if len(parts) < 3:
-        return None
-    code, kind = parts[1], "_".join(parts[2:])
-    identity = f"{code}_{kind}"
-    all_docs = _all_docs_sorted()
-    prior = None
-    for d in all_docs:
-        if d == doc:
-            break
-        dp = d.split("_")
-        if len(dp) >= 3 and f"{dp[1]}_{'_'.join(dp[2:])}" == identity:
-            prior = d
-    return prior
-
-
-def _load_parsed(doc):
-    """讀 v4/raw/{doc}.json 的 parsed 欄位。找不到回 None。"""
-    import json
-    import os
-    path = os.path.join(reader.OUT_DIR, f"{doc}.json")
-    if not os.path.exists(path):
-        return None
-    with open(path, encoding="utf-8") as f:
-        return json.load(f).get("parsed")
-
-
-def check_cross_period(doc, cls):
-    """W4:確認前一期文件存在於 v4/raw/。
-    ─── 現階段為「孤證偵測」版 ───────────────────────────────────────────
-    完整 W4 需要 prompt 回報 prior_total(本期財報印出的前期欄)才能做數值比對。
-    在 prompt 升版之前,這道 witness 只確認「是否有前一期可比」:
-      - 有前一期已讀入 → no_witness + note(知道存在,但尚未取到前期欄數值)
-      - 無前一期(最早一份或尚未讀入) → no_witness(孤證)
-    這樣做使「只有前三道 OK、W4 還沒啟用」的格不會誤跑進 GREEN 區,
-    而是落進 GREY(孤證)—— 符合 plan_v4_dump.md §六的語義。
-    """
-    prior = _prior_doc(doc)
-    if prior is None:
-        return {"status": "no_witness", "diff": None,
-                "note": "最早的一份,或前一期尚未讀入 v4/raw/"}
-    prior_parsed = _load_parsed(prior)
-    if prior_parsed is None:
-        return {"status": "no_witness", "diff": None,
-                "note": f"前一期 {prior} parsed 讀取失敗"}
-    prior_total = (prior_parsed.get(cls) or {}).get("book", {}).get("total")
-    note = (f"前一期 {prior} 存在(total={prior_total:,})" if prior_total is not None
-            else f"前一期 {prior} 存在但 total 為 None")
-    return {"status": "no_witness", "diff": None, "note": note}
+# 留著它有兩個實害:①每一格的 witness 清單多一行永遠不會亮的字;②它的 docstring
+# 宣稱「這樣可以讓只有前三道 OK 的格落進 GREY」,但分流規則其實是 ok>=2 就 GREEN,
+# 於是那句話變成一個沒人驗證過的錯誤描述(實測 0 格 GREY 就是反證)。
+#
+# 要做 W4 就重寫並附上會失敗的測試,不要留一個空殼佔位。
+# 舊實作見 git history(commit 前一版的 _prior_doc / _load_parsed / check_cross_period)。
 
 
 # ─────────────────────────────── W5 ───────────────────────────────
@@ -165,6 +117,44 @@ def check_bucket_complete(book):
     if agg.ok:
         return {"status": "OK", "diff": 0}
     return {"status": "MISMATCH", "diff": None, "note": agg.reason}
+
+
+# ─────────────────────────────── W6 ───────────────────────────────
+def check_basis(book, cost):
+    """逐項是成本口徑時,附註的成本 == 明細表取得成本欄的成本(逐桶比對)。
+
+    **這是真的兩個獨立來源**,符合檔頭那句「同一個數字的兩個獨立來源必須相等」:
+      來源一 附註逐項(扣掉評價調整那一列)—— `book.rows`
+      來源二 重要會計項目明細表的「取得成本」欄 —— `cost.rows`,另一頁、另一張表
+    實測兆豐 202504 Trading 兩邊逐桶完全相同(明細表股票 11,743,395
+    = 附註 4,727,053+1,104,928+5,911,414),那份對得上才敢說口徑判對了。
+
+    ⚠️ **只在 basis=="成本" 且明細表有成本欄時才有話講**,其餘一律 no_witness ——
+    不要為了讓每一格都有一行字而硬湊出恆真的 OK(W4 就是那樣死的)。
+    """
+    if not book or book.get("rows") is None:
+        return {"status": "no_witness", "diff": None}
+    agg = adapter.aggregate(book["rows"], book.get("printed_subtotal"))
+    if not agg.ok:
+        # 桶本身不合格,`check_bucket_complete` 會報,這裡不重複判紅
+        return {"status": "no_witness", "diff": None,
+                "note": "七桶未通過,口徑無從判定(見 check_bucket_complete)"}
+    if agg.basis != "成本":
+        return {"status": "no_witness", "diff": None, "note": "逐項即帳面,無成本可互證"}
+    if not (isinstance(cost, dict) and cost.get("rows") is not None):
+        return {"status": "no_witness", "diff": None,
+                "note": "文件未揭露取得成本欄(半年報常態),無第二來源可比"}
+    agg_c = adapter.aggregate(cost["rows"], cost.get("total"))
+    if not agg_c.ok:
+        return {"status": "no_witness", "diff": None,
+                "note": f"明細表成本欄自身不合格:{agg_c.reason}"}
+    diff = {b: agg.book[b] - agg_c.book[b]
+            for b in agg.book if agg.book[b] != agg_c.book.get(b)}
+    if diff:
+        return {"status": "MISMATCH", "diff": None,
+                "note": "附註成本 vs 明細表取得成本逐桶不符:"
+                        + "、".join(f"{b} 差 {d:,}" for b, d in diff.items())}
+    return {"status": "OK", "diff": 0, "note": "附註成本 == 明細表取得成本(逐桶)"}
 
 
 # ─────────────────────────────── 彙整 ───────────────────────────────
@@ -188,13 +178,16 @@ def run_witness(doc):
 
     out = {}
     for cls in CLASSES:
-        book = (parsed.get(cls) or {}).get("book")
+        cls_data = parsed.get(cls) or {}
+        book = cls_data.get("book")
         out[cls] = {
+            # 提示(人對原始頁自己看得到,不判 RED —— 見 ledger.HARD_GATES)
             "check_rowsum": check_rowsum(book),
             "check_anchor": check_anchor(book, pages),
             "check_page_ref": check_page_ref(book, pages),
-            "check_cross_period": check_cross_period(doc, cls),
+            # 硬閘門(人對原始頁看不出來的那一類)
             "check_bucket_complete": check_bucket_complete(book),
+            "check_basis": check_basis(book, cls_data.get("cost")),
         }
     return out
 

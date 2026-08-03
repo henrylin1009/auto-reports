@@ -87,7 +87,12 @@ def t2_no_null_overwrite():
     #     誠實回 null(逐桶帳面在文件裡真的不存在,同 wide.py:99 的既有規則),
     #     於是多出 4 處「v3/v4 都是 null 而 v2 有值」的衝突——**這是誠實的代價,
     #     不是退步**:先前那 4 個位置放的是成本數字冒充帳面。
-    check("已知 69 處衝突全部被偵測並保留 v2", len(man["conflicts"]) == 69,
+    #   69 → 66(2026-08-03,同日稍晚):witness 五道收成三道。rowsum/anchor/
+    #     page_ref 從硬閘門降成提示(判準:人拿原始頁對得出來的不必當閘門),
+    #     7 格因此從 RED 轉 GREEN 開始發布 → v4 單位 9 → 13、衝突少 3 處。
+    #     **那 7 格沒有靜靜放行**:`ledger.review_queue()` 新增 hint 段列出來,
+    #     test_adapter T11 釘住「會發布但有提示沒過的格一定在清單上」。
+    check("已知 66 處衝突全部被偵測並保留 v2", len(man["conflicts"]) == 66,
           f"實測 {len(man['conflicts'])} 處")
     for c in man["conflicts"]:
         u = prov.get(c["unit"])

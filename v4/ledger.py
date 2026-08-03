@@ -49,8 +49,32 @@ def _basis_of_book(book):
         for r in book["rows"] if isinstance(r, dict)) else "公允"
 
 
+#: **硬閘門 —— 只有這些不過才判 RED。**(2026-08-03 裁示,五道收成三道)
+#:
+#: 判準是一句話:**人拿原始頁對得出來的,不必當閘門;人對不出來的,才必須擋。**
+#: 最終把關是人對著頁面影像複核,機器的價值在於補上人看不到的那一類,
+#: 而不是把人已經會做的事再做一遍、順便製造一堆要人處理的 RED。
+#:
+#:   check_bucket_complete  有列對不到桶 → 那筆錢會從七桶裡無聲消失。
+#:                          數字印在紙上、逐列都對,人打勾放行也看不出來
+#:                          (實測:買入國庫券 16.3 億、CMO 45.4 億)。
+#:   check_basis            成本口徑的七桶被當帳面發布。每一列都跟紙上一樣,
+#:                          錯的是它落在 wide 還是 wide_cost(實測 20 格)。
+#:
+#: 其餘降級成**提示**(照樣算、照樣顯示,但不判 RED):
+#:   check_rowsum   Σ列≠小計 —— 抄錯數字,人對圖一眼就看到
+#:   check_page_ref 合計不在引用頁 —— 引錯頁,人對圖一眼就看到
+#:   check_anchor   小計≠BS錨 —— 人翻得到 BS 那頁自己對
+#:
+#: `check_cross_period` 已整支移除:42/42 全是 no_witness,程式每條路徑都只回
+#: no_witness(在等 prompt 升版報 prior_total)。留著它只是讓每一格的 witness
+#: 清單多一行永遠不會亮的字。要做 W4 就重寫,不要留一個空殼佔位。
+HARD_GATES = ("check_bucket_complete", "check_basis")
+
+
 def _witness_counts(checks):
-    """回傳 (n_ok, n_mismatch, n_no_witness) —— 分流唯一看的東西。"""
+    """回傳 (n_ok, n_mismatch, n_no_witness)。**注意這是全部 witness 的計數,
+    不是分流判準** —— 分流只看 `HARD_GATES`(見 `classify_cell`)。"""
     ok = sum(1 for c in checks.values() if c["status"] == "OK")
     bad = sum(1 for c in checks.values() if c["status"] == "MISMATCH")
     nw = sum(1 for c in checks.values() if c["status"] == "no_witness")
@@ -59,18 +83,27 @@ def _witness_counts(checks):
 
 def classify_cell(doc, cls, checks, book):
     """單一格的分流結果。`checks` 來自 `witness.run_witness`(程式重算過的,
-    不是模型自報的)。"""
+    不是模型自報的)。
+
+    RED  = 有硬閘門不過(人對原始頁看不出來的那一類,見 `HARD_GATES`)
+    GREY = 連 book 都沒有,無從驗起(不是「證據不足」,是「沒有資料」)
+    GREEN= 硬閘門都過了 —— 意思是「機器沒有意見」,**不等於這格一定對**,
+           最終仍由人對著頁面影像複核。提示類 witness 沒過會照樣顯示在畫面上。
+    """
     ok, bad, nw = _witness_counts(checks)
-    if bad > 0:
+    hard_bad = [g for g in HARD_GATES
+                if (checks.get(g) or {}).get("status") == "MISMATCH"]
+    if hard_bad:
         status = "RED"
-    elif ok >= 2:
-        status = "GREEN"
-    else:
+    elif not book or book.get("rows") is None:
         status = "GREY"
+    else:
+        status = "GREEN"
     return {
         "status": status,
         "witnesses": checks,
         "n_ok": ok, "n_mismatch": bad, "n_no_witness": nw,
+        "hard_failed": hard_bad,
         "book": book,
     }
 
@@ -188,20 +221,38 @@ def load_all():
 
 
 def review_queue():
-    """RED 排最前(按最大差額絕對值降冪),再來 GREY。GREEN/RATIFIED 不進來——
-    這是整個 v4 的重點:人只看這個列表,不必逐份點開文件。"""
-    red, grey = [], []
+    """人的工作清單,三段:
+
+        red   硬閘門不過 —— **擋著不發布**,一定要處理
+        grey  連 book 都沒有,無從驗起
+        hint  硬閘門過了(所以會發布),但有提示類 witness 沒過 —— 建議看一眼
+
+    第三段是 2026-08-03 收斂 witness 時補的,而且**非補不可**:那次把
+    rowsum/anchor/page_ref 從閘門降成提示,7 格因此從 RED 變成 GREEN 直接發布。
+    如果佇列只列 RED/GREY,這 7 格會publish 而且**不出現在任何清單上**——
+    沒有人會再看它們一眼。降級的前提是「人對原始頁複核得到」,那就必須有一份
+    清單告訴人要看哪幾格,否則降級等於靜靜放行。
+    """
+    red, grey, hint = [], [], []
     for doc_entry in load_all():
         doc, bank, period = doc_entry["doc"], doc_entry["bank"], doc_entry["period"]
         for cls, c in doc_entry["cells"].items():
-            if c["status"] not in ("RED", "GREY"):
-                continue
+            checks = c.get("witnesses", {}) or {}
             max_diff = max(
-                (abs(w["diff"]) for w in c.get("witnesses", {}).values()
+                (abs(w["diff"]) for w in checks.values()
                  if w.get("diff") is not None), default=0)
             row = {"doc": doc, "bank": bank, "period": period, "cls": cls,
                    "status": c["status"], "max_diff": max_diff,
-                   "witnesses": c.get("witnesses", {})}
-            (red if c["status"] == "RED" else grey).append(row)
+                   "witnesses": checks}
+            if c["status"] == "RED":
+                red.append(row)
+            elif c["status"] == "GREY":
+                grey.append(row)
+            else:
+                soft = [w for w, v in checks.items()
+                        if v.get("status") == "MISMATCH" and w not in HARD_GATES]
+                if soft:
+                    hint.append({**row, "soft_failed": soft})
     red.sort(key=lambda r: -r["max_diff"])
-    return {"red": red, "grey": grey}
+    hint.sort(key=lambda r: -r["max_diff"])
+    return {"red": red, "grey": grey, "hint": hint}

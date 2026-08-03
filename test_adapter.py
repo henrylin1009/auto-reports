@@ -169,6 +169,63 @@ def a9_cost_basis_must_not_publish_as_wide():
           f"{len(wrong)} 格寫錯欄:{wrong[:3]}" if wrong else "全部走 wide_cost")
 
 
+def a10_hard_gates_vs_hints():
+    """**降級的驗收**(2026-08-03 五道收成三道)。這條要釘住兩件事:
+
+    ① 提示類 witness 沒過**不可以**讓格子變 RED —— 否則降級根本沒生效
+    ② 硬閘門沒過**一定要**變 RED —— 否則降級把閘門一起降掉了
+
+    兩件事要一起驗:只驗其中一邊的話,「全部都判 RED」和「全部都不判 RED」
+    各自都能讓單邊測試通過。
+    """
+    from v4 import ledger
+    book = {"rows": GOOD_ROWS, "printed_subtotal": GOOD_SUBTOTAL}
+
+    only_hint_bad = {
+        "check_rowsum": {"status": "MISMATCH", "diff": 999},
+        "check_anchor": {"status": "MISMATCH", "diff": 888},
+        "check_page_ref": {"status": "MISMATCH", "diff": None},
+        "check_bucket_complete": {"status": "OK", "diff": 0},
+        "check_basis": {"status": "OK", "diff": 0},
+    }
+    got = ledger.classify_cell("D", "Trading", only_hint_bad, book)
+    check("T10a 三道提示全掛、硬閘門都過 → 仍然 GREEN(降級真的生效了)",
+          got["status"] == "GREEN", f"status={got['status']}")
+
+    for gate in ledger.HARD_GATES:
+        checks = {k: {"status": "OK", "diff": 0} for k in only_hint_bad}
+        checks[gate] = {"status": "MISMATCH", "diff": None}
+        g = ledger.classify_cell("D", "Trading", checks, book)
+        check(f"T10b 硬閘門 {gate} 不過 → RED(閘門沒被一起降掉)",
+              g["status"] == "RED", f"status={g['status']}")
+
+    check("T10c check_cross_period 已整支移除(不再出現在 run_witness 的輸出裡)",
+          "check_cross_period" not in only_hint_bad
+          and not hasattr(witness, "check_cross_period"))
+
+
+def a11_soft_failures_must_appear_in_queue():
+    """降級之後那些格子**會發布**,所以必須有一份清單讓人去對圖 ——
+    佇列只列 RED/GREY 的話它們會 publish 而且不出現在任何畫面上,
+    那就是把「降級」偷偷變成「靜靜放行」。"""
+    from v4 import ledger
+    q = ledger.review_queue()
+    check("T11a review_queue 有 hint 這一段", "hint" in q)
+    listed = {(r["doc"], r["cls"]) for r in q.get("hint", [])}
+    missing = []
+    for e in ledger.load_all():
+        for cls, c in e["cells"].items():
+            if c["status"] not in ("GREEN", "RATIFIED"):
+                continue
+            soft = [w for w, v in (c.get("witnesses") or {}).items()
+                    if v.get("status") == "MISMATCH" and w not in ledger.HARD_GATES]
+            if soft and (e["doc"], cls) not in listed:
+                missing.append(f"{e['doc']}|{cls}")
+    check("T11b 每個「會發布但有提示沒過」的格都在 hint 清單裡", not missing,
+          f"{len(missing)} 格沒列出來:{missing[:3]}" if missing
+          else f"{len(listed)} 格在清單上")
+
+
 if __name__ == "__main__":
     for fn in (a1_split_matches_first_before_splitting,
                a2_group_split_resolves_generic_plus_group,
@@ -178,7 +235,9 @@ if __name__ == "__main__":
                a6_witness_w5_mismatch_forces_not_green,
                a7_subtotal_rows_filtered_not_treated_as_unknown,
                a8_basis_is_cost_when_valuation_adj_present,
-               a9_cost_basis_must_not_publish_as_wide):
+               a9_cost_basis_must_not_publish_as_wide,
+               a10_hard_gates_vs_hints,
+               a11_soft_failures_must_appear_in_queue):
         fn()
     print(f"\nPASS {PASS}  FAIL {FAIL}")
     sys.exit(1 if FAIL else 0)

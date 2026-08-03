@@ -77,14 +77,19 @@ async function viewQueue() {
   const el = $(`<div>
     <h1>複核佇列</h1>
     <div class="stats">
-      <div class="stat red"><b>${q.red.length}</b><span>RED · 有 witness 打架</span></div>
-      <div class="stat grey"><b>${q.grey.length}</b><span>GREY · 證人不足(孤證)</span></div>
+      <div class="stat red"><b>${q.red.length}</b><span>RED · 硬閘門不過,擋著不發布</span></div>
+      <div class="stat"><b style="color:var(--warn)">${(q.hint||[]).length}</b><span>提示未過 · 會發布,請對圖看一眼</span></div>
+      <div class="stat grey"><b>${q.grey.length}</b><span>GREY · 沒有資料</span></div>
     </div>
     ${q.red.length ? `<h2 style="font-size:13px;margin:16px 0 8px">RED —— 按最大差額排序</h2>
       <table class="q" data-red></table>` : ""}
-    ${q.grey.length ? `<h2 style="font-size:13px;margin:16px 0 8px">GREY —— 抽樣看,不必全看</h2>
+    ${(q.hint||[]).length ? `<h2 style="font-size:13px;margin:16px 0 4px">提示未過 —— 已發布,人工複核</h2>
+      <p class="hint" style="margin:0 0 8px">抄錯數字／引錯頁／對不上 BS 這幾類,人翻到原始頁一眼就看得出來,
+      所以不擋發布(2026-08-03 裁示)。但**一定要有人看過** —— 這份清單就是那份工作清單。</p>
+      <table class="q" data-hint></table>` : ""}
+    ${q.grey.length ? `<h2 style="font-size:13px;margin:16px 0 8px">GREY —— 沒有 book,無從驗起</h2>
       <table class="q" data-grey></table>` : ""}
-    ${!q.red.length && !q.grey.length ? `<p class="muted">目前沒有紅燈或孤證的格子。
+    ${!q.red.length && !q.grey.length && !(q.hint||[]).length ? `<p class="muted">目前沒有需要處理的格子。
       (還沒有資料就會是空的 —— 先用 <code>python3 -m v4.reader &lt;doc&gt;</code> 跑幾份。)</p>` : ""}
   </div>`);
   const mkTable = (rows) => {
@@ -108,6 +113,7 @@ async function viewQueue() {
     return t;
   };
   if (q.red.length) el.querySelector("[data-red]").replaceWith(mkTable(q.red));
+  if ((q.hint||[]).length) el.querySelector("[data-hint]").replaceWith(mkTable(q.hint));
   if (q.grey.length) el.querySelector("[data-grey]").replaceWith(mkTable(q.grey));
   document.getElementById("app").replaceChildren(el);
 }
@@ -202,11 +208,16 @@ async function viewCell(doc, cls) {
   el.querySelector("[data-rows]").replaceChildren(...rows.map(r =>
     $(`<div class="r2"><span class="nm">${esc(r.name)}</span><span class="vl">${num(r.amount)}</span></div>`)));
 
+  // 硬閘門與提示要一眼分得出來 —— 不然「這格 RED 是因為什麼」跟「這格會發布
+  // 但有一道沒過」在畫面上長得一樣,那正是降級之後最容易誤讀的地方。
+  const HARD = ["check_bucket_complete", "check_basis"];
   const wl = el.querySelector("[data-witnesses]");
   Object.entries(c.witnesses || {}).forEach(([name, w]) => {
+    const hard = HARD.includes(name);
     wl.appendChild($(`<div class="w ${w.status}">
       <span class="name">${esc(name)}</span>
       <span class="st">${esc(w.status)}</span>
+      <span class="muted" style="font-size:10px">${hard ? "硬閘門" : "提示"}</span>
       ${w.diff ? `<span class="diff">diff ${num(w.diff)}</span>` : ""}
       ${w.note ? `<span class="muted" style="font-size:11px;margin-left:4px">${esc(w.note)}</span>` : ""}
     </div>`));
