@@ -16,6 +16,7 @@ import glob
 import json
 import os
 
+import buckets
 import config
 from core.webdata import EditError
 
@@ -35,6 +36,17 @@ def _bank_and_kind(doc):
             code = p
     bank = config.BANKS.get(code, code or "?")
     return bank, period
+
+
+def _basis_of_book(book):
+    """這份 book 的逐桶口徑。判準與 `adapter.aggregate()` 完全同一條
+    (有評價調整列 ⇒ 逐項是成本),只是這裡不需要真的攤成七桶。
+    回傳 "成本" / "公允",book 形狀不對時回 None(不猜)。"""
+    if not isinstance(book, dict) or not isinstance(book.get("rows"), list):
+        return None
+    return "成本" if any(
+        buckets.is_adj({"name": r.get("name") or "", "group": r.get("group") or ""})
+        for r in book["rows"] if isinstance(r, dict)) else "公允"
 
 
 def _witness_counts(checks):
@@ -140,13 +152,18 @@ def classify(doc):
         if cls in frozen:
             out[cls] = {"status": "RATIFIED", "book": frozen[cls]["book"],
                          "ratified_by": frozen[cls]["by"], "ratified_at": frozen[cls]["at"]}
-            continue
-        cls_data = parsed.get(cls) or {}
-        book = cls_data.get("book")
-        checks = checks_all.get(cls, {})
-        out[cls] = classify_cell(doc, cls, checks, book)
-        out[cls]["cost"] = cls_data.get("cost")
-        out[cls]["cost_note"] = cls_data.get("cost_note")
+        else:
+            cls_data = parsed.get(cls) or {}
+            book = cls_data.get("book")
+            checks = checks_all.get(cls, {})
+            out[cls] = classify_cell(doc, cls, checks, book)
+            out[cls]["cost"] = cls_data.get("cost")
+            out[cls]["cost_note"] = cls_data.get("cost_note")
+        # 逐桶口徑要讓複核的人看得到 —— 「這格的帳面是 null」不是出錯,是文件
+        # 真的沒揭露逐桶帳面(只印了一整筆評價調整)。畫面上不講的話,人只會
+        # 看到網站少一塊數字卻不知道為什麼。RATIFIED 的格也要算(它一樣會發布)。
+        _b = out[cls].get("book")
+        out[cls]["basis"] = _basis_of_book(_b)
     return out
 
 

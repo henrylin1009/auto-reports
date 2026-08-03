@@ -107,6 +107,68 @@ def a7_subtotal_rows_filtered_not_treated_as_unknown():
     check("T7 小計列有被記錄在 dropped 裡(不是憑空消失)", len(dropped) == 1)
 
 
+def a8_basis_is_cost_when_valuation_adj_present():
+    """**口徑閘門。** 有評價調整列 ⇒ 逐項是成本,那一列是補到公允的差額,
+    而它是**一整筆、不分桶** —— 所以「逐桶帳面」在文件裡不存在。
+
+    這條要是壞了,症狀是「數字全對、閘門全綠、發布的欄位錯」:實測 20 格把成本
+    當帳面發布過(兆豐 202302 Trading 差 5,979,308 = 10.73%)。人對著原始頁
+    逐列核對也看不出來 —— 每一列都跟紙上一模一樣,錯的是它落在 wide 還是
+    wide_cost。這正是「全綠但產出是廢的」那一類,只有這裡擋得住。
+    """
+    clean = adapter.aggregate(GOOD_ROWS, GOOD_SUBTOTAL)
+    check("T8 沒有評價調整列 → 口徑是公允(可以當帳面發布)",
+          clean.ok and clean.basis == "公允", f"basis={clean.basis}")
+
+    # 注入:同一批列多一筆評價調整,小計同步加上去(算術仍然完全對得起來)
+    adj_rows = GOOD_ROWS + [{"group": "", "name": "評價調整", "amount": 40}]
+    adj = adapter.aggregate(adj_rows, GOOD_SUBTOTAL + 40)
+    check("T8 注入評價調整列 → 口徑翻成成本", adj.ok and adj.basis == "成本",
+          f"basis={adj.basis}")
+    check("T8 翻成成本之後,七桶本身仍然有效(不是把資料丟掉)",
+          adj.ok and adj.book["GB"] == 100 and adj.book["公司債"] == 200)
+    check("T8 評價調整沒有被算進七桶(它不是持有的資產)",
+          adj.ok and sum(adj.book.values()) == 350)
+
+
+def a9_cost_basis_must_not_publish_as_wide():
+    """T8 的**發布端**對照:口徑是成本時,`build.rebuild_v4()` 一定要把七桶
+    放進 wide_cost 而不是 wide。分開驗是因為 adapter 判對了、build 用錯欄位
+    的話,錯的數字照樣會上網站(這正是修這個 bug 之前的實況)。
+
+    ⚠️ **判「這格是成本」時不准呼叫 `adapter.aggregate().basis`** —— 那樣寫的話
+    adapter 一壞,這條測試會跟著用同一個壞掉的判斷,永遠自我一致、永遠綠。
+    (實測:第一版就是這樣寫的,注入 bug 之後 T8 紅了、T9 照樣綠。)
+    這裡直接用 `buckets.is_adj` 從原始 rows 獨立判定。
+    """
+    import json
+    import os
+
+    import buckets
+    import build
+    v4v = build.rebuild_v4()
+    wrong = []
+    for key, v in v4v.items():
+        if not v["pass"]:
+            continue
+        doc, cls = key.split("|")
+        p = os.path.join("v4", "raw", f"{doc}.json")
+        if not os.path.exists(p):
+            continue
+        book = ((json.load(open(p, encoding="utf-8")).get("parsed") or {})
+                .get(cls) or {}).get("book")
+        if not isinstance(book, dict) or book.get("rows") is None:
+            continue
+        # 獨立判定:原始 rows 裡有沒有評價調整/備抵損失列
+        is_cost = any(buckets.is_adj({"name": r.get("name") or "",
+                                       "group": r.get("group") or ""})
+                      for r in book["rows"] if isinstance(r, dict))
+        if is_cost and v["wide"] is not None:
+            wrong.append(key)
+    check("T9 沒有任何成本口徑的格把七桶寫進 wide(帳面)", not wrong,
+          f"{len(wrong)} 格寫錯欄:{wrong[:3]}" if wrong else "全部走 wide_cost")
+
+
 if __name__ == "__main__":
     for fn in (a1_split_matches_first_before_splitting,
                a2_group_split_resolves_generic_plus_group,
@@ -114,7 +176,9 @@ if __name__ == "__main__":
                a4_unknown_row_must_fail_not_silently_drop,
                a5_sum_mismatch_must_fail,
                a6_witness_w5_mismatch_forces_not_green,
-               a7_subtotal_rows_filtered_not_treated_as_unknown):
+               a7_subtotal_rows_filtered_not_treated_as_unknown,
+               a8_basis_is_cost_when_valuation_adj_present,
+               a9_cost_basis_must_not_publish_as_wide):
         fn()
     print(f"\nPASS {PASS}  FAIL {FAIL}")
     sys.exit(1 if FAIL else 0)

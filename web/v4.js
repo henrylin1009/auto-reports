@@ -169,6 +169,11 @@ async function viewCell(doc, cls) {
             bs_anchor ${num(book.bs_anchor)} ·
             逐列加總 ${num(rows.reduce((s,r) => s + (r.amount||0), 0))}
           </div>
+          ${c.basis === "成本" ? `<div class="hint" style="color:var(--warn)">
+            ⚠ 逐項是<b>成本</b>口徑(有評價調整列)——評價調整是一整筆、不分桶,
+            所以「逐桶帳面」在這份文件裡不存在。這七桶會發布成 <b>wide_cost</b>,
+            帳面(wide)誠實留 null,不是漏抓。
+          </div>` : ""}
         </div>
         <div class="card" style="margin-top:12px">
           <b>Witness(程式重算,非模型自報)</b>

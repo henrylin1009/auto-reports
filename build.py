@@ -137,23 +137,40 @@ def rebuild_v4():
         for cls, c in doc_entry["cells"].items():
             passed = c.get("status") in ("RATIFIED", "GREEN")
             book_raw = c.get("book") or {}
-            wide_book = None
+            wide_book = book_as_cost = None
+            agg_ok = False
             if passed and book_raw.get("rows") is not None:
                 agg = adapter.aggregate(book_raw["rows"], book_raw.get("printed_subtotal"))
+                agg_ok = agg.ok
                 if agg.ok:
-                    wide_book = agg.book
+                    # **口徑決定它進哪一欄,不是進哪一欄決定口徑。**
+                    # 逐項有評價調整列 ⇒ 這七桶是成本,而評價調整是一整筆不分桶,
+                    # 所以「逐桶帳面」在文件裡不存在 → wide 必須 null
+                    # (與 `wide.py:99`「所有來源逐項皆為成本口徑」同一條規則)。
+                    # 之前這裡無條件寫進 wide,實測 20 格把成本當帳面發布,
+                    # 兆豐 Trading 差 11.82%。七桶本身仍然有效,改走 wide_cost。
+                    if agg.basis == "公允":
+                        wide_book = agg.book
+                    else:
+                        book_as_cost = agg.book
             # RATIFIED 的 book 是 `v4.ledger.ratify()` 凍結進帳本的那份,沒有連帶
-            # 存 cost(`ratify()` 簽名只收 book,見 v4/ledger.py)——RATIFIED 的
-            # wide_cost 目前一律留 None,是既有帳本結構的限制,不是這裡漏接。
+            # 存 cost(`ratify()` 簽名只收 book,見 v4/ledger.py)。
             cost_raw = c.get("cost") or {}
             wide_cost = None
             if passed and cost_raw.get("rows") is not None:
                 agg_c = adapter.aggregate(cost_raw["rows"], cost_raw.get("total"))
                 if agg_c.ok:
                     wide_cost = agg_c.book
+            # 明細表的取得成本欄優先(那是文件直接印的成本);沒有時才用上面推出來的
+            # ——兩者都是成本,但前者是獨立來源,後者是同一份 book 換個口徑解讀。
+            if wide_cost is None:
+                wide_cost = book_as_cost
             verdict[f"{doc}|{cls}"] = {
                 "doc": doc, "class": cls,
-                "pass": passed and wide_book is not None,
+                # `pass` = 這格的閘門過了,**與它落在哪個口徑欄無關**(同 results.py:53
+                # 的 v3 語義)。`eligible()` 會另外檢查該口徑是不是 null,
+                # 並回「該口徑在文件裡不存在」——那句話正是這種格子該有的說法。
+                "pass": passed and agg_ok,
                 "wide": wide_book, "wide_cost": wide_cost,
                 "anchor": book_raw.get("bs_anchor"),
             }

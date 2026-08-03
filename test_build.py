@@ -81,7 +81,13 @@ def t2_no_null_overwrite():
     #     現在能算出來了,3 個「v3 null 但 v2 有值」的衝突因此消失:
     #     2023H1|兆豐|AC|wide、2023H1|富邦|Trading|wide、2024H1|玉山|Trading|wide。
     #     實測:消失 3、新增 0(有腳本可查:diff conf_before.json/conf_after.json)。
-    check("已知 65 處衝突全部被偵測並保留 v2", len(man["conflicts"]) == 65,
+    #   65 → 69(2026-08-03):補上口徑閘門(`adapter.Aggregated.basis`)。v4 原本
+    #     把「逐項成本 + 一整筆評價調整」這種版型的七桶當帳面寫進 wide,實測 20 格
+    #     發布了錯的數字(兆豐 202302 Trading 差 10.73%)。修好之後那些格的 wide
+    #     誠實回 null(逐桶帳面在文件裡真的不存在,同 wide.py:99 的既有規則),
+    #     於是多出 4 處「v3/v4 都是 null 而 v2 有值」的衝突——**這是誠實的代價,
+    #     不是退步**:先前那 4 個位置放的是成本數字冒充帳面。
+    check("已知 69 處衝突全部被偵測並保留 v2", len(man["conflicts"]) == 69,
           f"實測 {len(man['conflicts'])} 處")
     for c in man["conflicts"]:
         u = prov.get(c["unit"])

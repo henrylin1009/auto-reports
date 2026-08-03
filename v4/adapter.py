@@ -81,13 +81,23 @@ def bucket_row(row):
 
 class Aggregated:
     """一份 book 或 cost 攤開成七桶後的結果。`ok=False` 時 `book` 是 None——
-    不合格的格不准硬湊一個部分正確的七桶出來(同一條鐵則見 wide.View)。"""
+    不合格的格不准硬湊一個部分正確的七桶出來(同一條鐵則見 wide.View)。
 
-    def __init__(self, ok, book=None, side=None, others=None, unknown=None, reason=None):
+    `basis` 是**這七桶本身**的口徑,不是這份 record 叫什麼名字:
+      "公允" —— 七桶就是帳面,可以直接發布成 wide
+      "成本" —— 七桶是逐項成本,帳面要靠那一筆評價調整才補得到,而評價調整
+                是**一整筆**、不分桶,所以「逐桶帳面」在文件裡根本不存在。
+                這時 wide 必須是 null(見 `wide.py:99` 同一條規則),
+                七桶要改走 wide_cost。
+    """
+
+    def __init__(self, ok, book=None, side=None, others=None, unknown=None, reason=None,
+                 basis="公允"):
         self.ok, self.book, self.side = ok, book, side
         self.others = others or []
         self.unknown = unknown or []
         self.reason = reason
+        self.basis = basis
 
 
 def aggregate(raw_rows, printed_subtotal):
@@ -97,6 +107,13 @@ def aggregate(raw_rows, printed_subtotal):
     rows, dropped = normalize_rows(raw_rows)
     if not rows:
         return Aggregated(False, reason="rows 為空(可能整份都被當成合計列濾掉了)")
+
+    # **口徑由表自己的算術決定,不由這份 record 叫什麼名字決定**(同 `buckets.basis_of`
+    # 的判準,memory/oracle-basis-mismatch)。有評價調整列 ⇒ 逐項是成本,那一列是補到
+    # 公允的差額。這件事一定要在這裡算:呼叫端拿到七桶之後就分不出它是成本還是帳面了,
+    # 而兩者在網站上是兩個不同欄位(wide / wide_cost),放錯就是發布錯的數字
+    # ——實測 20 格踩過(兆豐 Trading 差 11.82%),見 docs/plan_v5_統一.md。
+    basis = "成本" if any(buckets.is_adj(r) for r in rows) else "公允"
 
     book = {wb: 0 for wb in WIDE_BUCKETS}
     side = {k: 0 for k in SIDE}
@@ -122,16 +139,17 @@ def aggregate(raw_rows, printed_subtotal):
 
     if unknown:
         return Aggregated(False, book=book, side=side, others=others, unknown=unknown,
-                           reason=f"{len(unknown)} 列對不到桶,錢不能悄悄消失")
+                           reason=f"{len(unknown)} 列對不到桶,錢不能悄悄消失", basis=basis)
 
     if printed_subtotal is not None:
         total = sum(book.values()) + sum(side.values())
         diff = total - printed_subtotal
         if diff != 0:
             return Aggregated(False, book=book, side=side, others=others,
-                               reason=f"Σ桶+Σ衍生評價 {total:,} ≠ 小計 {printed_subtotal:,}(差 {diff:,})")
+                               reason=f"Σ桶+Σ衍生評價 {total:,} ≠ 小計 {printed_subtotal:,}(差 {diff:,})",
+                               basis=basis)
 
-    return Aggregated(True, book=book, side=side, others=others)
+    return Aggregated(True, book=book, side=side, others=others, basis=basis)
 
 
 def _to_wide(bucket_name):
