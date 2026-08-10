@@ -17,6 +17,8 @@
 「其他」是表上實際存在的科目,不是「不知道」的收容所 —— 混在一起會讓錯誤
 看起來像正常值。
 """
+import re
+
 from config import DERIVATIVE, VALUATION_ADJ
 
 #: 原名 → config.BUCKETS 之一。
@@ -252,18 +254,55 @@ def norm(s):
 _SYN_N = {norm(k): v for k, v in SYN.items()}
 
 
+#: 尾端的註腳記號。`norm()` 之後才套用,所以括號已經是半形。
+#:
+#: **為什麼是這裡而不是 `norm()`**:見 GENERIC 上方那段 —— norm 是零判斷的機械
+#: 正規化,「哪些後綴是註腳」是判斷。判斷一律留在判斷層,這條就是判斷層的通則。
+#:
+#: **為什麼要有這條**:在此之前,每一個帶註腳的寫法都要單獨收進 SYN
+#: (`金融債券（註二）` `其他（註）` `公司債（附註十一）`…),而註腳編號是每家
+#: 銀行每年自己編的,永遠收不完 —— 那是打版,不是通用解。實測(2026-08-10):
+#: `facts/` 1789 列中 60 列分不到桶,這一條救回 **32 列**、零個新 SYN 條目;
+#: `review/queue.jsonl` 138 筆待人審中有 **23 筆**是這一類。
+#:
+#: 剝的是**記號**不是名稱:`公司債（附註十一）` 的科目就是公司債,括號裡的是
+#: 指向附註的頁碼指標。反例(不剝):`受益證券 CMO` 的 CMO 是名稱的一部分。
+_FOOTNOTE = re.compile(r"\((?:附註|註)[^)]*\)$|[-－—]\s*註?$")
+
+
+def _strip_footnote(n):
+    """反覆剝到不再變(`股票-註` 這種會連著兩個記號)。輸入須已 norm()。"""
+    prev = None
+    while prev != n:
+        prev, n = n, _FOOTNOTE.sub("", n).strip()
+    return n
+
+
 def bucket(row):
     """rows 的一列 → 桶名,認不得回 None。
 
     通稱(「其他」)看所在段落;其餘一律看名字 —— 段落**不准覆蓋**具名科目,
     否則衍生段裡的「政府公債」會被整段吃掉。
+
+    查不到時**再剝一次註腳記號重查**(`_FOOTNOTE`)。只在查不到時才剝,
+    所以已收錄的寫法行為完全不變 —— 這條只會把原本的 None 變成桶名,
+    不會把既有的桶名改掉。
     """
     n = norm(row["name"])
     if n in GENERIC:
         g = GROUP_SYN.get(norm(row.get("group") or ""))
         if g:
             return g
-    return _SYN_N.get(n)
+    b = _SYN_N.get(n)
+    if b is not None:
+        return b
+
+    n2 = _strip_footnote(n)
+    if n2 == n:
+        return None
+    if n2 in GENERIC:
+        return GROUP_SYN.get(norm(row.get("group") or ""))
+    return _SYN_N.get(n2)
 
 
 _PEND_N = {norm(k) for k in PENDING}
