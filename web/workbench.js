@@ -128,11 +128,14 @@ async function route() {
   try {
     if (r === "buckets") await viewBuckets();
     else if (r === "queue") await viewQueue();
-    // v4 讀取/複核不在這裡 —— 那是 /v4.html 自己的一套(2026-08-03 收成一份,
-    // 原本 workbench.js 跟 v4.js 各打一份同樣的 /api/v4/* 是重複實作)。
+    // v4 讀取/複核的實作仍在 /v4.html(2026-08-03 收成一份,原本兩邊各打一份
+    // 同樣的 /api/v4/*)。2026-08-10 起它從一級導覽降成「資料」頁底下的入口
+    // (`#/v4`,用 iframe 掛)—— 它跟資料頁做的是同一件事(把文件變成可發布的
+    // 數字),只是走另一條管線,並排在最上層會讓人以為是兩個功能領域。
     // 從網址進來(或 hashchange)算一次新的導覽 —— 重拉,免得看到過期的內容。
     else if (r === "doc") await viewDoc(decodeURIComponent(parts[1] || ""), { reload: true });
     else if (r === "analysis") await viewAnalysis();
+    else if (r === "v4") viewV4();
     else await viewMatrix();
   } catch (e) {
     // `_checked()` 已經彈過紅字條——這裡只負責把畫面從「載入中…」
@@ -146,6 +149,18 @@ async function route() {
 // 不是真融合 —— 分析頁的 JS 跟這裡是兩個世界,互相看不到對方的變數。
 // 換到這個好處是分析頁完全不用改,壞處是「點分析頁某格跳到後台去改」做不到,
 // 見 docs/plan_ui_unify.md 步驟 5。
+// ── v4 複核:同樣用 iframe 掛(理由同 viewAnalysis)────────────────────────
+// iframe 裡的 web/appnav.js 會自己不畫全站導覽列(它判 window.self !== window.top),
+// 所以不會出現兩條導覽疊著;v4 自己的三個分頁(佇列/比較表/讀取)是第三層,留著。
+function viewV4() {
+  nav("v4");
+  document.getElementById("app").replaceChildren($(`
+    <div style="margin:-16px;height:calc(100vh - 42px)">
+      <iframe src="/v4.html" title="v4 複核台"
+              style="width:100%;height:100%;border:0;display:block"></iframe>
+    </div>`));
+}
+
 function viewAnalysis() {
   nav("analysis");
   const el = $(`<div style="margin:-16px;height:calc(100vh - 42px)">
@@ -171,6 +186,7 @@ async function viewMatrix() {
         `<button data-b="${esc(b)}" class="${b === S.basis ? "pri" : ""}">${esc(b)}</button>`).join("")}</span>
       <a href="#/buckets" class="tag" style="text-decoration:none;margin-left:8px">分桶檢視</a>
       <a href="#/queue" class="tag" style="text-decoration:none;margin-left:4px">裁示台</a>
+      <a href="#/v4" class="tag" style="text-decoration:none;margin-left:4px">v4 複核</a>
     </h1>
     <div class="stats">
       <div class="stat"><b>${stats.done}</b><span>已抄</span></div>

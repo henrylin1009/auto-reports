@@ -14,13 +14,15 @@
   if (window.self !== window.top) return;
 
   //: 一級項目 = 「去哪一頁」。順序照使用頻率由讀者往操作者排:
-  //  分析(給人看的成品)→ 模擬器(探索)→ 資料(抄列)→ 複核(v4)。
+  //  分析(給人看的成品)→ 模擬器(探索)→ 資料(把文件變成數字)。
   //  **頁內的分頁不放這裡** —— 那是第二層,見 tokens.css 的 .appnav 註解。
   var ITEMS = [
     { href: "/workbench.html#/analysis", label: "分析",  match: /^\/workbench\.html$/, hash: "#/analysis" },
     { href: "/sim.html",                 label: "模擬器", match: /^\/sim\.html$/ },
     { href: "/workbench.html#/matrix",   label: "資料",  match: /^\/workbench\.html$/, hash: "#/matrix" },
-    { href: "/v4.html",                  label: "複核",  match: /^\/v4\.html$/ },
+    // v4 複核**不在這裡**(2026-08-10)。它跟「資料」做的是同一件事——把文件變成
+    // 可發布的數字,只是走另一條管線——並排在最上層會被當成兩個獨立的功能領域。
+    // 入口收在資料頁的 `#/v4`。/v4.html 仍可直接開,那時這條導覽照常顯示。
   ];
 
   var host = document.getElementById("appnav");
@@ -60,9 +62,15 @@
   function mark() {
     [].forEach.call(links.children, function (a) {
       var re = new RegExp(a.dataset.match);
-      var on = re.test(path) &&
-        (!a.dataset.hash || location.hash === a.dataset.hash ||
-          (a.dataset.hash === "#/analysis" && !location.hash));
+      // 「資料」底下還有子路由(#/buckets #/queue #/v4 #/doc/…),它們都算在資料裡 ——
+      // 點進分桶檢視卻看到整條導覽都沒亮,會讓人以為自己離開了這個 app。
+      // 規則:分析只認 #/analysis(與空 hash,那是預設頁);同頁的其餘 hash 都歸資料。
+      var h = location.hash;
+      var on = re.test(path) && (!a.dataset.hash
+        ? true
+        : a.dataset.hash === "#/analysis"
+          ? (h === "#/analysis" || !h)
+          : (h !== "#/analysis" && !!h) || h === a.dataset.hash);
       a.classList.toggle("on", on);
     });
   }

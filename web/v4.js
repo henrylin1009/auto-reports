@@ -35,7 +35,11 @@ route();
 
 // ── 發布狀態列 + 重建鈕 —— plan_v5_統一.md P4-1,跟 workbench.js 共用同一顆
 // 後端按鈕(/api/rebuild),這裡是 v4 這側原本完全沒有的入口。
-document.getElementById("rebuildBtn").onclick = async () => {
+// ⚠️ 這頁被「資料」頁用 iframe 掛著時沒有全站導覽列(web/appnav.js 在 iframe 裡
+//    不畫),也就沒有重建鈕 —— 外層的殼有一顆。少了它不該讓整支 v4.js 停在這裡,
+//    後面的 route() 還沒跑,症狀會是整頁卡在「載入中…」。
+const _rebuildBtn = document.getElementById("rebuildBtn");
+if (_rebuildBtn) _rebuildBtn.onclick = async () => {
   const btn = document.getElementById("rebuildBtn");
   const stat = document.getElementById("rebuildstat");
   if (!confirm("重建會用 facts/ + v4 帳本現有資料重跑 build.py --write + make_web.py,"
