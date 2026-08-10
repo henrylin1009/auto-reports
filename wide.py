@@ -94,6 +94,17 @@ def pick(recs, basis):
                 if all(c in row["cols"] for row in r["rows"]):
                     return r, c
         for r in recs:
+            # **`total_col` 是成本欄的 record 不准當帳面用。** `basis_of()` 只看
+            # 「有沒有評價調整列」,而成本明細表本來就沒有那一列 → 它回「公允」,
+            # 於是「取得成本」那一欄會被當成帳面發布。
+            #
+            # 既有 v3 資料踩不到(實測 0 格):v3 的明細表 record 同時抄了
+            # 「公允價值總額」欄,上面 BOOK_COLS 那圈就先接走了。會踩到的是
+            # v4 那種「附註(帳面)+明細表(成本)分成兩份 record」的形狀 ——
+            # 附註是成本口徑時第一圈跳過它,第二圈就撿到成本明細表。
+            # 實測 202504_5843_AI3|OCI 等 10 格,成本七桶被當帳面。
+            if r["total_col"] in COST_COLS:
+                continue
             if buckets.basis_of(r) == "公允":
                 return r, r["total_col"]
         return None, "所有來源逐項皆為成本口徑,逐桶帳面在文件裡不存在"

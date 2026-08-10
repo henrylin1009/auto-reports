@@ -13,6 +13,7 @@
     有列對不到桶  → 不合格(那筆錢不准悄悄從發布數字裡消失)
     Σ桶 ≠ 小計    → 不合格
 """
+import datetime
 import re
 
 import buckets
@@ -185,3 +186,122 @@ def aggregate(raw_rows, printed_subtotal):
 def _to_wide(bucket_name):
     import wide
     return wide.BUCKET_MAP.get(bucket_name)
+
+
+# ── v4 raw → facts/ records ────────────────────────────────────────────────
+#
+# A-1(docs/plan_工具化.md 階段 A):**這是兩條管線會合的那個接縫。**
+# 在此之前 `v4/reader.py` 的產出停在 `v4/raw/`,進不了 `facts/` —— 於是同一件事
+# 有兩個事實庫、兩個 ratify、兩套人審介面,每條規則都要做兩次。實例:用 claude
+# 重抽 `202502_5836` 之後,gemini 那份壞資料還留在 `facts/`,待辦也清不掉。
+#
+# ⚠️ **本檔頭那段「不走 wide.pick()」的顧慮已被推翻,不是被忽略。**
+#     原文說「AC 的 book 沒有評價調整列,硬套 basis_of() 會被誤判成成本」。
+#     實測(202502_5836 AC):book 的 rows 含「減:備抵損失 -543,513」,
+#     逐項是**未扣備抵的毛額**、合計才是淨額,備抵一整筆沒分攤到桶 ——
+#     所以「AC 逐桶帳面」在文件裡**真的不存在**,`basis_of()` 判成本是對的。
+#     (memory/oracle-basis-mismatch、2026-08-10 完成度普查同結論。)
+#     `aggregate()` 那條路徑照舊不受影響,本段只新增一個輸出形狀。
+
+_COST_COL = "取得成本"          # 必須是 config.COST_COLS 的成員
+
+
+def _split_for_facts(raw_row):
+    """把 `bucket_row()` 那個「整條查不到才拆前綴」的決定**固化進 record**。
+
+    ⚠️ **這是 A-1 最容易踩的坑,本檔 `is_adjustment_row()` 的警告講的就是它。**
+    `bucket_row()` 會拆前綴,但下游的 `buckets.basis_of()` 走的是
+    `buckets.is_adj()` —— **不拆**。所以若把模型原始的黏合名字
+    (`債務工具-評價調整`)直接寫進 `facts/`,`basis_of()` 認不出那是評價調整列,
+    口徑就從「成本」翻成「公允」,整格成本七桶會被當帳面發布。
+
+    實測(未修前):`202104_5843` `202304_5841` `202504_5843` 的 Trading/OCI
+    帳面因此憑空出現數字,而 v4 那條路徑判定它們是成本。
+    `202504_5843_AI3|OCI` 正是本檔警告裡點名的那一格。
+
+    所以寫進 `facts/` 的名字必須**已經是 `bucket_row()` 看到的那個樣子**,
+    下游任何只查 `buckets.bucket()`/`is_adj()` 的地方才會得到一致答案。
+    """
+    row = {"name": (raw_row.get("name") or "").strip(),
+           "group": (raw_row.get("group") or "").strip() or None}
+    if buckets.bucket(row) is not None:
+        return row                       # 整條查得到,不動它
+    g, n = split_row_name(raw_row.get("group"), raw_row.get("name"))
+    if (g, n) != (row["group"] or "", row["name"]) and \
+            buckets.bucket({"name": n, "group": g}) is not None:
+        return {"name": n, "group": g or None}
+    return row                           # 拆了也查不到 ⇒ 保留原樣進人審
+
+
+def _date_col(bs_date):
+    """`114/06/30` → `114年6月30日`。認不得就原樣回傳(當成一個欄名用)。"""
+    m = re.fullmatch(r"\s*(\d{2,3})[/-](\d{1,2})[/-](\d{1,2})\s*", bs_date or "")
+    return f"{int(m[1])}年{int(m[2])}月{int(m[3])}日" if m else (bs_date or "合計")
+
+
+def to_facts_records(doc, cls, parsed_cls, bs_date, model=None, at=None):
+    """v4 的一格(`parsed[cls]`)→ `facts/` 的 records(0~2 份)。
+
+    **book 與 cost 各成一份 record**,因為 `facts[key]` 本來就是 list,而
+    `wide.pick()` 就是設計成從多份來源裡挑出符合該口徑的那一份。
+
+    兩個欄名不是隨便取的,它們是 `wide.pick()` 的兩個鉤子:
+
+    · **book 用日期欄名,絕不可以叫「帳面金額」。** 叫帳面金額會命中
+      `pick()` 的 `BOOK_COLS` 分支、**繞過 `basis_of()`**,於是 AC 那種
+      「逐項毛額 + 一整筆備抵」的表會產出一個不存在的逐桶帳面。用日期欄名
+      才會走 `basis_of()`,由「有沒有評價調整列」決定 —— 那是對的判準。
+
+    · **cost 的 `printed_totals` 必須含 `取得成本` 這個鍵。** 那是 `pick()`
+      成本口徑第二分支唯一的鉤子(第一分支要 `basis_of()==成本`,而明細表
+      的成本欄通常沒有評價調整列,走不到)。
+
+    回傳的 record **不含 `basis` 欄** —— 該欄位在 `buckets.basis_of()` 已停用
+    (agent 自由敘述沒法機械驗證)。口徑一律由表自己算。
+    """
+    stamp = {"via": "v4/reader", "model": model or "claude",
+             "at": at or datetime.datetime.now().isoformat(timespec="minutes")}
+
+    def _rec(sub, col, kind, side, total):
+        """一份 record,湊不齊就回 None。
+
+        **金額是 None ⇒ 不要那個欄鍵,不要填 0。** `facts.validate()` 要求
+        `cols[col]` 是 int,而 `wide.view()` 的語意本來就是「缺欄 = 未揭露,
+        不是 0」(兆豐明細表 5 種衍生無取得成本)。填 0 會把「沒揭露」講成
+        「這桶是零」,那是兩件事。
+
+        **`printed_totals` 沒有整數合計就整個省略。** 它是 `wide.pick()` 認
+        成本口徑的鉤子;沒有印出來的合計就驗不到,不給鉤子讓它落空是**對的** ——
+        `pick()` 的理由字串「明細表也沒抄下取得成本欄的合計(驗不到)」講的就是
+        這件事。硬塞一個自己加總出來的數字等於偽造文件上沒有的東西。
+        """
+        rows = []
+        for r in sub.get("rows") or []:
+            v = r.get("amount")
+            cols = {} if isinstance(v, bool) or not isinstance(v, int) else {col: v}
+            nm = _split_for_facts(r)
+            rows.append({"name": nm["name"], "group": nm["group"], "cols": cols})
+        if not any(col in r["cols"] for r in rows):
+            return None          # 沒有任何一列有值 → total_col 掛不上,不成立
+        rec = {"doc": doc, "class": cls,
+               "source_kind": kind, "source_page": sub.get("page"),
+               "total_col": col, "printed_total": total, "rows": rows,
+               "_by": dict(stamp, basis_side=side)}
+        if not isinstance(total, bool) and isinstance(total, int):
+            rec["printed_totals"] = {col: total}
+        return rec
+
+    out = []
+    book = (parsed_cls or {}).get("book") or {}
+    if book.get("rows"):
+        r = _rec(book, _date_col(bs_date), "附註", "book",
+                 book.get("printed_subtotal"))
+        if r:
+            out.append(r)
+
+    cost = (parsed_cls or {}).get("cost") or {}
+    if cost.get("rows"):
+        r = _rec(cost, _COST_COL, "明細表", "cost", cost.get("total"))
+        if r:
+            out.append(r)
+    return out
