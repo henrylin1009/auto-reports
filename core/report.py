@@ -15,8 +15,8 @@
     - holdout(保留集永不進報表)
     - 算術三段恆等式不成立(該格/該口徑在文件裡不存在,或六道檢查沒過)
 
-`cell_of`/`to_yi` 是從 `bridge_v3.py` 搬過來的(§4.3 退場順序:這兩個函式
-搬完 `bridge_v3.py` 才能刪,C4 就是搬的時間點)。
+`cell_of`/`to_yi` 從 `bridge_v3.py` 搬過來(§4.3),`bridge_v3.py` 已於
+2026-08-10 刪除 —— 這裡是它們唯一的家,`build.py` 也從這裡拿。
 """
 import datetime
 import glob
@@ -27,6 +27,7 @@ import subprocess
 
 import facts as facts_mod
 import holdout as holdout_mod
+import locate
 from config import BANKS, WIDE_BUCKETS
 from core import decision_store, publish_gate
 from core import reconcile as reconcile_mod
@@ -35,20 +36,48 @@ OUT_DIR = "out/report"
 BASIS_NAMES = {"wide": "帳面", "wide_cost": "成本"}
 
 
-# ── 搬自 bridge_v3.py(§4.3:搬完才能刪 bridge_v3.py)───────────────────
+# ── 發布網格的座標:doc key → (格, 類別) ────────────────────────────────
 
 def to_yi(v):
     """仟元 → 億(1 億 = 100,000 仟元),與既有 wide 一致。"""
     return None if v is None else round(v / 100000)
 
 
-def cell_of(key):
-    """`202404_5843_AI3|OCI` → (`2024H2|兆豐`, `OCI`) 或 None(非個體報表)。"""
+#: 報表口徑(個體/合併)→ 期別碼 → 網格標籤。
+#: **兩種口徑的期別本身就不同**:個體只有半年報(02)與年報(04),合併有四季
+#: (01-04)。混在同一張網格會長出一整排永遠空著的季報欄,所以分成兩張表
+#: (`core/webdata.py:199`,使用者 2026-07-29 裁示)。
+PERIOD_LABELS = {
+    locate.SOLO: {"02": "H1", "04": "H2"},
+    locate.CONSOLIDATED: {"01": "Q1", "02": "Q2", "03": "Q3", "04": "Q4"},
+}
+
+#: 報表口徑 → (帳面表, 成本表)。注意這裡有**兩個不同的「口徑」**互相正交:
+#: 個體/合併決定進哪一張網格,帳面/成本決定進哪一欄,所以是 2×2 四張表。
+TABLES = {
+    locate.SOLO: ("wide", "wide_cost"),
+    locate.CONSOLIDATED: ("wide_consol", "wide_cost_consol"),
+}
+
+
+def cell_of(key, basis):
+    """`(202404_5843_AI3|OCI, 個體)` → (`2024H2|兆豐`, `OCI`);認不得回 None。
+
+    ⚠️ **`basis` 要由呼叫端從封面判好傳進來(`locate.basis_of`),不准去看 doc
+    名字裡的 AI 編號。** `resolve.py` 抓檔一律存成 `_AI3`,而合併的舊檔叫
+    `_AI1` —— AI 編號各家各年不一,早就不帶意義(`core/webdata.py:203`)。
+    舊版這裡寫 `kind != "AI3"` 就回 None,後果是**整張合併網格永遠是空的**,
+    而「永遠空的」跟「還沒抄」在畫面上長得一模一樣,沒有任何檢查抓得到。
+
+    `basis` 是必填、沒有預設值:個體與合併的 `02`/`04` 都是合法期別碼
+    (個體是 H1/H2、合併是 Q2/Q4),少了它就分不出來,給預設值等於猜。
+    """
     doc, cls = key.split("|")
-    yr, per, code, kind = doc[:4], doc[4:6], doc[7:11], doc[12:]
-    if kind != "AI3" or code not in BANKS or per not in ("02", "04"):
+    yr, per, code = doc[:4], doc[4:6], doc[7:11]
+    label = PERIOD_LABELS.get(basis, {}).get(per)
+    if code not in BANKS or label is None:
         return None
-    return f"{yr}{'H1' if per == '02' else 'H2'}|{BANKS[code]}", cls
+    return f"{yr}{label}|{BANKS[code]}", cls
 
 
 # ── sha256 —— manifest 的可追溯清單要用 ─────────────────────────────────
@@ -79,9 +108,15 @@ def _decision_id(dec):
 
 # ── 建 report ────────────────────────────────────────────────────────────
 
-def build_report(cells, decisions_dir=None, taxonomy_dir="taxonomy"):
+def build_report(cells, decisions_dir=None, taxonomy_dir="taxonomy", bmap=None):
     """→ (report, manifest)。`cells` 是 `facts.load()` 的完整輸出
-    (含 holdout——本函式自己切,呼叫端不用先切)。"""
+    (含 holdout——本函式自己切,呼叫端不用先切)。
+
+    `bmap` 是 `{doc: 個體/合併}`(見 `fill.basis_map()`);不給就現查。
+    """
+    if bmap is None:
+        import fill
+        bmap = fill.basis_map()
     train, leak = holdout_mod.split(cells)
     verdict, audit = reconcile_mod.verify_all(train)
 
@@ -90,9 +125,9 @@ def build_report(cells, decisions_dir=None, taxonomy_dir="taxonomy"):
     coverage = {}  # "basis|bank_period|cls|bucket" → [decision_id, ...]
 
     for key, v in sorted(verdict.items()):
-        got = cell_of(key)
+        got = cell_of(key, bmap.get(key.split("|")[0]))
         if got is None:
-            continue  # AI1 合併報表,v3 尚無網站格映射,不在本報表範圍
+            continue  # 口徑判不出來(封面沒讀到)或不是五家銀行的報表
         cell, cls = got
         recs = train[key]
         status = publish_gate.coarse_status(key, recs, decisions_dir, taxonomy_dir)
@@ -120,10 +155,11 @@ def build_report(cells, decisions_dir=None, taxonomy_dir="taxonomy"):
                 # 用 "|" join 會撞出歧義。用 unit separator(\x1f)避開資料裡會出現的字元。
                 coverage["\x1f".join((basis_cn, cell, cls, b))] = list(dec_ids)
 
-    archived = sum(1 for k in train if cell_of(k))
-    publishable = sum(1 for k in train if cell_of(k)
-                      and publish_gate.coarse_status(k, train[k], decisions_dir,
-                                                     taxonomy_dir)["publishable"])
+    _mapped = [k for k in train if cell_of(k, bmap.get(k.split("|")[0]))]
+    archived = len(_mapped)
+    publishable = sum(1 for k in _mapped
+                      if publish_gate.coarse_status(k, train[k], decisions_dir,
+                                                    taxonomy_dir)["publishable"])
 
     manifest = {
         "run_id": datetime.datetime.now().strftime("%Y%m%dT%H%M%S"),

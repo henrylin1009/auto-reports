@@ -153,13 +153,31 @@ def aggregate(raw_rows, printed_subtotal):
         return Aggregated(False, book=book, side=side, others=others, unknown=unknown,
                            reason=f"{len(unknown)} 列對不到桶,錢不能悄悄消失", basis=basis)
 
-    if printed_subtotal is not None:
-        total = sum(book.values()) + sum(side.values())
-        diff = total - printed_subtotal
-        if diff != 0:
-            return Aggregated(False, book=book, side=side, others=others,
-                               reason=f"Σ桶+Σ衍生評價 {total:,} ≠ 小計 {printed_subtotal:,}(差 {diff:,})",
-                               basis=basis)
+    # **沒有可對帳的小計 ⇒ 不合格。**(2026-08-10 加)原本這裡是
+    # `if printed_subtotal is not None:` —— 沒有小計就整段跳過、直接回 ok,
+    # 等於「沒東西可以檢查」被當成「檢查過了」。
+    #
+    # 這條擋得到的實例:玉山 202104 OCI 的取得成本欄,reader 正確判定債務工具
+    # 那 5 項填的是**攤銷後成本不是取得成本**,依規則填 null 只抄了 2 列股票,
+    # 並註明表上的合計 312,625,010 混了兩種口徑、不能當比對基準(見該份
+    # `cost_note`)。少了 5 個債券桶的 rows 照樣加得出七桶 —— 只是那 5 桶全是 0。
+    # 於是網站上玉山 2021H2 OCI 的成本是「公債 0 / 公司債 0 / 金融債 0」,
+    # 而同一格帳面是 2,947 億。**沒有任何其他檢查抓得到**,因為能抓的那一個
+    # (跟小計對)正好就是不存在的那個。
+    #
+    # 實測影響:v4 目前 87 筆 book 全都有小計,不受影響;cost 少 4 筆
+    # (富邦 202004/202104 Trading、玉山 202104 OCI、國泰 202304 Trading)。
+    if printed_subtotal is None:
+        return Aggregated(False, book=book, side=side, others=others, basis=basis,
+                           reason="沒有可對帳的小計 —— 少抄幾列照樣加得出七桶,"
+                                  "缺的桶會靜靜變成 0")
+
+    total = sum(book.values()) + sum(side.values())
+    diff = total - printed_subtotal
+    if diff != 0:
+        return Aggregated(False, book=book, side=side, others=others,
+                           reason=f"Σ桶+Σ衍生評價 {total:,} ≠ 小計 {printed_subtotal:,}(差 {diff:,})",
+                           basis=basis)
 
     return Aggregated(True, book=book, side=side, others=others, basis=basis)
 

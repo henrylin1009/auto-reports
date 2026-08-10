@@ -4,6 +4,8 @@
     python3 fill.py next               印出一格待抄的候選頁,或明確的下一步指示
     python3 fill.py submit <path>      驗收剛寫好的 rows,PASS / RETRY / REJECT 三選一
     python3 fill.py status             已完成 / 待抄 / 人審佇列 三行
+    python3 fill.py revalidate         用現在的推導/驗收邏輯重跑 rejected/blocked 既有的
+                                        submitted.records,不呼叫模型(邏輯改版後撿現成的)
 
 **狀態全在檔案裡,這支程式不持有任何跨呼叫狀態**:正在抄哪一格、抄到第幾級擴張
 記在 `work/pending.json`;過關的進 `facts/`;拒收的進 `work/rejected/`。三者
@@ -26,7 +28,9 @@ import buckets
 import facts
 import locate
 import pipeline
+import section
 import transcribe
+from core import derive
 
 WORK_DIR = "work"
 PENDING = f"{WORK_DIR}/pending.json"
@@ -34,21 +38,40 @@ REJECTED_DIR = f"{WORK_DIR}/rejected"
 BLOCKED_DIR = f"{WORK_DIR}/blocked"
 PROPOSALS = f"{WORK_DIR}/proposals.jsonl"
 INDEX = f"{WORK_DIR}/index.json"
+#: 重抄前的舊版快照(`plan_web_usable.md` P3)。不進版控——git 才是最終稽核
+#: 軌跡,這裡只是給「還沒 commit 就手滑重抄」一個救回來的機會。
+HISTORY_DIR = f"{WORK_DIR}/history"
+
+#: 系統推導的欄位(`core/derive.py`,`docs/plan_schema_derive.md` D1)——
+#: **不跟模型要**,填了也會被推導層整個覆蓋。原因:213 份既有 record 實測
+#: 「哪一欄的列和 == 錨」全部唯一命中,系統自己算比問模型準
+#: (25 格拒收裡 22 格死在這兩個欄位上,模型在它真正的工作——名字、金額——
+#: 幾乎不出錯)。跟模型要的欄位清單見 `MODEL_REQUIRED_REC`。
+#:
+#: `source_page` 不在這裡:一格常有 2+ 個候選頁(實測 49/82 格 candidate pages ≥ 2,
+#: `pdf_cache/*.pdf` 抽樣),同一格的「附註」與「明細表」兩份 record 可能落在不同
+#: 候選頁 —— 系統知道候選頁**集合**,不知道某一份 record 具體是哪一頁,這件事
+#: 仍然只有讀得懂那幾頁的人/模型能回答。
+DERIVED_FIELDS = ("total_col", "printed_total")
+#: 跟模型要的必要欄位——`facts.REQUIRED_REC` 減去系統自己填的(`doc`/`class`
+#: 由本檔的 `_key()` 呼叫端補、`total_col`/`printed_total` 由推導層補)。
+MODEL_REQUIRED_REC = tuple(
+    f for f in facts.REQUIRED_REC if f not in ("doc", "class") + DERIVED_FIELDS)
 
 RULES = """## 事實層規矩(違反會被退回)
 - name 存表上印的原名 —— 不正規化、不翻譯、不分桶、不改錯字
 - cols 的 key 存原欄名(「取得成本」「公允價值總額」「帳面金額」…)
-- 缺的欄不放 key,不准補 0 —— 未揭露與 0 是不同的事實。
-  **「印了 `-`」怎麼記,看是哪一欄**(實測 88 列缺欄,這條分得開):
-    · **total_col(合計欄)印 `-` → 記 0。** 那一欄每列都必須有,缺了第 1 道會擋
-      (實測訊息:「有列缺合計欄『114年12月31日』:['政府公債']」)。
-    · **其他欄空白或 `-` → 不放 key。** 絕大多數缺欄根本不是零,是「這一列本來就
-      沒有那個欄位」(衍生工具無取得成本、股票無面額),補 0 會製造假資料。
+- **缺的欄一律不放 key,不准補 0**(不分是不是合計欄)——未揭露與 0 是不同的
+  事實。絕大多數缺欄根本不是零,是「這一列本來就沒有那個欄位」(衍生工具無
+  取得成本、股票無面額),補 0 會製造假資料。**哪一欄是合計欄由系統事後推導,
+  推導出來之後系統會自己把那一欄缺的值補成 0**(因為那一欄的列和已經被錨
+  確認過)——你不必先猜哪一欄是合計欄再決定要不要補 0,一律不補就對了。
 - 小計 / 合計不是資料列,不進 rows
-- **比較年度那一欄照抄**(如「113年12月31日」),不要只抄當期。
-  它是唯一能看出「同一列被改名」的東西 —— 兆豐把「受益憑證」改成
-  「不動產投資信託受益證券」、玉山把「上市（櫃）股票」改成「股票及基金」,
-  兩次都是靠比較欄金額逐字相同才確認標的沒變。
+- **只抄當期那一欄,比較年度欄不要抄。** 它唯一的用途是跨期對帳,而那條路
+  已經不做了(使用者裁示,2026-07-31:人工複核台就是承重牆)。少抄一欄有兩個
+  實際好處,不只是省事:要抄的數字少一半 → 抄錯的機會少一半;`total_col` 的
+  候選欄變少 → 少掉「≥2 個欄命中」的歧義(202502_5847 那格當初就是選到
+  比較欄「113年12月31日」而不是當期欄)。
 - **兩個欄名撞名時**(明細表常有「總額」= 面額總額,又有「公允價值總額」),
   取能對到印出合計的那一欄,另一欄可以不抄。不要讓兩個不同意義的欄共用一個 key。
 - **註腳記號(（註）、（註一）、（註二）…)列名與欄名都照抄,不要剝掉。**
@@ -62,22 +85,51 @@ RULES = """## 事實層規矩(違反會被退回)
   ② 段小計是該段**公允價值的唯一來源**。中信/兆豐 OCI 附註逐桶印的是成本,
      公允只出現在段的「小計 / 淨額」那一層(兆豐 202404 權益段淨額 41,701,384
      == 明細表 股票 41,398,782 + 受益憑證 302,602)。沒有 group 就接不回去
-- 同一格可能有多份 record(年報通常是「附註」+「明細表」),一份對一個來源頁
 - 抄不出來就寫 {"records": []}。不要猜 —— 猜錯比空白糟糕得多
 
-## printed_total 與 printed_totals 的差別(最常填錯的地方)
-- printed_total:表上印的**總計**,一個數字,要等於錨值
-- printed_totals:**逐欄**的合計。key 必須是 cols 裡出現過的**欄名**
+## 一段一份 record,每份填 record_total(最重要的一條)
+給你的是**一整個附註章節**,裡面常常不只一張表:主表印大類(權益工具 / 債務工具),
+子附註 (一)(二) 各印一類的明細;或同一頁有「指定 / 強制 / 衍生」三段各有小計。
+
+**每一個有自己印出合計(或小計)的段,各輸出一份 record**,並在該份填
+`record_total` = **那一段自己印出來的那個數字**。
+
+  ✓ 主表 record_total = 章節總合計;子附註 record_total = 該子附註自己的合計
+  ✗ 不要把子附註的列硬塞進主表那一份,湊成一份大的
+  ✗ 不要每份都填章節總合計 —— 填該段**自己印的**那個數
+
+⚠️ **章節最外層的總計常常是光禿禿一行金額,沒有「合計」二字**(例如
+`小 計 22,708,892` / `小 計 281,909,396` 之後單獨一行 `$ 304,618,288`)。
+它仍然是一份 record:rows 就是那幾個段小計,`record_total` 就是那個總數。
+漏掉它,底下的段就沒有東西可以掛,整格會被判「沒有任何一份的合計 == 錨」。
+(玉山 202102 p24 的合計列同樣是 `$ 292,943,799` 光禿禿一行 —— 不是特例。)
+
+為什麼:系統事後用金額把子附註掛回主表的哪一列(主表「債務工具投資
+292,943,799」== 子附註(二)的合計 → 掛上去)。**沒有 record_total 就掛不上**,
+每一份都會被判成「逐列相加不等於錨」而整格退回 —— 實測 4 格卡在這裡,
+內容其實全對。
+
+## printed_totals(選填,常見漏填的地方)
+- **逐欄**的合計,不是總計。key 必須是 cols 裡出現過的**欄名**
   ✓ {"取得成本": 44631513}      ← 「取得成本」是欄名,rows 的 cols 裡有
   ✗ {"小計": 686764055}         ← 「小計」不是欄名,是表上的中間小計
   ✗ {"113年12月31日小計": ...}  ← 同上
   **表上的中間小計(例如備抵損失前的『小計』)不要放這裡。**
-  沒有逐欄合計就**整個省略** —— 省略是誠實的「不適用」,填錯會變成失敗
+  沒有逐欄合計就**整個省略** —— 省略是誠實的「不適用」,填錯會變成失敗。
+  ⚠️ 這是**獨立驗證**:系統不會用它來反推,你填的值要是自己讀出來的合計,
+  不是自己算出來的 —— 算的話這道檢查就沒有意義了(它是明細表成本欄
+  唯一驗得到的來源)。
 
 ## 格式
-{"records": [{"source_page": 31, "source_kind": "附註", "total_col": "...",
-  "printed_total": 9082587, "printed_totals": {"取得成本": ...},
-  "rows": [{"name": "公司債", "group": "有價證券", "cols": {"取得成本": ..., "公允價值總額": ...}}]}]}"""
+{"records": [{"source_page": 31, "source_kind": "附註", "record_total": 316073868,
+  "printed_totals": {"取得成本": ...},
+  "rows": [{"name": "公司債", "group": "有價證券", "cols": {"取得成本": ..., "公允價值總額": ...}}]}]}
+
+## total_col / printed_total 不要填
+**這兩個欄位系統會自己算,你不必填,填了也會被覆蓋。**
+（`total_col` = 哪一欄的列和等於錨,`printed_total` = 錨本身——兩者都是
+系統已經知道或推導得出來的東西,問模型只會多一個出錯的地方。）
+你只要專心把 rows 抄對:名字、當期金額、group。"""
 
 
 def _now():
@@ -108,74 +160,24 @@ def _rejected_keys():
     return _marked_keys(REJECTED_DIR) | _marked_keys(BLOCKED_DIR)
 
 
-def _taxonomy_gap(recs, loc):
-    """只差「分類表沒收錄」時回傳提案清單,否則 None —— **擴頁永遠修不好這種失敗。**
+def unit_pages(loc, cls, level):
+    """→ `locate.Located.expand`(2026-07-31 起回傳的是第 `level` 個附註章節)。
+    留一層別名是因為 `fill` 是 agent 面向的入口,「工單怎麼取頁」屬於這支的敘事。"""
+    return loc.expand(cls, level)
 
-    第 5 道「列皆可分桶」有兩種失敗,長得一樣但處置相反:
 
-      (a) 兩層附註的小計列 —— 名字對不到桶,但**擴頁修得好**。
-          玉山 2021H1 OCI 實測:主附註兩列「權益工具投資 / 債務工具投資」相加剛好 == 錨,
-          前四道全綠,而明細在子附註 p24。這種一定要擴。
-      (b) 分類表缺口 —— 真的新科目名,**擴頁永遠修不好**。
-          國泰 202504 Trading 實測:「基金受益憑證」兩表同名同額,擴到 8 頁仍卡住,
-          白燒約 8 輪(level 2 的頁文字是 level 0 的 4.7 倍,每輪重讀一次)。
-
-    判準是**模擬**,不是比對錯誤訊息:每一個對不到桶的名字都有 `rules.propose()` 的提案,
-    而且**假裝把提案收錄進去之後這一格會通過**,才算分類表缺口。
-
-    ⚠️ 一開始寫成「唯一的 hard failure 是第 5 道」,用真實資料一測就破:
-       未收錄的名字會讓第 3 道也跟著報「兩邊都對不到桶」(國泰 202504 Trading 實測,
-       附註 p35 + 明細表 p135 兩份 record 都有那個名字)。那是**同一個根因的第二個症狀**,
-       不是另一個問題 —— 照訊息比對會漏判,而漏判等於這個修完全沒作用。
-       模擬則直接回答對的問題:「收錄之後還過不過?」
-
-    ⚠️ 判錯的後果是可回復的:提案會送到人眼前,看到不像科目名的東西就退掉再 requeue。
-       **人審就是這裡的安全網**,所以寧可短路得積極一點,也不要白燒擴頁。
-
-    ⚠️ 混合情況:對不到桶的名字裡,有的生得出提案、有的生不出來,不代表「提不出來的
-       那個」就是小計 —— 也可能是既有科目的新註腳變體,規則只是沒收錄它的完整字串
-       (實測玉山 202504 AC p127:「可轉讓定期存單（註三）」「政府公債（註四）」都
-       propose 得出來,「國外機構發行債券（註二）」propose 不出來,但它就是無註腳版
-       「國外機構發行債券」的同一個科目,不是小計)。只要**至少一個**名字生得出提案,
-       整組就判定為缺口,生不出提案的名字一併送人審、標 bucket=None —— 不強求模擬
-       全數通過,因為本來就少一條規則才過不了,那正是要等人審的東西。
-       只有**全部**都生不出提案時,才交給擴張(這才是小計/分頁遺漏的訊號)。
-    """
-    import rules
-
-    unknown = {row["name"] for rec in recs for row in rec["rows"]
-               if buckets.bucket(row) is None}
-    if not unknown:
-        return None
-
-    props, resolved = [], {}
-    for name in sorted(unknown):
-        if buckets.pending({"name": name}):
-            return None              # 已在人審佇列 —— 規則不得代決
-        b, why = rules.propose(buckets.norm(name))
-        if b is None:
-            props.append({"name": name, "bucket": None,
-                           "why": "BUCKET_RULES 沒有任何關鍵字命中,需要人工新增規則"})
-        else:
-            props.append({"name": name, "bucket": b, "why": why})
-            resolved[buckets.norm(name)] = b
-
-    if not resolved:
-        return None                  # 一個提案都生不出來 → 可能是小計,交給擴張
-
-    # 模擬收錄「生得出提案的那些」後重驗。**只在這個判斷裡暫時生效,不寫進
-    # buckets.SYN** —— 收錄是人的動作,git diff 就是審核介面(見 buckets.py 開頭)。
-    saved = dict(buckets._SYN_N)
-    try:
-        buckets._SYN_N.update(resolved)
-        ok, _ = transcribe.verify(recs, loc)
-    finally:
-        buckets._SYN_N.clear()
-        buckets._SYN_N.update(saved)
-
-    if ok or len(resolved) < len(unknown):
-        return props
-    return None
+#: **`_taxonomy_gap()` 已於 2026-07-31 移除。** 它整支的存在理由是「⑤ 分桶失敗會
+#: 擋住歸檔,所以要分辨這次失敗擴頁救不救得回來」。⑤ 移到發布閘之後,分桶未知
+#: 不再擋歸檔 —— 那個問題連同它的答案一起消失了。
+#:
+#: 分桶未知現在走 `core.ingest` 的 **FILED** 出口:照樣寫進 `facts/`,同時把
+#: 未定的列丟進 `review/queue.jsonl` 等人審(實測:1 列未知 → facts 有寫、
+#: 佇列 1 筆)。**保護沒有變弱,只是從「擋住」變成「記下來」** ——
+#: `core/publish_gate.py` 仍然擋著發布(未知列 ⇒ `wide.View.ok` 為 False)。
+#:
+#: `work/blocked/` 的**讀取端**刻意留著(`core/queue.py`、`core/webdata.py`):
+#: 目錄裡還有舊機制留下的檔,刪掉讀取端會讓它們變成沒有人看得到的孤兒。
+#: 寫入端已經沒有任何呼叫點,那個目錄只會變空,不會再長大。
 
 
 def _pdf_signature():
@@ -191,13 +193,25 @@ def _build_index():
     cells, basis = {}, {}
     for doc in _all_docs():
         loc = locate.locate(f"pdf_cache/{doc}.pdf")
-        cells[doc] = {cls: bool(pages) for cls, _, pages in loc.cells()}
+        # 有沒有東西可抄 = 切不切得出附註章節(明細表落不進編號章節,自動排除)
+        cells[doc] = {cls: bool(section.units(loc, cls)) for cls, _, _ in loc.cells()}
         # 口徑順便一起判:這裡本來就要讀完整份的頁文字,再開一次檔純屬浪費。
         basis[doc] = loc.basis
     idx = {"sig": sig, "cells": cells, "basis": basis}
     os.makedirs(WORK_DIR, exist_ok=True)
     json.dump(idx, open(INDEX, "w", encoding="utf-8"))
     return idx
+
+
+def basis_map():
+    """`{doc: 個體/合併/?}` —— **唯一該問「這份報表是什麼口徑」的地方。**
+
+    值是 `locate.basis_of()` 從**封面**判出來的,建索引時順便算好存進快取。
+    任何地方要判口徑都走這裡,不准自己看 doc 名字裡的 AI 編號:抓檔一律存成
+    `_AI3`,合併的舊檔叫 `_AI1`,編號各家各年不一、早就不帶意義
+    (`core/webdata.py:203`、`resolve.py` 檔頭)。
+    """
+    return _load_index().get("basis") or {}
 
 
 def _load_index():
@@ -244,8 +258,9 @@ def _render(doc, cls, loc, pages):
     print(RULES)
     print()
     print("## 自己先對一次(對得上就不必來回一輪)")
-    print(f"每份 record:sum(每列的 total_col 那一欄) == printed_total,"
-          f"且 printed_total == {anchor:,}")
+    print(f"把每一欄各自加總,應該有一欄的和等於錨 {anchor:,}"
+          f"(哪一欄是合計欄不必你判斷,系統事後會自己挑)。"
+          f"沒有任何一欄對得上,通常是漏抄了一列或抄錯一個數字。")
     print()
     print("## 來源頁")
     print(transcribe.context_pages(loc, cls, pages))
@@ -276,11 +291,60 @@ def cmd_next():
         return
 
     doc, cls, loc = picked
-    pages = list(loc.pages[cls])
+    pages = unit_pages(loc, cls, 0)
     os.makedirs(WORK_DIR, exist_ok=True)
     json.dump({"doc": doc, "cls": cls, "level": 0, "pages": pages, "retries": 0},
                open(PENDING, "w", encoding="utf-8"))
     _render(doc, cls, loc, pages)
+
+
+def _attempt(doc, cls, loc, recs, log=print):
+    """驗收核心:推導 → 分類 → 六道,doc/cls/loc/recs 就位後不必問模型。
+
+    跟 `cmd_submit` 拆開是因為 `cmd_revalidate` 要對 `work/rejected/*.json`
+    裡**已經存在**的 `submitted.records` 重跑同一套(pipeline 換版後常有格子
+    當初卡住,現在其實過得了),那條路徑不經過 `work/pending.json`、不必問模型,
+    走一樣的驗收邏輯即可,不該複製一份。
+
+    回傳 (ok, reason, recs, hard)——`recs` 是通過推導後的版本(ok 時才有效,
+    已補好 total_col/printed_total,可以直接寫進 facts/)。`hard` 區分兩種
+    「沒過」:推導/分類失敗(`hard=True`,列本身有問題,`_taxonomy_gap` 不該
+    模擬)vs 六道核對失敗(`hard=False`,才輪到判斷是不是分類表缺口)——
+    跟 `cmd_submit` 原本 `problems`/`reason` 分開判斷是同一件事,搬進這支
+    共用函式後用 `hard` 明講,不靠「problems 是不是 None」猜。
+    """
+    if not recs:
+        return False, "抄不出來(records 為空)", recs, True
+
+    # 推導層(`docs/plan_schema_derive.md` D1)——`total_col` / `printed_total` /
+    # 破折號列一律系統算,不問模型。**推導失敗直接算「沒過」,不進 facts.validate
+    # 也不進 _taxonomy_gap**:0 個欄命中代表列本身抄錯了,那不是分類問題,
+    # 硬塞進分桶模擬只會產生一個查不到根因的假警報。
+    anchor = loc.anchors.get(cls)
+    other_anchors = {c: v for c, v in loc.anchors.items() if c != cls}
+    recs, foreign = derive.split_foreign_records(recs, anchor, other_anchors)
+    for rec, other_cls in foreign:
+        page = rec.get("source_page")
+        tag = f"p.{page + 1}" if isinstance(page, int) else "p.?"
+        log(f"          {tag}({rec.get('source_kind')}):"
+            f"列和對到 {other_cls} 的錨,不屬於這格,已摘除。")
+
+    if not recs:
+        return False, "擴頁抓進來的頁全部屬於別的類別,這格本身沒有可用的 record", recs, True
+
+    derived, derive_err = derive.derive_records(recs, anchor)
+    if derive_err:
+        return False, derive_err, recs, True
+
+    recs = derived
+    problems = facts.validate({_key(doc, cls): recs})
+    if problems:
+        return False, "; ".join(problems), recs, True
+
+    ok, res = transcribe.verify(recs, loc)
+    if not ok:
+        return False, "; ".join(f"{k}:{v}" for k, v in res.items() if v), recs, False
+    return True, None, recs, False
 
 
 def cmd_submit(path):
@@ -299,71 +363,48 @@ def cmd_submit(path):
         r.setdefault("class", cls)
 
     loc = locate.locate(f"pdf_cache/{doc}.pdf")
-
-    ok, reason, res, problems = False, "抄不出來(records 為空)", {}, None
-    if recs:
-        problems = facts.validate({_key(doc, cls): recs})
-        if problems:
-            reason = "; ".join(problems)
-        else:
-            ok, res = transcribe.verify(recs, loc)
-            if not ok:
-                reason = "; ".join(f"{k}:{v}" for k, v in res.items() if v)
+    ok, reason, recs, hard = _attempt(doc, cls, loc, recs)
+    problems = [reason] if (reason and hard) else None
 
     if ok:
         cells = facts.load()
+        key = _key(doc, cls)
+        old = cells.get(key)
+        if old:
+            # 重抄整格覆蓋(見下面 `cells[key] = recs`)——如果這格本來就有內容
+            # (包含人工列,`row._src` 不是機器抄的),覆蓋前先留一份快照。
+            # git log 是最終稽核軌跡沒錯,但那要求「先 commit」;這裡是給
+            # 還沒 commit 就手滑重抄的那個當下一個救回來的機會(plan_web_usable.md P3)。
+            os.makedirs(HISTORY_DIR, exist_ok=True)
+            snap = f"{HISTORY_DIR}/{doc}__{cls}__{_now().replace(':', '')}.json"
+            json.dump(old, open(snap, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
         for r in recs:
             # 稽核欄位,不是事實 —— wide / buckets / verify 一律不准讀它(facts.py 已把
             # 它列為已知選填欄位,不會被 T1 的「未知欄位」檢查擋下來)。
             r["_by"] = {"at": _now(), "retries": retries, "level": level, "via": "claude-code"}
-        cells[_key(doc, cls)] = recs
+        cells[key] = recs
         facts.save(cells)
         os.remove(PENDING)
         print(f"PASS      已歸檔進 facts/{doc}.json({cls})。")
         print("下一步:python3 fill.py next")
         return
 
-    # 擴頁前先問:這是不是「擴頁永遠修不好」的那一種?
-    gap = _taxonomy_gap(recs, loc) if recs and not problems else None
-    if gap:
-        os.makedirs(BLOCKED_DIR, exist_ok=True)
-        json.dump({"doc": doc, "cls": cls, "reason": reason, "level": level,
-                   "proposals": gap, "submitted": data},
-                  open(f"{BLOCKED_DIR}/{doc}__{cls}.json", "w", encoding="utf-8"),
-                  ensure_ascii=False, indent=1, sort_keys=True)
-        seen = set()
-        if os.path.exists(PROPOSALS):
-            seen = {json.loads(l)["name"] for l in open(PROPOSALS, encoding="utf-8") if l.strip()}
-        with open(PROPOSALS, "a", encoding="utf-8") as f:
-            for g in gap:
-                if g["name"] not in seen:
-                    seen.add(g["name"])
-                    f.write(json.dumps({**g, "key": _key(doc, cls), "at": _now()},
-                                       ensure_ascii=False) + "\n")
-        os.remove(PENDING)
-        print(f"BLOCKED   這格卡在**分類表缺口**,不是你抄錯 —— 擴頁修不好這種失敗,所以不擴了。")
-        for g in gap:
-            if g["bucket"] is None:
-                print(f"          未收錄:「{g['name']}」→ 沒有規則命中,需要人工判斷({g['why']})")
-            else:
-                print(f"          未收錄:「{g['name']}」→ 建議「{g['bucket']}」({g['why']})")
-        print(f"          提案已寫入 {PROPOSALS},請使用者審核後收錄進 buckets.SYN,")
-        print(f"          再跑 python3 fill.py requeue 把這格放回佇列。")
-        print("下一步:python3 fill.py next(先做別格,不要停在這裡)")
-        return
+    # 存的是 `recs`,不是原始 `data` —— 推導成功時 `recs` 已經是補好
+    # total_col/printed_total 的版本,人工裁示台(`core/webdata.ratify`)
+    # 打開這格才不必再手動點一次欄位選擇器。推導失敗時兩者相同(沒被覆寫)。
+    submitted_out = {"records": recs}
 
     level += 1
-    more = loc.expand(cls, level) if level <= pipeline.MAX_LEVEL else []
-    new_pages = sorted(set(pages) | set(more))
+    new_pages = unit_pages(loc, cls, level)
 
-    if level > pipeline.MAX_LEVEL or not more or new_pages == pages:
+    if not new_pages or new_pages == pages:
         os.makedirs(REJECTED_DIR, exist_ok=True)
         json.dump({"doc": doc, "cls": cls, "reason": reason, "level": level - 1,
-                   "submitted": data},
+                   "submitted": submitted_out},
                   open(_rejected_path(doc, cls), "w", encoding="utf-8"),
                   ensure_ascii=False, indent=1, sort_keys=True)
         os.remove(PENDING)
-        print(f"REJECT    擴張到上限仍對不上,已進 work/rejected/{doc}__{cls}.json。")
+        print(f"REJECT    章節都試過了仍對不上,已進 work/rejected/{doc}__{cls}.json。")
         print(f"          理由:{reason}")
         print("下一步:python3 fill.py next")
         return
@@ -371,13 +412,86 @@ def cmd_submit(path):
     json.dump({"doc": doc, "cls": cls, "level": level, "pages": new_pages,
                "retries": retries + 1},
               open(PENDING, "w", encoding="utf-8"))
-    added = sorted(set(new_pages) - set(pages))
     print(f"RETRY     沒過:{reason}")
-    print(f"          已擴張加入鄰頁 {added}。")
+    print(f"          換下一個章節試(頁 {[i + 1 for i in new_pages]})。")
     print("下一步:重讀下面的頁再抄一次,寫回 work/current.json,"
           "再跑 python3 fill.py submit work/current.json(不要跳過,不要回 next)")
     print()
     _render(doc, cls, loc, new_pages)
+
+
+def cmd_revalidate():
+    """把 `work/rejected/` 與 `work/blocked/` 裡已經存過的 `submitted.records`
+    拿現在的推導/驗收邏輯重跑一次,**不呼叫模型**——過了就直接歸檔,標記檔刪掉。
+
+    存在的理由:`core/derive.py` 這類推導/驗收邏輯改版後,舊的拒收檔案不會
+    自動重新受益,得靠人手動一格一格「退回重抄」才會重跑,而重抄會重新
+    燒一次 LLM。但 `submitted.records` 早就存在檔裡了 —— 邏輯改版當下能不能
+    通過,重驗一次(純計算,不必問模型)就知道,不必浪費一次模型呼叫去問
+    「這次還一樣嗎」。
+
+    仍然過不了的**不是原樣留著**,而是把 `reason` 與 `submitted.records`
+    一起更新成這次重驗的結果。理由是使用者實測抓到的(2026-07-31,
+    `202502_5847_AI3|Trading`):舊 reason 是舊管線寫的字串,裡面
+    `total_col` 指著錯的欄(「113年12月31日」)、`printed_total` 是那一欄的
+    和(275,226,180)、頁碼還是 0-based(`@p22`)—— 但推導層現在自己就選對了
+    (「114年6月30日」= 錨 252,890,908),複核台的欄位選擇器也早就打勾在對的
+    那一欄。**畫面上「已經是對的」與紅字「卡在欄位」互相矛盾,而矛盾的那一半
+    是死掉的字串**,人會照著紅字去找一個根本不存在的問題。
+
+    """
+    n_pass, n_stay, n_fresh = 0, 0, 0
+    # 兩個目錄都掃:`blocked/` 的寫入端已經退場,但舊檔還在,重驗一樣要撿。
+    paths = [p for d in (REJECTED_DIR, BLOCKED_DIR)
+             for p in sorted(glob.glob(f"{d}/*.json"))]
+    for path in paths:
+        data = json.load(open(path, encoding="utf-8"))
+        doc, cls = data["doc"], data["cls"]
+        key = _key(doc, cls)
+        recs = list(data.get("submitted", {}).get("records") or [])
+        for r in recs:
+            r.setdefault("doc", doc)
+            r.setdefault("class", cls)
+        loc = locate.locate(f"pdf_cache/{doc}.pdf")
+        ok, reason, derived, hard = _attempt(
+            doc, cls, loc, recs, log=lambda s: print(f"  {key}{s}"))
+        if ok:
+            cells = facts.load()
+            for r in derived:
+                r["_by"] = {"at": _now(), "retries": data.get("level", 0),
+                            "level": data.get("level", 0), "via": "revalidate"}
+            cells[key] = derived
+            facts.save(cells)
+            os.remove(path)
+            n_pass += 1
+            print(f"PASS      {key} 重驗通過,已歸檔進 facts/{doc}.json({cls})。")
+            continue
+
+        n_stay += 1
+        # 還是沒過。把這次真正的失敗理由寫回去蓋掉舊的 —— `derived` 是推導
+        # 過的版本(total_col/printed_total 已經是系統選的),複核台打開這格
+        # 看到的就跟重驗看到的是同一件事。
+        stale = (data.get("reason") or "") != (reason or "")
+        data["reason"] = reason
+        data["submitted"] = {"records": derived}
+        # 仍然沒過的一律留在 `rejected/` —— 分類表缺口那條分支已經沒有了。
+        data.pop("proposals", None)
+        new_path = f"{REJECTED_DIR}/{doc}__{cls}.json"
+        os.makedirs(REJECTED_DIR, exist_ok=True)
+        json.dump(data, open(new_path, "w", encoding="utf-8"),
+                  ensure_ascii=False, indent=1, sort_keys=True)
+        if new_path != path:
+            os.remove(path)
+            print(f"MOVED     {key} → rejected/(舊 blocked 檔已改路由)")
+        if stale:
+            n_fresh += 1
+            print(f"STALE     {key} 舊理由已過時,換成這次重驗的:")
+            print(f"          {reason}")
+
+    print(f"{n_pass} 格重驗通過並歸檔,{n_stay} 格仍未過"
+          f"(其中 {n_fresh} 格的理由是過時的,已更新)。")
+    if n_pass or n_fresh:
+        print("下一步:python3 fill.py status 確認進度")
 
 
 def cmd_requeue():
@@ -386,7 +500,7 @@ def cmd_requeue():
     只刪標記檔,不動 `facts/`:那些格子從來沒被歸檔過,重跑一次是乾淨的。
     """
     n = 0
-    for d, label in ((BLOCKED_DIR, "分類表缺口"), (REJECTED_DIR, "拒收")):
+    for d, label in ((BLOCKED_DIR, "舊 blocked 殘留"), (REJECTED_DIR, "拒收")):
         for p in glob.glob(f"{d}/*.json"):
             print(f"  放回({label}):{os.path.basename(p)[:-5]}")
             os.remove(p)
@@ -402,17 +516,18 @@ def cmd_status():
     total = 0
     for doc in _all_docs():
         loc = locate.locate(f"pdf_cache/{doc}.pdf")
-        total += sum(1 for _, _, pages in loc.cells() if pages)
+        total += sum(1 for cls, _, _ in loc.cells() if section.units(loc, cls))
     todo = max(total - len(cells) - len(rejected) - len(blocked), 0)
-    print(f"已完成 {len(cells)} / 待抄 {todo} / 分類表缺口 {len(blocked)} / 人審佇列 {len(rejected)}")
+    print(f"已完成 {len(cells)} / 待抄 {todo} / 舊 blocked 殘留 {len(blocked)} / 人審佇列 {len(rejected)}")
     if blocked:
-        print(f"  ⚠ {len(blocked)} 格卡在分類表缺口 —— 審核 {PROPOSALS} 收錄後跑 "
-              f"python3 fill.py requeue")
+        print(f"  ⚠ {len(blocked)} 格是舊分類表缺口機制留下的 —— 跑 "
+              f"python3 fill.py revalidate 重驗(多半現在就過得了)")
 
 
 def _main():
-    if len(sys.argv) < 2 or sys.argv[1] not in ("next", "submit", "status", "requeue"):
-        print("用法: python3 fill.py next | submit <path> | status | requeue")
+    if len(sys.argv) < 2 or sys.argv[1] not in (
+            "next", "submit", "status", "requeue", "revalidate"):
+        print("用法: python3 fill.py next | submit <path> | status | requeue | revalidate")
         return 2
     cmd = sys.argv[1]
     if cmd == "next":
@@ -421,6 +536,8 @@ def _main():
         cmd_status()
     elif cmd == "requeue":
         cmd_requeue()
+    elif cmd == "revalidate":
+        cmd_revalidate()
     else:
         if len(sys.argv) < 3:
             print("用法: python3 fill.py submit <path>")

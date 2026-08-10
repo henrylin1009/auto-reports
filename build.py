@@ -1,26 +1,34 @@
 # -*- coding: utf-8 -*-
-"""**唯一允許寫入 `data.json` 的程式。** 過渡期建置:v2 凍結快照保底 + v3 逐單位取代。
+"""**唯一允許寫入 `data.json` 的程式。** 四張發布表全部由 `facts/` 當次重建。
 
-規格見 `docs/plan_phase1_build.md`。五條鐵則:
+規格見 `docs/plan_phase1_build.md`。四條鐵則:
 
-1. **唯一寫入者。** `bridge_v2` / `bridge_v3` 已加寫入防護,只剩這裡。
-2. **當次重建。** v3 的數字一律在本次執行內由 `facts/` + 現行分類邏輯算出
+1. **唯一寫入者。** `bridge_v2` / `bridge_v3` 已退場,只剩這裡。
+2. **當次重建。** 數字一律在本次執行內由 `facts/` + 現行分類邏輯算出
    (`results.build()`)。**絕不讀 `results/verdict.json`** —— 那個落地檔實測
    落後過 25 小時且缺 22 格,而且是在分類表已知有 bug 的時候算的。
    `_assert_no_stale_verdict()` 把這條寫成執行期斷言,不是靠自律。
-3. **回退保底。** 單位不合格 → 用凍結快照的值,並記錄**具體**原因。
-4. **禁止 null 覆寫。** v3 的 null 永遠不會抹掉 v2 的數字。這條擋的是
-   「v3 說某口徑文件裡不存在」的 8 處實測衝突 —— 抹掉會改變已發布的財務數字。
-5. **保留集排除。** `holdout.HOLDOUT` 的格永不進入發布。
+3. **一格只有兩種下場:有數字,或 null。** 不合格就寫 null,並記錄**具體**原因。
+   前端把 null 畫成灰底斜紋 —— 看得出來是缺的。
+4. **保留集排除。** `holdout.HOLDOUT` 的格永不進入發布。
 
-發布單位是**四元組** `(期別, 銀行, 類別, 口徑)`。三元組不夠:同一個
-`(期別,銀行,類別)` 底下 v3 可能只有一個口徑合格(實測 8 處),用三元組採用 v3
-就會把另一個口徑的 v2 數字抹成 null。
+⚠️ **2026-08-10 拿掉了「v2 凍結快照保底」。** 原本不合格的格子會沿用 v2 的數字,
+實測結果是 383 個發布單位裡 **194 個(51%)由 v2 供應**,而那些數字沒有經過
+這支程式的任何一道閘門 —— 「該擋的會被擋住」在當時是假的。其中 88 個的理由是
+「v3 判該口徑文件裡不存在」,也就是 **v2 很可能印了一個文件裡根本沒有的數字**
+(`docs/` 的逐頁普查:9 格裡 7 格文件真的只有一個口徑)。
+代價量過:93 個原本有數字的單位變 null,只有 4 個(期別×銀行)整格全空
+—— 2022H1 中信/國泰/玉山、2025H1 富邦。使用者 2026-08-10 裁示:缺就顯示缺。
+
+發布單位是**四元組** `(期別, 銀行, 類別, 表)`。三元組不夠:同一個
+`(期別,銀行,類別)` 底下可能只有一個口徑成立(實測 8 處),分開記才看得出來
+是「另一個口徑不存在」而不是「整格沒抄」。
 
     python3 build.py            # dry-run:寫 preview/,印差異。**預設**
     python3 build.py --diff     # 只印差異,不寫任何檔
     python3 build.py --write    # 寫 ./data.json(先備份)。Phase 1 不執行
 """
+import collections
 import datetime
 import glob
 import hashlib
@@ -30,11 +38,12 @@ import shutil
 import subprocess
 import sys
 
-import bridge_v3
 import facts
+import fill
 import holdout
 import results
 from config import WIDE_BUCKETS
+from core import report
 
 SNAP_DIR = "snapshots"
 SNAP_MANIFEST = f"{SNAP_DIR}/MANIFEST.json"
@@ -43,10 +52,12 @@ DATA = "data.json"
 MANIFEST = "build_manifest.json"
 
 #: 發布單位涵蓋的兩個口徑。`wide` = 帳面(公允 / 攤銷後成本);`wide_cost` = 取得成本。
+#: 順序要與 `core.report.TABLES` 的值對齊(個體/合併各一組帳面+成本表)。
 BASES = ("wide", "wide_cost")
 
-#: **不在 Phase 1 發布範圍**,整塊沿用快照:合併報表(`bridge_v3.cell_of` 對 AI1 回 None)。
-PASSTHROUGH = ("wide_consol", "wide_cost_consol")
+#: `provenance` 的第三種值:這一格**沒有任何合格來源**,發布 null。
+#: 不是「壞掉」也不是「還沒抄」—— 是哪一種,看同一筆的 `reason`。
+NONE_SRC = "none"
 
 
 # ── 輸入指紋 ────────────────────────────────────────────────────────────────
@@ -86,7 +97,7 @@ def _assert_no_stale_verdict():
     """鐵則 2 的執行期保證:本次建置不得使用落地的 `results/verdict.json`。
 
     做法是**證明它沒被讀**:把它的 mtime 記下來,建置完再比。純自律沒有價值 ——
-    `bridge_v3.py:89` 就是自律失敗的實例(它讀落地檔,而那個檔落後了 25 小時)。
+    已刪除的 `bridge_v3.py` 就是自律失敗的實例(它讀落地檔,而那個檔落後過 25 小時)。
     """
     p = f"{results.OUT}/verdict.json"
     return (p, os.path.getmtime(p)) if os.path.exists(p) else (p, None)
@@ -180,113 +191,152 @@ def rebuild_v4():
 # ── 建置 ────────────────────────────────────────────────────────────────────
 
 def build():
-    """回傳 (data, manifest, diff)。`data` 是新的發布 payload;`diff` 是與快照的差異。"""
+    """回傳 (data, manifest, diff)。`data` 是新的發布 payload;`diff` 是與前一版的差異。"""
     snap, snap_man = load_snapshot()
     verdict, facts_sha, n_cells = rebuild_v3()
     verdict_v4 = rebuild_v4()
+    bmap = fill.basis_map()
 
     data = json.loads(json.dumps(snap))          # 深拷貝,快照本身不動
     data.pop("_bridge_v3", None)                 # 舊的 bridge_v3 遺物,不再使用
+    data.pop("_bridge", None)                    # bridge_v2 的落款,已無來源可言
 
-    # 格 key → v3 verdict(只取個體報表 AI3;AI1 合併報表 cell_of 回 None)
-    by_cell = {}
-    for key, v in verdict.items():
-        got = bridge_v3.cell_of(key)
-        if got:
-            by_cell[got] = (key, v)
-    # v4 用同一把 `bridge_v3.cell_of`(doc 命名規則相同,函式名字沒改是因為
-    # 它本質是「解析 doc key」不是「v3 專用」)。**只在 v3 沒有這一格時才查**,
-    # 見下面迴圈 —— v4 目前只跑過少數文件,絕不能搶 v3 已經覆蓋的格。
-    by_cell_v4 = {}
-    for key, v in verdict_v4.items():
-        got = bridge_v3.cell_of(key)
-        if got:
-            by_cell_v4[got] = (key, v)
+    def by_cell_of(vd):
+        """verdict → `{(報表口徑, 格, 類別): [(facts_key, verdict), ...]}`。
 
-    units, diff, conflicts = [], {}, []
-    for basis in BASES:
-        table = data.setdefault(basis, {})
-        for cell in sorted(table):
-            # 快照裡這一格本身可能是 `None`(尚無任何 v2 數字,例如 2020H1/2026 那些
-            # 還沒出報表或還沒抓到的期別)——`setdefault` 只在**鍵不存在**時才給預設值,
-            # 鍵存在但值是 None 時它會原封不動回傳 None,下面 `[...] = new` 就會對
-            # `None` 做 item assignment 而炸掉。這裡先正規化一次。
-            if table.get(cell) is None:
+        口徑一律走 `fill.basis_map()`(封面判),不看 doc 名字裡的 AI 編號 ——
+        舊版寫死 AI3,合併報表因此整張網格永遠是空的。
+
+        ⚠️ **值是 list,因為一格真的可能對到多份文件。** 實測:玉山 2021H1 的
+        同一份 PDF 被存成 `202102_5847_AI2` 與 `_AI3` 兩個檔名(sha256 完全相同,
+        是重複抓檔),兩份都判個體、都對到 `2021H1|玉山`。舊版寫死 AI3 時 AI2
+        被順手擋掉;拿掉寫死之後如果還用 dict 直接覆寫,**誰贏由插入順序決定** ——
+        AI2 只抄了 2 列、AI3 抄了 7 列,順序一翻那格就從有數字變成沒數字,
+        而且沒有任何檢查看得到。挑選規則見 `pick()`。
+        """
+        out = collections.defaultdict(list)
+        for key in sorted(vd):          # 排序:結果不隨 dict 插入順序改變
+            b = bmap.get(key.split("|")[0])
+            got = report.cell_of(key, b)
+            if got:
+                out[(b, got[0], got[1])].append((key, vd[key]))
+        return out
+
+    by_cell, by_cell_v4 = by_cell_of(verdict), by_cell_of(verdict_v4)
+
+    def pick(cands, basis, src):
+        """一格的候選文件 → `(facts_key, verdict, ok, 理由)`。
+
+        規則:**取唯一合格的那份。** 多份都合格時,數字一致才放行(同一份 PDF
+        抄兩次本來就該一致);不一致就是真衝突,擋下來寫 null 並把文件列出來 ——
+        這種時候猜哪份對,錯了沒有任何人看得見。
+        """
+        okd = [(k, v) for k, v in cands if eligible(v, basis, src)[0]]
+        if len(okd) == 1:
+            return okd[0][0], okd[0][1], True, f"{src} 合格"
+        if len(okd) > 1:
+            books = {json.dumps(v[basis], sort_keys=True) for _, v in okd}
+            if len(books) == 1:
+                return okd[0][0], okd[0][1], True, \
+                    f"{src} 合格(同一格 {len(okd)} 份文件,七桶一致)"
+            return okd[0][0], okd[0][1], False, \
+                f"{src} 同一格有 {len(okd)} 份文件且數字不一致:{[k for k, _ in okd]}"
+        if cands:
+            return cands[0][0], cands[0][1], False, eligible(cands[0][1], basis, src)[1]
+        return None, None, False, f"{src} 沒有這一格"
+
+    units, diff, blanked = [], {}, []
+    for rep_basis, tables in report.TABLES.items():
+        for basis, table_name in zip(BASES, tables):
+            old = data.get(table_name) or {}
+            # 格的宇宙 = 前一版有的 ∪ 這次算得出來的。取聯集是為了讓新抄出來的
+            # 期別/銀行能自己長出來,而不是被前一版的鍵列表悄悄擋掉。
+            cells = sorted(set(old) | {c for (b, c, _) in by_cell if b == rep_basis}
+                           | {c for (b, c, _) in by_cell_v4 if b == rep_basis})
+            table = {}
+            for cell in cells:
+                cur = old.get(cell) or {}
                 table[cell] = {}
-            bank_period = cell
-            for cls in ("Trading", "OCI", "AC"):
-                cur = table[cell]
-                key, v = by_cell.get((cell, cls), (None, None))
-                ok, why = eligible(v, basis, src="v3")
-                src = "v3"
-                if not ok:
-                    # v3 沒有這一格(或不合格)才問 v4 —— v3 永遠優先,理由見
-                    # `rebuild_v4()` 檔頭:v4 batch 還沒跑,coverage 遠小於 v3。
-                    key4, v4v = by_cell_v4.get((cell, cls), (None, None))
-                    ok4, why4 = eligible(v4v, basis, src="v4")
-                    if ok4:
-                        ok, why, key, v, src = ok4, why4, key4, v4v, "v4"
-                unit = f"{bank_period}|{cls}|{basis}"
-                had = {b: cur.get(f"{cls}_{b}") for b in WIDE_BUCKETS}
-                has_v2 = any(x is not None for x in had.values())
+                for cls in ("Trading", "OCI", "AC"):
+                    key, v, ok, why = pick(by_cell.get((rep_basis, cell, cls), []),
+                                           basis, "v3")
+                    src = "v3"
+                    if not ok:
+                        # v3 沒有這一格(或不合格)才問 v4 —— v3 永遠優先,理由見
+                        # `rebuild_v4()` 檔頭:v4 coverage 遠小於 v3。
+                        key4, v4v, ok4, why4 = pick(
+                            by_cell_v4.get((rep_basis, cell, cls), []), basis, "v4")
+                        if ok4:
+                            ok, why, key, v, src = ok4, why4, key4, v4v, "v4"
+                    unit = f"{cell}|{cls}|{table_name}"
+                    had = {b: cur.get(f"{cls}_{b}") for b in WIDE_BUCKETS}
 
-                if ok:
-                    book = v[basis]
+                    book = v[basis] if ok else None
                     changed = {}
                     for b in WIDE_BUCKETS:
-                        new = bridge_v3.to_yi(book[b])
+                        new = report.to_yi(book[b]) if book else None
                         if had[b] != new:
                             changed[f"{cls}_{b}"] = (had[b], new)
                         table[cell][f"{cls}_{b}"] = new
                     if changed:
                         diff[unit] = changed
-                    units.append({"unit": unit, "provenance": src, "reason": why,
-                                  "facts_key": key})
-                else:
-                    # 鐵則 4:**不寫任何東西**。快照的值原封不動留著。
-                    units.append({"unit": unit, "provenance": "v2", "reason": why,
-                                  "facts_key": key})
-                    if v is not None and v.get("pass") and v.get(basis) is None and has_v2:
-                        conflicts.append({"unit": unit, "reason": why,
-                                          "v2_columns": [k for k, x in had.items() if x is not None],
-                                          "note": "v3 判該口徑文件裡不存在,但 v2 有數字 —— "
-                                                  "保留 v2(抹成 null 會改變已發布財務數字),待裁示"})
+                    units.append({"unit": unit, "provenance": src if ok else NONE_SRC,
+                                  "reason": why, "facts_key": key})
+                    if not ok and any(x is not None for x in had.values()):
+                        blanked.append({"unit": unit, "reason": why,
+                                        "dropped_columns": [k for k, x in had.items()
+                                                            if x is not None]})
+            data[table_name] = table
 
-    for k in PASSTHROUGH:
-        if k in snap:
-            units.append({"unit": k, "provenance": "v2",
-                          "reason": "合併報表(AI1):v3 尚無網站格映射,整塊沿用快照"})
+    # 主儀表板讀的 `data`(四桶)**由 `wide` 推導**,不再是獨立來源。
+    # 這欄原本只有 bridge_v2 寫過,build.py 從來沒動過它 —— 實測 2020H2|兆豐
+    # Trading 的 `data.其他` 是 1.95 而 `wide.其他` 是 0,兩張圖各說各話而
+    # 沒有任何檢查抓得到。推導之後定義上不可能再分岔。
+    # ⚠️ 四桶**刻意不含**資產基礎/股票/貨幣市場 —— 這是沿用現行網站的口徑,
+    #    不是新判斷。要不要把資產基礎算進「債券市值」是內容決策,另案處理。
+    # ⚠️ **齊全才進來,缺一角就整格不出現。** `make_web.py` 的 `mv()` 把四桶直接
+    #    相加、`tot()` 要三類都在,少一個不是畫得醜而是 TypeError;更要緊的是
+    #    半齊的格子會畫出一根**偏低但看起來正常**的長條 —— 那正是這次要消滅的
+    #    「錯的看起來像對的」。整格不出現時 `make_web.rb()` 回 None,長條直接跳過。
+    FOUR = {"公債": "GB", "公司債": "公司債", "金融債": "金融債", "其他": "其他"}
+    four_bucket = {}
+    for cell, w in (data.get("wide") or {}).items():
+        cols = {cls: {k: w.get(f"{cls}_{src}") for k, src in FOUR.items()}
+                for cls in ("Trading", "OCI", "AC")}
+        if all(v is not None for c in cols.values() for v in c.values()):
+            four_bucket[cell] = cols
+    data["data"] = four_bucket
 
     # data.json 內只放**確定性**的 _build(不含 timestamp),保證同輸入 byte-identical
     data["_build"] = {
         "built_by": "build.py",
         "publish_unit": "(期別, 銀行, 類別, 口徑)",
-        "frozen_snapshot": {"path": snap_man["path"], "sha256": snap_man["sha256"]},
         "facts_sha256": facts_sha,
         "decisions_sha256": _sha("buckets.py", "config.py"),
         "manifest": MANIFEST,
-        "note": "唯一寫入者是 build.py。v3 逐單位取代,其餘回退凍結快照;"
-                "v3 的 null 不會抹掉 v2 的數字。",
+        "note": "唯一寫入者是 build.py。四張發布表全部由 facts/ 當次重建;"
+                "不合格的格子寫 null(前端畫灰底斜紋),不回退舊管線的數字。",
     }
 
     manifest = {
         "build_timestamp": datetime.datetime.now().isoformat(timespec="seconds"),
         "code_revision": _git_rev(),
         "inputs": {
-            "frozen_snapshot": {"path": snap_man["path"], "sha256": snap_man["sha256"],
-                                "source": snap_man["source"]["from"]},
             "facts": {"sha256": facts_sha, "cells": n_cells},
             "decisions": {"sha256": _sha("buckets.py", "config.py"),
                           "files": ["buckets.py", "config.py"]},
+            "skeleton_only": {"path": snap_man["path"], "sha256": snap_man["sha256"],
+                              "note": "只供 periods/banks/review 這些非金額欄位,"
+                                      "不再供應任何數字"},
         },
         "counts": {
             "v3": sum(1 for u in units if u["provenance"] == "v3"),
             "v4": sum(1 for u in units if u["provenance"] == "v4"),
-            "v2": sum(1 for u in units if u["provenance"] == "v2"),
+            NONE_SRC: sum(1 for u in units if u["provenance"] == NONE_SRC),
             "changed_units": len(diff),
-            "conflicts": len(conflicts),
+            "blanked": len(blanked),
         },
-        "conflicts": conflicts,
+        "blanked": blanked,
         "units": units,
     }
     return data, manifest, diff
@@ -300,22 +350,24 @@ def dump(obj, path):
               ensure_ascii=False, indent=1, sort_keys=True)
 
 
-def report(manifest, diff):
+def summarize(manifest, diff):
     c = manifest["counts"]
-    print(f"發布單位:v3 {c['v3']} / v4 {c['v4']} / v2 {c['v2']}   "
+    total = c["v3"] + c["v4"] + c[NONE_SRC]
+    print(f"發布單位 {total}:v3 {c['v3']} / v4 {c['v4']} / 缺 {c[NONE_SRC]}   "
           f"有變動 {c['changed_units']} 個單位")
-    print(f"輸入:facts {manifest['inputs']['facts']['cells']} 格 "
-          f"· 快照 {manifest['inputs']['frozen_snapshot']['path']}")
+    print(f"輸入:facts {manifest['inputs']['facts']['cells']} 格")
     if diff:
         print(f"\n{len(diff)} 個單位的數字有變動(億元):")
         for unit, cols in sorted(diff.items()):
             print(f"\n  {unit}")
             for col, (old, new) in sorted(cols.items()):
                 print(f"      {col:<16} {str(old):>9} → {str(new):>9}")
-    if manifest["conflicts"]:
-        print(f"\n⚠ {len(manifest['conflicts'])} 處衝突(v3 判 null 而 v2 有值,**已保留 v2**):")
-        for x in manifest["conflicts"]:
-            print(f"    {x['unit']:<34} v2 有 {len(x['v2_columns'])} 欄 —— {x['reason']}")
+    if manifest["blanked"]:
+        print(f"\n⚠ {len(manifest['blanked'])} 個單位由「有數字」變成 null "
+              f"—— 舊管線有值,但新管線給不出合格的數字:")
+        by_reason = collections.Counter(x["reason"] for x in manifest["blanked"])
+        for reason, n in by_reason.most_common():
+            print(f"    {n:>4}  {reason}")
 
 
 def main(argv):
@@ -324,7 +376,7 @@ def main(argv):
     after = os.path.getmtime(stale[0]) if os.path.exists(stale[0]) else None
     assert after == stale[1], "build 期間動到了 results/verdict.json —— 鐵則 2 被違反"
 
-    report(manifest, diff)
+    summarize(manifest, diff)
 
     if "--diff" in argv:
         print("\n（--diff:未寫任何檔）")

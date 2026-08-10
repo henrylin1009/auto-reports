@@ -16,7 +16,8 @@ wide → 可以採用」)它可採用 v3,只把 `wide` 這個投影切過去,`wi
 """
 import json
 
-import bridge_v3
+import fill
+from core import report as creport
 import facts
 import holdout
 from config import WIDE_BUCKETS
@@ -52,9 +53,10 @@ def compute():
     cells = facts.load()
     train, _leak = holdout.split(cells)
     verdict, _audit = reconcile.verify_all(train)
+    bmap = fill.basis_map()
     by_cell = {}
     for key, v in verdict.items():
-        got = bridge_v3.cell_of(key)
+        got = creport.cell_of(key, bmap.get(key.split("|")[0]))
         if got:
             by_cell[got] = (key, v)
 

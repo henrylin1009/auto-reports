@@ -37,3 +37,12 @@ preview/
 out/
 # /fill skill 的權威位置是 .claude/skills/fill/,.agents/ 底下那份是本機重複副本
 .agents/
+# 2026-08-10:這幾個一直沒被忽略,git status 裡混在 142 個未追蹤項目中間,
+# 真正該入庫的原始碼(sim/、capital.py …)因此被埋住看不見。
+node_modules/
+package-lock.json
+# pdf_norm.py 產的正規化快取,跟 pdf_cache/ 同性質:重跑就重建
+pdf_cache_norm/
+pillar3_cache/
+# 舊管線(extract_v2)的落地結果,已無人讀,重跑就重建
+extract_v2_results.json
