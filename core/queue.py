@@ -30,9 +30,35 @@ import json
 import os
 
 import buckets
+from config import CLS_NAME
 from core import decision_store
 
 BLOCKED_GLOB = "work/blocked/*.json"
+
+#: 衡量基礎的前綴,**由 `config.CLS_NAME` 推導,不寫死** ——
+#: 「透過損益按公允價值衡量之」「透過其他綜合損益按公允價值衡量之」「按攤銷後成本衡量之」。
+_MEASURE = tuple(buckets.norm(v.split("衡量之")[0] + "衡量之")
+                 for v in CLS_NAME.values() if "衡量之" in v)
+
+
+def _is_class_label(name):
+    """列名是「衡量基礎 + 之 + 某類資產」⇒ 那是**類別/段落的合計列,不是明細列**。
+
+    正確的形狀是段落放 `group`、明細放 `name`(claude reader 產出的就是
+    `group="權益工具投資"` / `name="上市（櫃）及興櫃股票"`);把段落標題抄成
+    `name` 是抽取階段的失誤。
+
+    **這不是新機制,是清歷史殘留。** `core/expand_policy.py` §2026-07-31 記著:
+    `check_closure` 上線後,這種兩層附註小計「根本不會流到分桶那一關 —— 建樹時
+    就被識別成子節的父列而排除」。所以現在的程式不會再產生這種待辦,佇列裡的
+    14 筆全是 7/31 之前存下來的快照。照 `pending()` 既有的原則
+    (「待辦用算的,不用存的」)在讀取端算掉,而不是去改 append-only 的歷史檔。
+
+    ⚠️ **壞字版本不會命中,這是刻意的** —— `透過其他綜合損益按公允僵值衡量之…`
+    (僵/價)比對不上前綴,會繼續留在待辦裡。它本來就不是分類問題而是抽取錯誤,
+    該走重抽,不該被這條靜靜吃掉。
+    """
+    return bool(name) and buckets.norm(name).startswith(_MEASURE)
 
 
 def _entry(source, cell_key, name, suggested, why, ref):
@@ -68,7 +94,13 @@ def _from_review(workspace):
 
 
 def pending(workspace="."):
-    """兩個來源合流,**再用 `buckets.SYN` 篩掉已經解決的**。
+    """兩個來源合流,**再篩掉兩類已經不是待辦的**:①`buckets.bucket()` 現在查得到桶
+    ②`_is_class_label()` 類別/段落合計列。兩道都是「用算的,不看快照檔還在不在」。
+
+    實測(2026-08-10):原始檔 138 行 → ① 之後 27 筆 → ② 之後 **13 筆**。
+    剩下的 13 筆裡 9 筆是 gemini 的壞字(抽取錯誤,重抽後消失)、
+    **4 筆才是真的需要人判斷**:`受益證券 CMO`、`受益證券 RMBS`、
+    `國外定期存單（註二）`、`期貨交易保證金一自有資金`。
 
     ⚠️ **這道篩選是必要的,不是錦上添花**(2026-07-30 實測抓到):`work/blocked/`
     與 `review/queue.jsonl` 是兩份**存下來的快照**,confirm_bucket() 只寫
@@ -84,7 +116,8 @@ def pending(workspace="."):
     """
     raw = _from_blocked(workspace) + _from_review(workspace)
     return [e for e in raw
-            if not (e["name"] and buckets.bucket({"name": e["name"]}) is not None)]
+            if not (e["name"] and buckets.bucket({"name": e["name"]}) is not None)
+            and not _is_class_label(e["name"])]
 
 
 def count(workspace="."):
