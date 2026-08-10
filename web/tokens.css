@@ -4,7 +4,17 @@
    前半段抽自 make_web.py 產出的最外層 <style>;後段 .ix-seg/.ix-sub 抽自
    interactive_html() 的 <style>(複核台的按鈕也要用同一套分段控制語彙)。
    2026-07-29 建,見 docs/plan_ui_unify.md。 */
-:root{--ink:#111827;--sub:#5f6672;--mut:#8a919e;--line:#e9ebef;--bg:#f5f6f8;--accent:#4f46e5}
+:root{
+  /* 正式名字 */
+  --ink:#111827;--sub:#5f6672;--mut:#8a919e;--line:#e9ebef;--bg:#f5f6f8;--accent:#4f46e5;
+  --panel:#fff;--panel2:#eef0f3;--ok:#15803d;--warn:#b45309;--danger:#b91c1c;
+  /* 舊名別名。2026-08-10 之前 workbench/sim/v4 各自宣告一份 `:root`,
+     色值與這裡**逐一相同**,只是名字不一樣(#111827 在這裡叫 --ink、那邊叫 --fg)——
+     同一組顏色宣告了四次,改色要改四個地方而且沒有任何東西會提醒你漏改。
+     那三份已刪除;別名留著是為了不用去改那三個檔裡幾百處 var() 用法,
+     **不要拿別名寫新規則**,新的一律用上面的正式名字。 */
+  --fg:var(--ink);--dim:var(--sub);--mute:var(--mut);
+}
 *{box-sizing:border-box}
 body{font-family:Inter,-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif;margin:0;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
 header{background:#fff;border-bottom:1px solid var(--line);padding:18px 28px;position:sticky;top:0;z-index:10;display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
@@ -52,8 +62,36 @@ table.wide th.rowh{background:#f8f9fb;text-align:left;position:sticky;left:0;z-i
 table.wide tbody tr:hover td{background:#fafbfc}
 @media print{header{position:static}.card{box-shadow:none;break-inside:avoid}details.card{display:none}}
 
+/* ── 全站導覽列 ────────────────────────────────────────────────────────────
+   一份樣式,四頁共用(工作台/分析/模擬器/複核台),markup 由 web/appnav.js 產生。
+   2026-08-10 之前是三份幾乎相同的 `nav{...}` 各自複製一份,而分析頁又完全不同
+   (它用 <header> + #pagetabs)—— 四個頁面看起來像四個網站。
+
+   分層規矩:**這條列只放「去哪一頁」,不放頁內的東西。**
+   頁內的分頁(分析頁的個體/合併/估值、複核台的佇列/比較表/讀取)一律往下沉,
+   用 .ix-seg 畫在內容區裡 —— 兩層都長成導覽列,是「像兩個東西」的主因。 */
+.appnav{display:flex;align-items:center;gap:14px;background:var(--panel);
+  border-bottom:1px solid var(--line);padding:0 16px;position:sticky;top:0;z-index:20;
+  overflow-x:auto}
+.appnav .brand{font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap;
+  flex:none;padding:12px 0;text-decoration:none;letter-spacing:-.01em}
+.appnav .links{display:flex;gap:2px;flex:none}
+.appnav .links a{padding:12px 14px;color:var(--sub);text-decoration:none;font-size:13px;
+  border-bottom:2px solid transparent;white-space:nowrap}
+.appnav .links a:hover{color:var(--ink)}
+.appnav .links a.on{color:var(--ink);font-weight:500;border-bottom-color:var(--accent)}
+.appnav .slot{margin-left:auto;display:flex;align-items:center;gap:8px;flex:none;
+  font-size:12px;color:var(--mut);white-space:nowrap;padding-right:2px}
+
 /* .ix-seg 分段控制、.ix-sub 副標 —— 跨頁共用(互動儀表板 + 複核台皆用) */
 .ix-sub{font-weight:400;color:#8a919e;font-size:12px;margin-left:8px}
 .ix-seg{display:inline-flex;background:#eef0f3;border-radius:8px;padding:2px}
 .ix-seg button{border:none;background:transparent;font-size:12px;padding:6px 12px;cursor:pointer;color:#5f6672;border-radius:6px;font-family:inherit}
 .ix-seg button.on{background:#fff;color:#111827;font-weight:600;box-shadow:0 1px 2px rgba(16,24,40,.08)}
+/* .ix-seg 裡也可以放 <a>(頁內路由用 hash,不是按鈕)—— 樣式與 button 一致,
+   免得同一種控制在不同頁長不一樣。 */
+.ix-seg a{font-size:12px;padding:6px 12px;color:#5f6672;border-radius:6px;
+  text-decoration:none;display:inline-block}
+.ix-seg a.on{background:#fff;color:#111827;font-weight:600;box-shadow:0 1px 2px rgba(16,24,40,.08)}
+/* 頁內分頁的容器:留白讓它明顯屬於內容區,不會被誤讀成第二條導覽列 */
+.subtabs{padding:16px 16px 0;max-width:1240px}

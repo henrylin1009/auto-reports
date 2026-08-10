@@ -6,20 +6,9 @@
 <title>配置模擬器</title>
 <link rel="stylesheet" href="/tokens.css">
 <style>
-:root{
-  --bg:#f5f6f8; --panel:#fff; --panel2:#eef0f3; --line:#e9ebef;
-  --fg:#111827; --dim:#5f6672; --mute:#8a919e; --accent:#4f46e5; --warn:#b45309;
-}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);
   font:14px/1.5 -apple-system,"Noto Sans TC",sans-serif}
-nav{display:flex;align-items:center;gap:2px;background:var(--panel);
-  border-bottom:1px solid var(--line);padding:0 12px;position:sticky;top:0;z-index:10;
-  overflow-x:auto}
-nav a{padding:11px 16px;color:var(--dim);text-decoration:none;font-size:13px;
-  border-bottom:2px solid transparent;white-space:nowrap;flex:none}
-nav a.on{color:var(--fg);border-bottom-color:var(--accent)}
-nav .sp{margin-left:auto;font-size:12px;color:var(--mute);padding-right:4px}
 main{padding:16px;max-width:1240px;margin:0 auto}
 h1{font-size:17px;font-weight:500;margin:0 0 4px}
 .sub{font-size:12px;color:var(--mute);margin:0 0 16px}
@@ -121,11 +110,12 @@ svg{width:100%;max-width:900px;height:auto;overflow:visible;font-family:inherit;
 </style>
 </head>
 <body>
-<nav>
-  <a href="/workbench.html">工作台</a>
-  <a href="/sim.html" class="on">配置模擬器</a>
-  <span class="sp" id="src"></span>
-</nav>
+<div id="appnav"></div>
+<script src="appnav.js"></script>
+<script>
+(function(){var s=document.getElementById("navslot");if(!s)return;
+ s.insertAdjacentHTML("beforeend",'<span id="src"></span>');})();
+</script>
 <main>
   <h1>配置空間 —— 選軸即選圖</h1>
   <p class="sub">選幾根軸決定畫什麼圖；「看得到多少」只影響①信用②利率（③④本來就只有一種看法）。</p>

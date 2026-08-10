@@ -868,6 +868,19 @@ html=f"""<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 {TOKENS_CSS}</style></head><body>
+<script>
+// 被工作台用 iframe 嵌著時,把自己的標頭降級成「頁內分頁」——
+// 外層已經有一條全站導覽列(web/appnav.js),再擺一條同樣重的標頭就是兩層疊著,
+// 那是 2026-08-10 之前「四個頁面像四個網站」的最後一塊。
+// 站名與更新時間由外層負責,這裡只留真正屬於本頁的分頁(個體/合併/估值)。
+// **單獨開啟(GitHub Pages)時什麼都不做** —— 那時這條標頭是它唯一的標頭。
+if (window.self !== window.top) document.documentElement.classList.add("embedded");
+</script>
+<style>
+.embedded header{{position:static;border-bottom:0;padding:16px 20px 0;background:transparent}}
+.embedded header h1,.embedded header .upd{{display:none}}
+.embedded .wrap{{padding-top:14px}}
+</style>
 <header><h1>銀行債券投資債種分析</h1>
 <span class="ix-seg" id="pagetabs"><button id="tab1" class="on">個體報表</button>{'<button id="tab3">合併報表</button>' if HAS_CONSOL else ''}<button id="tab2">個體更多(估值與獲利)</button></span>
 <span class="upd">更新 {now}</span></header>

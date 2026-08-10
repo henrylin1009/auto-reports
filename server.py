@@ -293,11 +293,16 @@ class Handler(SimpleHTTPRequestHandler):
     def do_GET(self):
         route = urllib.parse.urlparse(self.path).path
         if route == "/analysis":
-            # 302 而不是直接發檔:讓瀏覽器的文件網址真的落在 /site/index.html,
-            # 這樣頁面裡的相對路徑(圖1.png、xlsx)才會對到 /site/ 底下,不用改
-            # make_web.py 產出的任何連結。
+            # 導進工作台的殼,**不是**直接發分析頁(2026-08-10 改)。
+            # 舊做法讓網址落在 /site/index.html —— 那頁自己有一條 <header>,
+            # 於是「從工作台點分析」看到兩條導覽列疊著、「直接開 /analysis」
+            # 又看到一條完全不同樣式的,四個頁面像四個網站。
+            # 現在分析頁只在殼裡出現(工作台 #/analysis 用 iframe 掛),
+            # iframe 內的 appnav.js 會自己不畫(見該檔開頭的 window.self 判斷)。
+            # `/site/index.html` 仍可直接取用 —— iframe 就是走那個路徑,
+            # 而 GitHub Pages 發布的也是同一份、單檔可攜。
             self.send_response(302)
-            self.send_header("Location", "/site/index.html")
+            self.send_header("Location", "/workbench.html#/analysis")
             self.end_headers()
             return
         if route.startswith("/site/"):

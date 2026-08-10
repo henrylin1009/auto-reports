@@ -15,10 +15,10 @@ const rootPost = (p, b) => fetch("/api/" + p, { method: "POST", headers: {"Conte
   .then(async r => { const j = await r.json(); if (!r.ok) throw new Error(j.error || r.statusText); return j; });
 
 async function route() {
-  document.querySelectorAll("nav a[data-r]").forEach(a => a.classList.remove("on"));
+  document.querySelectorAll("a[data-r]").forEach(a => a.classList.remove("on"));
   const h = location.hash.replace(/^#\//, "") || "queue";
   const [page, ...rest] = h.split("/");
-  const cur = document.querySelector(`nav a[data-r="${page === "cell" ? "matrix" : page}"]`);
+  const cur = document.querySelector(`a[data-r="${page === "cell" ? "matrix" : page}"]`);
   if (cur) cur.classList.add("on");
   try {
     if (page === "cell") await viewCell(decodeURIComponent(rest[0]), rest[1]);

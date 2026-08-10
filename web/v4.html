@@ -7,21 +7,9 @@
 <link rel="stylesheet" href="/tokens.css">
 <style>
 /* 沿用 workbench.html 的視覺語言,樣式表獨立——v4 是新頁面,不共用 v3 的 JS/DOM 假設。 */
-:root{
-  --bg:#f5f6f8; --panel:#fff; --panel2:#eef0f3; --line:#e9ebef;
-  --fg:#111827; --dim:#5f6672; --mute:#8a919e;
-  --ok:#15803d; --warn:#b45309; --accent:#4f46e5; --danger:#b91c1c;
-}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);
   font:14px/1.5 -apple-system,"Noto Sans TC",sans-serif}
-nav{display:flex;align-items:center;gap:2px;background:var(--panel);
-  border-bottom:1px solid var(--line);padding:0 12px;position:sticky;top:0;z-index:10;
-  overflow-x:auto}
-nav a{padding:11px 16px;color:var(--dim);text-decoration:none;font-size:13px;
-  border-bottom:2px solid transparent;white-space:nowrap;flex:none}
-nav a.on{color:var(--fg);border-bottom-color:var(--accent)}
-nav .sp{margin-left:auto;font-size:12px;color:var(--mute);padding-right:4px;white-space:nowrap}
 main{padding:16px;max-width:1240px}
 h1{font-size:17px;font-weight:500;margin:0 0 12px}
 button{background:var(--panel2);color:var(--fg);border:1px solid var(--line);
@@ -76,14 +64,20 @@ table.q tr.row:hover{background:var(--panel2);cursor:pointer}
 </style>
 </head>
 <body>
-<nav>
+<div id="appnav"></div>
+<script src="appnav.js"></script>
+<script>
+(function(){var s=document.getElementById("navslot");if(!s)return;
+ s.insertAdjacentHTML("beforeend",
+   '<button id="rebuildBtn" class="pri">⟳ 重建</button>'+
+   '<span class="muted" id="rebuildstat"></span>');})();
+</script>
+<!-- 頁內分頁下沉成內容的一部分,不再長得像第二條導覽列(見 tokens.css .appnav) -->
+<div class="subtabs"><span class="ix-seg" id="v4tabs">
   <a href="#/queue" data-r="queue">複核佇列</a>
   <a href="#/matrix" data-r="matrix">比較表</a>
   <a href="#/run" data-r="run">讀取</a>
-  <button id="rebuildBtn" class="pri" style="margin-left:auto">⟳ 重建</button>
-  <span class="muted" id="rebuildstat"></span>
-  <a href="/workbench.html" class="muted">← 回 v3 工作台</a>
-</nav>
+</span></div>
 <main id="app">載入中…</main>
 <script src="v4.js"></script>
 </body>

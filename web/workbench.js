@@ -2,7 +2,10 @@
 // 複核台前端:零框架、零 CDN。只跟 /api/* 說話,不自己算業務邏輯。
 //
 // 四個畫面(2026-07-29 重構,原本五個;同日再加「分析」):
-//   #/analysis   分析 —— 前台本體(make_web.py 的產出)用 iframe 掛進來
+//   #/analysis   分析 —— 前台本體(make_web.py 的產出)用 iframe 掛進來。
+//                ⚠️ src 一定要寫 `/site/index.html`,**不能寫 `/analysis`** ——
+//                後者自 2026-08-10 起 302 導回本頁 `#/analysis`(讓分析頁永遠在殼裡),
+//                iframe 指過去就是工作台自己載自己,無限遞迴。
 //   #/matrix     資料 —— 總覽矩陣(期別 × 銀行+代碼),nav 上的預設頁
 //   #/doc/DOC    文件頁 —— 一份財報,三類攤開;已抄的核對、沒抄的一顆按鈕
 //   #/buckets    分桶 —— 十個桶 × 收進去的名字,拖曳改判;入口是「資料」頁
@@ -50,7 +53,10 @@ const post = (p, b) => fetch("/api/" + p, {
 async function boot() {
   [S.ov, S.buckets] = await Promise.all([api("overview"), api("buckets")]);
   S.basis = S.ov.basis;
-  document.getElementById("rebuildBtn").onclick = runRebuild;
+  // 用 ?. —— 這頁若被嵌在別的殼裡(沒有導覽列、也就沒有重建鈕),
+  // 不該讓整個 boot() 在這裡炸掉,後面的 route() 還得跑。
+  const rb = document.getElementById("rebuildBtn");
+  if (rb) rb.onclick = runRebuild;
   addEventListener("hashchange", route);
   addEventListener("keydown", onKey);
   route();
@@ -105,7 +111,9 @@ function evidenceChip(c) {
 }
 
 function nav(r) {
-  document.querySelectorAll("nav a").forEach(a => a.classList.toggle("on", a.dataset.r === r));
+  // 只挑頁內路由的連結(有 data-r);全站導覽列(.appnav)由 web/appnav.js 自己標記,
+  // 這裡碰它會把它剛標好的 .on 拔掉。
+  document.querySelectorAll("a[data-r]").forEach(a => a.classList.toggle("on", a.dataset.r === r));
   const st = S.ov.stats;
   // 「卡住」= blocked(分類表缺口)+ rejected(擴頁到上限仍對不上)——
   // 對使用者來說都是「這格需要我去看一眼」,細分留給文件頁的理由文字。
@@ -141,7 +149,7 @@ async function route() {
 function viewAnalysis() {
   nav("analysis");
   const el = $(`<div style="margin:-16px;height:calc(100vh - 42px)">
-    <iframe src="/analysis" title="分析頁"
+    <iframe src="/site/index.html" title="分析頁"
       style="width:100%;height:100%;border:0;display:block"></iframe>
   </div>`);
   document.getElementById("app").replaceChildren(el);

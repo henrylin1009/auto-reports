@@ -9,22 +9,9 @@
 /* 複核台專屬 —— 變數沿用分析頁的視覺語言(見 web/tokens.css),
    值改成同一組色階(白底/淺灰/靛紫),名字維持不變是為了不用改動下面每一條規則。
    見 docs/plan_ui_unify.md 步驟 3。 */
-:root{
-  --bg:#f5f6f8; --panel:#fff; --panel2:#eef0f3; --line:#e9ebef;
-  --fg:#111827; --dim:#5f6672; --mute:#8a919e;
-  --ok:#15803d; --warn:#b45309; --accent:#4f46e5; --danger:#b91c1c;
-}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);
   font:14px/1.5 -apple-system,"Noto Sans TC",sans-serif}
-nav{display:flex;align-items:center;gap:2px;background:var(--panel);
-  border-bottom:1px solid var(--line);padding:0 12px;position:sticky;top:0;z-index:10;
-  overflow-x:auto}
-nav a{padding:11px 16px;color:var(--dim);text-decoration:none;font-size:13px;
-  border-bottom:2px solid transparent;white-space:nowrap;flex:none}
-nav a.on{color:var(--fg);border-bottom-color:var(--accent)}
-nav .sp{margin-left:auto;font-size:12px;color:var(--mute);padding-right:4px;
-  white-space:nowrap;flex:none}
 #rebuildBtn{margin-left:14px;font-size:12px;white-space:nowrap;flex:none}
 #rebuildstat{font-size:11px;margin-left:8px;max-width:220px;overflow:hidden;
   text-overflow:ellipsis;white-space:nowrap;flex:none}
@@ -178,15 +165,15 @@ textarea:focus{outline:none;border-color:var(--accent)}
 </style>
 </head>
 <body>
-<nav>
-  <a href="#/analysis" data-r="analysis">分析</a>
-  <a href="#/matrix" data-r="matrix">資料</a>
-  <a href="/sim.html">配置模擬器 →</a>
-  <a href="/v4.html">v4 複核台 →</a>
-  <button id="rebuildBtn" class="pri">⟳ 重建</button>
-  <span class="muted" id="rebuildstat"></span>
-  <span class="sp" id="navstat"></span>
-</nav>
+<div id="appnav"></div>
+<script src="appnav.js"></script>
+<script>
+// 右側狀態區:重建鈕與狀態文字掛進共用導覽列的 .slot(這頁專屬,不進 appnav.js)
+(function(){var s=document.getElementById("navslot");if(!s)return;
+ s.insertAdjacentHTML("beforeend",
+   '<button id="rebuildBtn" class="pri">⟳ 重建</button>'+
+   '<span class="muted" id="rebuildstat"></span><span id="navstat"></span>');})();
+</script>
 <main id="app">載入中…</main>
 <script src="workbench.js"></script>
 </body>
