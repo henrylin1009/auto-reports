@@ -1,0 +1,136 @@
+{
+ "202502_5835_AI3|AC": [
+  {
+   "at": "2026-07-29T13:34:59.743514Z",
+   "by": "decide",
+   "group": "按攤銷後成本衡量之債務工具投資",
+   "locator": {
+    "cell_key": "202502_5835_AI3|AC",
+    "row_index": 0,
+    "source_page": 38
+   },
+   "mapping": "貨幣市場",
+   "name": "短期票券",
+   "occurrence": {
+    "cell_key": "202502_5835_AI3|AC",
+    "ordinal": 0,
+    "record_fp": "961628f24dca62e01cab44a4766a0a0b8fc55f5cf14826e93a6d6986a77f44b0",
+    "row_fp": "cfdb90e0e7b74ac0170e5711d0f1a095c055df903d4dbad2abdf9ccd8291c54f",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:短期票券"
+  },
+  {
+   "at": "2026-07-29T13:34:59.743602Z",
+   "by": "decide",
+   "group": "按攤銷後成本衡量之債務工具投資",
+   "locator": {
+    "cell_key": "202502_5835_AI3|AC",
+    "row_index": 1,
+    "source_page": 38
+   },
+   "mapping": "公債",
+   "name": "政府公債",
+   "occurrence": {
+    "cell_key": "202502_5835_AI3|AC",
+    "ordinal": 1,
+    "record_fp": "961628f24dca62e01cab44a4766a0a0b8fc55f5cf14826e93a6d6986a77f44b0",
+    "row_fp": "dc0b8be5f424fbe85031c3bfd91d9aa1df8f12b8040241df5d8f84f25d4aaee2",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:政府公債"
+  },
+  {
+   "at": "2026-07-29T13:34:59.743639Z",
+   "by": "decide",
+   "group": "按攤銷後成本衡量之債務工具投資",
+   "locator": {
+    "cell_key": "202502_5835_AI3|AC",
+    "row_index": 2,
+    "source_page": 38
+   },
+   "mapping": "公司債",
+   "name": "公 司 債",
+   "occurrence": {
+    "cell_key": "202502_5835_AI3|AC",
+    "ordinal": 2,
+    "record_fp": "961628f24dca62e01cab44a4766a0a0b8fc55f5cf14826e93a6d6986a77f44b0",
+    "row_fp": "7be6496c2c548bc384f4cd7c4537092741a3abc31a29f8c17856da8d8d311987",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:公司債"
+  },
+  {
+   "at": "2026-07-29T13:34:59.743665Z",
+   "by": "decide",
+   "group": "按攤銷後成本衡量之債務工具投資",
+   "locator": {
+    "cell_key": "202502_5835_AI3|AC",
+    "row_index": 3,
+    "source_page": 38
+   },
+   "mapping": "金融債",
+   "name": "金 融 債",
+   "occurrence": {
+    "cell_key": "202502_5835_AI3|AC",
+    "ordinal": 3,
+    "record_fp": "961628f24dca62e01cab44a4766a0a0b8fc55f5cf14826e93a6d6986a77f44b0",
+    "row_fp": "7174aa5bca593c1921fdc5635a896aee8eb4ffd33e3f32b083e2f878197e1a15",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:金融債"
+  },
+  {
+   "at": "2026-07-29T13:34:59.743685Z",
+   "by": "decide",
+   "group": "按攤銷後成本衡量之債務工具投資",
+   "locator": {
+    "cell_key": "202502_5835_AI3|AC",
+    "row_index": 4,
+    "source_page": 38
+   },
+   "mapping": "資產基礎",
+   "name": "資產基礎債券",
+   "occurrence": {
+    "cell_key": "202502_5835_AI3|AC",
+    "ordinal": 4,
+    "record_fp": "961628f24dca62e01cab44a4766a0a0b8fc55f5cf14826e93a6d6986a77f44b0",
+    "row_fp": "6a1d00b8df1cf663bfc5486f46fe080599a67bb783005fe64a6494efce662895",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:資產基礎債券"
+  },
+  {
+   "at": "2026-07-29T13:34:59.743705Z",
+   "by": "decide",
+   "group": "按攤銷後成本衡量之債務工具投資",
+   "locator": {
+    "cell_key": "202502_5835_AI3|AC",
+    "row_index": 5,
+    "source_page": 38
+   },
+   "mapping": "評價調整",
+   "name": "減：備抵損失",
+   "occurrence": {
+    "cell_key": "202502_5835_AI3|AC",
+    "ordinal": 5,
+    "record_fp": "961628f24dca62e01cab44a4766a0a0b8fc55f5cf14826e93a6d6986a77f44b0",
+    "row_fp": "08c940b91b94e7e2bb6b4a3e27550c51bd7e7ea2e4cb6125051fbc2a87c5560f",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:減：備抵損失"
+  }
+ ]
+}

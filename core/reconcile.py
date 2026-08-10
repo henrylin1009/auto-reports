@@ -14,7 +14,7 @@ import os
 
 import transcribe
 import wide
-from core import store
+from core import closure, store
 
 OUT_DIR = "out"
 
@@ -35,7 +35,17 @@ def verdict_of(cell_key, recs, anchors_mapping):
     """
     anchors = _Anchors(anchors_mapping)
     ok, checks = transcribe.verify(recs, anchors)
-    views = wide.cell(recs)
+    # `wide.py` 心智模型是「一份 record 就是一整張表」,不認章節模式的母表/子附註
+    # 樹狀結構 —— 2026-07-31 起先用 `core.closure.flatten()` 把樹攤平成它認得的
+    # 單根單份形狀再交給它。攤不平(ok=False)就不必攤,views 本來就全部被
+    # `if ok else None` 蓋掉,攤平失敗的錯誤已經在 `checks["④合計==錨(整格拼樹)"]`
+    # 裡了,不必在這裡重複處理。
+    flat = recs
+    if ok:
+        flat, flat_err = closure.flatten(recs, anchors_mapping.get(recs[0]["class"]))
+        if flat_err:
+            ok, flat = False, recs
+    views = wide.cell(flat)
     return {
         "doc": recs[0]["doc"], "class": recs[0]["class"], "pass": ok,
         "wide": views["帳面"].book if ok and views["帳面"].ok else None,

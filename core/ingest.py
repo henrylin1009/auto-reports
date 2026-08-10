@@ -46,7 +46,11 @@ from core import decision_store, decisions as decisions_mod, expand_policy
 
 #: 結構化檢查名 —— 給 `core.expand_policy` 用的訊號集合(I3 的唯一來源仍是
 #: `expand_policy.TRIGGERS`/`NEVER`,這裡只是「怎麼把 rec 轉成失敗訊號」)。
-_CHECK_NAMES = ("check_identity", "check_anchor", "check_buckets", "check_col_totals")
+#: `check_identity` 逐 record;`check_closure`/`check_buckets` 是 2026-07-31 起
+#: **整格算一次**的訊號(見 `_structured_checks`),不是逐 record ——
+#: 名字保留單數是因為 `expand_policy.TRIGGERS`/`NEVER` 拿它們當 key,改名要
+#: 兩邊一起改。
+_CHECK_NAMES = ("check_identity", "check_closure", "check_buckets", "check_col_totals")
 
 
 def _now():
@@ -215,8 +219,11 @@ def _taxonomy_gap(recs, loc):
 
 
 def _structured_checks(recs, loc, pages):
-    """對每份 record 個別呼叫 check_* 函式,組出結構化的 {檢查名: 訊息 or None}
-    清單,以及匯總出的失敗檢查名集合(給 A2 的 `expand_policy` 用)。
+    """組出結構化的 {檢查名: 訊息 or None} 清單,以及匯總出的失敗檢查名集合
+    (給 A2 的 `expand_policy` 用)。**必須跟 `transcribe.verify()` 用同一套
+    判準**(`consistent_with_verify` 就是拿來守這件事的),2026-07-31 起
+    ④/⑤ 都改成整格算一次,不再逐 record——見 `transcribe.verify()` 的
+    同一段改法與理由。
 
     §1.2:`source` 不是 `transcribe` 裡的既有檢查 —— 它是 ingest 自己判的:
     `source_page` 在不在這一輪的候選頁集合內。"""
@@ -228,16 +235,26 @@ def _structured_checks(recs, loc, pages):
             "source": (None if rec["source_page"] in pages
                        else f"來源頁 p{rec['source_page']} 不在候選頁集合 {pages} 內"),
             "check_identity": transcribe.check_identity(rec),
-            "check_anchor": transcribe.check_anchor(rec, loc),
-            "check_buckets": transcribe.check_buckets(rec, buckets),
-            "check_col_totals": (transcribe.check_col_totals(rec)
-                                  if rec.get("printed_totals") else None),
         }
         per_rec.append(entry)
-        for name in ("source",) + _CHECK_NAMES:
-            if entry[name]:
+        for name in ("source", "check_identity"):
+            if _is_hard(entry[name]):
                 failed.add(name)
-    cross = transcribe.check_cross(recs, buckets) if len(recs) >= 2 else None
+
+    tree, closure_err = transcribe.check_closure(recs, loc)
+    if _is_hard(closure_err):
+        failed.add("check_closure")
+        return per_rec, None, failed
+
+    buckets_err = transcribe.check_buckets_leaves(tree.leaves(), buckets)
+    if _is_hard(buckets_err):
+        failed.add("check_buckets")
+    for rec in recs:
+        col_err = transcribe.check_col_totals(rec) if rec.get("printed_totals") else None
+        if _is_hard(col_err):
+            failed.add("check_col_totals")
+
+    cross = transcribe.check_cross(tree.roots, buckets) if len(tree.roots) >= 2 else None
     if _is_hard(cross):
         failed.add("check_cross")
     return per_rec, cross, failed
@@ -256,10 +273,14 @@ def _is_hard(v):
 def consistent_with_verify(recs, loc, pages):
     """I2:結構化檢查結果的 pass/fail 結論,與 `transcribe.verify()` 的結論
     必須同進同出。回傳 (structured_ok, verify_ok) 給呼叫端自己斷言相等。
-    **不含 `source`**——`verify()` 本來就不測 source,不能拿它來比。"""
-    per_rec, cross, _failed = _structured_checks(recs, loc, pages)
-    structured_hard = any(_is_hard(e[name]) for e in per_rec for name in _CHECK_NAMES)
-    structured_hard = structured_hard or _is_hard(cross)
+    **不含 `source`**——`verify()` 本來就不測 source,不能拿它來比。
+
+    2026-07-31 起 `check_closure`/`check_buckets`/`check_col_totals` 是整格
+    算一次的訊號,已經直接記在 `_structured_checks` 回傳的 `failed` 集合裡
+    (不再是 `per_rec` 逐筆 dict 的 key),判準改讀 `failed`,不讀 `per_rec`。"""
+    _per_rec, _cross, failed = _structured_checks(recs, loc, pages)
+    hard_names = (set(_CHECK_NAMES) | {"check_cross"}) - {"source"}
+    structured_hard = bool(failed & hard_names)
     verify_ok, _res = transcribe.verify(recs, loc)
     return (not structured_hard), verify_ok
 
@@ -287,6 +308,26 @@ def classify_outcome(doc, cls, recs, loc, level, pages, retries, max_level,
                 reason = "; ".join(f"{k}:{v}" for k, v in res.items() if v)
 
     if ok:
+        # 2026-07-31:歸檔閘砍成兩道(①② 與 ④)之後,⑤ 分桶未知**不再讓
+        # `verify()` 回 False** —— 但那不等於「沒事」。舊寫法在這裡直接回 PASS,
+        # 結果是分類未知的格子悄悄變成乾淨通過,**不再進人審佇列**
+        # (`test_b2.F1_I1` 抓到的就是這個)。桶是要人補的東西,少了佇列就
+        # 沒有人會知道要補。
+        #
+        # 所以這裡仍然問一次 Gate 2 訊號:過了才是 PASS,沒過走 FILED
+        # ——**兩者都歸檔**,差別只在 FILED 會進 review 佇列。這正是
+        # 「分桶從歸檔閘移到發布閘」該有的形狀:不擋存檔,但要看得見。
+        gate2 = None
+        if use_policy and recs and not problems:
+            _pr, _cr, gate2 = _structured_checks(recs, loc, pages)
+            gate2 = {n for n in gate2 if n in expand_policy.NEVER}
+        if gate2:
+            return {"outcome": "FILED", "doc": doc, "cls": cls, "recs": recs,
+                    "level": level, "retries": retries, "res": res,
+                    "why": "Gate 1 全過;Gate 2(分類)未過 —— 歸檔並進人審佇列",
+                    "failed_checks": sorted(gate2),
+                    "message": (f"FILED     算術全過,但分類未定 —— 已歸檔進 "
+                                f"facts/{doc}.json({cls}),進 review 佇列。")}
         return {"outcome": "PASS", "doc": doc, "cls": cls, "recs": recs,
                 "level": level, "retries": retries, "res": res,
                 "message": f"PASS      已歸檔進 facts/{doc}.json({cls})。"}
@@ -331,10 +372,10 @@ def classify_outcome(doc, cls, recs, loc, level, pages, retries, max_level,
                             f"進 review 佇列,不擴頁不消耗預算。")}
 
     new_level = level + 1
-    more = loc.expand(cls, new_level) if new_level <= max_level else []
-    new_pages = sorted(set(pages) | set(more))
+    # 2026-07-31:擴頁 → 換章節。**取代不是聯集**(見 `locate.Located.expand`)。
+    new_pages = loc.expand(cls, new_level) if new_level <= max_level else []
 
-    if new_level > max_level or not more or new_pages == pages:
+    if new_level > max_level or not new_pages or new_pages == pages:
         return {"outcome": "REJECT", "doc": doc, "cls": cls, "reason": reason,
                 "level": new_level - 1, "retries": retries, "why": why,
                 "message": (f"REJECT    擴張到上限仍對不上,"

@@ -29,9 +29,6 @@ CLASSES = ("Trading", "OCI", "AC")
 #: 所有 pdfium 呼叫(這裡跟 server.render_png)共用同一把鎖,序列化存取。
 PDFIUM_LOCK = threading.Lock()
 
-#: 千分位數字。expand() 用它取子錨 —— 只認格式,不認金額大小。
-_NUM = re.compile(r"\d{1,3}(?:,\d{3})+")
-
 #: expand() 的回歸基準:手動驗過的 11 格,正確頁必須落在擴張後的候選裡。
 #: 每格的正確頁都是用算術證過的(逐項相加 == 錨或其小計),不是關鍵字猜的。
 EXPAND_TRUTH = [
@@ -75,49 +72,20 @@ class Located:
                 yield c, self.anchors[c], self.pages[c]
 
     def expand(self, cls, level=1):
-        """第 1 層抄完 `sum(葉列) != 錨` 時才呼叫:擴張候選頁。
+        """第 `level` 個(由小到大)附註章節的頁 —— 見 `section.pages_at`。
 
-        **由算術驅動,不是由版型驅動。** 對不上就擴,對上就停,
-        所以不需要分辨遇到的是哪一種漏抓 —— 實測有三種,同一招都治:
+        ⚠️ **2026-07-31 換過語意,回傳值是「取代」不是「追加」。** 舊版回傳
+        「要加進候選頁的鄰頁」,呼叫端做 `set(pages) | set(more)`;現在回傳的
+        就是下一輪要用的完整頁集合。理由與實測見 `section.py` 檔頭 ——
+        擴頁的三種漏抓全是「頁不是文件的單位」的症狀,章節一次涵蓋
+        (`EXPAND_TRUTH` 11 格 11/11 不必逐級放寬)。
 
-          子附註在另一頁  富邦 202402_5836 OCI p38→p39;玉山 202502_5847 OCI p23→p24
-          表格跨頁        國泰 202102_5835 Trading p34→p33;中信 202502_5841 OCI p17→p16
-          同頁多段小計    富邦 202304_5836 Trading(108,284,903+31,162,445+492,897=錨)
-
-        **分級,便宜的先來**(level 1→3 逐級放寬,對上就不必往下走):
-          1. 鄰頁 ±1        —— EXPAND_TRUTH 11 格全中,平均 2.2 頁
-          2. 鄰頁 ±2        —— 平均 4.4 頁
-          3. 再加子錨 grep  —— 第 1 層頁上任一數字所在的頁,平均 8.7 頁
-
-        level 3 目前**沒有任何一格用得上**(11 格的正確頁全是鄰頁),留著是因為
-        「子附註不在隔壁」在原理上可能發生,但**沒有實例前不要預設開啟** ——
-        它的雜訊來源是短數字:中信合併那格 56 個子錨裡,`7,400` 中 5 頁、`3,200` 中 4 頁,
-        把 15 個無關頁拉進來,而正確頁 p17 是靠鄰頁規則找到的,不是靠它。
-
-        ⚠️ **試過的較窄判準都失敗,不要退回去**(2026-07-26 實測):
-          - 「子錨須標著小計/合計」→ 玉山 p24 合計列是光禿禿的
-            `$ 292,943,799 $ ...`,沒有「合計」二字 → 漏抓
-          - 「數字須 ≥ N 才當子錨」→ MIN_GROUPS=2 有雜訊、=3 直接歸零
-            (小計 144,508,936 只有兩個逗號)。**沒有安全區間 = 判準本身錯**
-          雜訊由抄列時 `sum(葉列) == 錨` 濾掉,寧可寬進嚴驗 —— 但也不要無謂地寬。
+        方法留在 `Located` 上而不是讓呼叫端直接呼叫 `section` —— 它是
+        `fill` / `core.ingest` / `fill_auto` 與測試替身共用的接縫,換成
+        模組函式的話每個 `_FakeLoc` 都得跟著長出 `texts`。
         """
-        l1 = self.pages.get(cls) or []
-        if not l1:
-            return []
-        out = set()
-        for i in l1:
-            for d in range(1, (2 if level >= 2 else 1) + 1):
-                out |= {i - d, i + d}
-        if level >= 3:
-            subs = set()
-            for i in l1:
-                subs |= set(_NUM.findall(self.text(i)))
-            subs.discard(f"{self.anchors[cls]:,}")
-            for i, t in enumerate(self.texts):
-                if any(s in t for s in subs):
-                    out.add(i)
-        return sorted(i for i in out
-                      if 0 <= i < len(self.texts) and i not in l1 and i != self.bs_page)
+        import section
+        return section.pages_at(self, cls, level)
 
     def __repr__(self):
         got = " ".join(f"{c}:{len(p)}頁" for c, _, p in self.cells())
@@ -137,10 +105,17 @@ SOLO, CONSOLIDATED, UNKNOWN = "個體", "合併", "?"
 def basis_of(text):
     """從封面文字判口徑。**合併優先比對** —— 合併報告封面印「及子公司…合併財務報告」,
     個體報告印「個體財務報告」;兩者都含「財務報告」四字,順序寫反會誤判。"""
-    head = (text or "")[:400]
-    if "合併財務報告" in head or "及子公司" in head:
+    # 攤平空白再比:2002 那批封面把字距拉開印成「財 務 報 告」,原樣比對必敗。
+    head = re.sub(r"\s", "", (text or "")[:400])
+    if "合併財務報" in head or "及子公司" in head:
         return CONSOLIDATED
-    if "個體財務報告" in head:
+    if "個體財務報" in head or "個別財務報" in head:
+        return SOLO
+    # **2015 以前的封面不印「個體」二字**,只印「財務報告」/「財務報表」。
+    # 實測封面:2012 兆豐個體「兆豐國際商業銀行股份有限公司 財務報告」,
+    # 同期合併「…股份有限公司及子公司 合併財務報表」。合併那邊一定會印
+    # 「及子公司」或「合併」,已在上面攔掉,所以走到這裡的無修飾封面就是母公司財報。
+    if "財務報告" in head or "財務報表" in head:
         return SOLO
     return UNKNOWN
 
@@ -240,23 +215,20 @@ def _main():
     paths = a.paths or sorted(glob.glob("pdf_cache/*.pdf"))
 
     if a.expand:
-        # level 1 必須就全中。若哪天新增的真值要靠 level 2/3 才中,
-        # 那是行為改變,要在這裡看見,不准默默調高預設等級。
-        rc = 0
-        for lv in (1, 2, 3):
-            hit, sizes = 0, []
-            for doc, cls, need in EXPAND_TRUTH:
-                loc = locate(f"pdf_cache/{doc}.pdf")
-                got = loc.expand(cls, lv)
-                sizes.append(len(got))
-                ok = need in got or need in loc.pages[cls]
-                hit += ok
-                if lv == 1 and not ok:
-                    print(f"  ✗ {doc} {cls:<8} 需 p{need}  得 {got}")
-            print(f"  level {lv}: 命中 {hit}/{len(EXPAND_TRUTH)}  "
-                  f"候選頁 平均 {sum(sizes)/len(sizes):.1f} 最多 {max(sizes)}")
-            if lv == 1 and hit != len(EXPAND_TRUTH):
+        # 章節模式下沒有「逐級放寬」了:正確頁必須落在**最小的那個章節**裡
+        # (level 0)。要靠 level 1/2 才中的話是行為改變,要在這裡看見。
+        rc, hit, sizes = 0, 0, []
+        for doc, cls, need in EXPAND_TRUTH:
+            loc = locate(f"pdf_cache/{doc}.pdf")
+            got = loc.expand(cls, 0)
+            sizes.append(len(got))
+            ok = need in got
+            hit += ok
+            if not ok:
+                print(f"  ✗ {doc} {cls:<8} 需 p{need}  得 {got}")
                 rc = 1
+        print(f"  level 0(最小章節): 命中 {hit}/{len(EXPAND_TRUTH)}  "
+              f"頁數 平均 {sum(sizes)/len(sizes):.1f} 最多 {max(sizes)}")
         return rc
 
     if not a.census:

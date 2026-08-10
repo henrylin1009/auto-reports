@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 """R3 的分層測試(T-R3):Ring 1(純)不得碰 PDF / state / 時鐘。
 
-Ring 1:core.contracts / core.classify(尚不存在,C2 才有) / core.reconcile /
+Ring 1:core.classify(尚不存在,C2 才有) / core.reconcile /
         core.publish(尚不存在,C4 才有) / core.units
+        (core.contracts 已刪除,`docs/plan_schema_derive.md` D3 —— 零 production 引用,
+        跟 facts.py 重複一份驗證邏輯,只有自己的測試在用)
 Ring 0:core.store 的 anchors 產生器 / core.ingest(尚不存在,C3 才有) / resolve
 """
 import json

@@ -1,0 +1,233 @@
+{
+ "doc": "202002_5841_AI3",
+ "model": "claude",
+ "n_pages": 191,
+ "prompt_chars": 168202,
+ "elapsed_s": 77.7,
+ "raw_text": "```json\n{\n  \"basis\": \"個體\",\n  \"bs_date\": \"109/06/30\",\n  \"Trading\": {\n    \"book\": {\n      \"total\": 222449392,\n      \"printed_subtotal\": 222449392,\n      \"bs_anchor\": null,\n      \"page\": 29,\n      \"rows\": [\n        {\"group\": \"強制透過損益按公允價值衡量之金融資產\", \"name\": \"商業本票\", \"amount\": 131588172},\n        {\"group\": \"強制透過損益按公允價值衡量之金融資產\", \"name\": \"政府公債\", \"amount\": 351347},\n        {\"group\": \"強制透過損益按公允價值衡量之金融資產\", \"name\": \"公司債\", \"amount\": 1496900},\n        {\"group\": \"強制透過損益按公允價值衡量之金融資產\", \"name\": \"可轉換公司債\", \"amount\": 17696},\n        {\"group\": \"強制透過損益按公允價值衡量之金融資產\", \"name\": \"金融債券\", \"amount\": 2355730},\n        {\"group\": \"強制透過損益按公允價值衡量之金融資產\", \"name\": \"股票\", \"amount\": 914273},\n        {\"group\": \"強制透過損益按公允價值衡量之金融資產\", \"name\": \"衍生金融資產\", \"amount\": 85680812},\n        {\"group\": \"強制透過損益按公允價值衡量之金融資產\", \"name\": \"金融資產評價調整\", \"amount\": 44462}\n      ]\n    },\n    \"cost\": {\"total\": null, \"page\": null, \"rows\": []},\n    \"cost_note\": \"本文件為半年報(民國一○九年第二季)，僅有財務報表附註的帳面揭露(附註六(三))，無「重要會計項目明細表」揭露取得成本；文件內僅期貨部門及證券部門之自身小額投資組合明細表列有單價/成本欄位，但不涵蓋銀行整體Trading部位，故此類科目成本填null。\",\n    \"checks\": {\n      \"check_rowsum\": {\"status\": \"OK\", \"diff\": 0},\n      \"check_anchor\": {\"status\": \"no_witness\", \"diff\": null},\n      \"check_cost\": {\"status\": \"no_witness\", \"diff\": null}\n    }\n  },\n  \"OCI\": {\n    \"book\": {\n      \"total\": 235100636,\n      \"printed_subtotal\": 235100636,\n      \"bs_anchor\": null,\n      \"page\": 31,\n      \"rows\": [\n        {\"group\": \"透過其他綜合損益按公允價值衡量之債務工具\", \"name\": \"可轉讓定期存單\", \"amount\": 3080158},\n        {\"group\": \"透過其他綜合損益按公允價值衡量之債務工具\", \"name\": \"國庫券\", \"amount\": 1193626},\n        {\"group\": \"透過其他綜合損益按公允價值衡量之債務工具\", \"name\": \"政府公債\", \"amount\": 44497023},\n        {\"group\": \"透過其他綜合損益按公允價值衡量之債務工具\", \"name\": \"公司債\", \"amount\": 10096144},\n        {\"group\": \"透過其他綜合損益按公允價值衡量之債務工具\", \"name\": \"金融債券\", \"amount\": 144544701},\n        {\"group\": \"透過其他綜合損益按公允價值衡量之債務工具\", \"name\": \"資產基礎證券\", \"amount\": 7581287},\n        {\"group\": \"透過其他綜合損益按公允價值衡量之債務工具\", \"name\": \"其他證券及債券\", \"amount\": 5563861},\n        {\"group\": \"透過其他綜合損益按公允價值衡量之債務工具\", \"name\": \"金融資產評價調整\", \"amount\": 1975261},\n        {\"group\": \"透過其他綜合損益按公允價值衡量之權益工具\", \"name\": \"股票\", \"amount\": 15721465},\n        {\"group\": \"透過其他綜合損益按公允價值衡量之權益工具\", \"name\": \"金融資產評價調整\", \"amount\": 847110}\n      ]\n    },\n    \"cost\": {\"total\": null, \"page\": null, \"rows\": []},\n    \"cost_note\": \"同上，半年報無銀行整體OCI科目之「重要會計項目明細表」(取得成本)揭露，故成本填null。\",\n    \"checks\": {\n      \"check_rowsum\": {\"status\": \"OK\", \"diff\": 0},\n      \"check_anchor\": {\"status\": \"no_witness\", \"diff\": null},\n      \"check_cost\": {\"status\": \"no_witness\", \"diff\": null}\n    }\n  },\n  \"AC\": {\n    \"book\": {\n      \"total\": 743973813,\n      \"printed_subtotal\": 743973813,\n      \"bs_anchor\": null,\n      \"page\": 32,\n      \"rows\": [\n        {\"group\": \"\", \"name\": \"可轉讓定期存單\", \"amount\": 419426400},\n        {\"group\": \"\", \"name\": \"國庫券\", \"amount\": 9297497},\n        {\"group\": \"\", \"name\": \"政府公債\", \"amount\": 182236036},\n        {\"group\": \"\", \"name\": \"公司債\", \"amount\": 58588075},\n        {\"group\": \"\", \"name\": \"金融債券\", \"amount\": 16235576},\n        {\"group\": \"\", \"name\": \"資產基礎證券\", \"amount\": 52867839},\n        {\"group\": \"\", \"name\": \"其他\", \"amount\": 5346397},\n        {\"group\": \"\", \"name\": \"減:備抵損失\", \"amount\": -24007}\n      ]\n    },\n    \"cost\": {\"total\": null, \"page\": null, \"rows\": []},\n    \"cost_note\": \"同上，半年報無銀行整體AC科目之「重要會計項目明細表」(取得成本)揭露，故成本填null；本表本身即為攤銷後成本衡量表，未另印「取得成本」欄。\",\n    \"checks\": {\n      \"check_rowsum\": {\"status\": \"OK\", \"diff\": 0},\n      \"check_anchor\": {\"status\": \"no_witness\", \"diff\": null},\n      \"check_cost\": {\"status\": \"no_witness\", \"diff\": null}\n    }\n  }\n}\n```\n",
+ "parsed": {
+  "basis": "個體",
+  "bs_date": "109/06/30",
+  "Trading": {
+   "book": {
+    "total": 222449392,
+    "printed_subtotal": 222449392,
+    "bs_anchor": null,
+    "page": 29,
+    "rows": [
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "商業本票",
+      "amount": 131588172
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "政府公債",
+      "amount": 351347
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "公司債",
+      "amount": 1496900
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "可轉換公司債",
+      "amount": 17696
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "金融債券",
+      "amount": 2355730
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "股票",
+      "amount": 914273
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "衍生金融資產",
+      "amount": 85680812
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "金融資產評價調整",
+      "amount": 44462
+     }
+    ]
+   },
+   "cost": {
+    "total": null,
+    "page": null,
+    "rows": []
+   },
+   "cost_note": "本文件為半年報(民國一○九年第二季)，僅有財務報表附註的帳面揭露(附註六(三))，無「重要會計項目明細表」揭露取得成本；文件內僅期貨部門及證券部門之自身小額投資組合明細表列有單價/成本欄位，但不涵蓋銀行整體Trading部位，故此類科目成本填null。",
+   "checks": {
+    "check_rowsum": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_anchor": {
+     "status": "no_witness",
+     "diff": null
+    },
+    "check_cost": {
+     "status": "no_witness",
+     "diff": null
+    }
+   }
+  },
+  "OCI": {
+   "book": {
+    "total": 235100636,
+    "printed_subtotal": 235100636,
+    "bs_anchor": null,
+    "page": 31,
+    "rows": [
+     {
+      "group": "透過其他綜合損益按公允價值衡量之債務工具",
+      "name": "可轉讓定期存單",
+      "amount": 3080158
+     },
+     {
+      "group": "透過其他綜合損益按公允價值衡量之債務工具",
+      "name": "國庫券",
+      "amount": 1193626
+     },
+     {
+      "group": "透過其他綜合損益按公允價值衡量之債務工具",
+      "name": "政府公債",
+      "amount": 44497023
+     },
+     {
+      "group": "透過其他綜合損益按公允價值衡量之債務工具",
+      "name": "公司債",
+      "amount": 10096144
+     },
+     {
+      "group": "透過其他綜合損益按公允價值衡量之債務工具",
+      "name": "金融債券",
+      "amount": 144544701
+     },
+     {
+      "group": "透過其他綜合損益按公允價值衡量之債務工具",
+      "name": "資產基礎證券",
+      "amount": 7581287
+     },
+     {
+      "group": "透過其他綜合損益按公允價值衡量之債務工具",
+      "name": "其他證券及債券",
+      "amount": 5563861
+     },
+     {
+      "group": "透過其他綜合損益按公允價值衡量之債務工具",
+      "name": "金融資產評價調整",
+      "amount": 1975261
+     },
+     {
+      "group": "透過其他綜合損益按公允價值衡量之權益工具",
+      "name": "股票",
+      "amount": 15721465
+     },
+     {
+      "group": "透過其他綜合損益按公允價值衡量之權益工具",
+      "name": "金融資產評價調整",
+      "amount": 847110
+     }
+    ]
+   },
+   "cost": {
+    "total": null,
+    "page": null,
+    "rows": []
+   },
+   "cost_note": "同上，半年報無銀行整體OCI科目之「重要會計項目明細表」(取得成本)揭露，故成本填null。",
+   "checks": {
+    "check_rowsum": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_anchor": {
+     "status": "no_witness",
+     "diff": null
+    },
+    "check_cost": {
+     "status": "no_witness",
+     "diff": null
+    }
+   }
+  },
+  "AC": {
+   "book": {
+    "total": 743973813,
+    "printed_subtotal": 743973813,
+    "bs_anchor": null,
+    "page": 32,
+    "rows": [
+     {
+      "group": "",
+      "name": "可轉讓定期存單",
+      "amount": 419426400
+     },
+     {
+      "group": "",
+      "name": "國庫券",
+      "amount": 9297497
+     },
+     {
+      "group": "",
+      "name": "政府公債",
+      "amount": 182236036
+     },
+     {
+      "group": "",
+      "name": "公司債",
+      "amount": 58588075
+     },
+     {
+      "group": "",
+      "name": "金融債券",
+      "amount": 16235576
+     },
+     {
+      "group": "",
+      "name": "資產基礎證券",
+      "amount": 52867839
+     },
+     {
+      "group": "",
+      "name": "其他",
+      "amount": 5346397
+     },
+     {
+      "group": "",
+      "name": "減:備抵損失",
+      "amount": -24007
+     }
+    ]
+   },
+   "cost": {
+    "total": null,
+    "page": null,
+    "rows": []
+   },
+   "cost_note": "同上，半年報無銀行整體AC科目之「重要會計項目明細表」(取得成本)揭露，故成本填null；本表本身即為攤銷後成本衡量表，未另印「取得成本」欄。",
+   "checks": {
+    "check_rowsum": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_anchor": {
+     "status": "no_witness",
+     "diff": null
+    },
+    "check_cost": {
+     "status": "no_witness",
+     "diff": null
+    }
+   }
+  }
+ },
+ "parse_ok": true
+}

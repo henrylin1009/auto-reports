@@ -67,6 +67,26 @@ def case_unknown_field():
     yield ("未知欄位被抓到", bool(problems), problems)
 
 
+def case_row_src_accepted():
+    """`_src`(人工列的稽核欄位,2026-07-30 加)不准被當成未知欄位擋下來——
+    否則 W2 的「網頁改一列」整個立刻被 Gate 1 擋死,跟沒加一樣。"""
+    rec = copy.deepcopy(GOOD_REC)
+    rec["rows"][0]["_src"] = {"by": "henrylin", "at": "2026-07-30T12:00",
+                              "why": "文字層缺一位千分位,用印出合計反推"}
+    problems = facts.validate(_cells(rec))
+    yield ("帶 _src 的列通過驗證", not problems, problems)
+
+
+def case_row_src_does_not_bypass_schema():
+    """`_src` 只是多一個欄位,**不是通行證**——名字還是不准是空字串,
+    cols 還是不准塞 float。人工列一樣要守格式,只是不用守六道語意檢查。"""
+    rec = copy.deepcopy(GOOD_REC)
+    rec["rows"][0]["_src"] = {"by": "henrylin", "at": "2026-07-30T12:00", "why": "x"}
+    rec["rows"][0]["cols"]["帳面金額"] = 100.5
+    problems = facts.validate(_cells(rec))
+    yield ("有 _src 也擋得住 float", bool(problems), problems)
+
+
 def case_existing_facts_pass():
     """現有事實庫全部通過。
 
@@ -84,6 +104,7 @@ def main():
     bad = 0
     for case in (case_missing_total_col, case_float_in_cols, case_empty_rows,
                  case_key_content_mismatch, case_unknown_field,
+                 case_row_src_accepted, case_row_src_does_not_bypass_schema,
                  case_existing_facts_pass):
         print(f"\n{case.__doc__.splitlines()[0]}")
         for label, ok, detail in case():

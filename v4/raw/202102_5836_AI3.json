@@ -1,0 +1,208 @@
+{
+ "doc": "202102_5836_AI3",
+ "model": "claude",
+ "n_pages": 188,
+ "prompt_chars": 169754,
+ "elapsed_s": 68.4,
+ "raw_text": "```json\n{\n  \"basis\": \"個體\",\n  \"bs_date\": \"110/06/30\",\n  \"Trading\": {\n    \"book\": {\n      \"total\": 72915412,\n      \"printed_subtotal\": 72915412,\n      \"bs_anchor\": null,\n      \"page\": 38,\n      \"rows\": [\n        {\"group\": \"強制透過損益按公允價值衡量之金融資產\", \"name\": \"可轉換公司債\", \"amount\": 16290692},\n        {\"group\": \"強制透過損益按公允價值衡量之金融資產\", \"name\": \"商業本票\", \"amount\": 13468172},\n        {\"group\": \"強制透過損益按公允價值衡量之金融資產\", \"name\": \"政府公債\", \"amount\": 12678304},\n        {\"group\": \"強制透過損益按公允價值衡量之金融資產\", \"name\": \"公司債\", \"amount\": 4180399},\n        {\"group\": \"強制透過損益按公允價值衡量之金融資產\", \"name\": \"金融債券\", \"amount\": 3444952},\n        {\"group\": \"強制透過損益按公允價值衡量之金融資產\", \"name\": \"可轉讓定存單\", \"amount\": 1673343},\n        {\"group\": \"強制透過損益按公允價值衡量之金融資產\", \"name\": \"其他\", \"amount\": 3297511},\n        {\"group\": \"衍生金融資產\", \"name\": \"外匯換匯合約\", \"amount\": 10854440},\n        {\"group\": \"衍生金融資產\", \"name\": \"其他\", \"amount\": 7027599}\n      ]\n    },\n    \"cost\": {\"total\": null, \"page\": null, \"rows\": []},\n    \"cost_note\": \"本文件為民國110年第2季（半年報），無「重要會計項目明細表」章節，該表僅年報揭露，故無取得成本欄位可查，全數填 null。\",\n    \"checks\": {\n      \"check_rowsum\": {\"status\": \"OK\", \"diff\": 0},\n      \"check_anchor\": {\"status\": \"no_witness\", \"diff\": 0},\n      \"check_cost\": {\"status\": \"no_witness\", \"diff\": 0}\n    }\n  },\n  \"OCI\": {\n    \"book\": {\n      \"total\": 105866675,\n      \"printed_subtotal\": 105866675,\n      \"bs_anchor\": null,\n      \"page\": 39,\n      \"rows\": [\n        {\"group\": \"透過其他綜合損益按公允價值衡量之權益工具投資\", \"name\": \"上市（櫃）及興櫃股票\", \"amount\": 16890517},\n        {\"group\": \"透過其他綜合損益按公允價值衡量之權益工具投資\", \"name\": \"REITs\", \"amount\": 7137279},\n        {\"group\": \"透過其他綜合損益按公允價值衡量之權益工具投資\", \"name\": \"未上市（櫃）股票\", \"amount\": 2023818},\n        {\"group\": \"透過其他綜合損益按公允價值衡量之債務工具投資\", \"name\": \"金融債券\", \"amount\": 37503391},\n        {\"group\": \"透過其他綜合損益按公允價值衡量之債務工具投資\", \"name\": \"公司債\", \"amount\": 33566474},\n        {\"group\": \"透過其他綜合損益按公允價值衡量之債務工具投資\", \"name\": \"政府公債\", \"amount\": 7637189},\n        {\"group\": \"透過其他綜合損益按公允價值衡量之債務工具投資\", \"name\": \"其他\", \"amount\": 1108007}\n      ]\n    },\n    \"cost\": {\"total\": null, \"page\": null, \"rows\": []},\n    \"cost_note\": \"半年報無「重要會計項目明細表」，OCI本無取得成本欄位（權益工具與債務工具皆按公允價值衡量），故填 null。\",\n    \"checks\": {\n      \"check_rowsum\": {\"status\": \"OK\", \"diff\": 0},\n      \"check_anchor\": {\"status\": \"no_witness\", \"diff\": 0},\n      \"check_cost\": {\"status\": \"no_witness\", \"diff\": 0}\n    }\n  },\n  \"AC\": {\n    \"book\": {\n      \"total\": 719743993,\n      \"printed_subtotal\": 720243989,\n      \"bs_anchor\": null,\n      \"page\": 40,\n      \"rows\": [\n        {\"group\": \"\", \"name\": \"可轉讓定期存單\", \"amount\": 335357697},\n        {\"group\": \"\", \"name\": \"公司債\", \"amount\": 191124007},\n        {\"group\": \"\", \"name\": \"金融債券\", \"amount\": 115800142},\n        {\"group\": \"\", \"name\": \"政府公債\", \"amount\": 45665971},\n        {\"group\": \"\", \"name\": \"其他\", \"amount\": 32296172}\n      ]\n    },\n    \"cost\": {\"total\": null, \"page\": null, \"rows\": []},\n    \"cost_note\": \"本文件為半年報，無「重要會計項目明細表」（該表僅年報揭露取得成本），AC類明細表僅列帳面金額（小計720,243,989）減備抵損失(499,996)後之合計719,743,993，無取得成本欄位，故填 null。\",\n    \"checks\": {\n      \"check_rowsum\": {\"status\": \"OK\", \"diff\": 0},\n      \"check_anchor\": {\"status\": \"no_witness\", \"diff\": 0},\n      \"check_cost\": {\"status\": \"no_witness\", \"diff\": 0}\n    }\n  }\n}\n```\n\n補充說明（非JSON部分）：個體資產負債表本身位於 PAGE 8，但該頁抽取內容為空（掃描圖或版面問題），故三類的 check_anchor 皆無法比對資產負債表科目金額，一律誠實回報 no_witness，並未替換為附註本身的合計數。此外，本文件為半年報（民國110年第2季),不含「重要會計項目明細表」章節，故三類 cost 皆為 null,不是漏抄。\n",
+ "parsed": {
+  "basis": "個體",
+  "bs_date": "110/06/30",
+  "Trading": {
+   "book": {
+    "total": 72915412,
+    "printed_subtotal": 72915412,
+    "bs_anchor": null,
+    "page": 38,
+    "rows": [
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "可轉換公司債",
+      "amount": 16290692
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "商業本票",
+      "amount": 13468172
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "政府公債",
+      "amount": 12678304
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "公司債",
+      "amount": 4180399
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "金融債券",
+      "amount": 3444952
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "可轉讓定存單",
+      "amount": 1673343
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "其他",
+      "amount": 3297511
+     },
+     {
+      "group": "衍生金融資產",
+      "name": "外匯換匯合約",
+      "amount": 10854440
+     },
+     {
+      "group": "衍生金融資產",
+      "name": "其他",
+      "amount": 7027599
+     }
+    ]
+   },
+   "cost": {
+    "total": null,
+    "page": null,
+    "rows": []
+   },
+   "cost_note": "本文件為民國110年第2季（半年報），無「重要會計項目明細表」章節，該表僅年報揭露，故無取得成本欄位可查，全數填 null。",
+   "checks": {
+    "check_rowsum": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_anchor": {
+     "status": "no_witness",
+     "diff": 0
+    },
+    "check_cost": {
+     "status": "no_witness",
+     "diff": 0
+    }
+   }
+  },
+  "OCI": {
+   "book": {
+    "total": 105866675,
+    "printed_subtotal": 105866675,
+    "bs_anchor": null,
+    "page": 39,
+    "rows": [
+     {
+      "group": "透過其他綜合損益按公允價值衡量之權益工具投資",
+      "name": "上市（櫃）及興櫃股票",
+      "amount": 16890517
+     },
+     {
+      "group": "透過其他綜合損益按公允價值衡量之權益工具投資",
+      "name": "REITs",
+      "amount": 7137279
+     },
+     {
+      "group": "透過其他綜合損益按公允價值衡量之權益工具投資",
+      "name": "未上市（櫃）股票",
+      "amount": 2023818
+     },
+     {
+      "group": "透過其他綜合損益按公允價值衡量之債務工具投資",
+      "name": "金融債券",
+      "amount": 37503391
+     },
+     {
+      "group": "透過其他綜合損益按公允價值衡量之債務工具投資",
+      "name": "公司債",
+      "amount": 33566474
+     },
+     {
+      "group": "透過其他綜合損益按公允價值衡量之債務工具投資",
+      "name": "政府公債",
+      "amount": 7637189
+     },
+     {
+      "group": "透過其他綜合損益按公允價值衡量之債務工具投資",
+      "name": "其他",
+      "amount": 1108007
+     }
+    ]
+   },
+   "cost": {
+    "total": null,
+    "page": null,
+    "rows": []
+   },
+   "cost_note": "半年報無「重要會計項目明細表」，OCI本無取得成本欄位（權益工具與債務工具皆按公允價值衡量），故填 null。",
+   "checks": {
+    "check_rowsum": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_anchor": {
+     "status": "no_witness",
+     "diff": 0
+    },
+    "check_cost": {
+     "status": "no_witness",
+     "diff": 0
+    }
+   }
+  },
+  "AC": {
+   "book": {
+    "total": 719743993,
+    "printed_subtotal": 720243989,
+    "bs_anchor": null,
+    "page": 40,
+    "rows": [
+     {
+      "group": "",
+      "name": "可轉讓定期存單",
+      "amount": 335357697
+     },
+     {
+      "group": "",
+      "name": "公司債",
+      "amount": 191124007
+     },
+     {
+      "group": "",
+      "name": "金融債券",
+      "amount": 115800142
+     },
+     {
+      "group": "",
+      "name": "政府公債",
+      "amount": 45665971
+     },
+     {
+      "group": "",
+      "name": "其他",
+      "amount": 32296172
+     }
+    ]
+   },
+   "cost": {
+    "total": null,
+    "page": null,
+    "rows": []
+   },
+   "cost_note": "本文件為半年報，無「重要會計項目明細表」（該表僅年報揭露取得成本），AC類明細表僅列帳面金額（小計720,243,989）減備抵損失(499,996)後之合計719,743,993，無取得成本欄位，故填 null。",
+   "checks": {
+    "check_rowsum": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_anchor": {
+     "status": "no_witness",
+     "diff": 0
+    },
+    "check_cost": {
+     "status": "no_witness",
+     "diff": 0
+    }
+   }
+  }
+ },
+ "parse_ok": true
+}

@@ -29,6 +29,7 @@ import glob
 import json
 import os
 
+import buckets
 from core import decision_store
 
 BLOCKED_GLOB = "work/blocked/*.json"
@@ -67,9 +68,23 @@ def _from_review(workspace):
 
 
 def pending(workspace="."):
-    """兩個來源合流。每筆是「一個待人裁示的科目名」,不是「一格」——
-    一格卡住可能同時有好幾個名字要裁示。"""
-    return _from_blocked(workspace) + _from_review(workspace)
+    """兩個來源合流,**再用 `buckets.SYN` 篩掉已經解決的**。
+
+    ⚠️ **這道篩選是必要的,不是錦上添花**(2026-07-30 實測抓到):`work/blocked/`
+    與 `review/queue.jsonl` 是兩份**存下來的快照**,confirm_bucket() 只寫
+    `buckets.SYN`,從不回頭改這兩份快照。實測:138 筆裡有 **63 筆(46%)**
+    的名字已經在 `buckets.SYN` 裡查得到桶——也就是說,那個名字**已經被人
+    裁示過了**,只是存下來的舊佇列檔案沒人去清。
+
+    `buckets.SYN` 才是唯一影響 `data.json` 的來源(`build.py` 的
+    `decisions_sha256` 只算 `buckets.py`/`config.py`)。所以「還算不算待辦」
+    這件事**用它現算**,不是看快照檔案還在不在——這正是
+    `docs/plan_simplify.md` §5「待辦用算的,不用存的」的原則,提前在這裡
+    落地一小步,不必等那份計畫的大改動。
+    """
+    raw = _from_blocked(workspace) + _from_review(workspace)
+    return [e for e in raw
+            if not (e["name"] and buckets.bucket({"name": e["name"]}) is not None)]
 
 
 def count(workspace="."):

@@ -27,6 +27,7 @@ import holdout
 import locate
 import transcribe
 import wide
+from core import closure
 
 OUT = "results"
 
@@ -37,7 +38,15 @@ def build(cells):
     for key, recs in cells.items():
         loc = locate.locate(f"pdf_cache/{recs[0]['doc']}.pdf")
         ok, checks = transcribe.verify(recs, loc)
-        views = wide.cell(recs)
+        # `wide.py` 認的是單根單份的形狀,章節模式的母表/子附註要先攤平
+        # (`core/reconcile.py:verdict_of` 同一段理由——這裡是它的 E2 對照組,
+        # 必須逐字同一種攤平方式,不然等價閘門會憑空冒出差異)。
+        flat = recs
+        if ok:
+            flat, flat_err = closure.flatten(recs, loc.anchors.get(recs[0]["class"]))
+            if flat_err:
+                ok, flat = False, recs
+        views = wide.cell(flat)
         # 拒收的格子**也要留 verdict**,但把數字留空 —— 讓下游看得到「這格被拒收了」,
         # 而不是靜靜地不存在。不存在與被拒收在畫面上長得一樣,但意義完全不同。
         verdict[key] = {

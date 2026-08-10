@@ -13,7 +13,7 @@
 在那之前不要加 apply 分支,否則等於用沒量過的東西覆蓋量過的結果。
 
 READER 切換(`FILL_READER` 環境變數):
-    gemini(預設)   走 extract_v2._gen,復用既有的多 key 輪替與節流
+    gemini(預設)   走 core.llm.generate,復用既有的多 key 輪替與節流
     claude          走 `claude -p` 無頭模式(需另裝 CLI;尚未實作)
 """
 import argparse
@@ -36,8 +36,10 @@ CLASSES = ("Trading", "OCI", "AC")
 #
 # ⚠️ **不要在這裡另寫一份 JSON schema**。`fill.RULES` 結尾已經有正確的格式範例,
 # 手寫第二份的下場實測過:漏了 `source_kind`,`facts.validate` 當場擋下(2026-07-29)。
-# 欄位清單一律從 `facts.REQUIRED_REC` 推導,規矩一律引用 RULES 原文。
-_REQ = [f for f in facts.REQUIRED_REC if f not in ("doc", "class")]  # doc/class 由本檔補
+# 欄位清單一律引用 `fill.MODEL_REQUIRED_REC`(`facts.REQUIRED_REC` 減去
+# doc/class/total_col/printed_total——後兩者系統推導,見 `docs/plan_schema_derive.md` D1、
+# `core/derive.py`),規矩一律引用 RULES 原文。
+_REQ = list(fill.MODEL_REQUIRED_REC)
 OUTPUT_CONTRACT = f"""
 ## 輸出格式(唯一要求)
 **只輸出一個 JSON 物件**,不要說明文字、不要 markdown 圍欄,結構就是上面「## 格式」那個。
@@ -75,7 +77,8 @@ def build_prompt(loc, cls, pages):
         OUTPUT_CONTRACT,
         "",
         "## 自己先對一次",
-        f"sum(每列的 total_col 那一欄) == printed_total,且 printed_total == {loc.anchors[cls]:,}",
+        f"把每一欄各自加總,應該有一欄的和等於錨 {loc.anchors[cls]:,}"
+        f"(哪一欄是合計欄不必你判斷,系統事後會自己挑)。",
         "",
         "## 來源頁",
         transcribe.context_pages(loc, cls, pages),
@@ -108,10 +111,10 @@ MAX_OUTPUT_TOKENS = 32768
 
 
 def read_gemini(prompt):
-    import extract_v2
+    from core import llm
     from google.genai import types
     from config import MODEL
-    r = extract_v2._gen(
+    r = llm.generate(
         model=MODEL, contents=[prompt],
         # temperature=0 與既有呼叫一致:抄列是照抄,不需要任何發散。
         config=types.GenerateContentConfig(temperature=0,
@@ -139,7 +142,31 @@ def read_claude(prompt):
     return r.stdout
 
 
-READERS = {"gemini": read_gemini, "claude": read_claude}
+def read_deepseek(prompt):
+    """DeepSeek API(OpenAI-compatible)呼叫。"""
+    import urllib.request
+    api_key = os.environ.get("DEEPSEEK_API_KEY", "")
+    model = os.environ.get("DEEPSEEK_MODEL", "deepseek-chat")
+    if not api_key:
+        raise RuntimeError("DEEPSEEK_API_KEY 未設定(請確認 .env 有 DEEPSEEK_API_KEY=sk-...)")
+    body = json.dumps({
+        "model": model,
+        "messages": [{"role": "user", "content": prompt}],
+        "temperature": 0,
+    }).encode("utf-8")
+    req = urllib.request.Request(
+        "https://api.deepseek.com/chat/completions",
+        data=body,
+        headers={"Content-Type": "application/json",
+                 "Authorization": f"Bearer {api_key}"},
+        method="POST",
+    )
+    with urllib.request.urlopen(req, timeout=CLAUDE_TIMEOUT_S) as resp:
+        result = json.loads(resp.read().decode("utf-8"))
+    return result["choices"][0]["message"]["content"]
+
+
+READERS = {"gemini": read_gemini, "claude": read_claude, "deepseek": read_deepseek}
 
 
 def read_cell(doc, cls, loc, pages, reader):
@@ -272,15 +299,20 @@ def _summary(results, out_path, elapsed):
 # 這正是自動化要的行為(分類未知不該讓一整格重跑,見 expand_policy 檔頭)。
 
 
-def run_cell(doc, cls, loc, reader, max_level, verbose=True):
+def run_cell(doc, cls, loc, reader, max_level, verbose=True, pages=None):
     """跑一格到終局。回傳最後那個 outcome dict(已落地)。
 
     重試迴圈的形狀完全由 `classify_outcome` 的 RETRY 回傳值決定 ——
     要擴哪幾頁、要不要消耗預算都是它算好的,本函式只負責照做並重讀。
+
+    `pages`:選填,手動指定起始候選頁(`plan_web_complete.md` W3,見
+    `core.webdata.effective_pages`)。不傳就取**最小的附註章節**
+    (`loc.expand(cls, 0)`,2026-07-31 起;舊行為是
+    `list(loc.pages[cls])` 也就是附註+明細表兩頁一起塞)。
     """
     from core import ingest
 
-    pages = list(loc.pages[cls])
+    pages = list(pages) if pages is not None else loc.expand(cls, 0)
     level, retries = 0, 0
     while True:
         recs, raw = read_cell(doc, cls, loc, pages, reader)
@@ -297,11 +329,15 @@ def run_cell(doc, cls, loc, reader, max_level, verbose=True):
         pages, level, retries = out["pages"], out["level"], out["retries"]
 
 
-def run_key(cell_key, reader, max_level=None):
+def run_key(cell_key, reader, max_level=None, cellmeta=None):
     """只抄指定的一格 —— 文件頁上「抄這格」按鈕用。
 
     走的是與 `run_queue` **同一支** `run_cell`,不是另一條捷徑:
     擴頁重試、Gate1/Gate2、落地路徑全部一樣。
+
+    `cellmeta`:選填,`core.webdata.load_cellmeta()` 的回傳值——有的話,
+    候選頁改走人工指定的覆寫(見 `core.webdata.effective_pages`)。
+    不傳(預設)就跟改之前逐字一樣:`loc.pages[cls]`。
     """
     import pipeline
     doc, cls = cell_key.split("|", 1)
@@ -309,12 +345,16 @@ def run_key(cell_key, reader, max_level=None):
     if cls not in loc.anchors:
         print(f"{cell_key}:錨讀不到,這格不是能抄的格子。")
         return None
+    pages = None
+    if cellmeta:
+        from core import webdata
+        pages = webdata.effective_pages(loc, doc, cls, cellmeta)
     print(f"{cell_key} ...")
-    out = run_cell(doc, cls, loc, reader, max_level or pipeline.MAX_LEVEL)
+    out = run_cell(doc, cls, loc, reader, max_level or pipeline.MAX_LEVEL, pages=pages)
     return out
 
 
-def run_queue(reader, limit=None, max_level=None):
+def run_queue(reader, limit=None, max_level=None, stop_check=None):
     import pipeline
     max_level = max_level or pipeline.MAX_LEVEL
 
@@ -340,6 +380,9 @@ def run_queue(reader, limit=None, max_level=None):
 
     tally, results = {}, []
     for n, (doc, cls, loc) in enumerate(todo, 1):
+        if stop_check and stop_check():
+            print(f"\n使用者取消 —— 停在 {n - 1}/{len(todo)}。")
+            break
         print(f"[{n}/{len(todo)}] {doc} | {cls} ...")
         try:
             out = run_cell(doc, cls, loc, reader, max_level)

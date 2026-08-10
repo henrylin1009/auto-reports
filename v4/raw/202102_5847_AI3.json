@@ -1,0 +1,238 @@
+{
+ "doc": "202102_5847_AI3",
+ "model": "claude",
+ "n_pages": 139,
+ "prompt_chars": 125030,
+ "elapsed_s": 107.6,
+ "raw_text": "```json\n{\"basis\":\"個體\",\n \"bs_date\":\"110/06/30\",\n \"Trading\":{\"book\":{\"total\":625162595,\"printed_subtotal\":625162595,\"bs_anchor\":625962595,\"page\":23,\n            \"rows\":[\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"可轉讓定期存單\",\"amount\":384846217},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"商業本票\",\"amount\":87140166},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"國庫券\",\"amount\":9036025},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"公司債\",\"amount\":73082536},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"金融債券\",\"amount\":53800363},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"國外政府債券\",\"amount\":0},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"上市（櫃）股票\",\"amount\":1310437},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"外匯換匯合約\",\"amount\":6587138},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"利率交換合約\",\"amount\":8084365},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"外匯選擇權合約\",\"amount\":472523},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"遠期外匯合約\",\"amount\":73508},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"期貨交易保證金一自有資金\",\"amount\":65505},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"無本金交割遠期外匯合約\",\"amount\":306174},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"換匯換利合約\",\"amount\":354784},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"金屬商品交換合約\",\"amount\":2854}\n            ]},\n            \"cost\":{\"total\":null,\"page\":null,\"rows\":[]},\n            \"cost_note\":\"本份為半年報,目錄「九、重要會計項目明細表」頁次為空白,無取得成本明細表,cost一律填null\",\n            \"checks\":{\"check_rowsum\":{\"status\":\"OK\",\"diff\":0},\n                      \"check_anchor\":{\"status\":\"MISMATCH\",\"diff\":-800000},\n                      \"check_cost\":{\"status\":\"no_witness\",\"diff\":0}}},\n \"OCI\":{\"book\":{\"total\":287711177,\"printed_subtotal\":287711177,\"bs_anchor\":287711177,\"page\":24,\n        \"rows\":[\n          {\"group\":\"權益工具投資\",\"name\":\"上市（櫃）股票\",\"amount\":14936578},\n          {\"group\":\"權益工具投資\",\"name\":\"未上市（櫃）股票\",\"amount\":1081850},\n          {\"group\":\"債務工具投資\",\"name\":\"金融債券\",\"amount\":121110908},\n          {\"group\":\"債務工具投資\",\"name\":\"政府公債\",\"amount\":78631709},\n          {\"group\":\"債務工具投資\",\"name\":\"公司債\",\"amount\":65259743},\n          {\"group\":\"債務工具投資\",\"name\":\"國外機構發行債券\",\"amount\":5850907},\n          {\"group\":\"債務工具投資\",\"name\":\"可轉讓定期存單\",\"amount\":839482}\n        ]},\n        \"cost\":{\"total\":null,\"page\":null,\"rows\":[]},\n        \"cost_note\":\"本份為半年報,目錄「九、重要會計項目明細表」頁次為空白,無取得成本明細表,cost一律填null\",\n        \"checks\":{\"check_rowsum\":{\"status\":\"OK\",\"diff\":0},\n                  \"check_anchor\":{\"status\":\"OK\",\"diff\":0},\n                  \"check_cost\":{\"status\":\"no_witness\",\"diff\":0}}},\n \"AC\":{\"book\":{\"total\":32776030,\"printed_subtotal\":32776030,\"bs_anchor\":32776030,\"page\":26,\n       \"rows\":[\n         {\"group\":\"\",\"name\":\"國外機構發行債券\",\"amount\":12391010},\n         {\"group\":\"\",\"name\":\"金融債券\",\"amount\":17086839},\n         {\"group\":\"\",\"name\":\"公司債\",\"amount\":3179758},\n         {\"group\":\"\",\"name\":\"國外定期存單\",\"amount\":125415},\n         {\"group\":\"\",\"name\":\"減：備抵損失\",\"amount\":-6992}\n       ]},\n       \"cost\":{\"total\":null,\"page\":null,\"rows\":[]},\n       \"cost_note\":\"本份為半年報,目錄「九、重要會計項目明細表」頁次為空白,無取得成本明細表,cost一律填null\",\n       \"checks\":{\"check_rowsum\":{\"status\":\"OK\",\"diff\":0},\n                 \"check_anchor\":{\"status\":\"OK\",\"diff\":0},\n                 \"check_cost\":{\"status\":\"no_witness\",\"diff\":0}}}}\n```\n",
+ "parsed": {
+  "basis": "個體",
+  "bs_date": "110/06/30",
+  "Trading": {
+   "book": {
+    "total": 625162595,
+    "printed_subtotal": 625162595,
+    "bs_anchor": 625962595,
+    "page": 23,
+    "rows": [
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "可轉讓定期存單",
+      "amount": 384846217
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "商業本票",
+      "amount": 87140166
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "國庫券",
+      "amount": 9036025
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "公司債",
+      "amount": 73082536
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "金融債券",
+      "amount": 53800363
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "國外政府債券",
+      "amount": 0
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "上市（櫃）股票",
+      "amount": 1310437
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "外匯換匯合約",
+      "amount": 6587138
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "利率交換合約",
+      "amount": 8084365
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "外匯選擇權合約",
+      "amount": 472523
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "遠期外匯合約",
+      "amount": 73508
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "期貨交易保證金一自有資金",
+      "amount": 65505
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "無本金交割遠期外匯合約",
+      "amount": 306174
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "換匯換利合約",
+      "amount": 354784
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "金屬商品交換合約",
+      "amount": 2854
+     }
+    ]
+   },
+   "cost": {
+    "total": null,
+    "page": null,
+    "rows": []
+   },
+   "cost_note": "本份為半年報,目錄「九、重要會計項目明細表」頁次為空白,無取得成本明細表,cost一律填null",
+   "checks": {
+    "check_rowsum": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_anchor": {
+     "status": "MISMATCH",
+     "diff": -800000
+    },
+    "check_cost": {
+     "status": "no_witness",
+     "diff": 0
+    }
+   }
+  },
+  "OCI": {
+   "book": {
+    "total": 287711177,
+    "printed_subtotal": 287711177,
+    "bs_anchor": 287711177,
+    "page": 24,
+    "rows": [
+     {
+      "group": "權益工具投資",
+      "name": "上市（櫃）股票",
+      "amount": 14936578
+     },
+     {
+      "group": "權益工具投資",
+      "name": "未上市（櫃）股票",
+      "amount": 1081850
+     },
+     {
+      "group": "債務工具投資",
+      "name": "金融債券",
+      "amount": 121110908
+     },
+     {
+      "group": "債務工具投資",
+      "name": "政府公債",
+      "amount": 78631709
+     },
+     {
+      "group": "債務工具投資",
+      "name": "公司債",
+      "amount": 65259743
+     },
+     {
+      "group": "債務工具投資",
+      "name": "國外機構發行債券",
+      "amount": 5850907
+     },
+     {
+      "group": "債務工具投資",
+      "name": "可轉讓定期存單",
+      "amount": 839482
+     }
+    ]
+   },
+   "cost": {
+    "total": null,
+    "page": null,
+    "rows": []
+   },
+   "cost_note": "本份為半年報,目錄「九、重要會計項目明細表」頁次為空白,無取得成本明細表,cost一律填null",
+   "checks": {
+    "check_rowsum": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_anchor": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_cost": {
+     "status": "no_witness",
+     "diff": 0
+    }
+   }
+  },
+  "AC": {
+   "book": {
+    "total": 32776030,
+    "printed_subtotal": 32776030,
+    "bs_anchor": 32776030,
+    "page": 26,
+    "rows": [
+     {
+      "group": "",
+      "name": "國外機構發行債券",
+      "amount": 12391010
+     },
+     {
+      "group": "",
+      "name": "金融債券",
+      "amount": 17086839
+     },
+     {
+      "group": "",
+      "name": "公司債",
+      "amount": 3179758
+     },
+     {
+      "group": "",
+      "name": "國外定期存單",
+      "amount": 125415
+     },
+     {
+      "group": "",
+      "name": "減：備抵損失",
+      "amount": -6992
+     }
+    ]
+   },
+   "cost": {
+    "total": null,
+    "page": null,
+    "rows": []
+   },
+   "cost_note": "本份為半年報,目錄「九、重要會計項目明細表」頁次為空白,無取得成本明細表,cost一律填null",
+   "checks": {
+    "check_rowsum": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_anchor": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_cost": {
+     "status": "no_witness",
+     "diff": 0
+    }
+   }
+  }
+ },
+ "parse_ok": true
+}

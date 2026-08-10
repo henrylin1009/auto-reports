@@ -64,7 +64,11 @@ def run(doc, cls):
     if not loc.pages[cls]:
         return Outcome(doc, cls, reason=f"無候選頁 錨={loc.anchors[cls]:,}")
 
-    pages, level, seen = list(loc.pages[cls]), 0, []
+    # 2026-07-31:起始頁 = 最小的附註章節(`loc.expand(cls, 0)`),不再是
+    # 「錨值 grep 命中的所有頁」—— 後者會把明細表跟附註塞進同一份工單。
+    pages, level, seen = loc.expand(cls, 0), 0, []
+    if not pages:
+        return Outcome(doc, cls, reason=f"切不出附註章節 錨={loc.anchors[cls]:,}")
     while True:
         recs = yield transcribe.context_pages(loc, cls, pages)
         if recs:
@@ -80,21 +84,20 @@ def run(doc, cls):
         if level > MAX_LEVEL:
             return Outcome(doc, cls, res=seen[-1][1], level=level - 1,
                            reason=f"擴張到 {MAX_LEVEL} 級仍對不上,進複核佇列")
+        # **取代不是聯集**(見 `locate.Located.expand`):每一級是各自獨立的
+        # 一個章節,聯集起來只會把不相干的章節混進同一份工單。
         more = loc.expand(cls, level)
-        if not more:
+        if not more or more == pages:
             return Outcome(doc, cls, res=seen[-1][1], level=level - 1,
-                           reason=f"{level} 級擴張沒有新頁可看,進複核佇列")
-        pages = sorted(set(loc.pages[cls]) | set(more))
+                           reason=f"沒有下一個章節可看,進複核佇列")
+        pages = more
 
 
 def prompt_at(doc, cls, level=0):
     """直接取某一級的 prompt。給「agent 就是我」的手動流程用 —— run() 的
     generator 協定在互動式抄列時很難用,但兩者算的是同一組頁,不會分岔。"""
     loc = locate.locate(f"pdf_cache/{doc}.pdf")
-    pages = list(loc.pages[cls])
-    if level:
-        pages = sorted(set(pages) | set(loc.expand(cls, level)))
-    return transcribe.context_pages(loc, cls, pages)
+    return transcribe.context_pages(loc, cls, loc.expand(cls, level))
 
 
 def drive(doc, cls, transcriber):

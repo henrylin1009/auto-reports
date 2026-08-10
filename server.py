@@ -361,6 +361,10 @@ class Handler(SimpleHTTPRequestHandler):
             self._json(webdata.fill_context(q["doc"], q["cls"]))
         elif route == "/api/doc":
             self._json(webdata.doc_detail(q["doc"]))
+        elif route == "/api/sim":
+            # 定位空間(web/sim.html)。取數一律在 sim/,這裡只轉 JSON。
+            from sim import axes as sim_axes
+            self._json(sim_axes.payload())
         elif route == "/api/bucketview":
             self._json(webdata.bucket_view())
         elif route == "/api/fetchlog":

@@ -16,6 +16,13 @@
 (`transcribe.check_cross(recs, bk=None)` 一跑就 AttributeError,見
 `transcribe.py:337/293` —— 潛伏 bug,禁改清單內,本單不修)。保守裁定為
 不觸發,代價已量 = 0:`locate.EXPAND_TRUTH` 11 格沒有一格靠它觸發。
+
+⚠️ 2026-07-31:`check_anchor`(逐 record 驗合計 == 錨)換成 `check_closure`
+(整格拼樹,根 == 錨,見 `core/closure.py`)。上面提到的玉山兩層附註小計
+(「透過其他綜合損益按公允價值衡量之權益/債務工具投資」)現在**根本不會
+流到分桶那一關**——建樹時就被識別成子節的父列而排除,不再需要靠
+`_taxonomy_gap`/expand 去猜它是不是小計。這段歷史仍留著,是因為同一個
+「訊號指向相反處置」的教訓對別的新科目名一樣成立。
 """
 
 # 判準是「哪一道檢查失敗」,**不是比對錯誤訊息字串**。
@@ -23,7 +30,7 @@
 TRIGGERS = {
     "source",           # source_page 不在候選頁集合內
     "check_identity",   # ①② sum(葉列 total_col) != printed_total
-    "check_anchor",     # ④  printed_total != 錨
+    "check_closure",    # ④  整格拼不成一棵樹(根 != 錨,或子表掛不上任何一列)
     "check_col_totals", # ⑥  逐欄合計對不上
 }
 NEVER = {

@@ -1,0 +1,690 @@
+{
+ "202402_5841_AI1|AC": [
+  {
+   "at": "2026-07-29T13:45:42.046912Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202402_5841_AI1|AC",
+    "row_index": 0,
+    "source_page": 22
+   },
+   "mapping": "可轉讓定存單",
+   "name": "可轉讓定期存單",
+   "occurrence": {
+    "cell_key": "202402_5841_AI1|AC",
+    "ordinal": 0,
+    "record_fp": "a15e61ec79ccf76ce34780ad432c768acac901ab6d7923b9e21b0841d4b67337",
+    "row_fp": "76a6c7b49d2395e01ed8ce580bd66b652f81215dd4c5b31f5667a214ed142800",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:可轉讓定期存單"
+  },
+  {
+   "at": "2026-07-29T13:45:42.046963Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202402_5841_AI1|AC",
+    "row_index": 1,
+    "source_page": 22
+   },
+   "mapping": "貨幣市場",
+   "name": "國庫券",
+   "occurrence": {
+    "cell_key": "202402_5841_AI1|AC",
+    "ordinal": 1,
+    "record_fp": "a15e61ec79ccf76ce34780ad432c768acac901ab6d7923b9e21b0841d4b67337",
+    "row_fp": "9f6db882bd5090e0972f038999e534e332276b73f33406e06ece2a67bb701863",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:國庫券"
+  },
+  {
+   "at": "2026-07-29T13:45:42.046984Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202402_5841_AI1|AC",
+    "row_index": 2,
+    "source_page": 22
+   },
+   "mapping": "公債",
+   "name": "政府公債",
+   "occurrence": {
+    "cell_key": "202402_5841_AI1|AC",
+    "ordinal": 2,
+    "record_fp": "a15e61ec79ccf76ce34780ad432c768acac901ab6d7923b9e21b0841d4b67337",
+    "row_fp": "a95060d5ccaa41b31283ef3f2510354b99480aafb15dd52d481ca0bf814943a9",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:政府公債"
+  },
+  {
+   "at": "2026-07-29T13:45:42.047003Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202402_5841_AI1|AC",
+    "row_index": 3,
+    "source_page": 22
+   },
+   "mapping": "公司債",
+   "name": "公司債",
+   "occurrence": {
+    "cell_key": "202402_5841_AI1|AC",
+    "ordinal": 3,
+    "record_fp": "a15e61ec79ccf76ce34780ad432c768acac901ab6d7923b9e21b0841d4b67337",
+    "row_fp": "b54bbb792613e6cbe46de420dd147511e2c5ac0782585737687f6cfb8101842b",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:公司債"
+  },
+  {
+   "at": "2026-07-29T13:45:42.047021Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202402_5841_AI1|AC",
+    "row_index": 4,
+    "source_page": 22
+   },
+   "mapping": "金融債",
+   "name": "金融債券",
+   "occurrence": {
+    "cell_key": "202402_5841_AI1|AC",
+    "ordinal": 4,
+    "record_fp": "a15e61ec79ccf76ce34780ad432c768acac901ab6d7923b9e21b0841d4b67337",
+    "row_fp": "5023664ec2d9b068b6a17cfa99c3983fcf879639da807c6640ac9dd2181c62f9",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:金融債券"
+  },
+  {
+   "at": "2026-07-29T13:45:42.047039Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202402_5841_AI1|AC",
+    "row_index": 5,
+    "source_page": 22
+   },
+   "mapping": "資產基礎",
+   "name": "資產基礎證券",
+   "occurrence": {
+    "cell_key": "202402_5841_AI1|AC",
+    "ordinal": 5,
+    "record_fp": "a15e61ec79ccf76ce34780ad432c768acac901ab6d7923b9e21b0841d4b67337",
+    "row_fp": "c8019b2ab41951901ff37e056964481459338edc33eeee20e16b591374fd9e2e",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:資產基礎證券"
+  },
+  {
+   "at": "2026-07-29T13:45:42.047056Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202402_5841_AI1|AC",
+    "row_index": 6,
+    "source_page": 22
+   },
+   "mapping": "其他",
+   "name": "其他",
+   "occurrence": {
+    "cell_key": "202402_5841_AI1|AC",
+    "ordinal": 6,
+    "record_fp": "a15e61ec79ccf76ce34780ad432c768acac901ab6d7923b9e21b0841d4b67337",
+    "row_fp": "5e7e6f6f72e84ac9136647ec9ac2b9f8ac7935fddc4ad44eee7e6df1c6324819",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:其他"
+  },
+  {
+   "at": "2026-07-29T13:45:42.047075Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202402_5841_AI1|AC",
+    "row_index": 7,
+    "source_page": 22
+   },
+   "mapping": "評價調整",
+   "name": "減：備抵損失",
+   "occurrence": {
+    "cell_key": "202402_5841_AI1|AC",
+    "ordinal": 7,
+    "record_fp": "a15e61ec79ccf76ce34780ad432c768acac901ab6d7923b9e21b0841d4b67337",
+    "row_fp": "125b4b1a72724abd234b1f07ae74616055c17819fda203a246acc60da2798738",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:減：備抵損失"
+  }
+ ],
+ "202402_5841_AI1|OCI": [
+  {
+   "at": "2026-07-29T13:45:39.227830Z",
+   "by": "decide",
+   "group": "透過其他綜合損益按公允倹值衡量之債務工具",
+   "locator": {
+    "cell_key": "202402_5841_AI1|OCI",
+    "row_index": 0,
+    "source_page": 20
+   },
+   "mapping": "可轉讓定存單",
+   "name": "可轉讓定期存單",
+   "occurrence": {
+    "cell_key": "202402_5841_AI1|OCI",
+    "ordinal": 0,
+    "record_fp": "4ad797c89aea7823a82afbaf7106a3408b6b85efc34d795ed4b899d36f6bf21b",
+    "row_fp": "b9fccb41667f98a1bdb77f4b4eee504eb6baf8dc0d53e0d512ca0187ec6c90a8",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:可轉讓定期存單"
+  },
+  {
+   "at": "2026-07-29T13:45:39.227893Z",
+   "by": "decide",
+   "group": "透過其他綜合損益按公允倹值衡量之債務工具",
+   "locator": {
+    "cell_key": "202402_5841_AI1|OCI",
+    "row_index": 1,
+    "source_page": 20
+   },
+   "mapping": "貨幣市場",
+   "name": "國庫券",
+   "occurrence": {
+    "cell_key": "202402_5841_AI1|OCI",
+    "ordinal": 1,
+    "record_fp": "4ad797c89aea7823a82afbaf7106a3408b6b85efc34d795ed4b899d36f6bf21b",
+    "row_fp": "3e9f4bd2780d1ecda7c1782b6aa961a5970df278c3d1161b0baaa504fdc155b3",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:國庫券"
+  },
+  {
+   "at": "2026-07-29T13:45:39.227917Z",
+   "by": "decide",
+   "group": "透過其他綜合損益按公允倹值衡量之債務工具",
+   "locator": {
+    "cell_key": "202402_5841_AI1|OCI",
+    "row_index": 2,
+    "source_page": 20
+   },
+   "mapping": "公債",
+   "name": "政府公債",
+   "occurrence": {
+    "cell_key": "202402_5841_AI1|OCI",
+    "ordinal": 2,
+    "record_fp": "4ad797c89aea7823a82afbaf7106a3408b6b85efc34d795ed4b899d36f6bf21b",
+    "row_fp": "75e8f38e26d382d58275301df9e170eef940b17df224d14236fc8031954dd401",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:政府公債"
+  },
+  {
+   "at": "2026-07-29T13:45:39.227937Z",
+   "by": "decide",
+   "group": "透過其他綜合損益按公允倹值衡量之債務工具",
+   "locator": {
+    "cell_key": "202402_5841_AI1|OCI",
+    "row_index": 3,
+    "source_page": 20
+   },
+   "mapping": "公司債",
+   "name": "公司債",
+   "occurrence": {
+    "cell_key": "202402_5841_AI1|OCI",
+    "ordinal": 3,
+    "record_fp": "4ad797c89aea7823a82afbaf7106a3408b6b85efc34d795ed4b899d36f6bf21b",
+    "row_fp": "1c038e29c0d7f2c3fe2a739685ca01e270c1fbb4bd0e3dbf098ddf993921af18",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:公司債"
+  },
+  {
+   "at": "2026-07-29T13:45:39.227955Z",
+   "by": "decide",
+   "group": "透過其他綜合損益按公允倹值衡量之債務工具",
+   "locator": {
+    "cell_key": "202402_5841_AI1|OCI",
+    "row_index": 4,
+    "source_page": 20
+   },
+   "mapping": "金融債",
+   "name": "金融債券",
+   "occurrence": {
+    "cell_key": "202402_5841_AI1|OCI",
+    "ordinal": 4,
+    "record_fp": "4ad797c89aea7823a82afbaf7106a3408b6b85efc34d795ed4b899d36f6bf21b",
+    "row_fp": "cbf1b5e91301d797b0f147bc1c0c1f5931b7a0d87c3e3dc3eeab031703005af0",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:金融債券"
+  },
+  {
+   "at": "2026-07-29T13:45:39.227973Z",
+   "by": "decide",
+   "group": "透過其他綜合損益按公允倹值衡量之債務工具",
+   "locator": {
+    "cell_key": "202402_5841_AI1|OCI",
+    "row_index": 5,
+    "source_page": 20
+   },
+   "mapping": "資產基礎",
+   "name": "資產基礎證券",
+   "occurrence": {
+    "cell_key": "202402_5841_AI1|OCI",
+    "ordinal": 5,
+    "record_fp": "4ad797c89aea7823a82afbaf7106a3408b6b85efc34d795ed4b899d36f6bf21b",
+    "row_fp": "6786ba30be71f9db08d76fc609313947f04a4a23f371eaa2ae7b8a62b2194195",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:資產基礎證券"
+  },
+  {
+   "at": "2026-07-29T13:45:39.227990Z",
+   "by": "decide",
+   "group": "透過其他綜合損益按公允倹值衡量之債務工具",
+   "locator": {
+    "cell_key": "202402_5841_AI1|OCI",
+    "row_index": 6,
+    "source_page": 20
+   },
+   "mapping": "其他",
+   "name": "其他證券及債券",
+   "occurrence": {
+    "cell_key": "202402_5841_AI1|OCI",
+    "ordinal": 6,
+    "record_fp": "4ad797c89aea7823a82afbaf7106a3408b6b85efc34d795ed4b899d36f6bf21b",
+    "row_fp": "75478cd08d9134a6676ce30dced4adec33c8ad1ff216c4adcab999a526564a4a",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:其他證券及債券"
+  },
+  {
+   "at": "2026-07-29T13:45:39.228007Z",
+   "by": "decide",
+   "group": "透過其他綜合損益按公允倹值衡量之債務工具",
+   "locator": {
+    "cell_key": "202402_5841_AI1|OCI",
+    "row_index": 7,
+    "source_page": 20
+   },
+   "mapping": "評價調整",
+   "name": "金融資產評價調整",
+   "occurrence": {
+    "cell_key": "202402_5841_AI1|OCI",
+    "ordinal": 7,
+    "record_fp": "4ad797c89aea7823a82afbaf7106a3408b6b85efc34d795ed4b899d36f6bf21b",
+    "row_fp": "0463a46df380cd3940127d3d39b4033cdd0ee37e2f8bfed3df18950548781517",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:金融資產評價調整"
+  },
+  {
+   "at": "2026-07-29T13:45:39.228024Z",
+   "by": "decide",
+   "group": "透過其他綜合損益按公允倹值衡量之權益工具",
+   "locator": {
+    "cell_key": "202402_5841_AI1|OCI",
+    "row_index": 8,
+    "source_page": 20
+   },
+   "mapping": "股票",
+   "name": "股票",
+   "occurrence": {
+    "cell_key": "202402_5841_AI1|OCI",
+    "ordinal": 8,
+    "record_fp": "4ad797c89aea7823a82afbaf7106a3408b6b85efc34d795ed4b899d36f6bf21b",
+    "row_fp": "68f9e2da0a6aa8e8968b346e5961dc7f4c53e67dd9d96dba290d064a32699ef3",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:股票"
+  },
+  {
+   "at": "2026-07-29T13:45:39.228041Z",
+   "by": "decide",
+   "group": "透過其他綜合損益按公允倹值衡量之權益工具",
+   "locator": {
+    "cell_key": "202402_5841_AI1|OCI",
+    "row_index": 9,
+    "source_page": 20
+   },
+   "mapping": "股票",
+   "name": "受益憑證",
+   "occurrence": {
+    "cell_key": "202402_5841_AI1|OCI",
+    "ordinal": 9,
+    "record_fp": "4ad797c89aea7823a82afbaf7106a3408b6b85efc34d795ed4b899d36f6bf21b",
+    "row_fp": "068e44f5475bd51c7e04c9fbd3b861638dae8d02c29446d0d472ce55950a6cf7",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:受益憑證"
+  },
+  {
+   "at": "2026-07-29T13:45:39.228058Z",
+   "by": "decide",
+   "group": "透過其他綜合損益按公允倹值衡量之權益工具",
+   "locator": {
+    "cell_key": "202402_5841_AI1|OCI",
+    "row_index": 10,
+    "source_page": 20
+   },
+   "mapping": "評價調整",
+   "name": "金融資產評價調整",
+   "occurrence": {
+    "cell_key": "202402_5841_AI1|OCI",
+    "ordinal": 10,
+    "record_fp": "4ad797c89aea7823a82afbaf7106a3408b6b85efc34d795ed4b899d36f6bf21b",
+    "row_fp": "fdf62f16b100fcc6616a4a9c84041e88862f4d9584081419cfb0383afb2dc405",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:金融資產評價調整"
+  }
+ ],
+ "202402_5841_AI1|Trading": [
+  {
+   "at": "2026-07-29T13:45:32.504628Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產：",
+   "locator": {
+    "cell_key": "202402_5841_AI1|Trading",
+    "row_index": 0,
+    "source_page": 18
+   },
+   "mapping": "貨幣市場",
+   "name": "商業本票",
+   "occurrence": {
+    "cell_key": "202402_5841_AI1|Trading",
+    "ordinal": 0,
+    "record_fp": "3507482d350840c92404eff3fb46b4a715f1920a3f25029fb8abcb483772e35e",
+    "row_fp": "7a1abadbd887f5d0eef35a7f30d102c82561b19210440ac0cbab7d68a9eaf372",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:商業本票"
+  },
+  {
+   "at": "2026-07-29T13:45:32.504694Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產：",
+   "locator": {
+    "cell_key": "202402_5841_AI1|Trading",
+    "row_index": 1,
+    "source_page": 18
+   },
+   "mapping": "貨幣市場",
+   "name": "國庫券",
+   "occurrence": {
+    "cell_key": "202402_5841_AI1|Trading",
+    "ordinal": 1,
+    "record_fp": "3507482d350840c92404eff3fb46b4a715f1920a3f25029fb8abcb483772e35e",
+    "row_fp": "6e698ef72890e7f07c0b294d3682e0890448f8ec5baeabdc478012310ba2a1b0",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:國庫券"
+  },
+  {
+   "at": "2026-07-29T13:45:32.504718Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產：",
+   "locator": {
+    "cell_key": "202402_5841_AI1|Trading",
+    "row_index": 2,
+    "source_page": 18
+   },
+   "mapping": "公債",
+   "name": "政府公債",
+   "occurrence": {
+    "cell_key": "202402_5841_AI1|Trading",
+    "ordinal": 2,
+    "record_fp": "3507482d350840c92404eff3fb46b4a715f1920a3f25029fb8abcb483772e35e",
+    "row_fp": "2f34ef76efb5dcc74beda9dbd9ad300d5220d826c09a7243f88004ecccfa7074",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:政府公債"
+  },
+  {
+   "at": "2026-07-29T13:45:32.504737Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產：",
+   "locator": {
+    "cell_key": "202402_5841_AI1|Trading",
+    "row_index": 3,
+    "source_page": 18
+   },
+   "mapping": "公司債",
+   "name": "公司債",
+   "occurrence": {
+    "cell_key": "202402_5841_AI1|Trading",
+    "ordinal": 3,
+    "record_fp": "3507482d350840c92404eff3fb46b4a715f1920a3f25029fb8abcb483772e35e",
+    "row_fp": "87471a9ee8591e98b9fbf9c7c95680d6ff2058afd04a3af7498479362fe232ea",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:公司債"
+  },
+  {
+   "at": "2026-07-29T13:45:32.504756Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產：",
+   "locator": {
+    "cell_key": "202402_5841_AI1|Trading",
+    "row_index": 4,
+    "source_page": 18
+   },
+   "mapping": "金融債",
+   "name": "金融債券",
+   "occurrence": {
+    "cell_key": "202402_5841_AI1|Trading",
+    "ordinal": 4,
+    "record_fp": "3507482d350840c92404eff3fb46b4a715f1920a3f25029fb8abcb483772e35e",
+    "row_fp": "b1b7e946166b4d09a20003d21b20d75a8e6e9a95d18f9d7da701df59f94de1a4",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:金融債券"
+  },
+  {
+   "at": "2026-07-29T13:45:32.504774Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產：",
+   "locator": {
+    "cell_key": "202402_5841_AI1|Trading",
+    "row_index": 5,
+    "source_page": 18
+   },
+   "mapping": "公司債",
+   "name": "可轉換公司債",
+   "occurrence": {
+    "cell_key": "202402_5841_AI1|Trading",
+    "ordinal": 5,
+    "record_fp": "3507482d350840c92404eff3fb46b4a715f1920a3f25029fb8abcb483772e35e",
+    "row_fp": "42508a65eab022daec6e3f9290e6f564d3a1eca1bb672457ab8e1fc30dd2ea8d",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:可轉換公司債"
+  },
+  {
+   "at": "2026-07-29T13:45:32.504792Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產：",
+   "locator": {
+    "cell_key": "202402_5841_AI1|Trading",
+    "row_index": 6,
+    "source_page": 18
+   },
+   "mapping": "股票",
+   "name": "受益憑證",
+   "occurrence": {
+    "cell_key": "202402_5841_AI1|Trading",
+    "ordinal": 6,
+    "record_fp": "3507482d350840c92404eff3fb46b4a715f1920a3f25029fb8abcb483772e35e",
+    "row_fp": "67323846a0b283b5498c937810c9f81e39c30405b2345c119614129c87c9ba08",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:受益憑證"
+  },
+  {
+   "at": "2026-07-29T13:45:32.504810Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產：",
+   "locator": {
+    "cell_key": "202402_5841_AI1|Trading",
+    "row_index": 7,
+    "source_page": 18
+   },
+   "mapping": "可轉讓定存單",
+   "name": "可轉讓定期存單",
+   "occurrence": {
+    "cell_key": "202402_5841_AI1|Trading",
+    "ordinal": 7,
+    "record_fp": "3507482d350840c92404eff3fb46b4a715f1920a3f25029fb8abcb483772e35e",
+    "row_fp": "542dc5cde4f629da166fb6bb08d663ba252382ea929c7a3b34007a9248b28860",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:可轉讓定期存單"
+  },
+  {
+   "at": "2026-07-29T13:45:32.504827Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產：",
+   "locator": {
+    "cell_key": "202402_5841_AI1|Trading",
+    "row_index": 8,
+    "source_page": 18
+   },
+   "mapping": "股票",
+   "name": "股票",
+   "occurrence": {
+    "cell_key": "202402_5841_AI1|Trading",
+    "ordinal": 8,
+    "record_fp": "3507482d350840c92404eff3fb46b4a715f1920a3f25029fb8abcb483772e35e",
+    "row_fp": "dc33de7090883d0f6d7b9d89275b120d9f5e635364ed601b39c6e0b942178729",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:股票"
+  },
+  {
+   "at": "2026-07-29T13:45:32.504845Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產：",
+   "locator": {
+    "cell_key": "202402_5841_AI1|Trading",
+    "row_index": 9,
+    "source_page": 18
+   },
+   "mapping": "其他",
+   "name": "其他證券及債券",
+   "occurrence": {
+    "cell_key": "202402_5841_AI1|Trading",
+    "ordinal": 9,
+    "record_fp": "3507482d350840c92404eff3fb46b4a715f1920a3f25029fb8abcb483772e35e",
+    "row_fp": "cb90ae217c48f526fe65338b4c424c5b7916fbecc216581f35209c1353ee8658",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:其他證券及債券"
+  },
+  {
+   "at": "2026-07-29T13:45:32.504862Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產：",
+   "locator": {
+    "cell_key": "202402_5841_AI1|Trading",
+    "row_index": 10,
+    "source_page": 18
+   },
+   "mapping": "衍生",
+   "name": "衍生金融資產",
+   "occurrence": {
+    "cell_key": "202402_5841_AI1|Trading",
+    "ordinal": 10,
+    "record_fp": "3507482d350840c92404eff3fb46b4a715f1920a3f25029fb8abcb483772e35e",
+    "row_fp": "2cdfc4b4cb32d5818e34ae7d3c49705fec1fd42940150d666410c246c411a643",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:衍生金融資產"
+  },
+  {
+   "at": "2026-07-29T13:45:32.504879Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產：",
+   "locator": {
+    "cell_key": "202402_5841_AI1|Trading",
+    "row_index": 11,
+    "source_page": 18
+   },
+   "mapping": "評價調整",
+   "name": "金融資產評價調整",
+   "occurrence": {
+    "cell_key": "202402_5841_AI1|Trading",
+    "ordinal": 11,
+    "record_fp": "3507482d350840c92404eff3fb46b4a715f1920a3f25029fb8abcb483772e35e",
+    "row_fp": "c043f21ba5e4c06d9a067070d0857c799cb4894eea1333e9518e97151ff4a3bc",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:金融資產評價調整"
+  }
+ ]
+}

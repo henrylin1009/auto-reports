@@ -107,35 +107,63 @@ def check_col_totals(rec):
 
 
 def check_anchor(rec, loc):
-    """第 4 道:印出合計 == BS 錨。
-
-    ⚠️ 用錨值定位之後這道**定義上必然成立**(候選頁就是因為印著錨值才被選中),
-    所以它不是獨立檢查,只是防止抄錯合計那一格。別把它當成第二個保證。"""
+    """單一 record 版的「合計 == 錨」。**只給根用**(整格的合計檢查已經改走
+    `check_closure`,見下方)——留著是因為它仍是最直白的「這份是不是這格的根」
+    問法,`core/ingest.py` 的結構化診斷與部分測試還在用它做單點診斷。"""
     a = loc.anchors.get(rec["class"])
     if a is None:
         return f"錨不存在"
     return None if rec["printed_total"] == a else f"印出合計 {rec['printed_total']:,} != 錨 {a:,}"
 
 
+def check_closure(recs, loc):
+    """第 4 道(2026-07-31 改版):整格(所有 record)拼不拼得成一棵樹,根的
+    合計 == 錨。取代舊的「每一份 record 自己都要 == 錨」——那條規矩把**文件
+    本來就分兩層印**的東西判死(玉山 202502 OCI:母表 p24 兩列 + 子附註
+    p24/p25,三張表沒有一張自己等於錨,合起來才等於)。
+
+    細節與注入測試見 `core/closure.py` / `test_closure.py`。這裡只包一層
+    介面:回傳 `(tree, 錯誤字串或 None)`——`tree` 是 None 時後面幾道
+    (⑤ 分桶只驗葉列、③ 互對只比根)都沒有意義,呼叫端要整格判失敗。
+    """
+    import core.closure as closure_mod
+    a = loc.anchors.get(recs[0]["class"]) if recs else None
+    return closure_mod.build(recs, a)
+
+
 def check_buckets(rec, bk):
+    """單一 record 版,只驗這一份自己的列。**整格判斷改走 `check_buckets_leaves`**
+    (只有葉列才該進分桶,母表的小計列必須排除)——這個版本留給
+    `core/ingest.py` 的逐 record 結構化診斷用,不是 `verify()` 的判準。"""
+    if bk is None:
+        return None
+    return check_buckets_leaves([(rec, r) for r in rec["rows"]], bk)
+
+
+def check_buckets_leaves(leaves, bk):
     """第 5 道:每一葉列都要對得到桶。**對不到桶的列就不是葉列。**
 
-    為什麼需要這道:`sum(葉列) == 錨` 擋不住**兩層附註**。玉山 2021H1 OCI 的
+    `leaves` = `[(rec, row), ...]`,通常是 `core.closure.Tree.leaves()` 的輸出——
+    母表被子節展開的小計列已經在建樹時排除,不會流到這裡。
+
+    為什麼需要這道:`sum(葉列) == 印出合計` 擋不住**兩層附註**。玉山 2021H1 OCI 的
     主附註 p23 只有兩列 ——「權益工具投資 16,018,428 / 債務工具投資 271,692,749」,
     相加剛好 = 錨 287,711,177,前四道**全綠通過**,而這份 record 一個債種明細
     都沒有(明細在子附註 p24)。四道全過、產出是廢的 —— 恆真閘門等級的洞。
+    (2026-07-31 更新:這兩列現在會被 `core.closure` 的建樹步驟先行排除,
+    這道檢查是**第二道防線**——建樹失敗、或子表沒被抄進來的情況仍要靠它擋。)
 
     這兩列不是資料列,是指向子附註的小計。而「它是小計」這件事,分桶表自己會說:
     「透過其他綜合損益按公允價值衡量之債務工具投資」對不到任何一個債種桶。
-    → 所以判準不是認標題、不是認縮排,是**對不到桶就往下挖**(pipeline 會擴張)。
+    → 所以判準不是認標題、不是認縮排,是**對不到桶就往下挖**。
 
     ⚠️ 這道**只會讓通過變困難**,不會讓失敗變通過。真的新名目(玉山「國外機構
-    發行債券」那種)也會落在這裡 —— 那正是要的:擴張若補不上,就拒收進人審佇列,
+    發行債券」那種)也會落在這裡 —— 那正是要的:拒收進人審佇列,
     而不是猜一個桶或丟進「其他」。
     """
     if bk is None:
         return None
-    bad = [r["name"] for r in rec["rows"] if bk.bucket(r) is None]
+    bad = [row["name"] for _, row in leaves if bk.bucket(row) is None]
     if not bad:
         return None
     # 分開講:待人審是**已知擴張補不了**的,再擴幾次都一樣,直接進佇列不要空轉。
@@ -244,9 +272,12 @@ def check_cross(recs, bk=None):
             ba = {bucket(r) for r in base[v]}
             bb = {bucket(r) for r in cur[v]}
             if ba != bb:
+                # +1:畫面上顯示一律 1-based(印在紙上的頁碼),與 `source_page`
+                # 的 0-based 儲存制分開——workbench.js 檔頭那條規矩對錯誤訊息
+                # 也適用,不只對 UI(`docs/plan_schema_derive.md` §5)。
                 out.append(f"金額對不上 — {v:,} 兩邊的桶不同:"
-                           f"p{ref['source_page']}{_names(base[v])}→{sorted(map(str, ba))} vs "
-                           f"p{rec['source_page']}{_names(cur[v])}→{sorted(map(str, bb))}")
+                           f"p{ref['source_page'] + 1}{_names(base[v])}→{sorted(map(str, ba))} vs "
+                           f"p{rec['source_page'] + 1}{_names(cur[v])}→{sorted(map(str, bb))}")
             elif None in ba:
                 # 兩邊講的是同一件事,只是**都**不認得 → 這道驗不了配對,不是配對錯了。
                 # 訊息要講對:玉山「國外機構發行債券」兩表同名同額,舊寫法會印
@@ -358,20 +389,71 @@ def _by_bucket(a, b, bucket):
 
 
 def verify(recs, loc):
-    """回傳 (通過?, 每道檢查的結果)。recs 是同一格的所有 record。"""
+    """回傳 (通過?, 每道檢查的結果)。recs 是同一格的所有 record。
+
+    ⚠️ `tag` 是 **1-based**(`source_page + 1`)——這是給人看的錯誤訊息,
+    `source_page` 本身仍是 0-based 儲存制,兩者不要混淆(`docs/plan_schema_derive.md`
+    §5 實測抓到:同一張卡片紅字寫 `@p35`、標題寫 `p.36`,同一頁兩套頁碼)。
+    這個字串**只給人看**,`core/ingest.py` / `core/expand_policy.py` 用的是
+    函式名(`check_identity`…)當 key,沒有任何程式碼 parse 這串顯示字。
+
+    2026-07-31 改版:④(合計==錨)從「每份 record 各自驗」改成「整格拼成一棵樹,
+    根 == 錨」(`check_closure` / `core/closure.py`)——章節模式下一格常有母表
+    +子附註,子附註自己永遠對不上錨,樹拼得起來才是對的判準。**樹拼不起來就
+    整格判失敗**,⑤⑥③不再各自跑(拼不起來,葉列/根都不存在,跑了也是噪音)。
+    """
     res = {}
     for rec in recs:
-        tag = f"p{rec['source_page']}"
+        tag = f"p{rec['source_page'] + 1}"
         res[f"①②列相加@{tag}"] = check_identity(rec)
-        res[f"④合計==錨@{tag}"] = check_anchor(rec, loc)
-        res[f"⑤列皆可分桶@{tag}"] = check_buckets(rec, buckets)
-        res[f"⑥逐欄合計@{tag}"] = (check_col_totals(rec) if rec.get("printed_totals")
-                                    else NA_NO_COL_TOTAL)
-    res["③雙表互對"] = check_cross(recs, buckets) if len(recs) >= 2 else NA_SINGLE
-    hard = [v for v in res.values()
+
+    tree, closure_err = check_closure(recs, loc)
+    res["④合計==錨(整格拼樹)"] = closure_err
+
+    if closure_err:
+        # 拼不起來:⑤⑥③無從談起(沒有葉列、沒有根),不要跑出一堆連帶的假失敗
+        # 蓋掉真正的根因。使用者只需要看到④這一條就知道要去哪裡查。
+        for rec in recs:
+            tag = f"p{rec['source_page'] + 1}"
+            res[f"⑥逐欄合計@{tag}"] = NA_NO_COL_TOTAL
+        res["③雙表互對"] = NA_SINGLE
+        res["⑤列皆可分桶"] = NA_SINGLE
+    else:
+        leaves = tree.leaves()
+        res["⑤列皆可分桶"] = check_buckets_leaves(leaves, buckets)
+        for rec in recs:
+            tag = f"p{rec['source_page'] + 1}"
+            res[f"⑥逐欄合計@{tag}"] = (check_col_totals(rec) if rec.get("printed_totals")
+                                        else NA_NO_COL_TOTAL)
+        # ③只在根與根之間比——附註/明細表是兩個平行來源,子附註是內部細節,
+        # 不該被硬拿去跟另一個來源的整份 record 比對(那本來就不是同一層次的東西)。
+        res["③雙表互對"] = (check_cross(tree.roots, buckets)
+                          if len(tree.roots) >= 2 else NA_SINGLE)
+
+    hard = [k for k, v in res.items()
             if v and v not in (NA_SINGLE, NA_BASIS, NA_NO_COL_TOTAL)
-            and not v.startswith(PARTIAL)]
+            and not v.startswith(PARTIAL) and _gates(k)]
     return not hard, res
+
+
+#: **歸檔閘只有兩道**(使用者裁示,2026-07-31):①② 段內列和 == 該段印出的合計、
+#: ④ 整格拼樹的根 == 錨(BS)。③⑤⑥ 仍然照跑、照顯示,但**不擋歸檔**:
+#:
+#:   ③ 雙表互對 —— 只抓附註之後一格只有一個來源,這道結構上不再存在
+#:                 (`section.py` 檔頭有為什麼不抓明細表的完整理由)
+#:   ⑤ 列皆可分桶 —— 桶是標籤不是事實。分不出桶不該讓驗過算術的列進不了檔;
+#:                 `core/publish_gate.py` 已經擋著發布(未知列 ⇒ `wide.View.ok`
+#:                 為 False),閘門本來就在那裡,不必在歸檔再擋一次
+#:   ⑥ 逐欄合計 —— 為明細表的成本欄而補的,附註沒有那一欄
+#:
+#: ⚠️ **這兩道驗的是金額總和,不驗名字掛在哪個金額上。** 兩列名字互換、附註把
+#:    跨桶科目併成一列(富邦 202404「其他」= 政府公債 + 公司債),兩者都全綠。
+#:    承重牆是人工複核台,不是這裡 —— 不要因為「全綠」就以為機器擋得住。
+_GATES = ("①②", "④")
+
+
+def _gates(name):
+    return name.startswith(_GATES)
 
 
 def report(recs, loc):

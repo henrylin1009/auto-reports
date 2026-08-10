@@ -20,7 +20,7 @@ B3 補的是**發布狀態半邊**:一格 wide 的算術即使全對(`View.ok`),
 """
 import buckets
 import wide
-from core import decision_store
+from core import closure, decision_store, store
 from core import ingest as ingest_mod
 
 
@@ -52,7 +52,21 @@ def decision_summary(cell_key, recs, decisions_dir=None, taxonomy_dir="taxonomy"
 def coarse_status(cell_key, recs, decisions_dir=None, taxonomy_dir="taxonomy"):
     """一格 → {"archived", "publishable", "arithmetic_ok", "fully_confirmed",
     "decisions", "reasons"}。**不改 `wide.view()` 的判斷,只轉述它。**"""
-    views = wide.cell(recs)
+    # `wide.view()` 認的是單根單份的形狀;章節模式的母表/子附註要先靠
+    # `core.closure.flatten()` 攤平(見 `core/reconcile.py` 同一段理由)。
+    # 攤不平就照原樣把 recs 交給 wide——它自然會判 not ok(母表的小計列
+    # 混進來,三段恆等式湊不出來),不必在這裡另外攔。
+    #
+    # `anchors/{doc}.json` 讀不到(合成測試資料、doc 還沒建過 anchors 快取)
+    # 就退回原樣不攤平——這裡的 `recs` 來源不保證一定有 anchors 可查,
+    # 不該讓一個環境缺口變成整支 crash;真正的生產路徑(facts/ 裡的格子)
+    # anchors 一定有,不受影響。
+    try:
+        anchor = store.anchor_of(recs[0]["doc"], recs[0]["class"])
+        flat, err = closure.flatten(recs, anchor)
+    except FileNotFoundError:
+        flat, err = recs, "anchors 讀不到"
+    views = wide.cell(flat if not err else recs)
     arithmetic_ok = any(v.ok for v in views.values())
     summary = decision_summary(cell_key, recs, decisions_dir, taxonomy_dir)
     fully_confirmed = summary["total"] > 0 and summary["confirmed"] == summary["total"]

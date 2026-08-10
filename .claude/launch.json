@@ -12,6 +12,12 @@
       "runtimeExecutable": ".venv/bin/python",
       "runtimeArgs": ["server.py", "8766"],
       "port": 8766
+    },
+    {
+      "name": "workbench-preview2",
+      "runtimeExecutable": ".venv/bin/python",
+      "runtimeArgs": ["server.py", "8767"],
+      "port": 8767
     }
   ]
 }

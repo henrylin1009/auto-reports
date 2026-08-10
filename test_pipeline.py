@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
-"""迴圈驅動的回歸:**證明升級決策會觸發,而且會走到正確的頁**。
+"""迴圈驅動的回歸:**證明工單一開始就走到正確的頁,而且抄不出來時會停**。
 
-`locate.EXPAND_TRUTH` 只證明了「正確頁在擴張後的候選集合裡」。那是必要條件,
-不是迴圈本身 —— 中間還有一個「對不上才擴張」的決策,而那個決策可能:
-  a. 根本不觸發(第 1 輪就誤判成過了)→ 永遠看不到子附註頁
-  b. 觸發了但沒把新頁餵給 agent
-  c. 抄不出來時不肯停,無限擴張
-本檔用假的 transcriber 把這三件事分別鎖住,不需要真的叫 agent 讀表。
+⚠️ 2026-07-31 改版。舊版釘的是「對不上 → 擴張鄰頁 → 才看得到子附註頁」,
+那條升級路徑已經不存在了:工單單位換成**附註章節**,子附註本來就在同一章裡,
+第 1 輪就看得到(`section.py` 檔頭有實測:EXPAND_TRUTH 11 格 11/11)。
+所以本檔改釘現在真正要保護的三件事:
+  a. **第 1 輪的工單就含手動驗過的正確頁**(章節模式的核心主張)
+  b. 抄不出來時會停,不會無限換章節
+  c. 母表-only(湊得出錨但沒有明細)**會歸檔**,但 `publish_gate` 必須擋住發布
+     —— 洞還在,守衛換位置了(⑤ 從歸檔閘移到發布閘,使用者裁示)
 
 跑法:python3 test_pipeline.py
 """
@@ -23,7 +25,7 @@ def _pages_in(prompt):
 
 
 def case_escalates():
-    """對不上 → 必須擴張,而且新 prompt 要包含手動驗過的正確頁。"""
+    """第 1 輪就該看到正確頁;抄不出來要停,不能無限換章節。"""
     seen = []
 
     def never_matches(doc, cls, prompt):
@@ -31,19 +33,20 @@ def case_escalates():
         return None                      # agent 抄不出來 → 逼迴圈升級
     out = pipeline.drive(DOC, CLS, never_matches)
     truth = dict(((d, c), p) for d, c, p in locate.EXPAND_TRUTH)[(DOC, CLS)]
-    yield ("抄不出來時會擴張(prompt 輪數 > 1)", len(seen) > 1, f"輪數={len(seen)}")
-    yield (f"擴張後的 prompt 含手動驗過的 p{truth}",
-           any(truth in p for p in seen[1:]), f"各輪頁碼={seen}")
-    yield ("每輪頁數只增不減", all(len(a) < len(b) for a, b in zip(seen, seen[1:])),
-           f"各輪頁數={[len(p) for p in seen]}")
-    yield ("抄不出來最終拒收,不會無限擴張", (not out.ok) and out.reason, repr(out))
+    yield (f"**第 1 輪**的 prompt 就含手動驗過的 p{truth}(不必等擴張)",
+           bool(seen) and truth in seen[0], f"第1輪={seen[0] if seen else None}")
+    yield ("每一輪都是一個章節,不是愈滾愈大的聯集",
+           all(a != b for a, b in zip(seen, seen[1:])), f"各輪頁碼={seen}")
+    yield ("抄不出來最終拒收,不會無限換章節", (not out.ok) and out.reason, repr(out))
 
 
 def case_two_layer():
-    """主附註加總剛好 = 錨,但沒有明細 → **必須照樣擴張**。
+    """主附註加總剛好 = 錨,但沒有明細 → **歸檔,但不可發布**。
 
-    這是原本測不出來的死角:舊的假 transcriber 一律回 None,所以「抄得出東西、
-    前四道還全綠、但產出是廢的」這條路徑從來沒被走過。實跑才撞到(玉山 p23)。
+    這是「四道全綠、產出是廢的」那個洞。2026-07-31 起 ⑤ 不再擋歸檔,所以它
+    會通過 `verify()` —— 保護改由 `publish_gate` 提供(兩列對不到桶 ⇒
+    `wide.View.unknown` 非空 ⇒ 不可發布)。**兩件事都要釘**:通過歸檔是預期的,
+    可以發布就是洞破了。
     """
     main_note = [{
         "doc": DOC, "class": CLS, "source_page": 23, "source_kind": "附註",
@@ -58,9 +61,13 @@ def case_two_layer():
         seen.append(_pages_in(prompt))
         return main_note                 # 每輪都只交得出主附註
     out = pipeline.drive(DOC, CLS, only_main_note)
-    yield ("主附註湊得出錨也不算過(第 5 道擋下)", len(seen) > 1, f"輪數={len(seen)}")
-    yield ("擴張後看得到子附註 p24", any(24 in p for p in seen[1:]), f"各輪={seen}")
-    yield ("始終交不出明細 → 拒收", not out.ok, repr(out))
+    truth = dict(((d, c), p) for d, c, p in locate.EXPAND_TRUTH)[(DOC, CLS)]
+    yield ("第 1 輪的工單就含子附註頁", bool(seen) and truth in seen[0],
+           f"第1輪={seen[0] if seen else None}")
+    yield ("主附註湊得出錨 → 兩道閘門放行(歸檔)", out.ok, repr(out))
+    from core import publish_gate
+    st = publish_gate.coarse_status(f"{DOC}|{CLS}", main_note)
+    yield ("但 publish_gate 必須擋住發布", not st["publishable"], repr(st["reasons"]))
 
 
 def case_stops_early():

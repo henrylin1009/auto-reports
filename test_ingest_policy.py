@@ -2,8 +2,15 @@
 # -*- coding: utf-8 -*-
 """test_ingest_policy.py — C3-a A2 的白名單注入測試(T1-T6)
 
-    T1  只有 check_buckets 失敗 → 不擴頁、retries 不增加(注入 → 必須紅)
-    T2  只有 check_cross 失敗   → 不擴頁、retries 不增加(注入 → 必須紅)
+    T1  只有 check_buckets 失敗 → FILED(歸檔且進人審佇列)、不擴頁(注入 → 必須紅)
+    T2  只有 check_cross 失敗   → FILED(同上)(注入 → 必須紅)
+
+⚠️ 2026-07-31 改版:歸檔閘砍成兩道(①② 與 ④)之後,⑤/③ 不再讓
+   `transcribe.verify()` 回 False,所以「注入 TRIGGERS 讓它去擴頁」這個舊注入
+   **打不到判斷點了**(`classify_outcome` 在 `if ok:` 就分流完)。注入改打
+   `expand_policy.NEVER`:把 check_buckets/check_cross 從 NEVER 拿掉 →
+   Gate 2 訊號變空 → outcome 從 FILED 變成 PASS → 主張必須變紅。
+   **這才是今天真正的判斷點** —— 注入要打在會出錯的地方,不是打在歷史上的地方。
     T3  check_identity 失敗    → 擴頁、retries +1(注入 → 必須紅)
     T4  check_identity + check_buckets 同時失敗 → 擴頁,理由只提 ①,不提 ⑤(注入 → 必須紅)
     T5  ingest 不准自己重寫一份觸發判斷 —— 唯一來源是 core.expand_policy
@@ -57,6 +64,16 @@ def _with_triggers(triggers, fn):
         ep.TRIGGERS = orig
 
 
+def _with_never(never, fn):
+    """暫時換掉 `expand_policy.NEVER` —— 今天決定 PASS/FILED 的就是它。"""
+    orig = ep.NEVER
+    try:
+        ep.NEVER = never
+        return fn()
+    finally:
+        ep.NEVER = orig
+
+
 # ── T1:只有 check_buckets 失敗 ──────────────────────────────────────────
 def _t1_case():
     """單列,名字兩邊都推不出桶(buckets.SYN 認不得,rules.propose 也提不出)—
@@ -75,19 +92,19 @@ def T1():
     rec, loc = _t1_case()
     r = ingest.classify_outcome("X", "Trading", [rec], loc, 0, [1], 3,
                                  pipeline.MAX_LEVEL, use_policy=True)
-    cond = (r["outcome"] != "RETRY") and (r["retries"] == 3)
-    return _ok(cond, "T1 只有⑤失敗→不擴頁、retries不變", r)
+    cond = r["outcome"] == "FILED" and r["retries"] == 3
+    return _ok(cond, "T1 只有⑤失敗→FILED(歸檔+進佇列)、不擴頁", r)
 
 
 def T1_inject():
-    """注入:把 check_buckets 塞進 TRIGGERS → 這一格應該會被擴頁,
-    「T1 的斷言(不擴頁)」必須變紅。"""
+    """注入:把 check_buckets 從 NEVER 拿掉 → Gate 2 訊號變空 → 這一格會變成
+    乾淨 PASS(不進人審佇列),「T1 的斷言(FILED)」必須變紅。"""
     rec, loc = _t1_case()
-    r = _with_triggers(ep.TRIGGERS | {"check_buckets"},
-                        lambda: ingest.classify_outcome(
-                            "X", "Trading", [rec], loc, 0, [1], 3,
-                            pipeline.MAX_LEVEL, use_policy=True))
-    would_hold = (r["outcome"] != "RETRY") and (r["retries"] == 3)
+    r = _with_never(ep.NEVER - {"check_buckets"},
+                    lambda: ingest.classify_outcome(
+                        "X", "Trading", [rec], loc, 0, [1], 3,
+                        pipeline.MAX_LEVEL, use_policy=True))
+    would_hold = r["outcome"] == "FILED" and r["retries"] == 3
     return _ok(would_hold is False, "T1-注入(必須紅)", r)
 
 
@@ -109,17 +126,18 @@ def T2():
     rec1, rec2, loc = _t2_case()
     r = ingest.classify_outcome("X", "Trading", [rec1, rec2], loc, 0, [1, 2], 5,
                                  pipeline.MAX_LEVEL, use_policy=True)
-    cond = (r["outcome"] != "RETRY") and (r["retries"] == 5)
-    return _ok(cond, "T2 只有③失敗→不擴頁、retries不變", r)
+    cond = r["outcome"] == "FILED" and r["retries"] == 5
+    return _ok(cond, "T2 只有③失敗→FILED(歸檔+進佇列)、不擴頁", r)
 
 
 def T2_inject():
+    """注入同 T1:把 check_cross 從 NEVER 拿掉 → 變成乾淨 PASS,主張必須變紅。"""
     rec1, rec2, loc = _t2_case()
-    r = _with_triggers(ep.TRIGGERS | {"check_cross"},
-                        lambda: ingest.classify_outcome(
-                            "X", "Trading", [rec1, rec2], loc, 0, [1, 2], 5,
-                            pipeline.MAX_LEVEL, use_policy=True))
-    would_hold = (r["outcome"] != "RETRY") and (r["retries"] == 5)
+    r = _with_never(ep.NEVER - {"check_cross"},
+                    lambda: ingest.classify_outcome(
+                        "X", "Trading", [rec1, rec2], loc, 0, [1, 2], 5,
+                        pipeline.MAX_LEVEL, use_policy=True))
+    would_hold = r["outcome"] == "FILED" and r["retries"] == 5
     return _ok(would_hold is False, "T2-注入(必須紅)", r)
 
 

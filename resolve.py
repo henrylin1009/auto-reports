@@ -21,13 +21,29 @@ def list_year(code, roc):
         params={"step":"1","colorchg":"1","mtype":"A","co_id":code,"year":roc},timeout=30)
     r.encoding="big5"; return r.text
 
+#: 清單上的口徑標籤。**2014 以前叫「母公司財報」,不叫「個體」** —— 只認「個體」
+#: 的話,2014 以前的每一期都會回 None,`acquire.fetch_one()` 就把它記成 absent
+#: (「TWSE 清單上沒有這期的個體檔」),而檔案其實一直都在。
+#: 舊時代四季都申報母公司財報,比現在的個體(只有半年報/年報)還密。
+_SOLO_TAGS = ("個體", "個別", "母公司財報")
+_CONS_TAGS = ("合併",)                                    # 涵蓋「母子公司合併報表」等寫法
+
 def indiv_filename(html, yyyymm):
-    """從清單找該期(YYYYMM 前綴)標為『個體』的檔名。"""
-    # 每個 readfile2 檔名 + 其所在列是否含「個體」
+    """從清單找該期(YYYYMM 前綴)標為個體/母公司的檔名。"""
     for m in re.finditer(r'readfile2\("A","\d+","('+re.escape(yyyymm)+r'_\d+_[A-Z0-9]+\.pdf)"\)', html):
         fn=m.group(1)
-        row=html[max(0,m.start()-600):m.start()]         # 該檔連結前的列描述
-        if "個體" in row or "個別" in row:
+        win=html[max(0,m.start()-600):m.start()]          # 該檔連結前的列描述
+        # **取最近的那個標籤,不是「窗口裡有沒有」** —— 600 字窗口會跨到上一列:
+        # 實測 201202_5843_A02(合併)的窗口裡,距離 514 字處就有上一列的
+        # 「母公司財報」,而它自己的「合併」在 63 字處。用 `in` 判斷會把合併
+        # 報表當成個體收下來,是靜默抓錯口徑的檔。
+        best, kind = None, None
+        for tags, k in ((_SOLO_TAGS, "solo"), (_CONS_TAGS, "cons")):
+            for t in tags:
+                i = win.rfind(t)
+                if i >= 0 and (best is None or i > best):
+                    best, kind = i, k
+        if kind == "solo":
             return fn
     return None
 

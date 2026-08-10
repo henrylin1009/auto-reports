@@ -15,13 +15,22 @@ REQUIRED_REC = ("doc", "class", "source_page", "source_kind", "total_col",
                 "printed_total", "rows")
 OPTIONAL_REC = ("printed_totals", "note", "_by")
 REQUIRED_ROW = ("name", "cols")
-OPTIONAL_ROW = ("group",)
+#: `_src` = 這一列是人在網頁上改 / 增的,不是機器抄的
+#: (`docs/plan_web_complete.md` §2)。形狀 `{"by", "at", "why", "evidence"?}`——
+#: 跟 `_by` 同一個模式:稽核欄位,`wide`/`buckets`/`verify` 一律不准讀它,
+#: 只讀 `name`/`cols`/`group`。**沒有 `_src` = 機器抄的**,這是唯一的判準,
+#: 不需要另外存一個「是不是人工」的旗標。
+OPTIONAL_ROW = ("group", "_src")
 
 
-def load():
-    """→ {格key: [record, ...]},格key 形如 `202404_5843_AI3|Trading`。"""
+def load(facts_dir=None):
+    """→ {格key: [record, ...]},格key 形如 `202404_5843_AI3|Trading`。
+
+    `facts_dir` 只給測試用(注入 tmp 目錄,見 `test_webdata.py`)——
+    production 呼叫一律用預設值,不要傳。"""
+    d = facts_dir or DIR
     cells = {}
-    for p in sorted(glob.glob(f"{DIR}/*.json")):
+    for p in sorted(glob.glob(f"{d}/*.json")):
         cells.update(json.load(open(p, encoding="utf-8")))
     problems = validate(cells)
     if problems:
@@ -29,14 +38,15 @@ def load():
     return cells
 
 
-def save(cells):
+def save(cells, facts_dir=None):
     """按 doc 分檔寫回。一個大檔的 git diff 在 169 格之後沒人看得動。"""
-    os.makedirs(DIR, exist_ok=True)
+    d = facts_dir or DIR
+    os.makedirs(d, exist_ok=True)
     by_doc = {}
     for key, recs in cells.items():
         by_doc.setdefault(key.split("|")[0], {})[key] = recs
     for doc, part in by_doc.items():
-        json.dump(part, open(f"{DIR}/{doc}.json", "w", encoding="utf-8"),
+        json.dump(part, open(f"{d}/{doc}.json", "w", encoding="utf-8"),
                   ensure_ascii=False, indent=1, sort_keys=True)
 
 

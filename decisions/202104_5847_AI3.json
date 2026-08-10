@@ -1,0 +1,387 @@
+{
+ "202104_5847_AI3|OCI": [
+  {
+   "at": "2026-07-29T13:51:13.825105Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202104_5847_AI3|OCI",
+    "row_index": 0,
+    "source_page": 37
+   },
+   "mapping": null,
+   "name": "透過其他綜合損益按公允價值衡量之權益工具投資",
+   "occurrence": {
+    "cell_key": "202104_5847_AI3|OCI",
+    "ordinal": 0,
+    "record_fp": "09c0bf2ccbb2d56033234a1679f0e93466fb63e14f57fc8b53aa934ac1c576b7",
+    "row_fp": "87dd1df9eaf5ceff972f1d2a987a8046cc461b8d04f1d2cd516e60df8a548924",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "UNCLASSIFIED",
+   "taxonomy_ref": null
+  },
+  {
+   "at": "2026-07-29T13:51:13.825194Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202104_5847_AI3|OCI",
+    "row_index": 1,
+    "source_page": 37
+   },
+   "mapping": null,
+   "name": "透過其他綜合損益按公允價值衡量之債務工具投資",
+   "occurrence": {
+    "cell_key": "202104_5847_AI3|OCI",
+    "ordinal": 1,
+    "record_fp": "09c0bf2ccbb2d56033234a1679f0e93466fb63e14f57fc8b53aa934ac1c576b7",
+    "row_fp": "6cc19e8801d9dbaa736e047482635fa840e675fabdde22213fe392e8e24cef10",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "UNCLASSIFIED",
+   "taxonomy_ref": null
+  }
+ ],
+ "202104_5847_AI3|Trading": [
+  {
+   "at": "2026-07-29T13:51:12.195365Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202104_5847_AI3|Trading",
+    "row_index": 0,
+    "source_page": 36
+   },
+   "mapping": "可轉讓定存單",
+   "name": "可轉讓定期存單",
+   "occurrence": {
+    "cell_key": "202104_5847_AI3|Trading",
+    "ordinal": 0,
+    "record_fp": "94800b320e72c56b68d2c22e73736e1ab477e9962a080591f4036ee08704bb05",
+    "row_fp": "8ce4258e4aa8d2cf6977010c0332e79429d67f1db41fefae1c3c3b08770f1385",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:可轉讓定期存單"
+  },
+  {
+   "at": "2026-07-29T13:51:12.195424Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202104_5847_AI3|Trading",
+    "row_index": 1,
+    "source_page": 36
+   },
+   "mapping": "貨幣市場",
+   "name": "商業本票",
+   "occurrence": {
+    "cell_key": "202104_5847_AI3|Trading",
+    "ordinal": 1,
+    "record_fp": "94800b320e72c56b68d2c22e73736e1ab477e9962a080591f4036ee08704bb05",
+    "row_fp": "dbc038e2957731f64f036f7ccc8c5386b8b7e555252d702db6814700787e1ee7",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:商業本票"
+  },
+  {
+   "at": "2026-07-29T13:51:12.195441Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202104_5847_AI3|Trading",
+    "row_index": 2,
+    "source_page": 36
+   },
+   "mapping": "貨幣市場",
+   "name": "國庫券",
+   "occurrence": {
+    "cell_key": "202104_5847_AI3|Trading",
+    "ordinal": 2,
+    "record_fp": "94800b320e72c56b68d2c22e73736e1ab477e9962a080591f4036ee08704bb05",
+    "row_fp": "a6b6a7d9a30fa954d09c697a126d948d5477d9c14abae4ddf65565d764297d4d",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:國庫券"
+  },
+  {
+   "at": "2026-07-29T13:51:12.195453Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202104_5847_AI3|Trading",
+    "row_index": 3,
+    "source_page": 36
+   },
+   "mapping": "公司債",
+   "name": "公司債",
+   "occurrence": {
+    "cell_key": "202104_5847_AI3|Trading",
+    "ordinal": 3,
+    "record_fp": "94800b320e72c56b68d2c22e73736e1ab477e9962a080591f4036ee08704bb05",
+    "row_fp": "e574d16da55e057578553ea19afcbb3024739a0ca93ada48a4d027b49833a3b8",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:公司債"
+  },
+  {
+   "at": "2026-07-29T13:51:12.195466Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202104_5847_AI3|Trading",
+    "row_index": 4,
+    "source_page": 36
+   },
+   "mapping": "金融債",
+   "name": "金融債券",
+   "occurrence": {
+    "cell_key": "202104_5847_AI3|Trading",
+    "ordinal": 4,
+    "record_fp": "94800b320e72c56b68d2c22e73736e1ab477e9962a080591f4036ee08704bb05",
+    "row_fp": "03b8a7008045b801ea41c02c886f2684ce896327065891ebd1f6d0d9b665d90c",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:金融債券"
+  },
+  {
+   "at": "2026-07-29T13:51:12.195478Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202104_5847_AI3|Trading",
+    "row_index": 5,
+    "source_page": 36
+   },
+   "mapping": "公債",
+   "name": "政府公債",
+   "occurrence": {
+    "cell_key": "202104_5847_AI3|Trading",
+    "ordinal": 5,
+    "record_fp": "94800b320e72c56b68d2c22e73736e1ab477e9962a080591f4036ee08704bb05",
+    "row_fp": "b77eea34feaa6e56b107138b842767c7381ad54e3a37e76c3d02c42e586c2b4d",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:政府公債"
+  },
+  {
+   "at": "2026-07-29T13:51:12.195492Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202104_5847_AI3|Trading",
+    "row_index": 6,
+    "source_page": 36
+   },
+   "mapping": "股票",
+   "name": "上市（櫃）股票",
+   "occurrence": {
+    "cell_key": "202104_5847_AI3|Trading",
+    "ordinal": 6,
+    "record_fp": "94800b320e72c56b68d2c22e73736e1ab477e9962a080591f4036ee08704bb05",
+    "row_fp": "4bca24b5c8dac154069278269a33830735f8902804156eacff049e14286e2ebd",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:上市(櫃)股票"
+  },
+  {
+   "at": "2026-07-29T13:51:12.195505Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202104_5847_AI3|Trading",
+    "row_index": 7,
+    "source_page": 36
+   },
+   "mapping": "衍生",
+   "name": "外匯換匯合約",
+   "occurrence": {
+    "cell_key": "202104_5847_AI3|Trading",
+    "ordinal": 7,
+    "record_fp": "94800b320e72c56b68d2c22e73736e1ab477e9962a080591f4036ee08704bb05",
+    "row_fp": "d076f30ce33dd4da124efd99e00d8dd04ed5132973e301012be0f57e61f28661",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "PROVISIONAL",
+   "taxonomy_ref": "tax:外匯換匯合約"
+  },
+  {
+   "at": "2026-07-29T13:51:12.195517Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202104_5847_AI3|Trading",
+    "row_index": 8,
+    "source_page": 36
+   },
+   "mapping": "衍生",
+   "name": "利率交換合約",
+   "occurrence": {
+    "cell_key": "202104_5847_AI3|Trading",
+    "ordinal": 8,
+    "record_fp": "94800b320e72c56b68d2c22e73736e1ab477e9962a080591f4036ee08704bb05",
+    "row_fp": "d8dd6f148d899d4a1af7715d6b0416f126f0879f1ed40ea882ace4f5bea6de20",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:利率交換合約"
+  },
+  {
+   "at": "2026-07-29T13:51:12.195529Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202104_5847_AI3|Trading",
+    "row_index": 9,
+    "source_page": 36
+   },
+   "mapping": "衍生",
+   "name": "外匯選擇權合約",
+   "occurrence": {
+    "cell_key": "202104_5847_AI3|Trading",
+    "ordinal": 9,
+    "record_fp": "94800b320e72c56b68d2c22e73736e1ab477e9962a080591f4036ee08704bb05",
+    "row_fp": "926261c7f834517d5c3522f361929f5438c27d2e81c484a019ab2801c61d6746",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:外匯選擇權合約"
+  },
+  {
+   "at": "2026-07-29T13:51:12.195541Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202104_5847_AI3|Trading",
+    "row_index": 10,
+    "source_page": 36
+   },
+   "mapping": "衍生",
+   "name": "遠期外匯合約",
+   "occurrence": {
+    "cell_key": "202104_5847_AI3|Trading",
+    "ordinal": 10,
+    "record_fp": "94800b320e72c56b68d2c22e73736e1ab477e9962a080591f4036ee08704bb05",
+    "row_fp": "d121d67fc571a496b98a813770c361ecb9202d8a8d03e39492c47ef973b86795",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:遠期外匯合約"
+  },
+  {
+   "at": "2026-07-29T13:51:12.195556Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202104_5847_AI3|Trading",
+    "row_index": 11,
+    "source_page": 36
+   },
+   "mapping": "衍生",
+   "name": "期貨交易保證金一自有資金",
+   "occurrence": {
+    "cell_key": "202104_5847_AI3|Trading",
+    "ordinal": 11,
+    "record_fp": "94800b320e72c56b68d2c22e73736e1ab477e9962a080591f4036ee08704bb05",
+    "row_fp": "e7b7f39dff42589c692a520625a918b32969dea0d7ca8a73b403025ff06904ac",
+    "scope": "row"
+   },
+   "references": [
+    {
+     "at": "2026-07-29T13:51:12.195556Z",
+     "detail": "BUCKET_RULES 關鍵字「期貨」",
+     "kind": "rule",
+     "recheck": "rules.propose('期貨交易保證金一自有資金')[0] == '衍生'"
+    }
+   ],
+   "state": "PROVISIONAL",
+   "taxonomy_ref": null
+  },
+  {
+   "at": "2026-07-29T13:51:12.195587Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202104_5847_AI3|Trading",
+    "row_index": 12,
+    "source_page": 36
+   },
+   "mapping": "衍生",
+   "name": "無本金交割遠期外匯合約",
+   "occurrence": {
+    "cell_key": "202104_5847_AI3|Trading",
+    "ordinal": 12,
+    "record_fp": "94800b320e72c56b68d2c22e73736e1ab477e9962a080591f4036ee08704bb05",
+    "row_fp": "f743f9999c5b41b7e2054aa6d052ab277435f0a05f0331d51c345c2dd4b3ae0a",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:無本金交割遠期外匯合約"
+  },
+  {
+   "at": "2026-07-29T13:51:12.195599Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202104_5847_AI3|Trading",
+    "row_index": 13,
+    "source_page": 36
+   },
+   "mapping": "衍生",
+   "name": "換匯換利合約",
+   "occurrence": {
+    "cell_key": "202104_5847_AI3|Trading",
+    "ordinal": 13,
+    "record_fp": "94800b320e72c56b68d2c22e73736e1ab477e9962a080591f4036ee08704bb05",
+    "row_fp": "9e9b0259b329d5603bc19cc4a7e9459033a98acd557e30aa2b33f7185dad7817",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:換匯換利合約"
+  },
+  {
+   "at": "2026-07-29T13:51:12.195611Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202104_5847_AI3|Trading",
+    "row_index": 14,
+    "source_page": 36
+   },
+   "mapping": null,
+   "name": "金屬商品交換合約",
+   "occurrence": {
+    "cell_key": "202104_5847_AI3|Trading",
+    "ordinal": 14,
+    "record_fp": "94800b320e72c56b68d2c22e73736e1ab477e9962a080591f4036ee08704bb05",
+    "row_fp": "6bbe5b50babbe21edde10c63baac3c545f6ce5fed398e5738a11a4c9ea3d0956",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "UNCLASSIFIED",
+   "taxonomy_ref": null
+  }
+ ]
+}
