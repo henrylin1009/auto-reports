@@ -10,7 +10,7 @@
     "其他",
     "股票"
    ],
-   "reason": "v3 沒有這一格",
+   "reason": "v3 該格檢查未通過",
    "unit": "2021H1|中信|Trading|wide"
   },
   {
@@ -23,7 +23,7 @@
     "其他",
     "股票"
    ],
-   "reason": "v3 沒有這一格",
+   "reason": "v3 該格檢查未通過",
    "unit": "2021H1|中信|OCI|wide"
   },
   {
@@ -36,7 +36,7 @@
     "其他",
     "股票"
    ],
-   "reason": "v3 沒有這一格",
+   "reason": "v3 該格檢查未通過",
    "unit": "2021H1|中信|AC|wide"
   },
   {
@@ -101,6 +101,45 @@
     "其他",
     "股票"
    ],
+   "reason": "v3 該格檢查未通過",
+   "unit": "2021H1|富邦|Trading|wide"
+  },
+  {
+   "dropped_columns": [
+    "GB",
+    "公司債",
+    "金融債",
+    "資產基礎",
+    "貨幣市場",
+    "其他",
+    "股票"
+   ],
+   "reason": "v3 該格檢查未通過",
+   "unit": "2021H1|富邦|OCI|wide"
+  },
+  {
+   "dropped_columns": [
+    "GB",
+    "公司債",
+    "金融債",
+    "資產基礎",
+    "貨幣市場",
+    "其他",
+    "股票"
+   ],
+   "reason": "v3 該格檢查未通過",
+   "unit": "2021H1|富邦|AC|wide"
+  },
+  {
+   "dropped_columns": [
+    "GB",
+    "公司債",
+    "金融債",
+    "資產基礎",
+    "貨幣市場",
+    "其他",
+    "股票"
+   ],
    "reason": "v3 沒有這一格",
    "unit": "2021H1|玉山|Trading|wide"
   },
@@ -140,7 +179,7 @@
     "其他",
     "股票"
    ],
-   "reason": "v3 沒有這一格",
+   "reason": "v3 該格檢查未通過",
    "unit": "2021H2|中信|OCI|wide"
   },
   {
@@ -153,7 +192,7 @@
     "其他",
     "股票"
    ],
-   "reason": "v3 沒有這一格",
+   "reason": "v3 該格檢查未通過",
    "unit": "2021H2|中信|AC|wide"
   },
   {
@@ -166,8 +205,21 @@
     "其他",
     "股票"
    ],
-   "reason": "v3 沒有這一格",
+   "reason": "v3 該格檢查未通過",
    "unit": "2021H2|兆豐|Trading|wide"
+  },
+  {
+   "dropped_columns": [
+    "GB",
+    "公司債",
+    "金融債",
+    "資產基礎",
+    "貨幣市場",
+    "其他",
+    "股票"
+   ],
+   "reason": "v3 該格檢查未通過",
+   "unit": "2021H2|國泰|Trading|wide"
   },
   {
    "dropped_columns": [
@@ -192,6 +244,45 @@
     "其他",
     "股票"
    ],
+   "reason": "v3 該格檢查未通過",
+   "unit": "2021H2|富邦|Trading|wide"
+  },
+  {
+   "dropped_columns": [
+    "GB",
+    "公司債",
+    "金融債",
+    "資產基礎",
+    "貨幣市場",
+    "其他",
+    "股票"
+   ],
+   "reason": "v3 該格檢查未通過",
+   "unit": "2021H2|富邦|OCI|wide"
+  },
+  {
+   "dropped_columns": [
+    "GB",
+    "公司債",
+    "金融債",
+    "資產基礎",
+    "貨幣市場",
+    "其他",
+    "股票"
+   ],
+   "reason": "v3 該格檢查未通過",
+   "unit": "2021H2|富邦|AC|wide"
+  },
+  {
+   "dropped_columns": [
+    "GB",
+    "公司債",
+    "金融債",
+    "資產基礎",
+    "貨幣市場",
+    "其他",
+    "股票"
+   ],
    "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
    "unit": "2021H2|玉山|Trading|wide"
   },
@@ -205,7 +296,20 @@
     "其他",
     "股票"
    ],
-   "reason": "v3 沒有這一格",
+   "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
+   "unit": "2021H2|玉山|OCI|wide"
+  },
+  {
+   "dropped_columns": [
+    "GB",
+    "公司債",
+    "金融債",
+    "資產基礎",
+    "貨幣市場",
+    "其他",
+    "股票"
+   ],
+   "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
    "unit": "2021H2|玉山|AC|wide"
   },
   {
@@ -324,6 +428,32 @@
    ],
    "reason": "v3 沒有這一格",
    "unit": "2022H1|國泰|AC|wide"
+  },
+  {
+   "dropped_columns": [
+    "GB",
+    "公司債",
+    "金融債",
+    "資產基礎",
+    "貨幣市場",
+    "其他",
+    "股票"
+   ],
+   "reason": "v3 該格檢查未通過",
+   "unit": "2022H1|富邦|Trading|wide"
+  },
+  {
+   "dropped_columns": [
+    "GB",
+    "公司債",
+    "金融債",
+    "資產基礎",
+    "貨幣市場",
+    "其他",
+    "股票"
+   ],
+   "reason": "v3 該格檢查未通過",
+   "unit": "2022H1|富邦|OCI|wide"
   },
   {
    "dropped_columns": [
@@ -466,19 +596,6 @@
     "股票"
    ],
    "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
-   "unit": "2022H2|玉山|Trading|wide"
-  },
-  {
-   "dropped_columns": [
-    "GB",
-    "公司債",
-    "金融債",
-    "資產基礎",
-    "貨幣市場",
-    "其他",
-    "股票"
-   ],
-   "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
    "unit": "2022H2|玉山|AC|wide"
   },
   {
@@ -530,7 +647,7 @@
     "其他",
     "股票"
    ],
-   "reason": "v3 沒有這一格",
+   "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
    "unit": "2023H1|兆豐|Trading|wide"
   },
   {
@@ -543,7 +660,7 @@
     "其他",
     "股票"
    ],
-   "reason": "v3 沒有這一格",
+   "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
    "unit": "2023H1|兆豐|OCI|wide"
   },
   {
@@ -571,6 +688,19 @@
    ],
    "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
    "unit": "2023H1|國泰|AC|wide"
+  },
+  {
+   "dropped_columns": [
+    "GB",
+    "公司債",
+    "金融債",
+    "資產基礎",
+    "貨幣市場",
+    "其他",
+    "股票"
+   ],
+   "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
+   "unit": "2023H1|富邦|OCI|wide"
   },
   {
    "dropped_columns": [
@@ -621,21 +751,8 @@
     "其他",
     "股票"
    ],
-   "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
-   "unit": "2023H2|兆豐|Trading|wide"
-  },
-  {
-   "dropped_columns": [
-    "GB",
-    "公司債",
-    "金融債",
-    "資產基礎",
-    "貨幣市場",
-    "其他",
-    "股票"
-   ],
-   "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
-   "unit": "2023H2|兆豐|OCI|wide"
+   "reason": "v3 該格檢查未通過",
+   "unit": "2023H2|富邦|OCI|wide"
   },
   {
    "dropped_columns": [
@@ -662,19 +779,6 @@
    ],
    "reason": "v3 沒有這一格",
    "unit": "2023H2|玉山|Trading|wide"
-  },
-  {
-   "dropped_columns": [
-    "GB",
-    "公司債",
-    "金融債",
-    "資產基礎",
-    "貨幣市場",
-    "其他",
-    "股票"
-   ],
-   "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
-   "unit": "2023H2|玉山|AC|wide"
   },
   {
    "dropped_columns": [
@@ -934,19 +1038,6 @@
     "股票"
    ],
    "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
-   "unit": "2025H1|富邦|Trading|wide"
-  },
-  {
-   "dropped_columns": [
-    "GB",
-    "公司債",
-    "金融債",
-    "資產基礎",
-    "貨幣市場",
-    "其他",
-    "股票"
-   ],
-   "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
    "unit": "2025H1|富邦|OCI|wide"
   },
   {
@@ -1029,11 +1120,68 @@
    "dropped_columns": [
     "GB",
     "公司債",
+    "金融債",
+    "資產基礎",
+    "貨幣市場",
+    "其他",
+    "股票"
+   ],
+   "reason": "v3 該格檢查未通過",
+   "unit": "2021H2|中信|OCI|wide_cost"
+  },
+  {
+   "dropped_columns": [
+    "GB",
+    "公司債",
+    "金融債",
+    "股票"
+   ],
+   "reason": "v3 該格檢查未通過",
+   "unit": "2021H2|兆豐|Trading|wide_cost"
+  },
+  {
+   "dropped_columns": [
+    "GB",
+    "公司債",
+    "金融債",
+    "貨幣市場",
+    "股票"
+   ],
+   "reason": "v3 該格檢查未通過",
+   "unit": "2021H2|國泰|Trading|wide_cost"
+  },
+  {
+   "dropped_columns": [
+    "GB",
+    "公司債",
+    "金融債",
+    "資產基礎",
+    "貨幣市場",
+    "股票"
+   ],
+   "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
+   "unit": "2021H2|國泰|OCI|wide_cost"
+  },
+  {
+   "dropped_columns": [
+    "GB",
+    "公司債",
     "貨幣市場",
     "其他"
    ],
-   "reason": "v3 沒有這一格",
+   "reason": "v3 該格檢查未通過",
    "unit": "2021H2|富邦|Trading|wide_cost"
+  },
+  {
+   "dropped_columns": [
+    "GB",
+    "公司債",
+    "金融債",
+    "貨幣市場",
+    "股票"
+   ],
+   "reason": "v3 該格檢查未通過",
+   "unit": "2021H2|富邦|OCI|wide_cost"
   },
   {
    "dropped_columns": [
@@ -1091,17 +1239,6 @@
   },
   {
    "dropped_columns": [
-    "公司債",
-    "金融債",
-    "貨幣市場",
-    "其他",
-    "股票"
-   ],
-   "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
-   "unit": "2022H2|玉山|Trading|wide_cost"
-  },
-  {
-   "dropped_columns": [
     "GB",
     "公司債",
     "金融債",
@@ -1139,11 +1276,35 @@
    "dropped_columns": [
     "GB",
     "公司債",
+    "金融債",
+    "資產基礎",
+    "貨幣市場",
+    "股票"
+   ],
+   "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
+   "unit": "2023H2|國泰|OCI|wide_cost"
+  },
+  {
+   "dropped_columns": [
+    "GB",
+    "公司債",
     "貨幣市場",
     "其他"
    ],
    "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
    "unit": "2023H2|富邦|Trading|wide_cost"
+  },
+  {
+   "dropped_columns": [
+    "GB",
+    "公司債",
+    "金融債",
+    "資產基礎",
+    "其他",
+    "股票"
+   ],
+   "reason": "v3 該格檢查未通過",
+   "unit": "2023H2|富邦|OCI|wide_cost"
   },
   {
    "dropped_columns": [
@@ -1210,7 +1371,7 @@
     "其他",
     "股票"
    ],
-   "reason": "v3 沒有這一格",
+   "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
    "unit": "2023Q1|中信|OCI|wide_consol"
   },
   {
@@ -1656,17 +1817,16 @@
    "unit": "2025Q4|中信|AC|wide_consol"
   }
  ],
- "build_timestamp": "2026-08-10T11:07:01",
+ "build_timestamp": "2026-08-11T22:34:13",
  "code_revision": {
-  "dirty": true,
-  "git": "8186cca0d48cadf02a9792b6df89533a6711af4d"
+  "dirty": false,
+  "git": "a4be5639a215380ecbac22c2208b25c5f7873dc5"
  },
  "counts": {
-  "blanked": 130,
-  "changed_units": 301,
-  "none": 237,
-  "v3": 174,
-  "v4": 45
+  "blanked": 143,
+  "changed_units": 290,
+  "none": 263,
+  "v3": 193
  },
  "inputs": {
   "decisions": {
@@ -1674,11 +1834,11 @@
     "buckets.py",
     "config.py"
    ],
-   "sha256": "d9bcf70f7e2f629a02d9a48121d1366ff9ebee05f824afce1f6bda2936cec772"
+   "sha256": "69a56f00043b0abe1e24c0d42528cd0a9315ffac739e06d5b04b7afcbd57068a"
   },
   "facts": {
-   "cells": 153,
-   "sha256": "76cf31ef88250ef55cd6161c2a5427901ca0b0e2294fceae0120dff54d2e82af"
+   "cells": 190,
+   "sha256": "0372887b6edb02264037d96512b85b647a6fe408addb874cb84ccc6d281423df"
   },
   "skeleton_only": {
    "note": "只供 periods/banks/review 這些非金額欄位,不再供應任何數字",
@@ -1688,21 +1848,21 @@
  },
  "units": [
   {
-   "facts_key": null,
+   "facts_key": "202002_5841_AI3|Trading",
    "provenance": "none",
-   "reason": "v3 沒有這一格",
+   "reason": "v3 該格檢查未通過",
    "unit": "2020H1|中信|Trading|wide"
   },
   {
-   "facts_key": null,
+   "facts_key": "202002_5841_AI3|OCI",
    "provenance": "none",
-   "reason": "v3 沒有這一格",
+   "reason": "v3 該格檢查未通過",
    "unit": "2020H1|中信|OCI|wide"
   },
   {
-   "facts_key": null,
+   "facts_key": "202002_5841_AI3|AC",
    "provenance": "none",
-   "reason": "v3 沒有這一格",
+   "reason": "v3 該格檢查未通過",
    "unit": "2020H1|中信|AC|wide"
   },
   {
@@ -1712,9 +1872,9 @@
    "unit": "2020H1|兆豐|Trading|wide"
   },
   {
-   "facts_key": null,
+   "facts_key": "202002_5843_AI3|OCI",
    "provenance": "none",
-   "reason": "v3 沒有這一格",
+   "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
    "unit": "2020H1|兆豐|OCI|wide"
   },
   {
@@ -1784,15 +1944,15 @@
    "unit": "2020H2|中信|Trading|wide"
   },
   {
-   "facts_key": null,
+   "facts_key": "202004_5841_AI3|OCI",
    "provenance": "none",
-   "reason": "v3 沒有這一格",
+   "reason": "v3 該格檢查未通過",
    "unit": "2020H2|中信|OCI|wide"
   },
   {
-   "facts_key": null,
+   "facts_key": "202004_5841_AI3|AC",
    "provenance": "none",
-   "reason": "v3 沒有這一格",
+   "reason": "v3 該格檢查未通過",
    "unit": "2020H2|中信|AC|wide"
   },
   {
@@ -1821,44 +1981,44 @@
   },
   {
    "facts_key": "202004_5835_AI3|OCI",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "none",
+   "reason": "v3 該格檢查未通過",
    "unit": "2020H2|國泰|OCI|wide"
   },
   {
-   "facts_key": null,
+   "facts_key": "202004_5835_AI3|AC",
    "provenance": "none",
-   "reason": "v3 沒有這一格",
+   "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
    "unit": "2020H2|國泰|AC|wide"
   },
   {
    "facts_key": "202004_5836_AI3|Trading",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "none",
+   "reason": "v3 該格檢查未通過",
    "unit": "2020H2|富邦|Trading|wide"
   },
   {
    "facts_key": "202004_5836_AI3|OCI",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "none",
+   "reason": "v3 該格檢查未通過",
    "unit": "2020H2|富邦|OCI|wide"
   },
   {
    "facts_key": "202004_5836_AI3|AC",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "none",
+   "reason": "v3 該格檢查未通過",
    "unit": "2020H2|富邦|AC|wide"
   },
   {
    "facts_key": "202004_5847_AI3|Trading",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "none",
+   "reason": "v3 該格檢查未通過",
    "unit": "2020H2|玉山|Trading|wide"
   },
   {
    "facts_key": "202004_5847_AI3|OCI",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "none",
+   "reason": "v3 該格檢查未通過",
    "unit": "2020H2|玉山|OCI|wide"
   },
   {
@@ -1868,21 +2028,21 @@
    "unit": "2020H2|玉山|AC|wide"
   },
   {
-   "facts_key": null,
+   "facts_key": "202102_5841_AI3|Trading",
    "provenance": "none",
-   "reason": "v3 沒有這一格",
+   "reason": "v3 該格檢查未通過",
    "unit": "2021H1|中信|Trading|wide"
   },
   {
-   "facts_key": null,
+   "facts_key": "202102_5841_AI3|OCI",
    "provenance": "none",
-   "reason": "v3 沒有這一格",
+   "reason": "v3 該格檢查未通過",
    "unit": "2021H1|中信|OCI|wide"
   },
   {
-   "facts_key": null,
+   "facts_key": "202102_5841_AI3|AC",
    "provenance": "none",
-   "reason": "v3 沒有這一格",
+   "reason": "v3 該格檢查未通過",
    "unit": "2021H1|中信|AC|wide"
   },
   {
@@ -1923,20 +2083,20 @@
   },
   {
    "facts_key": "202102_5836_AI3|Trading",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "none",
+   "reason": "v3 該格檢查未通過",
    "unit": "2021H1|富邦|Trading|wide"
   },
   {
    "facts_key": "202102_5836_AI3|OCI",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "none",
+   "reason": "v3 該格檢查未通過",
    "unit": "2021H1|富邦|OCI|wide"
   },
   {
    "facts_key": "202102_5836_AI3|AC",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "none",
+   "reason": "v3 該格檢查未通過",
    "unit": "2021H1|富邦|AC|wide"
   },
   {
@@ -1964,21 +2124,21 @@
    "unit": "2021H2|中信|Trading|wide"
   },
   {
-   "facts_key": null,
+   "facts_key": "202104_5841_AI3|OCI",
    "provenance": "none",
-   "reason": "v3 沒有這一格",
+   "reason": "v3 該格檢查未通過",
    "unit": "2021H2|中信|OCI|wide"
   },
   {
-   "facts_key": null,
+   "facts_key": "202104_5841_AI3|AC",
    "provenance": "none",
-   "reason": "v3 沒有這一格",
+   "reason": "v3 該格檢查未通過",
    "unit": "2021H2|中信|AC|wide"
   },
   {
-   "facts_key": null,
+   "facts_key": "202104_5843_AI3|Trading",
    "provenance": "none",
-   "reason": "v3 沒有這一格",
+   "reason": "v3 該格檢查未通過",
    "unit": "2021H2|兆豐|Trading|wide"
   },
   {
@@ -1995,8 +2155,8 @@
   },
   {
    "facts_key": "202104_5835_AI3|Trading",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "none",
+   "reason": "v3 該格檢查未通過",
    "unit": "2021H2|國泰|Trading|wide"
   },
   {
@@ -2013,20 +2173,20 @@
   },
   {
    "facts_key": "202104_5836_AI3|Trading",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "none",
+   "reason": "v3 該格檢查未通過",
    "unit": "2021H2|富邦|Trading|wide"
   },
   {
    "facts_key": "202104_5836_AI3|OCI",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "none",
+   "reason": "v3 該格檢查未通過",
    "unit": "2021H2|富邦|OCI|wide"
   },
   {
    "facts_key": "202104_5836_AI3|AC",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "none",
+   "reason": "v3 該格檢查未通過",
    "unit": "2021H2|富邦|AC|wide"
   },
   {
@@ -2037,14 +2197,14 @@
   },
   {
    "facts_key": "202104_5847_AI3|OCI",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "none",
+   "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
    "unit": "2021H2|玉山|OCI|wide"
   },
   {
-   "facts_key": null,
+   "facts_key": "202104_5847_AI3|AC",
    "provenance": "none",
-   "reason": "v3 沒有這一格",
+   "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
    "unit": "2021H2|玉山|AC|wide"
   },
   {
@@ -2103,14 +2263,14 @@
   },
   {
    "facts_key": "202202_5836_AI3|Trading",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "none",
+   "reason": "v3 該格檢查未通過",
    "unit": "2022H1|富邦|Trading|wide"
   },
   {
    "facts_key": "202202_5836_AI3|OCI",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "none",
+   "reason": "v3 該格檢查未通過",
    "unit": "2022H1|富邦|OCI|wide"
   },
   {
@@ -2211,8 +2371,8 @@
   },
   {
    "facts_key": "202204_5847_AI3|Trading",
-   "provenance": "none",
-   "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
+   "provenance": "v3",
+   "reason": "v3 合格",
    "unit": "2022H2|玉山|Trading|wide"
   },
   {
@@ -2246,15 +2406,15 @@
    "unit": "2023H1|中信|AC|wide"
   },
   {
-   "facts_key": null,
+   "facts_key": "202302_5843_AI3|Trading",
    "provenance": "none",
-   "reason": "v3 沒有這一格",
+   "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
    "unit": "2023H1|兆豐|Trading|wide"
   },
   {
-   "facts_key": null,
+   "facts_key": "202302_5843_AI3|OCI",
    "provenance": "none",
-   "reason": "v3 沒有這一格",
+   "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
    "unit": "2023H1|兆豐|OCI|wide"
   },
   {
@@ -2289,8 +2449,8 @@
   },
   {
    "facts_key": "202302_5836_AI3|OCI",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "none",
+   "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
    "unit": "2023H1|富邦|OCI|wide"
   },
   {
@@ -2301,8 +2461,8 @@
   },
   {
    "facts_key": "202302_5847_AI3|Trading",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "v3",
+   "reason": "v3 合格",
    "unit": "2023H1|玉山|Trading|wide"
   },
   {
@@ -2337,14 +2497,14 @@
   },
   {
    "facts_key": "202304_5843_AI3|Trading",
-   "provenance": "none",
-   "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
+   "provenance": "v3",
+   "reason": "v3 合格",
    "unit": "2023H2|兆豐|Trading|wide"
   },
   {
    "facts_key": "202304_5843_AI3|OCI",
-   "provenance": "none",
-   "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
+   "provenance": "v3",
+   "reason": "v3 合格",
    "unit": "2023H2|兆豐|OCI|wide"
   },
   {
@@ -2379,8 +2539,8 @@
   },
   {
    "facts_key": "202304_5836_AI3|OCI",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "none",
+   "reason": "v3 該格檢查未通過",
    "unit": "2023H2|富邦|OCI|wide"
   },
   {
@@ -2403,8 +2563,8 @@
   },
   {
    "facts_key": "202304_5847_AI3|AC",
-   "provenance": "none",
-   "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
+   "provenance": "v3",
+   "reason": "v3 合格",
    "unit": "2023H2|玉山|AC|wide"
   },
   {
@@ -2643,8 +2803,8 @@
   },
   {
    "facts_key": "202502_5836_AI3|Trading",
-   "provenance": "none",
-   "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
+   "provenance": "v3",
+   "reason": "v3 合格",
    "unit": "2025H1|富邦|Trading|wide"
   },
   {
@@ -2949,20 +3109,20 @@
   },
   {
    "facts_key": "202002_5841_AI3|Trading",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "none",
+   "reason": "v3 該格檢查未通過",
    "unit": "2020H1|中信|Trading|wide_cost"
   },
   {
    "facts_key": "202002_5841_AI3|OCI",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "none",
+   "reason": "v3 該格檢查未通過",
    "unit": "2020H1|中信|OCI|wide_cost"
   },
   {
    "facts_key": "202002_5841_AI3|AC",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "none",
+   "reason": "v3 該格檢查未通過",
    "unit": "2020H1|中信|AC|wide_cost"
   },
   {
@@ -2973,8 +3133,8 @@
   },
   {
    "facts_key": "202002_5843_AI3|OCI",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "v3",
+   "reason": "v3 合格",
    "unit": "2020H1|兆豐|OCI|wide_cost"
   },
   {
@@ -3009,14 +3169,14 @@
   },
   {
    "facts_key": "202004_5841_AI3|OCI",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "none",
+   "reason": "v3 該格檢查未通過",
    "unit": "2020H2|中信|OCI|wide_cost"
   },
   {
    "facts_key": "202004_5841_AI3|AC",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "none",
+   "reason": "v3 該格檢查未通過",
    "unit": "2020H2|中信|AC|wide_cost"
   },
   {
@@ -3039,50 +3199,50 @@
   },
   {
    "facts_key": "202004_5835_AI3|Trading",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "none",
+   "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
    "unit": "2020H2|國泰|Trading|wide_cost"
   },
   {
    "facts_key": "202004_5835_AI3|OCI",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "none",
+   "reason": "v3 該格檢查未通過",
    "unit": "2020H2|國泰|OCI|wide_cost"
   },
   {
    "facts_key": "202004_5835_AI3|AC",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "v3",
+   "reason": "v3 合格",
    "unit": "2020H2|國泰|AC|wide_cost"
   },
   {
-   "facts_key": null,
+   "facts_key": "202004_5836_AI3|Trading",
    "provenance": "none",
-   "reason": "v3 沒有這一格",
+   "reason": "v3 該格檢查未通過",
    "unit": "2020H2|富邦|Trading|wide_cost"
   },
   {
    "facts_key": "202004_5836_AI3|OCI",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "none",
+   "reason": "v3 該格檢查未通過",
    "unit": "2020H2|富邦|OCI|wide_cost"
   },
   {
-   "facts_key": null,
+   "facts_key": "202004_5836_AI3|AC",
    "provenance": "none",
-   "reason": "v3 沒有這一格",
+   "reason": "v3 該格檢查未通過",
    "unit": "2020H2|富邦|AC|wide_cost"
   },
   {
-   "facts_key": null,
+   "facts_key": "202004_5847_AI3|Trading",
    "provenance": "none",
-   "reason": "v3 沒有這一格",
+   "reason": "v3 該格檢查未通過",
    "unit": "2020H2|玉山|Trading|wide_cost"
   },
   {
-   "facts_key": null,
+   "facts_key": "202004_5847_AI3|OCI",
    "provenance": "none",
-   "reason": "v3 沒有這一格",
+   "reason": "v3 該格檢查未通過",
    "unit": "2020H2|玉山|OCI|wide_cost"
   },
   {
@@ -3093,20 +3253,20 @@
   },
   {
    "facts_key": "202102_5841_AI3|Trading",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "none",
+   "reason": "v3 該格檢查未通過",
    "unit": "2021H1|中信|Trading|wide_cost"
   },
   {
    "facts_key": "202102_5841_AI3|OCI",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "none",
+   "reason": "v3 該格檢查未通過",
    "unit": "2021H1|中信|OCI|wide_cost"
   },
   {
    "facts_key": "202102_5841_AI3|AC",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "none",
+   "reason": "v3 該格檢查未通過",
    "unit": "2021H1|中信|AC|wide_cost"
   },
   {
@@ -3146,21 +3306,21 @@
    "unit": "2021H1|國泰|AC|wide_cost"
   },
   {
-   "facts_key": null,
+   "facts_key": "202102_5836_AI3|Trading",
    "provenance": "none",
-   "reason": "v3 沒有這一格",
+   "reason": "v3 該格檢查未通過",
    "unit": "2021H1|富邦|Trading|wide_cost"
   },
   {
-   "facts_key": null,
+   "facts_key": "202102_5836_AI3|OCI",
    "provenance": "none",
-   "reason": "v3 沒有這一格",
+   "reason": "v3 該格檢查未通過",
    "unit": "2021H1|富邦|OCI|wide_cost"
   },
   {
-   "facts_key": null,
+   "facts_key": "202102_5836_AI3|AC",
    "provenance": "none",
-   "reason": "v3 沒有這一格",
+   "reason": "v3 該格檢查未通過",
    "unit": "2021H1|富邦|AC|wide_cost"
   },
   {
@@ -3189,20 +3349,20 @@
   },
   {
    "facts_key": "202104_5841_AI3|OCI",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "none",
+   "reason": "v3 該格檢查未通過",
    "unit": "2021H2|中信|OCI|wide_cost"
   },
   {
    "facts_key": "202104_5841_AI3|AC",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "none",
+   "reason": "v3 該格檢查未通過",
    "unit": "2021H2|中信|AC|wide_cost"
   },
   {
    "facts_key": "202104_5843_AI3|Trading",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "none",
+   "reason": "v3 該格檢查未通過",
    "unit": "2021H2|兆豐|Trading|wide_cost"
   },
   {
@@ -3219,14 +3379,14 @@
   },
   {
    "facts_key": "202104_5835_AI3|Trading",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "none",
+   "reason": "v3 該格檢查未通過",
    "unit": "2021H2|國泰|Trading|wide_cost"
   },
   {
    "facts_key": "202104_5835_AI3|OCI",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "none",
+   "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
    "unit": "2021H2|國泰|OCI|wide_cost"
   },
   {
@@ -3236,21 +3396,21 @@
    "unit": "2021H2|國泰|AC|wide_cost"
   },
   {
-   "facts_key": null,
+   "facts_key": "202104_5836_AI3|Trading",
    "provenance": "none",
-   "reason": "v3 沒有這一格",
+   "reason": "v3 該格檢查未通過",
    "unit": "2021H2|富邦|Trading|wide_cost"
   },
   {
    "facts_key": "202104_5836_AI3|OCI",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "none",
+   "reason": "v3 該格檢查未通過",
    "unit": "2021H2|富邦|OCI|wide_cost"
   },
   {
-   "facts_key": null,
+   "facts_key": "202104_5836_AI3|AC",
    "provenance": "none",
-   "reason": "v3 沒有這一格",
+   "reason": "v3 該格檢查未通過",
    "unit": "2021H2|富邦|AC|wide_cost"
   },
   {
@@ -3267,8 +3427,8 @@
   },
   {
    "facts_key": "202104_5847_AI3|AC",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "v3",
+   "reason": "v3 合格",
    "unit": "2021H2|玉山|AC|wide_cost"
   },
   {
@@ -3326,15 +3486,15 @@
    "unit": "2022H1|國泰|AC|wide_cost"
   },
   {
-   "facts_key": null,
+   "facts_key": "202202_5836_AI3|Trading",
    "provenance": "none",
-   "reason": "v3 沒有這一格",
+   "reason": "v3 該格檢查未通過",
    "unit": "2022H1|富邦|Trading|wide_cost"
   },
   {
-   "facts_key": null,
+   "facts_key": "202202_5836_AI3|OCI",
    "provenance": "none",
-   "reason": "v3 沒有這一格",
+   "reason": "v3 該格檢查未通過",
    "unit": "2022H1|富邦|OCI|wide_cost"
   },
   {
@@ -3429,14 +3589,14 @@
   },
   {
    "facts_key": "202204_5836_AI3|AC",
-   "provenance": "none",
-   "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
+   "provenance": "v3",
+   "reason": "v3 合格",
    "unit": "2022H2|富邦|AC|wide_cost"
   },
   {
    "facts_key": "202204_5847_AI3|Trading",
-   "provenance": "none",
-   "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
+   "provenance": "v3",
+   "reason": "v3 合格",
    "unit": "2022H2|玉山|Trading|wide_cost"
   },
   {
@@ -3471,14 +3631,14 @@
   },
   {
    "facts_key": "202302_5843_AI3|Trading",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "v3",
+   "reason": "v3 合格",
    "unit": "2023H1|兆豐|Trading|wide_cost"
   },
   {
    "facts_key": "202302_5843_AI3|OCI",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "v3",
+   "reason": "v3 合格",
    "unit": "2023H1|兆豐|OCI|wide_cost"
   },
   {
@@ -3519,14 +3679,14 @@
   },
   {
    "facts_key": "202302_5836_AI3|AC",
-   "provenance": "none",
-   "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
+   "provenance": "v3",
+   "reason": "v3 合格",
    "unit": "2023H1|富邦|AC|wide_cost"
   },
   {
-   "facts_key": null,
+   "facts_key": "202302_5847_AI3|Trading",
    "provenance": "none",
-   "reason": "v3 沒有這一格",
+   "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
    "unit": "2023H1|玉山|Trading|wide_cost"
   },
   {
@@ -3585,14 +3745,14 @@
   },
   {
    "facts_key": "202304_5835_AI3|OCI",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "none",
+   "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
    "unit": "2023H2|國泰|OCI|wide_cost"
   },
   {
    "facts_key": "202304_5835_AI3|AC",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "none",
+   "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
    "unit": "2023H2|國泰|AC|wide_cost"
   },
   {
@@ -3603,14 +3763,14 @@
   },
   {
    "facts_key": "202304_5836_AI3|OCI",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "none",
+   "reason": "v3 該格檢查未通過",
    "unit": "2023H2|富邦|OCI|wide_cost"
   },
   {
    "facts_key": "202304_5836_AI3|AC",
-   "provenance": "none",
-   "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
+   "provenance": "v3",
+   "reason": "v3 合格",
    "unit": "2023H2|富邦|AC|wide_cost"
   },
   {
@@ -3699,8 +3859,8 @@
   },
   {
    "facts_key": "202402_5836_AI3|AC",
-   "provenance": "none",
-   "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
+   "provenance": "v3",
+   "reason": "v3 合格",
    "unit": "2024H1|富邦|AC|wide_cost"
   },
   {
@@ -3879,8 +4039,8 @@
   },
   {
    "facts_key": "202502_5836_AI3|AC",
-   "provenance": "none",
-   "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
+   "provenance": "v3",
+   "reason": "v3 合格",
    "unit": "2025H1|富邦|AC|wide_cost"
   },
   {
@@ -3998,9 +4158,9 @@
    "unit": "2023Q1|中信|Trading|wide_consol"
   },
   {
-   "facts_key": null,
+   "facts_key": "202301_5841_AI1|OCI",
    "provenance": "none",
-   "reason": "v3 沒有這一格",
+   "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
    "unit": "2023Q1|中信|OCI|wide_consol"
   },
   {
@@ -4215,8 +4375,8 @@
   },
   {
    "facts_key": "202301_5841_AI1|OCI",
-   "provenance": "v4",
-   "reason": "v4 合格",
+   "provenance": "v3",
+   "reason": "v3 合格",
    "unit": "2023Q1|中信|OCI|wide_cost_consol"
   },
   {
@@ -4389,8 +4549,8 @@
   },
   {
    "facts_key": "202503_5841_AI1|Trading",
-   "provenance": "none",
-   "reason": "v3 該口徑為 null(該口徑在文件裡不存在或視圖不成立)",
+   "provenance": "v3",
+   "reason": "v3 合格",
    "unit": "2025Q3|中信|Trading|wide_cost_consol"
   },
   {
