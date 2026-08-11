@@ -48,9 +48,26 @@ def eq(label, got, want):
 
 # ── tmp workspace 建構 ────────────────────────────────────────────────
 
-def mkws(blocked=None, proposals=None, review=None):
-    """建一個只有指定內容的 workspace。回傳路徑,呼叫者負責 shutil.rmtree。"""
+def mkws(blocked=None, proposals=None, review=None, facts=None):
+    """建一個只有指定內容的 workspace。回傳路徑,呼叫者負責 shutil.rmtree。
+
+    `facts` 形如 `{cell_key: [列名, ...]}` —— 只需要列名,`_is_stale()` 只看名字。
+    **不傳就不建 `facts/` 目錄**,那是多數測試要的狀態(無從判斷 ⇒ 一律保留)。
+    """
     ws = tempfile.mkdtemp(prefix="q_")
+    if facts is not None:
+        os.makedirs(f"{ws}/facts", exist_ok=True)
+        by_doc = {}
+        for cell_key, names in facts.items():
+            doc, cls = cell_key.split("|")
+            by_doc.setdefault(doc, {})[cell_key] = [{
+                "doc": doc, "class": cls, "source_page": 0, "source_kind": "附註",
+                "total_col": "合計", "printed_total": 0,
+                "rows": [{"name": n, "cols": {"合計": 1}} for n in names],
+            }]
+        for doc, payload in by_doc.items():
+            json.dump(payload, open(f"{ws}/facts/{doc}.json", "w", encoding="utf-8"),
+                      ensure_ascii=False)
     if blocked:
         os.makedirs(f"{ws}/work/blocked")
         for name, payload in blocked.items():
@@ -182,6 +199,54 @@ def test_class_label_filtered():
         shutil.rmtree(ws)
 
 
+def test_stale_row_filtered():
+    """指著「已經不存在的列名」的待辦要篩掉,**但不准連真的待辦一起吃掉**。
+
+    背景(2026-08-11 R0-2):gemini 的壞字列逐格回原始頁核對更正之後,
+    `review/queue.jsonl` 這個 append-only 歷史檔仍留著指向舊壞字名的項目。
+    那個東西已經不存在了,不是待辦。
+
+    這條要能失敗:
+      · `_is_stale()` 永遠回 False → Q8a 紅(舊壞字名還掛在待辦上)
+      · 篩選範圍放寬到 `blocked` 來源 → Q8c 紅(卡住的格會被靜靜吃掉)
+      · 「該格不在 facts/ 就算 stale」→ Q8d 紅(還沒抄的格會被吃掉)
+    """
+    import core.queue as Q
+
+    CELL = "202502_5836_AI3|OCI"
+    OLD = "透過其他綜合損益按公允僵值衡量之權益工具投資"   # 已更正,不該再出現
+    REAL = "受益證券 CMO"                                  # 真的還要人判斷
+
+    # facts/ 裡這格現在只有更正後的名字 + 一個真待辦
+    ws = mkws(review=[
+        {"cell_key": CELL, "decision": {"name": OLD, "group": None,
+                                        "state": "UNCLASSIFIED", "mapping": None}},
+        {"cell_key": CELL, "decision": {"name": REAL, "group": None,
+                                        "state": "UNCLASSIFIED", "mapping": None}},
+    ], facts={CELL: ["透過其他綜合損益按公允價值衡量之權益工具投資", REAL]})
+    try:
+        names = {e["name"] for e in Q.pending(ws)}
+        eq("Q8a 已更正掉的舊列名不再是待辦", OLD in names, False)
+        eq("Q8b 同一格裡真的待辦仍留著", REAL in names, True)
+    finally:
+        shutil.rmtree(ws)
+
+    # blocked 來源:照定義就不在 facts/,不准被這道篩掉
+    ws = mkws(blocked=BLOCKED_SAMPLE, facts={"202504_5847_AI3|AC": ["完全不相干的列"]})
+    try:
+        eq("Q8c blocked 來源不受這道篩選影響", Q.count(ws) > 0, True)
+    finally:
+        shutil.rmtree(ws)
+
+    # 該格整格不在 facts/(還沒抄):無從判斷 ⇒ 保留
+    ws = mkws(review=REVIEW_SAMPLE, facts={"完全不相干_AI3|AC": ["某列"]})
+    try:
+        eq("Q8d 該格不在 facts/ 時保留(寧可多顯示)",
+           {e["name"] for e in Q.pending(ws)} == {"某科目"}, True)
+    finally:
+        shutil.rmtree(ws)
+
+
 # ── Q6:假綠燈的回歸測試 ──────────────────────────────────────────────
 
 def test_no_false_green():
@@ -207,6 +272,7 @@ if __name__ == "__main__":
     try:
         test_queue_module()
         test_class_label_filtered()
+        test_stale_row_filtered()
         test_no_false_green()
     except ImportError as e:
         fail("import", f"{e} —— core/queue.py 還沒寫")

@@ -56,9 +56,44 @@ def _is_class_label(name):
 
     ⚠️ **壞字版本不會命中,這是刻意的** —— `透過其他綜合損益按公允僵值衡量之…`
     (僵/價)比對不上前綴,會繼續留在待辦裡。它本來就不是分類問題而是抽取錯誤,
-    該走重抽,不該被這條靜靜吃掉。
+    該走重抽,不該被這條靜靜吃掉。**修好之後由 `_is_stale()` 收掉**,見下。
     """
     return bool(name) and buckets.norm(name).startswith(_MEASURE)
+
+
+def _live_row_names(workspace):
+    """{cell_key: {現在 facts/ 裡真的存在的列名}}。取不到就回 None(代表無從判斷)。"""
+    try:
+        import facts as facts_mod
+        cells = facts_mod.load(os.path.join(workspace, facts_mod.DIR))
+    except Exception:
+        return None
+    return {k: {r.get("name") for rec in recs for r in rec.get("rows", [])}
+            for k, recs in cells.items()}
+
+
+def _is_stale(entry, live):
+    """這筆待辦指的那一列,**在今天的 `facts/` 裡已經不存在了**⇒ 不是待辦。
+
+    `review/queue.jsonl` 是 append-only 的歷史檔,`edit_row()` 改掉一列的名字
+    之後不會回頭改它 —— 於是舊名字會永遠掛在待辦上,而那個東西已經不存在。
+    2026-08-11 實測:R0-2 把 10 個 gemini 壞字列更正回原始頁印的字之後,
+    佇列裡仍留著 10 筆指著舊壞字名的項目。
+
+    判準跟這個模組其他兩道篩選同一個原則:**用算的,不看快照檔還在不在。**
+
+    ⚠️ **只篩 `review` 來源,而且只在該格確實在 `facts/` 裡時才篩。**
+      · `blocked` 來源的格**照定義就不在 `facts/`**(卡住 = 沒歸檔),
+        拿「不在 facts 裡」當理由刪掉它,會把真正卡住的東西全部靜靜吃掉。
+      · 該格整格不在 `facts/`(還沒抄 / 剛被刪)時無從判斷,保留 ——
+        寧可多顯示一筆讓人看到,不要少顯示一筆讓人以為沒事。
+    """
+    if entry["source"] != "review" or live is None:
+        return False
+    names = live.get(entry["cell_key"])
+    if names is None:
+        return False
+    return entry["name"] not in names
 
 
 def _entry(source, cell_key, name, suggested, why, ref):
@@ -94,13 +129,16 @@ def _from_review(workspace):
 
 
 def pending(workspace="."):
-    """兩個來源合流,**再篩掉兩類已經不是待辦的**:①`buckets.bucket()` 現在查得到桶
-    ②`_is_class_label()` 類別/段落合計列。兩道都是「用算的,不看快照檔還在不在」。
+    """兩個來源合流,**再篩掉三類已經不是待辦的**:①`buckets.bucket()` 現在查得到桶
+    ②`_is_class_label()` 類別/段落合計列 ③`_is_stale()` 那一列在今天的 `facts/`
+    裡已經不存在。三道都是「用算的,不看快照檔還在不在」。
 
-    實測(2026-08-10):原始檔 138 行 → ① 之後 27 筆 → ② 之後 **13 筆**。
-    剩下的 13 筆裡 9 筆是 gemini 的壞字(抽取錯誤,重抽後消失)、
-    **4 筆才是真的需要人判斷**:`受益證券 CMO`、`受益證券 RMBS`、
-    `國外定期存單（註二）`、`期貨交易保證金一自有資金`。
+    實測(2026-08-10):原始檔 138 行 → ① 之後 27 筆 → ② 之後 13 筆。
+    當時那 13 筆裡 9 筆是 gemini 的壞字(抽取錯誤)、4 筆才是真的需要人判斷。
+
+    2026-08-11(R0-2):壞字已逐格回原始頁核對更正(10 列),③ 把指著舊壞字名
+    的殘留篩掉 → **剩 4 筆**,全部是真的需要人判斷:`受益證券 CMO`、
+    `受益證券 RMBS`、`國外定期存單（註二）`、`期貨交易保證金一自有資金`。
 
     ⚠️ **這道篩選是必要的,不是錦上添花**(2026-07-30 實測抓到):`work/blocked/`
     與 `review/queue.jsonl` 是兩份**存下來的快照**,confirm_bucket() 只寫
@@ -115,9 +153,11 @@ def pending(workspace="."):
     落地一小步,不必等那份計畫的大改動。
     """
     raw = _from_blocked(workspace) + _from_review(workspace)
+    live = _live_row_names(workspace)
     return [e for e in raw
             if not (e["name"] and buckets.bucket({"name": e["name"]}) is not None)
-            and not _is_class_label(e["name"])]
+            and not _is_class_label(e["name"])
+            and not _is_stale(e, live)]
 
 
 def count(workspace="."):
