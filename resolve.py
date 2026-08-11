@@ -1,5 +1,11 @@
 """穩健取檔:不寫死 AI3,改去 TWSE 清單找「個體」那個檔(代碼各家/各年不一,如 AI2/AI3)。
 補回缺檔,並統一存成 {YYYYMM}_{code}_AI3.pdf 讓下游照吃。
+
+⚠️ **這是一個取得器外掛,不是唯一入口**(2026-08-11,`docs/plan_v6_一台機器.md` R2-3)。
+還有一條路:網頁「資料」頁的拖放上傳(`/api/upload`,見 `server.py`)——
+使用者自己有 PDF(不管從哪裡拿到的)就能直接餵給機器,不需要 TWSE、
+不需要台灣網路。這支的存在理由沒變(TWSE 擋雲端 IP,取得層仍然要在
+台灣機器上跑),只是**不再是拿到 PDF 的唯一辦法**。
 """
 import re, time, requests, pdfplumber
 from pathlib import Path

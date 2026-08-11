@@ -286,6 +286,50 @@ class Handler(SimpleHTTPRequestHandler):
         n = int(self.headers.get("Content-Length") or 0)
         return json.loads(self.rfile.read(n) or b"{}")
 
+    def _handle_upload(self):
+        """R2-1:拖一份 PDF 進來。回傳 `{doc, dup, new}`。
+
+        **doc id 沿用現有命名慣例**(`{YYYYMM}_{代碼}_AI{n}.pdf`,`resolve.py`
+        抓檔用的同一套)——不是因為別的題目也要守這套規則,是因為這個 repo
+        現在唯一會讀 `pdf_cache/{doc}.pdf` 的下游(`v4/reader.run_doc`、
+        `locate.locate`、`report.cell_of`)全部假設這個形狀。`?doc=` 由前端從
+        檔名去掉副檔名帶來;不符合形狀就直接拒絕,不猜測、不硬湊。
+        """
+        import re
+        q = self._q()
+        doc = (q.get("doc") or "").strip()
+        if not re.fullmatch(r"\d{6}_\d{4,6}_AI\d", doc):
+            raise PageError(
+                f"doc 參數 {doc!r} 不符合命名慣例 YYYYMM_代碼_AI{{n}}"
+                f"(例:202502_5836_AI3)。")
+
+        n = int(self.headers.get("Content-Length") or 0)
+        if n <= 0:
+            raise PageError("沒有檔案內容(Content-Length 是 0)。")
+        if n > 200 * 1024 * 1024:
+            raise PageError(f"檔案太大({n} bytes,上限 200MB)——這不像一份財報。")
+        raw = self.rfile.read(n)
+        if raw[:5] != b"%PDF-":
+            raise PageError("這不是 PDF(檔頭不是 %PDF-)。")
+
+        import hashlib
+        import db as db_mod
+        sha = hashlib.sha256(raw).hexdigest()
+
+        existing = db_mod.find_document_by_sha256(sha)
+        if existing:
+            return {"doc": existing, "dup": True, "new": False,
+                    "note": f"內容跟已登記的 {existing} 完全相同,沒有重複存檔。"}
+
+        pdf_path = os.path.join(ROOT, "pdf_cache", f"{doc}.pdf")
+        is_overwrite = os.path.exists(pdf_path)
+        os.makedirs(os.path.dirname(pdf_path), exist_ok=True)
+        with open(pdf_path, "wb") as f:
+            f.write(raw)
+        db_mod.register_document(doc, sha)
+        return {"doc": doc, "dup": False, "new": not is_overwrite,
+                "note": f"已存成 pdf_cache/{doc}.pdf" + ("(覆蓋舊檔)" if is_overwrite else "")}
+
     def _q(self):
         return dict(urllib.parse.parse_qsl(
             urllib.parse.urlparse(self.path).query))
@@ -421,6 +465,17 @@ class Handler(SimpleHTTPRequestHandler):
     # ----------------------------------------------------------------- POST --
     def do_POST(self):
         route = urllib.parse.urlparse(self.path).path
+        if route == "/api/upload":
+            # **在 `_body()` 之前特判**——上傳的是 PDF 的原始 bytes,不是 JSON,
+            # 走 `_body()` 會直接 json.loads() 炸掉。doc id 走 query string
+            # (`?doc=...`),body 全部是檔案內容。
+            try:
+                self._json(self._handle_upload())
+            except PageError as e:
+                self._json({"error": str(e)}, 400)
+            except Exception:
+                self._json({"error": traceback.format_exc().splitlines()[-1]}, 500)
+            return
         try:
             b = self._body()
             if route == "/api/dispose":

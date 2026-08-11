@@ -206,6 +206,51 @@ def export_json(cells=None, facts_dir="facts"):
     return sorted(by_doc)
 
 
+# ── documents(R2:輸入通道)──────────────────────────────────────────────
+
+def find_document_by_sha256(sha256, path=None):
+    """這個內容雜湊有沒有登記過?回傳 doc id 或 None。
+
+    **去重的判準是內容,不是檔名** —— R2-1 的驗收「拖同一份兩次只有一列」
+    指的是同一份 PDF(位元組相同),不是同一個檔名。使用者兩次都叫
+    `report.pdf` 但內容不同,那是兩份文件;同一份檔案改了名字重拖一次,
+    是同一份文件。
+    """
+    conn = connect(path)
+    try:
+        row = conn.execute(
+            "SELECT doc FROM documents WHERE sha256 = ?", (sha256,)).fetchone()
+        return row[0] if row else None
+    finally:
+        conn.close()
+
+
+def register_document(doc, sha256, at=None, path=None):
+    """登記一份文件。**呼叫前應該已經先查過 `find_document_by_sha256()`**
+    ——這支本身不做去重判斷,只負責寫入(`doc` 是主鍵,重複呼叫是更新
+    `fetched_at`,不是報錯:同一個 `doc` 名字重新上傳同一份是合法操作)。
+    """
+    conn = connect(path)
+    try:
+        conn.execute(
+            "INSERT INTO documents (doc, sha256, fetched_at) VALUES (?, ?, ?) "
+            "ON CONFLICT(doc) DO UPDATE SET sha256=excluded.sha256, "
+            "fetched_at=excluded.fetched_at",
+            (doc, sha256, at or _now()))
+        conn.commit()
+    finally:
+        conn.close()
+
+
+def list_documents(path=None):
+    conn = connect(path)
+    try:
+        cur = conn.execute("SELECT doc, sha256, fetched_at FROM documents ORDER BY doc")
+        return [{"doc": d, "sha256": s, "fetched_at": t} for d, s, t in cur.fetchall()]
+    finally:
+        conn.close()
+
+
 def migrate_from_json(facts_dir="facts", path=None, force=False):
     """一次性把現有 `facts/*.json` 匯入 `observations`(`extractor="legacy-import"`)。
 

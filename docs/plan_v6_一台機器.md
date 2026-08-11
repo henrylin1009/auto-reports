@@ -379,13 +379,19 @@ cd /Users/henrylin/Desktop/work && git status --short && for t in test_facts tes
 
 ---
 
-### R2 輸入通道(1–2 天)—— 身分從「專案」變成「機器」
+### R2 輸入通道(1–2 天)—— 身分從「專案」變成「機器」 —— ✅ **完成(2026-08-11)**
 
 | # | 做什麼 | 驗收 |
 |---|---|---|
-| R2-1 | 網頁拖放上傳 PDF → 寫進 `documents`(sha256 去重) | 拖同一份兩次只有一列 |
-| R2-2 | 上傳完自動排進 `ingest` 佇列,進度在網頁上看得到 | 拖一份沒見過的 PDF 進去,不碰終端機,能一路走到「要人看」或「綠」 |
-| R2-3 | `resolve.py` 降級成「TWSE 取得器」外掛,不再是唯一入口 | 移除 `resolve.py` 之後,上傳流程照樣完整 |
+| R2-1 | 網頁拖放上傳 PDF → 寫進 `documents`(sha256 去重) | ✅ `POST /api/upload?doc=...`;`test_upload.py` 15 案例全過(對真的 server 打真的 HTTP,不是叫內部方法),含「拖同一份兩次只有一列」(U2)、壞檔名/壞內容/空 body 三種拒絕、拒絕時不覆蓋已存好的檔(U4 的副作用驗證) |
+| R2-2 | 上傳完自動排進 ingest 佇列,進度在網頁上看得到 | ✅ 上傳成功後直接呼叫既有的 `/api/autofill`(`{cell: doc+"|AC"}` 分支,`server._job_run` 早就有,只用 `cell` 的 doc 那半)觸發 `v4.reader.run_doc → classify → file_green`,進度共用「自動抄列」同一組 `#autolog`/`#autohint`(後端 `_JOB` 本來就只准跑一個,共用顯示是對的行為,不是偷懶)。實測對假 PDF 觸發過整條鏈:HTTP 200 → 排進佇列 → reader 快速失敗 → 錯誤原文顯示在同一個面板 |
+| R2-3 | `resolve.py` 降級成「TWSE 取得器」外掛,不再是唯一入口 | ✅ 檔頭加註記;上傳路徑(`server.py`/`db.py`/`web/workbench.js`)對 `resolve.py` 零 import,實測 `grep` 確認 |
+
+**doc id 沿用現有命名慣例**(`YYYYMM_代碼_AI{n}`),刻意不做成任意檔名。
+理由寫在 `server._handle_upload()`:這個 repo 現在唯一會讀 `pdf_cache/{doc}.pdf`
+的下游(`v4/reader.run_doc`、`locate.locate`、`report.cell_of`)全部假設這個
+形狀,做成任意檔名只是把「這份文件是哪一家哪一期」的問題往後推,沒有解決。
+換題目時這個假設要跟著 R3(schema 脫鉤)一起換,不在 R2 處理。
 
 ---
 

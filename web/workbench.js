@@ -209,6 +209,14 @@ async function viewMatrix() {
       <span class="hint" id="autohint">用你自己的 Claude Code 抄（不需 API key），六道檢查照跑；對不上的會自動擴頁重試，
         仍過不了就進「卡住」不會寫進事實庫。</span>
     </div>
+    <div id="uploadzone" class="uploadzone">
+      <span>拖一份 PDF 到這裡上傳，或
+        <label class="uplabel">選檔案<input type="file" accept="application/pdf" id="uploadfile" hidden></label>
+      </span>
+      <span class="hint">檔名格式要是 <code>YYYYMM_代碼_AI{n}.pdf</code>（例：<code>202502_5836_AI3.pdf</code>）
+        ——跟 TWSE 抓下來的檔名同一套；抄一次，除非拖同一份內容否則不會重複存。</span>
+      <span class="hint" id="uploadhint"></span>
+    </div>
     <pre class="autolog" id="autolog" hidden></pre>
     <div class="scroll"><table class="mx"><tbody></tbody></table></div>
     <p class="hint">一格 = 一份財報檔的三個類別(AC / OCI / Trading)。
@@ -237,6 +245,7 @@ async function viewMatrix() {
   };
 
   wireAutofill(el);
+  wireUpload(el);
 
   const tb = el.querySelector("tbody");
   tb.appendChild($(`<tr><th></th>${cols.map(c => `<th>${esc(c)}</th>`).join("")}</tr>`));
@@ -545,6 +554,73 @@ function wireAutofill(el) {
     if (s.lines.length) paint(s);
     if (s.running) timer = setInterval(poll, 1500);
   });
+}
+
+// ── R2-1/R2-2:拖 PDF 上傳,上傳完自動排進讀取佇列 ──────────────────────
+// 上傳走 /api/upload(原始 bytes,不是 JSON —— post() 那支不能用)。
+// 上傳成功後直接借 /api/autofill 的 {cell: doc+"|AC"} 分支觸發整份文件的
+// v4 讀取 + 分流 + 歸檔(server._job_run 的 elif cell 分支只用 doc 那半,
+// 類別隨便填),進度顯示借用跟「自動抄列」同一組 DOM(#autolog/#autohint)
+// ——後端 _JOB 同一時間只准跑一個,共用顯示反而是對的:不管現在跑的是
+// 手動觸發的自動抄列還是上傳觸發的讀取,畫面上永遠只有一份「現在在跑什麼」。
+function wireUpload(el) {
+  const zone = el.querySelector("#uploadzone");
+  const fileInput = el.querySelector("#uploadfile");
+  const hint = el.querySelector("#uploadhint");
+  const log = el.querySelector("#autolog");
+  const autohint = el.querySelector("#autohint");
+
+  async function ingest(file) {
+    if (!file) return;
+    if (file.type && file.type !== "application/pdf" && !file.name.endsWith(".pdf")) {
+      hint.textContent = `✗ ${file.name} 不是 PDF。`;
+      return;
+    }
+    const doc = file.name.replace(/\.pdf$/i, "");
+    hint.textContent = `上傳中…${file.name}`;
+    let r;
+    try {
+      const resp = await fetch(`/api/upload?doc=${encodeURIComponent(doc)}`, {
+        method: "POST", headers: { "Content-Type": "application/pdf" }, body: file
+      });
+      r = await resp.json();
+      if (!resp.ok) throw new Error(r.error || `HTTP ${resp.status}`);
+    } catch (e) {
+      hint.textContent = `✗ 上傳失敗:${e.message}`;
+      return;
+    }
+    if (r.dup) { hint.textContent = `${r.note}`; return; }
+    hint.textContent = `✓ ${r.note} —— 排進讀取佇列…`;
+
+    const started = await post("autofill", { cell: `${r.doc}|AC` });
+    if (!started.started) {
+      hint.textContent = `已存檔,但沒能立刻開始讀取:${started.why}`
+        + `（等目前那個跑完,去「文件頁」按「重抄」補跑這份即可）`;
+      return;
+    }
+    autohint.textContent = `正在讀取剛上傳的 ${r.doc}…`;
+    const poll = setInterval(async () => {
+      const s = await api("autofill/status");
+      log.hidden = !s.lines.length;
+      log.textContent = s.lines.join("\n");
+      log.scrollTop = log.scrollHeight;
+      if (s.running) return;
+      clearInterval(poll);
+      autohint.textContent = s.error
+        ? "出錯了，詳見上方訊息。"
+        : `${r.doc} 讀取完成。重畫資料頁…`;
+      hint.textContent = "";
+      if (!s.error) setTimeout(viewMatrix, 1200);
+    }, 1500);
+  }
+
+  fileInput.onchange = () => ingest(fileInput.files[0]);
+
+  ["dragenter", "dragover"].forEach(ev =>
+    zone.addEventListener(ev, e => { e.preventDefault(); zone.classList.add("drag"); }));
+  ["dragleave", "drop"].forEach(ev =>
+    zone.addEventListener(ev, e => { e.preventDefault(); zone.classList.remove("drag"); }));
+  zone.addEventListener("drop", e => ingest(e.dataTransfer.files[0]));
 }
 
 // ── 文件頁:一份財報,三類攤開 ──────────────────────────────────────────
