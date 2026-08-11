@@ -1,0 +1,52 @@
+# R3(docs/plan_v6_一台機器.md):視覺化要吃的設定,不是程式碼。
+#
+# **這份描述的是資料形狀,不是抽取規則。** `config.py` 仍然是抽取/分桶/口徑
+# 判準的唯一設定源(buckets.py / wide.py / transcribe.py 都讀它,不讀這份)——
+# 換掉這份不會改變任何發布數字。這份只給 `viz_generic.py`(通用視覺化層)用,
+# 描述的是「畫矩陣/時間序列的時候,實體/期別/維度長什麼樣子」。
+#
+# 驗收判準(R3-3):換一份 schema(不同實體、期別、維度),`viz_generic.py`
+# 要照樣畫得出矩陣、時間序列、缺漏標示 —— 見 `test_viz_generic.py` 用的
+# 假 schema(3 實體 × 4 期 × 3 桶),完全不認得銀行名字也畫得出來。
+
+title: 銀行債券投資
+entity_label: 銀行
+period_label: 期別
+
+entities:
+  - {id: "中信", label: "中信"}
+  - {id: "兆豐", label: "兆豐"}
+  - {id: "國泰", label: "國泰"}
+  - {id: "富邦", label: "富邦"}
+  - {id: "玉山", label: "玉山"}
+
+# 半年報週期,期別格式 YYYYH{1,2}(合併報表另有季別 periods_consol,通用層
+# 不需要知道那個特例存在 —— data.json 的 periods 欄位本來就只給個體用)。
+periods_source: data.json:periods
+
+dimensions:
+  - {id: "Trading", label: "透過損益按公允價值衡量"}
+  - {id: "OCI", label: "透過其他綜合損益按公允價值衡量"}
+  - {id: "AC", label: "按攤銷後成本衡量"}
+
+buckets:
+  - {id: "GB", label: "政府公債"}
+  - {id: "公司債", label: "公司債"}
+  - {id: "金融債", label: "金融債"}
+  - {id: "資產基礎", label: "資產基礎證券"}
+  - {id: "貨幣市場", label: "貨幣市場工具"}
+  - {id: "其他", label: "其他"}
+  - {id: "股票", label: "股票(權益工具)"}
+
+# 一格的 key = f"{dimension}_{bucket}",對應 data.json 的 wide/wide_cost 裡
+# 每個 "{period}|{entity}" 底下的攤平欄位。
+cell_key_format: "{dimension}_{bucket}"
+
+bases:
+  - {id: "wide", label: "帳面(公允價值 / 攤銷後成本)"}
+  - {id: "wide_cost", label: "取得成本"}
+
+# 資料來源:一個 {period}|{entity} → {dimension}_{bucket} → 數字或 null 的攤平表。
+# 這個形狀本身就是「通用層」的契約 —— 通用層只認這個形狀,不認 data.json
+# 裡任何其他欄位(那些是題目層的,見 make_web.py 的 valuation_html/profit_html)。
+data_source: data.json

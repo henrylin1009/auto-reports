@@ -187,6 +187,8 @@ async function viewMatrix() {
       <a href="#/buckets" class="tag" style="text-decoration:none;margin-left:8px">分桶檢視</a>
       <a href="#/queue" class="tag" style="text-decoration:none;margin-left:4px">裁示台</a>
       <a href="#/v4" class="tag" style="text-decoration:none;margin-left:4px">v4 複核</a>
+      <a href="/generic.html" target="_blank" class="tag" style="text-decoration:none;margin-left:4px"
+         title="R3 通用視覺化層：換一份 schema.yaml 就換題目，跟這個網站的其他頁不共用任何程式碼">通用層試畫</a>
     </h1>
     <div class="stats">
       <div class="stat"><b>${stats.done}</b><span>已抄</span></div>
