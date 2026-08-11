@@ -277,6 +277,13 @@ def to_facts_records(doc, cls, parsed_cls, bs_date, model=None, at=None):
         """
         rows = []
         for r in sub.get("rows") or []:
+            # **合計/小計列要濾掉,用 `normalize_rows()` 那份同一個名單。**
+            # 模型還是會把它們當一般列塞進 rows(實測 202302_5843_AI3|Trading
+            # 有「小計 49,737,828」「合計 55,717,136」兩列)。`aggregate()` 早就
+            # 濾了,這裡漏抄 → 它們進了 facts/、分不到桶、落進 `View.unknown`,
+            # 於是同一份資料兩個閘門給出相反答案(agg.ok=True / view.ok=False)。
+            if (r.get("name") or "").strip() in _SUBTOTAL_WORDS:
+                continue
             v = r.get("amount")
             cols = {} if isinstance(v, bool) or not isinstance(v, int) else {col: v}
             nm = _split_for_facts(r)

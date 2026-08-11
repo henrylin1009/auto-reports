@@ -68,13 +68,42 @@ def _agg_view(blk):
         sub = (blk or {}).get(side) or {}
         if not sub.get("rows"):
             return None
-        return adapter.aggregate(sub["rows"],
-                                 sub.get("printed_subtotal") or sub.get("total"))
+        printed = sub.get("printed_subtotal") or sub.get("total")
+        return _relax(adapter.aggregate(sub["rows"], printed), printed)
 
     b, c = agg("book"), agg("cost")
     book_is_cost = b is not None and b.basis == "成本"
     return {"帳面": None if book_is_cost else b,
             "成本": b if book_is_cost else c}
+
+
+class _Ok:
+    """把一個「只因 null 金額而不合格」的 Aggregated 視為合格。"""
+
+    def __init__(self, a):
+        self.book, self.side, self.basis, self.ok = a.book, a.side, a.basis, True
+
+
+def _relax(a, printed):
+    """`aggregate()` 把「金額是 null」的列一律判不合格(錢不准悄悄消失);
+    `wide.view()` 的規則是「缺欄 = 未揭露,不是 0」,跳過那幾列。
+
+    **當 unknown 全是 null 金額、而且印出的合計恆等式仍然成立時,後者才是對的。**
+    印出的合計就是見證人:那幾列若真的該有數字,等式不會剛好對上。
+    實測 `202004_5847_AI3|Trading` 成本 —— 明細表 6 列沒揭露取得成本,
+    其餘 686,786,752 + 衍生 481,932 = 687,268,684 = 文件印的成本合計。
+
+    這不是放寬閘門,是**認出 v4 那側在這個情況下過度保守**;兩條管線合併時
+    必須挑一個,挑的是有見證人的那個。恆等式**在這裡自己驗**,不是把判斷推給
+    `wide.view()` —— 推過去測試就變成套套邏輯。
+    """
+    if a is None or a.ok or not a.unknown:
+        return a
+    if not all(u[1] is None for u in a.unknown):
+        return a                                  # 有真的分不到桶的列,不放行
+    if printed is None or sum(a.book.values()) + sum(a.side.values()) != printed:
+        return a                                  # 恆等式不成立,不放行
+    return _Ok(a)
 
 
 def main():
@@ -131,9 +160,31 @@ def main():
         if cells:
             eq(f"{doc} 格式檢查通過", facts_mod.validate(cells), [])
 
+    _test_subtotal_rows_dropped()
     print(f"  掃過 {docs} 份 v4/raw,驗到 {cost_seen} 份成本 record")
     eq(f"驗到的成本 record 不得少於 {COST_SEEN_MIN}(否則成本斷言是空轉)",
        cost_seen >= COST_SEEN_MIN, True)
+
+
+def _test_subtotal_rows_dropped():
+    """合計/小計列不准進 record —— **獨立於 `aggregate()` 的斷言。**
+
+    不能用「跟 `aggregate()` 比」來守這條:`_SUBTOTAL_WORDS` 是兩邊共用的常數,
+    弄壞它會讓兩條路徑一起降級,對照就看不出差異(實測:清空常數後 397 條全綠)。
+    所以這裡直接餵合成資料驗結果。
+
+    這條擋的是真事故:`202302_5843_AI3|Trading` 的 v4 產出含「小計 49,737,828」
+    「合計 55,717,136」兩列,漏濾就會進 `facts/`、分不到桶、落進 `View.unknown`,
+    同一份資料兩個閘門給出相反答案。
+    """
+    blk = {"book": {"page": 1, "printed_subtotal": 300,
+                    "rows": [{"name": "政府公債", "group": None, "amount": 100},
+                             {"name": "公司債", "group": None, "amount": 200},
+                             {"name": "小計", "group": None, "amount": 300},
+                             {"name": "合計", "group": None, "amount": 300}]}}
+    recs = adapter.to_facts_records("X_AI3", "AC", blk, "113/12/31")
+    names = [r["name"] for rec in recs for r in rec["rows"]]
+    eq("合計/小計列不進 facts record", names, ["政府公債", "公司債"])
 
 
 if __name__ == "__main__":
