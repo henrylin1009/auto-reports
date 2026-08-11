@@ -26,6 +26,7 @@ import os
 import re
 import locate
 
+import checks
 from v4 import adapter, reader
 
 CLASSES = ("Trading", "OCI", "AC")
@@ -44,7 +45,9 @@ def check_rowsum(book):
     if not book or book.get("rows") is None or book.get("printed_subtotal") is None:
         return {"status": "no_witness", "diff": None}
     rows, _dropped = adapter.normalize_rows(book["rows"])
-    total = sum(r["amount"] for r in rows if r.get("amount") is not None)
+    # **加總語意走 `checks.total_of()`** —— 跟 `transcribe.check_identity`
+    # 共用同一份定義(2026-08-10 四份實作收一份,見 checks.py 檔頭)。
+    total = checks.total_of([(r.get("name"), r.get("amount")) for r in rows])
     diff = total - book["printed_subtotal"]
     return {"status": "OK" if diff == 0 else "MISMATCH", "diff": diff}
 

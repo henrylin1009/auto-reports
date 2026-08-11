@@ -18,6 +18,7 @@
 import json
 
 import buckets
+import checks
 from config import COST_COLS, DERIVATIVE
 
 #: 檢查是三值的:None=通過、NA_*=不適用、字串=失敗。
@@ -60,16 +61,16 @@ def check_identity(rec):
     """第 1/2 道:葉列相加 == 印出合計。
 
     注意這道**驗不到配對** —— 它加的是金額欄,而欄的和與名字怎麼配對無關。
-    名字整排錯位、金額照樣加得對。配對只能靠 check_cross。"""
+    名字整排錯位、金額照樣加得對。配對只能靠 check_cross。
+
+    ⚠️ **2026-08-10:改走 `checks.sum_matches()`,四份實作收成一份。**
+    行為上的差別只有一個:缺欄的列從「判死」改成「跳過,由恆等式當裁判」——
+    理由與證據見 `checks.py` 檔頭。實測對 `facts/` 203 份 record **0 影響**
+    (兩種語意結論 203/203 相同)。
+    """
     col = rec["total_col"]
-    missing = [r["name"] for r in rec["rows"] if col not in r["cols"]]
-    if missing:
-        return f"有列缺合計欄「{col}」:{missing}"
-    s = sum(r["cols"][col] for r in rec["rows"])
-    if s != rec["printed_total"]:
-        return (f"列相加 {s:,} != 印出合計 {rec['printed_total']:,}"
-                f"(差 {rec['printed_total'] - s:,})")
-    return None
+    return checks.sum_matches([(r["name"], r["cols"].get(col)) for r in rec["rows"]],
+                              rec["printed_total"], col)
 
 
 def check_col_totals(rec):
