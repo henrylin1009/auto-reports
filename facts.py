@@ -1,13 +1,30 @@
 # -*- coding: utf-8 -*-
-"""事實庫:一份文件一個檔,進 git。抄一次,除非發現抄錯否則永不重跑。
+"""事實庫。**唯一的讀寫入口**——呼叫端一律用這支,不直接碰 `facts/*.json` 或 `facts.db`。
 
     load()       {格key: [record, ...]},格key 形如 `202404_5843_AI3|Trading`
-    save(cells)  按 doc 分檔寫回 facts/
+    save(cells)  寫回
     validate()   回傳問題清單。空 list = 通過。**不修資料,只報告。**
+
+⚠️ **儲存後端有兩種,呼叫端不需要知道走哪一種**(`docs/plan_v6_一台機器.md` R1):
+
+    facts.db 存在 → 走 `db.py`(三張表:observations 機器寫、rulings 人工寫,
+                    人工永遠蓋過機器,append-only)
+    facts.db 不存在 → 走 `facts/*.json` 直讀直寫(舊行為,clone 下來還沒
+                      `python3 db.py migrate` 的人不受影響)
+
+只有 **production 呼叫**(不傳 `facts_dir`)才會走 DB。任何呼叫傳了
+`facts_dir`(絕大多數測試都這樣做,注入 tmp 目錄)一律走 JSON 直讀直寫,
+不碰 `facts.db` —— 這樣切換儲存後端不需要改任何一支測試。
+
+機器寫 `observations`、人工寫 `rulings` 的判準是**現有的**
+`core.webdata.human_ratified()`:一格的 records 裡任何一列帶 `_src` 就是
+人工裁示過。這支不重複那個判準,直接呼叫它。
 """
 import glob
 import json
 import os
+
+import db as db_mod
 
 DIR = "facts"
 
@@ -33,23 +50,60 @@ REQUIRED_ROW = ("name", "cols")
 OPTIONAL_ROW = ("group", "_src")
 
 
+def human_ratified(recs):
+    """這格的 records 裡有沒有任何一列帶 `_src`(= 人工裁示過)。
+
+    這是機器寫 `observations` / 人工寫 `rulings` 的唯一判準(`save()` 用它
+    決定進哪一張表),同時也是 `core.webdata.human_ratified()` 原本的定義 ——
+    那支現在委派到這裡,避免兩個模組各存一份「什麼是人工裁示」。
+    """
+    return any("_src" in row
+               for rec in (recs or [])
+               for row in (rec.get("rows") or []))
+
+
+def _use_db(facts_dir):
+    """production 呼叫(不傳 `facts_dir`)且 `facts.db` 存在 → 走 DB。"""
+    return facts_dir is None and db_mod.exists()
+
+
 def load(facts_dir=None):
     """→ {格key: [record, ...]},格key 形如 `202404_5843_AI3|Trading`。
 
     `facts_dir` 只給測試用(注入 tmp 目錄,見 `test_webdata.py`)——
     production 呼叫一律用預設值,不要傳。"""
-    d = facts_dir or DIR
-    cells = {}
-    for p in sorted(glob.glob(f"{d}/*.json")):
-        cells.update(json.load(open(p, encoding="utf-8")))
+    if _use_db(facts_dir):
+        cells = db_mod.materialize_cells()
+    else:
+        d = facts_dir or DIR
+        cells = {}
+        for p in sorted(glob.glob(f"{d}/*.json")):
+            cells.update(json.load(open(p, encoding="utf-8")))
     problems = validate(cells)
     if problems:
         raise ValueError("facts.load(): 事實庫驗證失敗:\n" + "\n".join(problems))
     return cells
 
 
-def save(cells, facts_dir=None):
-    """按 doc 分檔寫回。一個大檔的 git diff 在 169 格之後沒人看得動。"""
+def save(cells, facts_dir=None, by=None, why=None):
+    """寫回。DB 模式:機器寫的格進 `observations`,人工裁示過的(任何一列帶
+    `_src`)進 `rulings`;同一次 `save()` 呼叫裡兩種可以混在一起,逐格判斷。
+    寫完照樣匯出 `facts/*.json`(git diff 的可讀快照,見 `db.export_json()`)。
+
+    JSON 模式(沒有 `facts.db`,或呼叫端傳了 `facts_dir`):按 doc 分檔直寫,
+    舊行為不變。
+    """
+    if _use_db(facts_dir):
+        machine, human = {}, {}
+        for key, recs in cells.items():
+            (human if human_ratified(recs) else machine)[key] = recs
+        if machine:
+            db_mod.record_observation(machine)
+        if human:
+            db_mod.record_ruling(human, by=by, why=why)
+        db_mod.export_json()
+        return
+
     d = facts_dir or DIR
     os.makedirs(d, exist_ok=True)
     by_doc = {}
@@ -60,7 +114,7 @@ def save(cells, facts_dir=None):
                   ensure_ascii=False, indent=1, sort_keys=True)
 
 
-def remove(key, facts_dir=None):
+def remove(key, facts_dir=None, by=None, why=None):
     """刪掉一格,回傳有沒有刪到。
 
     **為什麼不能只做 `del cells[key]; save(cells)`**:`save()` 只寫 `cells` 裡
@@ -70,6 +124,14 @@ def remove(key, facts_dir=None):
 
     檔案佈局的知識留在本檔,不外洩給呼叫端自己去 unlink。
     """
+    if _use_db(facts_dir):
+        cells = load(facts_dir)
+        if key not in cells:
+            return False
+        db_mod.record_deletion(key, by=by, why=why)
+        db_mod.export_json()
+        return True
+
     d = facts_dir or DIR
     cells = load(facts_dir)
     if key not in cells:

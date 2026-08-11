@@ -46,3 +46,10 @@ pdf_cache_norm/
 pillar3_cache/
 # 舊管線(extract_v2)的落地結果,已無人讀,重跑就重建
 extract_v2_results.json
+# R1(docs/plan_v6_一台機器.md):facts.db 是本機的三張表(observations/rulings),
+# 不進 git —— 進 git 的是它匯出的 facts/*.json(人可讀的 diff、真正的版控快照)。
+# 沒有這個檔時 facts.py 自動退回直讀 facts/*.json,clone 下來不需要它就能跑;
+# 要用 DB 就跑 `python3 db.py migrate`。
+facts.db
+facts.db-wal
+facts.db-shm

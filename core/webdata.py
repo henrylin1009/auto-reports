@@ -381,7 +381,7 @@ def edit_row(doc, cls, record_index, row_index, row, why, by=None, today=None,
     if problems:
         raise EditError("格式不合規,沒有寫入:\n" + "\n".join(problems))
 
-    facts_mod.save(cells, facts_dir)
+    facts_mod.save(cells, facts_dir, by=stamp["by"], why=stamp["why"])
 
     loc = locate.locate(f"pdf_cache/{doc}.pdf")
     ok, res = transcribe.verify(recs, loc)
@@ -395,10 +395,12 @@ def human_ratified(recs):
     `_src` 只有 `ratify()`/`edit_row()` 這些人工出口會蓋(見 `facts.py`
     OPTIONAL_ROW 的說明),機器抄列的路徑一律不蓋。所以它就是「有人動過」
     的唯一標記,不需要另外發明一個狀態欄位。
+
+    委派到 `facts.human_ratified()`(R1):`facts.save()` 現在也要用同一個
+    判準決定一格寫進 `observations` 還是 `rulings`,兩處各存一份的話,
+    改一邊忘了改另一邊就是下一次「一道規則兩個實作」。
     """
-    return any("_src" in row
-               for rec in (recs or [])
-               for row in (rec.get("rows") or []))
+    return facts_mod.human_ratified(recs)
 
 
 def revoke(doc, cls, why=None, by=None, facts_dir=None):
@@ -417,7 +419,7 @@ def revoke(doc, cls, why=None, by=None, facts_dir=None):
     if key not in cells:
         return {"revoked": False, "reason": f"{key} 不在事實庫裡"}
     was_human = human_ratified(cells[key])
-    facts_mod.remove(key, facts_dir)     # 不能只 del + save,見 facts.remove()
+    facts_mod.remove(key, facts_dir, by=by, why=why)     # 不能只 del + save,見 facts.remove()
     return {"revoked": True, "was_human_ratified": was_human,
             "why": (why or "").strip() or None, "by": by or "henrylin"}
 
@@ -544,7 +546,7 @@ def ratify(doc, cls, records, why=None, by=None, today=None, facts_dir=None,
             f"  要改請先撤銷:`revoke({doc!r}, {cls!r}, why=...)`,再重新裁示。\n"
             f"  這條是刻意的 —— 見 `human_ratified()` 的說明。")
     cells[key] = recs
-    facts_mod.save(cells, facts_dir)
+    facts_mod.save(cells, facts_dir, by=stamp["by"], why=stamp.get("why"))
 
     for d in (fill.REJECTED_DIR, fill.BLOCKED_DIR):
         p = f"{d}/{doc}__{cls}.json"

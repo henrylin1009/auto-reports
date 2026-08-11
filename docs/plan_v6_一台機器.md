@@ -339,6 +339,46 @@ cd /Users/henrylin/Desktop/work && git status --short && for t in test_facts tes
 
 ---
 
+## ✅ R1 做完了(2026-08-11)—— 但範圍比原計畫小,誠實記下差多少
+
+**做了什麼:** `db.py` 定義三張表(`documents` / `observations` / `rulings`),
+`facts.py` 的 `load()`/`save()`/`remove()` **簽名不變**,production 呼叫
+(不傳 `facts_dir`)在 `facts.db` 存在時自動改走 DB;人工/機器判準沿用既有的
+`human_ratified()`(`_src` 存在與否),兩處各存一份的隱患已收成 `facts.py`
+一份、`core/webdata.py` 委派。
+
+**四項全部量到了,不是論證:**
+
+| 驗收 | 結果 |
+|---|---|
+| R1-2 逐位元組相同 | ✅ `build.build()` 切換前後 payload **逐位元組相同**(`json.dumps(...) ==` 比對) |
+| R1-4 往返無損 | ✅ `db.export_json()` 匯出的 68 份文件與遷移前的 `facts/*.json` **逐位元組相同**(`filecmp`) |
+| R1-5 並行保護 | ✅ 30 個 thread 同時寫同一格 → 30 筆 observation,不是 1 筆;SQLite WAL + busy_timeout |
+| 人工蓋過機器 | ✅ 不看時間先後,只看表:先人工後機器、先機器後人工,人工都贏(`test_db.py` D3,注入驗證過會失敗) |
+
+**範圍比 R1-1/R1-2 原計畫小,兩處刻意縮小,寫清楚原因:**
+
+1. **只做 `facts/`,沒做 `decisions/` + `review/queue.jsonl`。**
+   那兩個是完全不同的子系統(桶名判定、待辦佇列),各自有自己的讀寫模組
+   (`core/decision_store.py`、`decisions.py`),併進同一個三表模型是另一個
+   量級的工程。**這是範圍縮小,不是做完了假裝完整** —— 留給 R1b。
+
+2. **不是逐列 append-only,是逐格快照式 append-only。**
+   理想上 `observations`/`rulings` 該逐列記錄(這一列從什麼改成什麼),
+   但現有 `facts/*.json` 沒有逐列歷史(`_src` 只記「現在是誰改的」,不記
+   「改之前長怎樣」)——要逐列還原完整歷史等於重寫 `core/webdata.py`
+   四個寫入點的內部邏輯,那是比 R1 本身更大的工程。現在的形狀是
+   **「這一格(doc|cls)現在長這樣」的整格快照,append-only,不 UPDATE**,
+   仍然拿到 R1 要的核心性質(一個共同後端、人工永遠蓋過機器、可以並行寫)。
+
+**R1-1 的驗收(schema 有 migration 腳本)**:`python3 db.py migrate|export|status`。
+**R1-3(六個目錄可刪)**:`anchors/` 本來就是純快取(`core/store.build_anchors()`
+從 PDF 重算,不需要跟三表整合),**免費達成**;`v4/ledger`/`v4/raw`/`work`/`out`/
+`results` 沒有動,R0-3/R0-4 已經讓 `v4/ledger` 停止影響發布,但目錄本身
+還在——**沒有做「刪掉照樣正確」的實測,不能勾這格**。
+
+---
+
 ### R2 輸入通道(1–2 天)—— 身分從「專案」變成「機器」
 
 | # | 做什麼 | 驗收 |
