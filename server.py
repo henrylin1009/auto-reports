@@ -147,7 +147,7 @@ def _job_run(limit, reader, cell=None, fetch=None, then_fill=False):
         _JOB["running"] = False
 
 
-def start_autofill(limit=None, reader="gemini", cell=None,
+def start_autofill(limit=None, reader="claude", cell=None,
                    fetch=None, then_fill=False):
     """抓檔與抄列**共用同一個背景工作槽**。不是偷懶:兩者都會動 pdf_cache/index/
     facts,同時跑就是誰贏看時序 —— 一個槽就是一道天然的互斥。"""
@@ -431,12 +431,12 @@ class Handler(SimpleHTTPRequestHandler):
                 self._json(webdata.rebucket(b["name"], b["to"],
                                             bool(b.get("global"))))
             elif route == "/api/fetch":
-                self._json(start_autofill(reader=b.get("reader") or "gemini",
+                self._json(start_autofill(reader=b.get("reader") or "claude",
                                           fetch=b["targets"],
                                           then_fill=bool(b.get("then_fill"))))
             elif route == "/api/autofill":
                 self._json(start_autofill(b.get("limit"),
-                                          b.get("reader") or "gemini",
+                                          b.get("reader") or "claude",
                                           b.get("cell")))
             elif route == "/api/rebuild":
                 self._json(start_rebuild())

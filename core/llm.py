@@ -1,6 +1,16 @@
 # -*- coding: utf-8 -*-
 """Gemini API 的唯一出口 —— 多把 key 輪替 + 節流 + 429 重試。
 
+⚠️ **2026-08-11 起已不在任何活路徑上**(`docs/plan_v6_一台機器.md` R0-1)。
+抄列的預設抽取器改成 `claude -p`,`fill_auto.read_gemini` 已刪除。
+理由是 gemini 生過 PDF 裡不存在的字(`公允僵值`、`有僵證券`),
+而抄列的六道檢查全部驗算術/閉合/分桶,**沒有一道會抓到「字錯了」**。
+
+這支之所以還留著,是因為 `extract_v2.py`(舊視覺管線,已無任何入口可達)
+在 module 層 import 它,而 `extract_v2.py` 又是黃金集評分器 `score_golden.py`
+的依賴 —— 黃金集是真的資產,不能為了刪這支而弄壞它。
+**三支一起在 R5-2(清 25 支不可達的 .py)退場,不要單獨刪這支。**
+
 抽自 `extract_v2.py`(`docs/plan_schema_derive.md` D3)。根因:`fill_auto.py`
 只用得到 `extract_v2._gen()` 這一個函式,卻要 import 整支 786 行的舊視覺管線
 (`memory/feedback-no-old-pipeline` 已裁示不准用)。混淆的地方在於它自己也定義

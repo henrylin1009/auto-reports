@@ -206,7 +206,7 @@ async function viewMatrix() {
         <option value="10">跑 10 格</option>
         <option value="">跑完全部待抄(${stats.todo} 格)</option>
       </select>
-      <span class="hint" id="autohint">用 Gemini 抄，六道檢查照跑；對不上的會自動擴頁重試，
+      <span class="hint" id="autohint">用你自己的 Claude Code 抄（不需 API key），六道檢查照跑；對不上的會自動擴頁重試，
         仍過不了就進「卡住」不會寫進事實庫。</span>
     </div>
     <pre class="autolog" id="autolog" hidden></pre>
@@ -529,7 +529,7 @@ function wireAutofill(el) {
     if (!r.started) { hint.textContent = r.why; return; }
     btn.disabled = true; btn.textContent = "抄列中…";
     stopBtn.hidden = false; stopBtn.disabled = false; stopBtn.textContent = "取消";
-    hint.textContent = "跑起來了。Gemini 每格約 3 秒，擴頁重試會多幾輪。";
+    hint.textContent = "跑起來了。Claude 每格約 1-3 分鐘，擴頁重試會多幾輪。";
     timer = setInterval(poll, 1500);
   };
 
@@ -1268,7 +1268,7 @@ function f_anchor(card) {
 }
 
 // 抄單格 —— 跟資料頁那顆按鈕走同一個後端工作,所以一次只准跑一個。
-async function runCell(doc, cls, model = "gemini") {
+async function runCell(doc, cls, model = "claude") {
   const r = await post("autofill", { cell: `${doc}|${cls}`, reader: model });
   const tag = document.getElementById("jobtag");
   if (!r.started) { alert(r.why); return; }

@@ -54,7 +54,7 @@ def w21_run_key_without_cellmeta_passes_none():
     這次改動對 run_queue 的自動路徑零影響。"""
     restore, captured = _capture()
     try:
-        fill_auto.run_key(f"{DOC}|{CLS}", "gemini")
+        fill_auto.run_key(f"{DOC}|{CLS}", "claude")
     finally:
         restore()
     check("W21 pages 引數是 None", captured.get("pages") is None)
@@ -68,7 +68,7 @@ def w22_run_key_with_pages_override_passes_it_through():
                                            "at": "t", "why": "t"}}}
     restore, captured = _capture()
     try:
-        fill_auto.run_key(f"{DOC}|{CLS}", "gemini", cellmeta=cellmeta)
+        fill_auto.run_key(f"{DOC}|{CLS}", "claude", cellmeta=cellmeta)
     finally:
         restore()
     check("W22 pages 引數等於覆寫值", captured.get("pages") == override)
@@ -89,7 +89,7 @@ def w23_run_key_still_rejects_anchor_missing():
     restore, captured = _capture()
     try:
         out = fill_auto.run_key(
-            f"{_NO_ANCHOR_DOC}|{cls}", "gemini",
+            f"{_NO_ANCHOR_DOC}|{cls}", "claude",
             cellmeta={f"{_NO_ANCHOR_DOC}|{cls}":
                      {"pages": {"value": [1], "by": "t", "at": "t", "why": "t"}}})
     finally:

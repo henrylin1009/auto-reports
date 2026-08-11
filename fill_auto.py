@@ -13,8 +13,15 @@
 在那之前不要加 apply 分支,否則等於用沒量過的東西覆蓋量過的結果。
 
 READER 切換(`FILL_READER` 環境變數):
-    gemini(預設)   走 core.llm.generate,復用既有的多 key 輪替與節流
-    claude          走 `claude -p` 無頭模式(需另裝 CLI;尚未實作)
+    claude(預設)   走 `claude -p` 無頭模式,用**你自己的 Claude Code 訂閱**,不需 API key
+    deepseek        走 DeepSeek API(需 DEEPSEEK_API_KEY)
+
+⚠️ **gemini 已於 2026-08-11 從這條路徑退場**(`docs/plan_v6_一台機器.md` R0-1)。
+理由不是它慢或貴,是**它會生出 PDF 裡沒有的字**:`facts/` 裡曾出現
+`透過其他綜合損益按公允僵值衡量之權益工具投資`、`有僵證券` 這類壞字,
+原始 PDF 從頭到尾沒有「僵」這個字。抄列的定義是照抄,一個會自己造字的
+抄寫員不能當預設。`core/llm.py` 仍在,但只剩 `extract_v2.py`(舊視覺管線,
+已無入口可達)與它的黃金集評分器 `score_golden.py` 在用,隨那一批一起退場。
 """
 import argparse
 import json
@@ -110,19 +117,6 @@ def _parse_json(text):
 MAX_OUTPUT_TOKENS = 32768
 
 
-def read_gemini(prompt):
-    from core import llm
-    from google.genai import types
-    from config import MODEL
-    r = llm.generate(
-        model=MODEL, contents=[prompt],
-        # temperature=0 與既有呼叫一致:抄列是照抄,不需要任何發散。
-        config=types.GenerateContentConfig(temperature=0,
-                                           response_mime_type="application/json",
-                                           max_output_tokens=MAX_OUTPUT_TOKENS))
-    return r.text
-
-
 # `claude -p` 無頭模式。用**你自己的 Claude Code 訂閱**,不需要另外的 API key。
 # `--allowed-tools ""` 是必要的:工單全文已經在 prompt 裡(頁文字,不是檔案路徑),
 # 它不需要讀任何檔;不收掉工具的話它是 agent,可能自作主張去翻 repo 或改檔案。
@@ -166,7 +160,9 @@ def read_deepseek(prompt):
     return result["choices"][0]["message"]["content"]
 
 
-READERS = {"gemini": read_gemini, "claude": read_claude, "deepseek": read_deepseek}
+#: **不要把 gemini 加回來**(見檔頭)。它生過 PDF 裡不存在的字,
+#: 而抄列的每一道檢查都驗算術、驗閉合、驗分桶 —— 沒有一道會抓到「字錯了」。
+READERS = {"claude": read_claude, "deepseek": read_deepseek}
 
 
 def read_cell(doc, cls, loc, pages, reader):
@@ -410,7 +406,7 @@ def main(argv=None):
     ap.add_argument("--run", action="store_true",
                     help="生產模式:跑真的待抄佇列,**會寫進 facts/**")
     ap.add_argument("--limit", type=int, help="只跑前 N 格(省 API 配額)")
-    ap.add_argument("--reader", default=os.environ.get("FILL_READER", "gemini"),
+    ap.add_argument("--reader", default=os.environ.get("FILL_READER", "claude"),
                     choices=sorted(READERS))
     ap.add_argument("--out", help="結果輸出路徑")
     a = ap.parse_args(argv)

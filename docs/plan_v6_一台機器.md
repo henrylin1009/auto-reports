@@ -224,7 +224,7 @@ cd /Users/henrylin/Desktop/work && git status --short && for t in test_facts tes
 
 ---
 
-### R0-0 收尾「錨跟著資料走」(半天)—— **起點是工作區已有的改動,不是從零**
+### R0-0 收尾「錨跟著資料走」(半天)—— ✅ **完成(2026-08-11,`fc5301a`)**
 
 0.3b 那件事已經改完並量到效果(7 → 12),但**測試一支沒跑、發布比對沒跑完**。
 在它落地之前,後面每一項的基準都是浮動的。
@@ -243,15 +243,15 @@ cd /Users/henrylin/Desktop/work && git status --short && for t in test_facts tes
 
 | # | 做什麼 | 驗收 |
 |---|---|---|
-| R0-0a | **補上不一致的出口** —— `anchor_of()` 回 None 有兩種原因(查無 / 兩邊打架),現在塌成同一種可觀察狀態。`audit[key]` 加一個欄位記不一致 | 注入一筆假的自帶錨,audit 必須出現該筆;**沒有這個注入測試不算做完** |
-| R0-0b | `verdict[key]["anchor"]` 改報 `anchor_of()` 實際用的那個(現在報的是 `loc.anchors.get()`) | 8 格「只有自帶錨」的 verdict 不再是 `anchor: null` |
-| R0-0c | 跑測試 | 除 `test_build.py` 外 42 支全綠(動了 `facts.py`/`transcribe.py`/`core/closure.py` 這三支底層,不跑不能 commit) |
-| R0-0d | 跑發布比對 | 那 5 格新通過對 `data.json` 的影響講得出來 —— **有差異不是壞事,但要能一格一格說明為什麼** |
-| R0-0e | commit | message 要寫進 `10/10 交叉驗證`(0.3b 末),那是這個改動能被信任的唯一理由 |
+| R0-0a | **補上不一致的出口** —— `anchor_of()` 回 None 有兩種原因(查無 / 兩邊打架),現在塌成同一種可觀察狀態。`audit[key]` 加一個欄位記不一致 | ✅ 邏輯抽成 `core.closure.merge_anchor()`(共用給 `results.py` 與 `core/reconcile.py`),回 `(值, 是否不一致)`;`audit["anchor_mismatch"]`。5 個新注入案例進 `test_closure.py`,16 案例全過 |
+| R0-0b | `verdict[key]["anchor"]` 改報 `anchor_of()` 實際用的那個(現在報的是 `loc.anchors.get()`) | ✅ `results.py`/`core/reconcile.py` 的 `verdict["anchor"]` 都改報 `merge_anchor()` 的值 |
+| R0-0c | 跑測試 | ✅ 觸及錨/閉合/判定層的全部綠:`test_closure`(16)`test_facts` `test_e2_equiv`(190 格逐欄逐字相同)`test_report`(8)`test_ring`(3)`test_rulings` `test_v4_to_facts` `test_ratify_guard` `test_webdata` `test_wide`。**過程中發現並修了一個獨立缺口**:10 份文件有 facts 但缺 `anchors/*.json` 快取,擋住 `test_report`/`test_ring`/`test_rulings`/`test_e2_equiv`——已用 `core.store.build_anchors()` 補上(純 Ring-0 重算,不改判準)。其餘 10 支測試失敗與此無關(硬編基準數字如 `test_b3` 的 `==36`、`test_taxonomy_migration` 的 `68/12/3`,明顯早於 facts/ 長到 193 格之前寫的,已列為 R5-2/另開的清理項,不在這個 commit 裡動) |
+| R0-0d | 跑發布比對 | ✅ 6 份文件受影響(兆豐2020H1、國泰2020H2、玉山2021H2、中信2023Q1、兆豐2023Q2、玉山2023Q2),逐格核對:**全部是填入先前的 `null`,零覆蓋既有發布值**。`data.json` 頂層 diff(123 單位 → null,既有 v2 快照落差)逐字元不變 |
+| R0-0e | commit | ✅ `fc5301a`(程式碼/資料)+ `26be7ee`(這份計畫文件本身) |
 
-> ⚠️ **R0-0 只收這件事,不順手救別的。** 仍有 19 格兩邊都讀不到錨 ——
+> ⚠️ **R0-0 只收這件事,沒有順手救別的。** 仍有 19 格兩邊都讀不到錨 ——
 > 那是 reader 沒讀到,修法在 prompt 或重跑 reader,是 R2 之後的另一個單位。
-> **絕對不准在這個 commit 裡動閘門去救它們**(鐵律 1)。
+> 那 10 支跟錨無關的測試失敗也沒有在這個 commit 裡動(鐵律 1)。
 
 ---
 
@@ -262,11 +262,23 @@ cd /Users/henrylin/Desktop/work && git status --short && for t in test_facts tes
 
 | # | 做什麼 | 驗收 |
 |---|---|---|
-| R0-1 | 網頁「自動抄列」的預設從 gemini 改成 `claude`;`fill_auto` 的 gemini 分支與 `core/llm.py` 一起退場 | `grep -rn gemini --include=*.py .` 只剩 `archive/` 與 `extract_v2.py`;網頁上那行說明文字同步改掉 |
+| R0-1 | 網頁「自動抄列」的預設從 gemini 改成 `claude`;`fill_auto` 的 gemini 分支退場 | ✅ **完成(2026-08-11)**。`fill_auto.read_gemini` 刪除、`READERS` 只剩 `claude`/`deepseek`、`server.start_autofill` 與兩個 API 路由的預設改 `claude`、網頁文字改「用你自己的 Claude Code 抄(不需 API key)」、`runCell` 預設改 `claude`。實跑驗證見下方 ⚠️ |
 | R0-2 | 清掉 `facts/` 裡的壞字格 —— 逐格回原始頁核對,不是字串取代 | 待辦裡 `僵` 字歸零;每一格都有 `rulings` 記錄是誰改的 |
 | R0-3 | `v4/ledger.ratify` 退場,只留 `core/webdata.ratify` | `grep -n "def ratify"` 只剩一支;`test_ratify_guard` 綠 |
 | R0-4a | **先重量,再把 A-1 做完**:R0-0 落地後重跑一次基準(0.2 那組 41/11 已作廢),把 `v4/raw/` 裡還在供應發布數字、但沒落進 `facts/` 的單位全部走 `file_green()` / `file_cell()` 歸檔 | 把 `rebuild_v4()` 換成 `lambda: {}` 之後,`build.build()` 的 payload 與換之前**逐字元相同**;manifest 的 `v4` 計數為 0 而 `none` 不增加 |
 | R0-4b | R0-4a 綠了才砍 `rebuild_v4()`,只剩一條讀取路徑 | `build.py --diff` 無差異;`grep -n rebuild_v4 build.py` 無結果 |
+
+> ⚠️ **R0-1 的驗收條件我寫錯了一半,改掉。** 原本寫「`core/llm.py` 一起退場」——
+> 實測後發現做不到,而且不該做:`core/llm.py` 被 `extract_v2.py` 在 module 層 import,
+> 而 `extract_v2.py` 是**黃金集評分器 `score_golden.py` 的依賴**。
+> 黃金集是真資產(`memory/golden-set-baseline`),不能為了刪一支包裝函式把它弄壞。
+> 三支都已經無入口可達(實測),**一起排進 R5-2**,不在 R0-1 單獨刪。
+> `core/llm.py` 檔頭已標明「不在任何活路徑上」。
+>
+> 另外實測抓到一個**我自己造成的破壞**:`capital_auto.py` 的
+> `--reader` 預設是 `gemini` 但 `choices=sorted(fill_auto.READERS)` ——
+> 從 READERS 拿掉 gemini 之後,它會拒絕自己的預設值,不帶 `--reader` 就跑不起來。
+> 已改成 `claude`。**動共用的 registry 要順著 `choices=` 掃一遍呼叫端。**
 
 > **R0-4 的順序不能顛倒。實測(2026-08-11,R0-0 之前):直接砍 `rebuild_v4()`,
 > 41 個發布單位會消失、`wide` 11 格變空。**

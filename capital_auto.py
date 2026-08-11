@@ -358,7 +358,7 @@ def apply(results):
 def main(argv=None):
     ap = argparse.ArgumentParser(description="資本適足 / 盈餘分配自動抄表")
     ap.add_argument("--kind", default="capital", choices=KINDS + ("both",))
-    ap.add_argument("--reader", default=os.environ.get("FILL_READER", "gemini"),
+    ap.add_argument("--reader", default=os.environ.get("FILL_READER", "claude"),
                     choices=sorted(fill_auto.READERS))
     ap.add_argument("--limit", type=int)
     ap.add_argument("--docs", nargs="*", help="只跑指定的 doc(例:202504_5841_AI3)")
