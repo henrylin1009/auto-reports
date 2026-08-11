@@ -145,6 +145,137 @@
    "total_col": "帳面金額\n（註三）"
   }
  ],
+ "202304_5836_AI3|OCI": [
+  {
+   "_by": {
+    "at": "2026-08-11T09:54",
+    "basis_side": "book",
+    "model": "claude",
+    "via": "v4/reader"
+   },
+   "class": "OCI",
+   "doc": "202304_5836_AI3",
+   "printed_total": 161093279,
+   "printed_totals": {
+    "112年12月31日": 161093279
+   },
+   "rows": [
+    {
+     "cols": {
+      "112年12月31日": 14837911
+     },
+     "group": null,
+     "name": "上市(櫃)及興櫃股票"
+    },
+    {
+     "cols": {
+      "112年12月31日": 8261043
+     },
+     "group": null,
+     "name": "REITs"
+    },
+    {
+     "cols": {
+      "112年12月31日": 1895218
+     },
+     "group": null,
+     "name": "未上市(櫃)股票"
+    },
+    {
+     "cols": {
+      "112年12月31日": 49558689
+     },
+     "group": null,
+     "name": "公司債"
+    },
+    {
+     "cols": {
+      "112年12月31日": 43180067
+     },
+     "group": null,
+     "name": "金融債券"
+    },
+    {
+     "cols": {
+      "112年12月31日": 30485821
+     },
+     "group": null,
+     "name": "政府公債"
+    },
+    {
+     "cols": {
+      "112年12月31日": 12874530
+     },
+     "group": null,
+     "name": "其他"
+    }
+   ],
+   "source_kind": "附註",
+   "source_page": 7,
+   "total_col": "112年12月31日"
+  },
+  {
+   "_by": {
+    "at": "2026-08-11T09:54",
+    "basis_side": "cost",
+    "model": "claude",
+    "via": "v4/reader"
+   },
+   "class": "OCI",
+   "doc": "202304_5836_AI3",
+   "printed_total": 156756634,
+   "printed_totals": {
+    "取得成本": 156756634
+   },
+   "rows": [
+    {
+     "cols": {
+      "取得成本": 49900499
+     },
+     "group": null,
+     "name": "公司債"
+    },
+    {
+     "cols": {
+      "取得成本": 43325433
+     },
+     "group": null,
+     "name": "金融債券"
+    },
+    {
+     "cols": {
+      "取得成本": 30550985
+     },
+     "group": null,
+     "name": "政府公債"
+    },
+    {
+     "cols": {
+      "取得成本": 12007701
+     },
+     "group": null,
+     "name": "股票"
+    },
+    {
+     "cols": {
+      "取得成本": 8129041
+     },
+     "group": null,
+     "name": "REITs"
+    },
+    {
+     "cols": {
+      "取得成本": 12842975
+     },
+     "group": null,
+     "name": "其他"
+    }
+   ],
+   "source_kind": "明細表",
+   "source_page": 165,
+   "total_col": "取得成本"
+  }
+ ],
  "202304_5836_AI3|Trading": [
   {
    "class": "Trading",

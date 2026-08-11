@@ -258,3 +258,65 @@ def review_queue():
     red.sort(key=lambda r: -r["max_diff"])
     hint.sort(key=lambda r: -r["max_diff"])
     return {"red": red, "grey": grey, "hint": hint}
+
+
+def file_green(docs=None, dry_run=False):
+    """把分流為 **GREEN / RATIFIED** 的格歸檔進 `facts/`。
+
+    這是 A-1 接縫的**使用端**(docs/plan_工具化.md 階段 A):在此之前 v4 的資料
+    只活在 `v4/raw` + 本帳本裡,靠 `build.rebuild_v4()` 另開一條讀取路徑才進得了
+    網站。現在改成一律先落進 `facts/`,`build.py` 因此只需要一條讀取路徑。
+
+    **只吃 GREEN/RATIFIED,RED 一律不填** —— 與 `build.rebuild_v4()` 原本的
+    判準一字不差,所以這次遷移不會讓任何現在沒發布的東西冒出來。RED 是
+    「有 witness 失敗、要人看」,它該留在複核台,不是靜靜進事實庫。
+
+    **已經在 `facts/` 裡的格跳過,不覆蓋** —— `build.pick()` 一向是 v3 優先
+    (v3 coverage 遠大於 v4),而 `file_cell()` 是整格替換;不跳過就會把 v3
+    抄好的內容換成 v4 的,那不是合併是取代。
+
+    人工裁示過的格由 `file_cell()` 自己擋(append-only),這裡不重複判斷。
+    """
+    import facts as facts_mod
+    from core import webdata
+    from v4 import adapter
+
+    existing = set(facts_mod.load())
+    targets = docs if docs is not None else [e["doc"] for e in load_all()]
+    filed, skipped, blocked = [], [], []
+    for doc in targets:
+        # `classify()` 直接回 `{cls: 分流}`,沒有外層 "cells" —— 那層是
+        # `load_all()` 才包上去的。
+        info = classify(doc) or {}
+        raw_path = os.path.join(reader.OUT_DIR, f"{doc}.json")
+        parsed = None
+        if os.path.exists(raw_path):
+            with open(raw_path, encoding="utf-8") as f:
+                parsed = (json.load(f) or {}).get("parsed")
+        if not isinstance(parsed, dict):
+            parsed = None
+        for cls, c in info.items():
+            key = f"{doc}|{cls}"
+            if c.get("status") not in ("GREEN", "RATIFIED"):
+                skipped.append((key, c.get("status")))
+                continue
+            if key in existing:
+                skipped.append((key, "facts/ 已有(不覆蓋)"))
+                continue
+            blk = (parsed or {}).get(cls)
+            if not isinstance(blk, dict):
+                skipped.append((key, "raw 讀不到這一格"))
+                continue
+            recs = adapter.to_facts_records(doc, cls, blk, (parsed or {}).get("bs_date"))
+            if not recs:
+                skipped.append((key, "轉不出 record"))
+                continue
+            if dry_run:
+                filed.append(key)
+                continue
+            try:
+                webdata.file_cell(doc, cls, recs, via="v4/reader")
+                filed.append(key)
+            except webdata.EditError as e:
+                blocked.append((key, str(e).splitlines()[0]))
+    return {"filed": filed, "skipped": skipped, "blocked": blocked}
