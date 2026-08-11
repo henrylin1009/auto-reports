@@ -1,144 +1,99 @@
-# Auto-Reports — Bank Bond Portfolio Analysis Pipeline
+# 財報分析工具 —— 銀行債券投資（示範資料集）
 
-An end-to-end pipeline that extracts, validates, and visualizes the bond investment
-portfolios of major Taiwanese banks directly from their statutory financial reports.
+把財報 PDF 變成可以核對、可以看的分析，全程在網頁上操作，運算用你自己的
+Claude Code（不需要 API key，不需要付費）。
 
-**▶ Live dashboard:** https://henrylin1009.github.io/auto-reports/
+**▶ 目前的公開儀表板（示範資料集）：** https://henrylin1009.github.io/auto-reports/
 
-[![Bank bond dashboard](docs/dashboard-hero.png)](https://henrylin1009.github.io/auto-reports/)
+五家台灣銀行的債券投資組合是內建的**示範資料集**，不是交付物——它存在的
+目的是證明這台機器會動。這個 repo 真正的產物是一套可以核對任何一批
+「PDF 財報 → 結構化數字 → 視覺化」資料的工具鏈。
 
-For each bank it parses the bond holdings broken down by **accounting classification**
-— FVTPL (Trading), FVOCI (OCI), and Amortized Cost (AC) — and by **instrument type**
-(government bonds, corporate bonds, bank debentures, money-market instruments), then
-produces an **interactive web dashboard** and an Excel report with native charts.
+---
 
-Banks currently covered (extensible): CTBC (5841), Cathay (5835), Fubon (5836),
-Mega (5843), E.Sun (5847). Source: entity-level (non-consolidated) semi-annual reports
-from the Taiwan Market Observation Post System (`doc.twse.com.tw`).
+## 這是什麼
 
-## Highlights
+三層,各自獨立測試過:
 
-- **PDF parsing at scale** — extracts figures from footnotes across ~80 financial-report
-  PDFs with heterogeneous layouts, including one bank whose disclosure is a coordinate-based
-  "securities division" table requiring word-level (x/y) reconstruction.
-- **Three-layer checksum validation** — every extracted figure is reconciled
-  (pure-securities subtotal → total less derivatives/valuation → full-table tie-out),
-  so a mis-extraction is flagged rather than silently returned.
-- **Honest data model** — distinguishes a *true zero position* from *no data*
-  (e.g. two banks' 2020H1 reports are scanned image PDFs with no text layer, marked as
-  "no data" instead of 0).
-- **Interactive dashboard** — headline KPIs, cross-bank comparison, time-series trends,
-  and a bank × instrument heatmap; users can choose which instruments count toward
-  "holdings" and filter which banks are shown, all recomputed client-side.
-- **Self-updating** — the reporting period range extends automatically each year;
-  adding a new bank requires no code changes to the visualizations.
-
-## Architecture
-
-TWSE blocks cloud/data-center IP ranges (listing sometimes works, downloads frequently
-fail). The pipeline is therefore split into a **fetch** step that must run on a
-Taiwan-based machine, and a **render-only** step that runs in the cloud:
-
-| Step | Where it runs | What it does |
+| 層 | 做什麼 | 對應模組 |
 |---|---|---|
-| Fetch + parse | Local machine (Taiwan) | Downloads reports, parses, validates, writes `data.json` + Excel |
-| Publish | GitHub Actions | Reads the committed `data.json`, renders the site, deploys to GitHub Pages (never touches TWSE) |
+| **抽取** | 把財報 PDF 讀成結構化的表格資料 | `v4/reader.py`（呼叫你自己的 `claude -p`） |
+| **核對** | 每一格數字都要有算術證明對得上資產負債表,證不了就是 `null`,不猜 | `results.py` / `core/closure.py` / `wide.py` |
+| **視覺化** | 矩陣、逐桶表、時間序列,換一份 `schema.yaml` 就能換題目 | `viz_generic.py` |
 
-## Deliverables
+資料存在三張表（`documents` / `observations` / `rulings`,見 `db.py`）：
+機器抄的進 `observations`,人在網頁上改過的進 `rulings`,**人工永遠蓋過
+機器**。進 git 版控的是它匯出的 `facts/*.json`（人可讀的 diff）,不是資料庫
+本身。
 
-| Deliverable | Audience | How it's produced |
-|---|---|---|
-| **Interactive dashboard** (GitHub Pages) | Viewers / reviewers | Local data build → push → GitHub Actions publishes |
-| **`銀行債券_完整報表.xlsx`** (wide table + native Excel charts) | Anyone who needs the file | `python3 build_report.py` |
-| **Double-click desktop tool** (`.exe` / `.app`) | Non-technical users | Packaged by GitHub Actions, downloaded from Artifacts |
-
-## Quickstart — running the transcription loop (`/fill`)
-
-The pipeline's remaining bottleneck is **transcribing** bank-report tables into
-structured `facts/` records. That step is done by Claude Code itself, driven by
-the `fill` skill — no model API is called by any script in this repo.
+## 怎麼跑
 
 ```bash
 git clone <this repo> && cd auto-reports
-pip install -r requirements.txt
-python3 resolve.py          # fetch the ~89 report PDFs into pdf_cache/ (needs Taiwan network access)
+python3 app.py          # 起工作台,自動開瀏覽器 http://127.0.0.1:8765
 ```
 
-Then, inside Claude Code, run:
+或雙擊 [`啟動.command`](啟動.command)（macOS）——第一次執行會自動建立
+虛擬環境、裝依賴,之後每次雙擊直接開。
 
-```
-/fill
-```
+打開後在「資料」頁把一份 PDF 拖進網頁上傳,系統會自動排隊用你的
+Claude Code 讀取、驗算、分類。看到「要人看」的格子,點進去核對原始頁,
+按「我看過原始頁,照這樣歸檔」寫進事實庫。改完按「重建」,`data.json`
+就會照最新的事實庫重算。
 
-This repeats `python3 fill.py next` → transcribe the table → `python3 fill.py submit
-work/current.json` until it prints `ALL DONE`. Progress lives entirely in files
-(`facts/`, `work/`), so the loop can be interrupted and resumed from a fresh session,
-a fresh machine, or a different person — nothing needs to be remembered. Run
-`python3 fill.py status` any time for a one-line progress summary.
-
-If `pdf_cache/` is empty, `fill.py next` says so explicitly and tells you to run
-`python3 resolve.py` — it does not print `ALL DONE` in that case, since "nothing to
-do because there's nothing to fetch from" and "everything is finished" are different
-states.
-
-## Usage
-
-### A. Build the report locally
 ```bash
-pip install -r requirements.txt
-python3 build_report.py            # fetch latest reports → xlsx + data.json
+python3 app.py build --diff     # 由 facts/ 重算,只印差異不寫檔
+python3 app.py build --write    # 寫入 data.json
+python3 app.py migrate          # facts/*.json → facts.db(三張表儲存後端)
+python3 app.py fetch            # 抓最新財報(需要台灣網路,TWSE 擋雲端 IP)
 ```
-The period range extends automatically to the current year (from 2020); charts default to
-the most recent 6 periods — no code changes needed for future filings.
 
-### B. Update the website (build locally → publish via GitHub)
-```bash
-python3 build_report.py
-git add data.json 銀行債券_完整報表.xlsx
-git commit -m "update data" && git push
-```
-On push, `.github/workflows/report.yml` runs **render-only** (reads the committed
-`data.json`, draws the site, deploys Pages; it does not fetch from TWSE).
-One-time setup: repo **Settings → Pages → Source = "GitHub Actions"**.
+`app.py` 是**唯一入口**,收的是日常會用到的四件事;其餘研究/除錯用的
+腳本仍然各自 `python3 xxx.py` 執行,不重複收進選單（例如
+`score_golden.py`、`analyze_oci_div.py` 這類一次性分析）。
 
-### C. Package the desktop tool
-`.github/workflows/build-exe.yml` uses GitHub's Windows / macOS runners to package
-`app.py` into a single binary (packaging does not require TWSE access). Download from the
-run's Artifacts:
-- `銀行債券報表-Windows` (`.exe`)
-- `銀行債券報表-Mac` (`.zip`: binary + launcher `.command`)
+## 怎麼換題目
 
-The user runs it **in Taiwan** (so TWSE is reachable): double-click (on macOS, right-click →
-Open once to pass Gatekeeper) → ~2–3 minutes → the `.xlsx` appears in the same folder.
+視覺化跟這個題目脫鉤了：`viz_generic.py`（通用層,~220 行,不 import
+`config.py`、不認得任何銀行名字）只認 `schema.yaml` 描述的形狀——實體、
+期別、維度、桶、口徑。換一個題目（例如「上市公司研發費用」）:
 
-## Files
+1. 寫一份新的 `schema.yaml`（參考現有這份的形狀）
+2. 準備符合 `wide`/`wide_cost` 攤平表形狀的 `data.json`
+3. `python3 app.py serve`,開 `/generic.html` 就看得到矩陣/逐桶表/時間序列
 
-| File | Purpose |
-|---|---|
-| `build_report.py` | Main entry point (header `CONFIG`: chart gap width, size, number of periods shown) |
-| `extract3.py` / `extract2.py` | Core parsing + three-layer checksum validation |
-| `extract_megabank.py` | Dedicated coordinate-based parser for Mega's securities-division table |
-| `resolve.py` | Robust file resolution: finds the "entity-level" report (codes vary by bank/year, e.g. AI2/AI3) |
-| `make_web.py` | Renders the **interactive dashboard** from `data.json` (KPIs + cross-bank comparison + trends + heatmap; selectable instruments, filterable banks) — used by GitHub Actions |
-| `app.py` | Desktop-tool entry point (for PyInstaller packaging) |
-| `run.sh` | cron entry point for a Taiwan-based server (optional) |
+`test_viz_generic.py` 用一份跟銀行債券完全無關的假 schema（三個城市 × 四季
+降雨量）證明這件事——如果通用層真的脫鉤了,那份測試不需要改
+`viz_generic.py` 一行就會過。
 
-## Notes on data integrity
+抽取/分桶/口徑判準（`config.py`、`buckets.py`、`wide.py`）**沒有**脫鉤,
+換題目時這幾支需要跟著改——那是下一步（R3 只做完視覺化那一半,
+詳見 `docs/plan_v6_一台機器.md`）。
 
-- **Mega (5843)** — instrument detail comes from its "securities-division change table"
-  (coordinate-based layout, unlike other banks' summary tables; handled by
-  `extract_megabank.py`). Its securities division holds **no Trading positions**, so
-  Trading is 0 — a genuine zero, not missing data.
-- **True zero vs. no data** — the 2020H1 entity reports for Cathay and E.Sun are scanned
-  image PDFs with no text layer and cannot be parsed, so they are marked `null`
-  ("no data", shown hatched on the dashboard) rather than 0. Any report whose extracted
-  text is too short (`len(text) < 2000`) is automatically classified as no-data.
-- **Trustworthy by construction** — the three-layer checksum flags mis-extractions instead
-  of silently returning wrong numbers.
-- **Fully unattended operation** requires a Taiwan/Asia VPS running `run.sh` via cron
-  (GitHub's cloud runners are blocked by TWSE).
+## 資料誠實性
 
-## Tech stack
+- **不補 0。** 缺欄 = 未揭露 ≠ 0,取不到就是 `null`,前端畫成灰底斜紋。
+- **三道恆等式驗證**：逐列相加 = 印出小計、小計拼樹 = 資產負債表錨值、
+  分桶完整（沒有列漏分到桶）。任一道不過,整格擋下不發布。
+- **人工裁示的稽核軌跡**：`facts/*.json` 裡每一列人改過的都帶 `_src`
+  (誰、何時、為什麼),`git log` 是完整歷史。
+- **可重現**：同一份 `facts/`,`build.py --diff` 連跑兩次輸出逐位元組相同。
 
-Python · pdfplumber (PDF parsing) · openpyxl (native Excel charts) · Chart.js
-(dashboard) · GitHub Actions (CI/CD, cross-platform packaging, Pages deployment).
+## 銀行債券示範資料集的涵蓋範圍
+
+中信(5841)、國泰(5835)、富邦(5836)、兆豐(5843)、玉山(5847),個體財報
+（entity-level,非合併）,來源 TWSE 公開資訊觀測站。分類:FVTPL(Trading)、
+FVOCI(OCI)、攤銷後成本(AC),桶:政府公債/公司債/金融債/資產基礎證券/
+貨幣市場/其他/股票。近三年（2023 起）涵蓋率高,更早期的半年報有不少是
+資產負債表頁為掃描影像、無法核對錨值的情形,誠實標記為缺資料而非猜測。
+
+## 技術堆疊
+
+Python（標準庫 http.server,零框架）· `claude -p`（抽取,你自己的訂閱）·
+SQLite（三張表儲存）· pdfplumber/pypdfium2（PDF 讀取）· 手刻 HTML/CSS/JS
+（工作台）· GitHub Actions（CI,render-only,不碰 TWSE）。
+
+## 開發文件
+
+現況與計畫見 [`docs/plan_v6_一台機器.md`](docs/plan_v6_一台機器.md)——
+體檢、目標架構、逐項驗收記錄,包含這份 README 描述的每一件事的實測證據。

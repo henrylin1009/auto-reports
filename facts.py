@@ -27,6 +27,7 @@ import os
 import db as db_mod
 
 DIR = "facts"
+_DEFAULT_DIR = DIR   # 捕捉原始值,`_use_db()` 拿它判斷 DIR 有沒有被改過
 
 REQUIRED_REC = ("doc", "class", "source_page", "source_kind", "total_col",
                 "printed_total", "rows")
@@ -63,8 +64,19 @@ def human_ratified(recs):
 
 
 def _use_db(facts_dir):
-    """production 呼叫(不傳 `facts_dir`)且 `facts.db` 存在 → 走 DB。"""
-    return facts_dir is None and db_mod.exists()
+    """production 呼叫(不傳 `facts_dir`,而且 `DIR` 也沒被改過)且 `facts.db`
+    存在 → 走 DB。
+
+    ⚠️ **兩種方式都算「注入了目錄」,不是只有 `facts_dir` 參數這一種。**
+    `core/ingest.py._write_facts_and_decisions()`(真正的機器抄列落地路徑)
+    與 `test_b2.py` 都用另一招:暫時把模組層的 `facts.DIR` 換成 tmp 目錄,
+    再呼叫不帶 `facts_dir` 的 `load()`/`save()`。R1 上線時只檢查了
+    `facts_dir is None`,沒檢查 `DIR` 有沒有被换過 —— 於是這招的呼叫端
+    以為自己寫進了 tmp 目錄,其實悄悄寫進了正式的 `facts.db`
+    (2026-08-11 實測抓到:`test_b2.py` 的 F3 案例把 `doc="X"` 的假資料
+    寫進了正式事實庫,`facts/X.json` 是這次事故的殘留)。
+    """
+    return facts_dir is None and DIR == _DEFAULT_DIR and db_mod.exists()
 
 
 def load(facts_dir=None):
