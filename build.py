@@ -130,63 +130,29 @@ def eligible(v, basis, src="v3"):
     return True, f"{src} 合格"
 
 
-# ── v4 當次重建 ────────────────────────────────────────────────────────────
-# docs/plan_v5_統一.md P1-3。**只當 v3 的缺口填補者,不搶 v3 的位置**——
-# v4 目前只跑過 2 份文件(P1-4 批次還沒跑),coverage 遠低於 v3 的 62~123 個
-# 合格單位,若讓 v4 優先於 v3,今天會直接讓大部分已發布的 v3 數字消失。
-# 要等 P2(拿 facts/ 156 格真值逐桶比對)證明 v4 不比 v3 差,才會反過來。
-
-def rebuild_v4():
-    """**當次**由 `v4/ledger` 重算 verdict,形狀跟 `rebuild_v3()` 一樣方便共用
-    `eligible()`。只吃 RATIFIED / GREEN——RED/GREY 一律不算數,交回 v3 或 v2。
-    """
-    from v4 import adapter, ledger
-
-    verdict = {}
-    for doc_entry in ledger.load_all():
-        doc = doc_entry["doc"]
-        for cls, c in doc_entry["cells"].items():
-            passed = c.get("status") in ("RATIFIED", "GREEN")
-            book_raw = c.get("book") or {}
-            wide_book = book_as_cost = None
-            agg_ok = False
-            if passed and book_raw.get("rows") is not None:
-                agg = adapter.aggregate(book_raw["rows"], book_raw.get("printed_subtotal"))
-                agg_ok = agg.ok
-                if agg.ok:
-                    # **口徑決定它進哪一欄,不是進哪一欄決定口徑。**
-                    # 逐項有評價調整列 ⇒ 這七桶是成本,而評價調整是一整筆不分桶,
-                    # 所以「逐桶帳面」在文件裡不存在 → wide 必須 null
-                    # (與 `wide.py:99`「所有來源逐項皆為成本口徑」同一條規則)。
-                    # 之前這裡無條件寫進 wide,實測 20 格把成本當帳面發布,
-                    # 兆豐 Trading 差 11.82%。七桶本身仍然有效,改走 wide_cost。
-                    if agg.basis == "公允":
-                        wide_book = agg.book
-                    else:
-                        book_as_cost = agg.book
-            # RATIFIED 的 book 是 `v4.ledger.ratify()` 凍結進帳本的那份,沒有連帶
-            # 存 cost(`ratify()` 簽名只收 book,見 v4/ledger.py)。
-            cost_raw = c.get("cost") or {}
-            wide_cost = None
-            if passed and cost_raw.get("rows") is not None:
-                agg_c = adapter.aggregate(cost_raw["rows"], cost_raw.get("total"))
-                if agg_c.ok:
-                    wide_cost = agg_c.book
-            # 明細表的取得成本欄優先(那是文件直接印的成本);沒有時才用上面推出來的
-            # ——兩者都是成本,但前者是獨立來源,後者是同一份 book 換個口徑解讀。
-            if wide_cost is None:
-                wide_cost = book_as_cost
-            verdict[f"{doc}|{cls}"] = {
-                "doc": doc, "class": cls,
-                # `pass` = 這格的閘門過了,**與它落在哪個口徑欄無關**(同 results.py:53
-                # 的 v3 語義)。`eligible()` 會另外檢查該口徑是不是 null,
-                # 並回「該口徑在文件裡不存在」——那句話正是這種格子該有的說法。
-                "pass": passed and agg_ok,
-                "wide": wide_book, "wide_cost": wide_cost,
-                "anchor": book_raw.get("bs_anchor"),
-            }
-    return verdict
-
+# ── 為什麼沒有 rebuild_v4() ────────────────────────────────────────────────
+# 2026-08-11(`docs/plan_v6_一台機器.md` R0-4)砍掉。**不要加回來。**
+#
+# 它原本的角色是「v3 的缺口填補者」:v3 不合格的格改問 v4。實測之後發現
+# 這個安排在做的事情是**把驗不到的東西當成驗過的發布出去**:
+#
+#   由 v4 供應的 40 個發布單位(34 格)裡,check_anchor(合計 == BS 錨)
+#   只有 6 格是 OK,**其餘 28 格是 `no_witness`** —— 不是對不上,是沒有錨、
+#   根本沒驗。而 `classify_cell()` 的 GREEN 判準只看「硬閘門有沒有 MISMATCH」,
+#   `no_witness` 不是 MISMATCH,於是這 28 格一路 GREEN 到發布。
+#
+# 同一批格在 v3 這邊是「④這個類別沒有錨,無法檢查閉合」→ 擋下。
+# **兩條管線對同一件事的判斷相反**:v4 說「驗不到 = 通過」,v3 說「驗不到 = 擋」。
+# 這正是 R0-0 在 `core/closure.py` 修掉的那個 conflation,只是換到了分流這一層。
+#
+# 專案的最高原則(`docs/plan_v4_執行計畫.md` §0)是:
+#   **任何發布出去的數字,都必須有算術證明它對得上資產負債表;
+#     證不了的一律是 null,不准猜。**
+# 依這條原則,那 40 個單位本來就不該在網站上。砍掉 rebuild_v4() 之後它們變成
+# null,**這不是回歸,是把一個一直都在的錯誤停掉**。
+#
+# 要救它們的正確做法是把錨補回來(重跑 reader / 改 prompt,讓 `bs_anchor`
+# 真的讀到),不是放寬分流規則讓 `no_witness` 繼續當 GREEN。
 
 # ── 建置 ────────────────────────────────────────────────────────────────────
 
@@ -194,7 +160,6 @@ def build():
     """回傳 (data, manifest, diff)。`data` 是新的發布 payload;`diff` 是與前一版的差異。"""
     snap, snap_man = load_snapshot()
     verdict, facts_sha, n_cells = rebuild_v3()
-    verdict_v4 = rebuild_v4()
     bmap = fill.basis_map()
 
     data = json.loads(json.dumps(snap))          # 深拷貝,快照本身不動
@@ -222,7 +187,7 @@ def build():
                 out[(b, got[0], got[1])].append((key, vd[key]))
         return out
 
-    by_cell, by_cell_v4 = by_cell_of(verdict), by_cell_of(verdict_v4)
+    by_cell = by_cell_of(verdict)
 
     def pick(cands, basis, src):
         """一格的候選文件 → `(facts_key, verdict, ok, 理由)`。
@@ -251,8 +216,7 @@ def build():
             old = data.get(table_name) or {}
             # 格的宇宙 = 前一版有的 ∪ 這次算得出來的。取聯集是為了讓新抄出來的
             # 期別/銀行能自己長出來,而不是被前一版的鍵列表悄悄擋掉。
-            cells = sorted(set(old) | {c for (b, c, _) in by_cell if b == rep_basis}
-                           | {c for (b, c, _) in by_cell_v4 if b == rep_basis})
+            cells = sorted(set(old) | {c for (b, c, _) in by_cell if b == rep_basis})
             table = {}
             for cell in cells:
                 cur = old.get(cell) or {}
@@ -261,13 +225,6 @@ def build():
                     key, v, ok, why = pick(by_cell.get((rep_basis, cell, cls), []),
                                            basis, "v3")
                     src = "v3"
-                    if not ok:
-                        # v3 沒有這一格(或不合格)才問 v4 —— v3 永遠優先,理由見
-                        # `rebuild_v4()` 檔頭:v4 coverage 遠小於 v3。
-                        key4, v4v, ok4, why4 = pick(
-                            by_cell_v4.get((rep_basis, cell, cls), []), basis, "v4")
-                        if ok4:
-                            ok, why, key, v, src = ok4, why4, key4, v4v, "v4"
                     unit = f"{cell}|{cls}|{table_name}"
                     had = {b: cur.get(f"{cls}_{b}") for b in WIDE_BUCKETS}
 
@@ -331,7 +288,6 @@ def build():
         },
         "counts": {
             "v3": sum(1 for u in units if u["provenance"] == "v3"),
-            "v4": sum(1 for u in units if u["provenance"] == "v4"),
             NONE_SRC: sum(1 for u in units if u["provenance"] == NONE_SRC),
             "changed_units": len(diff),
             "blanked": len(blanked),
@@ -352,8 +308,8 @@ def dump(obj, path):
 
 def summarize(manifest, diff):
     c = manifest["counts"]
-    total = c["v3"] + c["v4"] + c[NONE_SRC]
-    print(f"發布單位 {total}:v3 {c['v3']} / v4 {c['v4']} / 缺 {c[NONE_SRC]}   "
+    total = c["v3"] + c[NONE_SRC]
+    print(f"發布單位 {total}:v3 {c['v3']} / 缺 {c[NONE_SRC]}   "
           f"有變動 {c['changed_units']} 個單位")
     print(f"輸入:facts {manifest['inputs']['facts']['cells']} 格")
     if diff:

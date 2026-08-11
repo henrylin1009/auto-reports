@@ -118,43 +118,40 @@ def is_ratified(doc, cls):
         return cls in json.load(f)
 
 
-def ratify(doc, cls, book, by="user"):
-    """把一格凍結進帳本。**append-only**:已經 ratified 的格拒絕覆寫,要改
-    走 `requeue()` 先撤銷,不准這裡靜靜蓋掉——那等於讓「人工確認過」這件事
-    可以被無聲推翻。"""
-    import datetime
-
-    os.makedirs(LEDGER_DIR, exist_ok=True)
-    path = os.path.join(LEDGER_DIR, f"{doc}.json")
-    data = {}
-    if os.path.exists(path):
-        with open(path, encoding="utf-8") as f:
-            data = json.load(f)
-    if cls in data:
-        raise EditError(
-            f"{doc}|{cls} 已經 ratified過,帳本是 append-only,"
-            f"要改先 requeue() 撤銷,不能直接覆蓋。")
-    data[cls] = {"book": book, "by": by,
-                 "at": datetime.datetime.now().isoformat(timespec="minutes")}
-    with open(path, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=1)
-    return data[cls]
+# ── 沒有 ratify() / requeue() 了 ──────────────────────────────────────────
+# 2026-08-11(`docs/plan_v6_一台機器.md` R0-3)退場。**不要加回來。**
+#
+# 這裡原本有一支 `ratify()`,把一格凍結進 `v4/ledger/`;而 `core/webdata.ratify()`
+# 做同一件事,寫進 `facts/`。**一件事兩個實作,而且落在兩個不同的地方** ——
+# 於是「人確認過了」這個事實會因為你按的是哪一顆按鈕而存到不同的檔案裡,
+# 兩邊互不知道。R0-4 砍掉 `build.rebuild_v4()` 之後,寫進 `v4/ledger/` 的
+# 那一份**完全不影響發布**,那顆按鈕就變成純粹的謊言。
+#
+# 現在只有一個 ratify:`core/webdata.ratify()`,寫 `facts/`、蓋 `_src`、
+# append-only(人工裁示過的格不准被機器無聲覆蓋,見 `test_ratify_guard.py`)。
+# v4 複核頁的「我看過原始頁,照這樣歸檔」改走 `records_of()` → 那一支。
 
 
-def requeue(doc, cls):
-    """撤銷 ratify——人工發現凍結的格其實有錯時的救回口。**顯式操作**,
-    不是 classify() 的副作用。"""
-    path = os.path.join(LEDGER_DIR, f"{doc}.json")
-    if not os.path.exists(path):
-        return False
-    with open(path, encoding="utf-8") as f:
-        data = json.load(f)
-    if cls not in data:
-        return False
-    del data[cls]
-    with open(path, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=1)
-    return True
+def records_of(doc, cls):
+    """v4 的一格 → `facts/` 的 records。取不到回 `[]`。
+
+    抽出來是因為兩個呼叫端要用同一份轉換:`file_green()`(機器自動歸檔)
+    與 `/api/v4/ratify`(人按下去歸檔)。**兩邊不准各自轉一次** ——
+    那正是這個檔案上面那段註解在講的事。
+    """
+    from v4 import adapter
+
+    raw_path = os.path.join(reader.OUT_DIR, f"{doc}.json")
+    if not os.path.exists(raw_path):
+        return []
+    with open(raw_path, encoding="utf-8") as f:
+        parsed = (json.load(f) or {}).get("parsed")
+    if not isinstance(parsed, dict):
+        return []
+    blk = parsed.get(cls)
+    if not isinstance(blk, dict):
+        return []
+    return adapter.to_facts_records(doc, cls, blk, parsed.get("bs_date")) or []
 
 
 def classify(doc):
@@ -301,13 +298,6 @@ def file_green(docs=None, dry_run=False, refresh=False):
         # `classify()` 直接回 `{cls: 分流}`,沒有外層 "cells" —— 那層是
         # `load_all()` 才包上去的。
         info = classify(doc) or {}
-        raw_path = os.path.join(reader.OUT_DIR, f"{doc}.json")
-        parsed = None
-        if os.path.exists(raw_path):
-            with open(raw_path, encoding="utf-8") as f:
-                parsed = (json.load(f) or {}).get("parsed")
-        if not isinstance(parsed, dict):
-            parsed = None
         for cls, c in info.items():
             key = f"{doc}|{cls}"
             if c.get("status") not in ("GREEN", "RATIFIED"):
@@ -316,13 +306,10 @@ def file_green(docs=None, dry_run=False, refresh=False):
             if key in existing and not (refresh and _filed_by_v4(cells_now[key])):
                 skipped.append((key, "facts/ 已有(不覆蓋)"))
                 continue
-            blk = (parsed or {}).get(cls)
-            if not isinstance(blk, dict):
-                skipped.append((key, "raw 讀不到這一格"))
-                continue
-            recs = adapter.to_facts_records(doc, cls, blk, (parsed or {}).get("bs_date"))
+            # 轉換走 `records_of()` —— 跟 `/api/v4/ratify` 同一支,不各自轉一次。
+            recs = records_of(doc, cls)
             if not recs:
-                skipped.append((key, "轉不出 record"))
+                skipped.append((key, "raw 讀不到這一格 / 轉不出 record"))
                 continue
             if dry_run:
                 filed.append(key)

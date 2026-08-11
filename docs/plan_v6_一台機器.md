@@ -263,10 +263,9 @@ cd /Users/henrylin/Desktop/work && git status --short && for t in test_facts tes
 | # | 做什麼 | 驗收 |
 |---|---|---|
 | R0-1 | 網頁「自動抄列」的預設從 gemini 改成 `claude`;`fill_auto` 的 gemini 分支退場 | ✅ **完成(2026-08-11)**。`fill_auto.read_gemini` 刪除、`READERS` 只剩 `claude`/`deepseek`、`server.start_autofill` 與兩個 API 路由的預設改 `claude`、網頁文字改「用你自己的 Claude Code 抄(不需 API key)」、`runCell` 預設改 `claude`。實跑驗證見下方 ⚠️ |
-| R0-2 | 清掉 `facts/` 裡的壞字格 —— 逐格回原始頁核對,不是字串取代 | 待辦裡 `僵` 字歸零;每一格都有 `rulings` 記錄是誰改的 |
-| R0-3 | `v4/ledger.ratify` 退場,只留 `core/webdata.ratify` | `grep -n "def ratify"` 只剩一支;`test_ratify_guard` 綠 |
-| R0-4a | **先重量,再把 A-1 做完**:R0-0 落地後重跑一次基準(0.2 那組 41/11 已作廢),把 `v4/raw/` 裡還在供應發布數字、但沒落進 `facts/` 的單位全部走 `file_green()` / `file_cell()` 歸檔 | 把 `rebuild_v4()` 換成 `lambda: {}` 之後,`build.build()` 的 payload 與換之前**逐字元相同**;manifest 的 `v4` 計數為 0 而 `none` 不增加 |
-| R0-4b | R0-4a 綠了才砍 `rebuild_v4()`,只剩一條讀取路徑 | `build.py --diff` 無差異;`grep -n rebuild_v4 build.py` 無結果 |
+| R0-2 | 清掉 `facts/` 裡的壞字格 —— 逐格回原始頁核對,不是字串取代 | ✅ **完成(`0e3ed22`)**。判準=「替換前 PDF 全文找不到、替換後找得到」:91 個可疑字串裡 **40 筆證明得了 → 更正**(name 10、group 30)、**61 筆證不了 → 不動**(全是 reader 的合法正規化)。壞字歸零;每列 `_src` 帶 by/at/why。順帶修同源假待辦(`_is_stale()`),**待辦 13 → 4** |
+| R0-3 | `v4/ledger.ratify` 退場,只留 `core/webdata.ratify` | ✅ **完成**。`ledger.ratify`/`requeue` 刪除,`/api/v4/ratify` 改走 `webdata.ratify`(寫 `facts/`、蓋 `_src`、append-only),轉換共用新的 `ledger.records_of()`。`grep "def ratify"` 只剩 `core/webdata.py` 一支(`core/ratify.py` 那兩支是規則/推導,不同主題)。server 的自動入帳改叫 `file_green()` —— **機器沒有資格蓋 ratify 的章** |
+| R0-4 | 砍掉 `rebuild_v4()`,只剩一條讀取路徑 | ✅ **完成**。`build.py` 建置段落無 `rebuild_v4`;`provenance` 只剩 `v3`/`none`;`test_build` T6 改成守最高原則的斷言。**但理由跟原本寫的完全不同 —— 見下方 ⚠️** |
 
 > ⚠️ **R0-1 的驗收條件我寫錯了一半,改掉。** 原本寫「`core/llm.py` 一起退場」——
 > 實測後發現做不到,而且不該做:`core/llm.py` 被 `extract_v2.py` 在 module 層 import,
@@ -280,14 +279,41 @@ cd /Users/henrylin/Desktop/work && git status --short && for t in test_facts tes
 > 從 READERS 拿掉 gemini 之後,它會拒絕自己的預設值,不帶 `--reader` 就跑不起來。
 > 已改成 `claude`。**動共用的 registry 要順著 `choices=` 掃一遍呼叫端。**
 
-> **R0-4 的順序不能顛倒。實測(2026-08-11,R0-0 之前):直接砍 `rebuild_v4()`,
-> 41 個發布單位會消失、`wide` 11 格變空。**
-> 所以「零差異」不是砍完之後才驗,是**砍之前用它決定能不能砍**——
-> 它同時是 A-1 是否真的接完的唯一證明。差異不代表可以放寬,代表 A-1 還沒做完。
+> ## ⚠️ R0-4:我原本整個問題設定就是錯的
 >
-> ⚠️ 41/11 這組數字是 R0-0 之前量的。R0-0 讓 5 格從 v3 側新通過,
-> `rebuild_v3()` 的產出就變了 —— **R0-4a 的第一個動作是重量,不是照抄這個數字。**
-> 對著會動的底線量,量了也不算數。
+> 原本的 R0-4a/4b 假設:那些單位「還卡在 `v4/raw` 沒落進 `facts/`」,
+> 所以只要補歸檔,砍掉 `rebuild_v4()` 就會零差異。**實測之後三個假設全錯。**
+>
+> **① 它們早就在 `facts/` 裡了。** 由 v4 供應的 34 格,`facts/` 全部都有。
+> 問題從來不是「沒歸檔」。
+>
+> **② v3 擋下它們是對的,不是缺陷。** 27 格 v3 判不合格,主因是
+> 「④這個類別沒有錨,無法檢查閉合」。
+>
+> **③ v4 之所以放行,是因為它把「驗不到」當成「通過」。**
+> 逐格量 `check_anchor`(合計 == BS 錨):
+>
+> ```
+> 34 格 →  OK 6 格 · no_witness 28 格
+> ```
+>
+> `classify_cell()` 的 GREEN 判準只看硬閘門有沒有 `MISMATCH`,
+> 而 `no_witness` 不是 `MISMATCH` —— 於是**28 格從來沒有對過資產負債表的數字,
+> 一路 GREEN 發布到網站上**。
+>
+> **這正是 0.3b 那個 conflation,換到了分流這一層。**
+> R0-0 在 `core/closure.py` 修掉「沒有錨 vs 對不上」,
+> 而同一個錯誤在 `classify_cell()` 裡以「no_witness vs MISMATCH」的形式活著。
+> 鐵律 9 就是為了這個寫的。
+>
+> **所以「零差異」是一個錯的驗收條件。** 依專案最高原則
+> (證不了的一律是 `null`,不准猜),那 40 個單位本來就不該在網站上。
+> 砍掉 `rebuild_v4()` 讓它們變成 `null`,**不是回歸,是把一個一直都在的錯誤停掉**。
+>
+> 實際結果:`發布單位 456:v3 193 / 缺 263`(砍之前 v3 193 / v4 40 / 缺 223)。
+>
+> 要救那些格的正確做法是**把錨補回來**(重跑 reader / 改 prompt,讓 `bs_anchor`
+> 真的讀到,見 R2 之後),不是放寬分流規則讓 `no_witness` 繼續當 GREEN。
 
 ---
 

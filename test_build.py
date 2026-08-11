@@ -149,7 +149,17 @@ def t2_ineligible_is_null():
     #     與明細表「資產證券化」同額)。少這一條時明細表那列分不到桶,
     #     `wide.view(帳面)` 整個 not ok,兩整格的逐桶帳面被判「文件裡不存在」——
     #     但它就印在明細表的「總額」欄。補上之後那 2 格的帳面回來了。
-    check("已知 130 個單位由有值變 null", len(man["blanked"]) == 130,
+    #   130 → 143(2026-08-11,R0-4):砍掉 `build.rebuild_v4()` 這條讀取路徑。
+    #     +13 全部是原本由 v4 供應、而 v3 判不合格的單位。**這不是退步,是把一個
+    #     一直都在的錯誤停掉**:逐格量過 v4 供應的 34 格,`check_anchor`(合計==BS錨)
+    #     只有 6 格是 OK,**其餘 28 格是 `no_witness`** —— 沒有錨、根本沒驗。
+    #     `classify_cell()` 的 GREEN 只看硬閘門有沒有 MISMATCH,而 `no_witness`
+    #     不是 MISMATCH,於是那些格一路 GREEN 發布到網站上。同一批格在 v3 是
+    #     「④這個類別沒有錨,無法檢查閉合」→ 擋下。**兩條管線對同一件事的判斷相反。**
+    #     依專案最高原則(證不了的一律 null,不准猜),v3 那邊才是對的。
+    #     要救它們的正確做法是把錨補回來(重跑 reader/改 prompt),不是放寬分流。
+    #     詳見 `build.py` 的「為什麼沒有 rebuild_v4()」與 docs/plan_v6_一台機器.md R0-4。
+    check("已知 143 個單位由有值變 null", len(man["blanked"]) == 143,
           f"實測 {len(man['blanked'])} 個")
     for c in man["blanked"]:
         u = prov.get(c["unit"])
@@ -266,44 +276,56 @@ def t5_traceable():
     # 「沒有第四種來路不明的值混進來」。
     # 2026-08-10:v2 保底砍掉,第三種值從 "v2" 換成 `build.NONE_SRC`("none")——
     # 意思也變了:不再是「回退到舊管線」,而是「這格沒有任何合格來源,發布 null」。
-    check(f"provenance 只有 v3 / v4 / {build.NONE_SRC} 三種值",
-          {u["provenance"] for u in man["units"]} <= {"v3", "v4", build.NONE_SRC})
+    # 2026-08-11(R0-4,docs/plan_v6_一台機器.md):v4 這條讀取路徑砍掉,
+    # provenance 回到兩種值。理由不是 coverage,是 v4 把「驗不到」當成「通過」——
+    # 它供應的 34 格裡 28 格的 check_anchor 是 `no_witness`(沒有錨、根本沒驗)。
+    check(f"provenance 只有 v3 / {build.NONE_SRC} 兩種值",
+          {u["provenance"] for u in man["units"]} <= {"v3", build.NONE_SRC})
 
 
-# ── T6 v4 只填 v3 的缺口,不搶 v3 的位置(P1-3) ─────────────────────────────
-def t6_v4_never_outranks_v3():
-    print("\nT6 v3 合格時 v4 不能搶走它的位置(即使 v4 也合格)")
-    verdict_v3, _, _ = build.rebuild_v3()
-    verdict_v4 = build.rebuild_v4()
+# ── T6 發布的數字一定通過了錨閘門(R0-4)────────────────────────────────────
+def t6_published_numbers_passed_the_anchor_gate():
+    """**專案最高原則的執行期斷言**:發布出去的數字都要有算術證明對得上 BS。
+
+    這條取代舊的「v4 不准搶 v3 的位置」——那條假設了 v4 是一個合法的第二來源,
+    而 2026-08-11 實測證明它不是:v4 供應的 34 格裡只有 6 格真的對過錨,
+    其餘 28 格是 `check_anchor: no_witness`(沒有錨,根本沒驗)被 `classify_cell()`
+    當成 GREEN 發布出去的。`rebuild_v4()` 因此砍掉。
+
+    這條要能失敗:把 `results.build()` 裡④的結果忽略掉(讓沒有錨的格也 pass),
+    這裡就會抓到一批 `pass=True 但 anchor is None` 的格被發布。
+    """
+    print("\nT6 發布出去的每一格都通過了④(合計==錨)")
+    verdict, _, _ = build.rebuild_v3()
     _, man, _ = build.build()
-    prov = {u["unit"]: u for u in man["units"]}
+    published = {u["facts_key"] for u in man["units"]
+                 if u["provenance"] == "v3" and u.get("facts_key")}
 
-    both_eligible, wrong = 0, []
-    for key3, v3 in verdict_v3.items():
-        cell3 = _cell_of(key3)
-        if not cell3:
-            continue
-        cell, cls, tables3 = cell3
-        key4 = key3  # 同一份 doc 命名規則,v4 用同一把 key
-        v4v = verdict_v4.get(key4)
-        for basis in build.BASES:
-            ok3, _ = build.eligible(v3, basis, src="v3")
-            ok4, _ = build.eligible(v4v, basis, src="v4")
-            if not (ok3 and ok4):
-                continue
-            both_eligible += 1
-            unit = f"{cell}|{cls}|{tables3[basis]}"
-            if prov.get(unit, {}).get("provenance") != "v3":
-                wrong.append(unit)
-    check("兩邊都合格時 provenance 一律是 v3", not wrong,
-          f"{len(wrong)} 個單位被 v4 搶走" if wrong else f"{both_eligible} 個雙合格單位都對")
-    check("有雙合格的單位可驗(否則這條測試是空的,見 v4/ledger 目前的 coverage)",
-          both_eligible >= 0)  # v4 batch 還沒跑(P1-4),0 也合法——只是這條先天測不到東西
+    no_anchor = [k for k in published
+                 if (verdict.get(k) or {}).get("anchor") is None]
+    check("沒有任何『沒有錨』的格被發布", not no_anchor,
+          f"{len(no_anchor)} 格無錨卻發布了:{sorted(no_anchor)[:5]}"
+          if no_anchor else f"{len(published)} 格全部有錨")
+
+    not_passed = [k for k in published if not (verdict.get(k) or {}).get("pass")]
+    check("沒有任何 pass=False 的格被發布", not not_passed,
+          f"{len(not_passed)} 格:{sorted(not_passed)[:5]}" if not_passed
+          else f"{len(published)} 格全部 pass")
+
+    check("這條測試不是空的(真的有格子在發布)", len(published) > 0,
+          f"{len(published)} 格")
+
+    src = open("build.py", encoding="utf-8").read()
+    body = src.split("# ── 建置")[1]
+    check("build.py 的建置段落裡不存在第二條讀取路徑",
+          "rebuild_v4" not in body,
+          "建置段落乾淨" if "rebuild_v4" not in body else "建置段落裡還有 rebuild_v4")
 
 
 if __name__ == "__main__":
     for fn in (t1_deterministic, t2_ineligible_is_null, t3_v3_adopted,
-               t4_no_stale_verdict, t5_traceable, t6_v4_never_outranks_v3):
+               t4_no_stale_verdict, t5_traceable,
+               t6_published_numbers_passed_the_anchor_gate):
         fn()
-    print("\n" + ("✗ 失敗:" + "; ".join(FAILED) if FAILED else "✔ 五條命題全數通過"))
+    print("\n" + ("✗ 失敗:" + "; ".join(FAILED) if FAILED else "✔ 六條命題全數通過"))
     raise SystemExit(1 if FAILED else 0)

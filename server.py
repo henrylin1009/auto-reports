@@ -128,15 +128,16 @@ def _job_run(limit, reader, cell=None, fetch=None, then_fill=False):
                 ok, info = v4_reader.run_doc(doc_key, model=model_used, force=True)
                 print(f"[v4] 讀取結果: {'OK' if ok else 'FAIL'} - {info}")
                 if ok:
-                    cells = v4_ledger.classify(doc_key)
                     print(f"[v4] {doc_key} Witness 驗證與分流計算完成。")
-                    for c_cls, c_info in (cells or {}).items():
-                        if c_info.get("status") == "GREEN":
-                            try:
-                                v4_ledger.ratify(doc_key, c_cls, c_info["book"], by="v4_auto_green")
-                                print(f"[v4] {doc_key}|{c_cls} Witness 判定 GREEN (無錯,≥2驗證通過) → 自動入帳完成")
-                            except Exception as e:
-                                pass
+                    # GREEN 的格直接歸檔進 `facts/`(A-1 的接縫)。
+                    # **不再呼叫 `ledger.ratify()`** —— 那支 R0-3 已退場,
+                    # 而且「機器自動入帳」本來就不該叫 ratify:ratify 的語意是
+                    # 「人看過原始頁了」,機器沒有資格蓋那個章(`_src` 只給人工出口)。
+                    res = v4_ledger.file_green(docs=[doc_key])
+                    for k in res.get("filed", []):
+                        print(f"[v4] {k} Witness 判定 GREEN → 已歸檔進 facts/")
+                    for k, why in res.get("skipped", []):
+                        print(f"[v4] {k} 未歸檔:{why}")
             else:
                 fill_auto.run_queue(reader, limit, stop_check=lambda: _JOB["cancel"])
         _JOB["done"] = True
@@ -456,15 +457,19 @@ class Handler(SimpleHTTPRequestHandler):
             elif route == "/api/cellmeta/clear":
                 self._json(webdata.clear_cellmeta(b["doc"], b["cls"], b["field"]))
             elif route == "/api/v4/ratify":
+                # **只有一個 ratify**(R0-3):`webdata.ratify` 寫 `facts/`、蓋 `_src`、
+                # append-only。v4 這邊只負責把 raw 轉成 records,不自己存一份。
                 from v4 import ledger
-                cells = ledger.classify(b["doc"])
-                if cells is None or b["cls"] not in cells:
-                    raise PageError(f"{b['doc']}|{b['cls']} 沒有可 ratify 的 book。")
-                self._json(ledger.ratify(b["doc"], b["cls"], cells[b["cls"]]["book"],
+                recs = ledger.records_of(b["doc"], b["cls"])
+                if not recs:
+                    raise PageError(f"{b['doc']}|{b['cls']} 沒有可歸檔的資料"
+                                    f"(v4/raw 讀不到這一格)。")
+                self._json(webdata.ratify(b["doc"], b["cls"], recs,
+                                          why=b.get("reason"),
                                           by=b.get("by") or "user"))
             elif route == "/api/v4/requeue":
-                from v4 import ledger
-                self._json({"ok": ledger.requeue(b["doc"], b["cls"])})
+                # 撤銷改走既有的單一出口(清掉 work/ 的標記檔),不再動 v4/ledger。
+                self._json(webdata.requeue(f"{b['doc']}|{b['cls']}"))
             elif route == "/api/v4/run":
                 # 背景跑 reader。共用 _JOB 槽(同一時間只能跑一個之工)。
                 doc_run = b.get("doc", "")

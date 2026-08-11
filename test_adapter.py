@@ -132,9 +132,9 @@ def a8_basis_is_cost_when_valuation_adj_present():
 
 
 def a9_cost_basis_must_not_publish_as_wide():
-    """T8 的**發布端**對照:口徑是成本時,`build.rebuild_v4()` 一定要把七桶
-    放進 wide_cost 而不是 wide。分開驗是因為 adapter 判對了、build 用錯欄位
-    的話,錯的數字照樣會上網站(這正是修這個 bug 之前的實況)。
+    """T8 的**發布端**對照:口徑是成本時,發布路徑一定要把七桶放進 wide_cost
+    而不是 wide。分開驗是因為 adapter 判對了、build 用錯欄位的話,
+    錯的數字照樣會上網站(這正是修這個 bug 之前的實況)。
 
     ⚠️ **判「這格是成本」時不准呼叫 `adapter.aggregate().basis`** —— 那樣寫的話
     adapter 一壞,這條測試會跟著用同一個壞掉的判斷,永遠自我一致、永遠綠。
@@ -144,34 +144,46 @@ def a9_cost_basis_must_not_publish_as_wide():
     `債務工具-評價調整`(段落黏進名字)判 False,跟真正的分桶路徑相反,
     測試自己也跟著漏掉 `202504_5843_AI3|OCI`。獨立不等於可以用比較弱的判準。
     這裡用 `adapter.bucket_row()`(分桶真正走的那支原語,與 basis 的計算分開)。
-    """
-    import json
-    import os
 
+    ⚠️ 2026-08-11(R0-4):`build.rebuild_v4()` 已刪除,這條改成驗**真正的發布路徑**
+    (`rebuild_v3()`,唯一的一條)。要守的不變量一個字都沒變,只是換了受檢對象 ——
+    v4 那條路徑不存在了,再驗它就是驗一個不會影響任何人的東西。
+    """
     from config import VALUATION_ADJ
 
     import build
-    v4v = build.rebuild_v4()
+    import facts as facts_mod
+
+    verdict, _, _ = build.rebuild_v3()
+    cells = facts_mod.load()
     wrong = []
-    for key, v in v4v.items():
-        if not v["pass"]:
+    for key, v in verdict.items():
+        if not v["pass"] or v.get("wide") is None:
             continue
-        doc, cls = key.split("|")
-        p = os.path.join("v4", "raw", f"{doc}.json")
-        if not os.path.exists(p):
+        recs = cells.get(key) or []
+        if not recs:
             continue
-        book = ((json.load(open(p, encoding="utf-8")).get("parsed") or {})
-                .get(cls) or {}).get("book")
-        if not isinstance(book, dict) or book.get("rows") is None:
-            continue
-        # 獨立判定:原始 rows 裡有沒有評價調整/備抵損失列
-        is_cost = any(adapter.bucket_row({"name": r.get("name") or "",
-                                           "group": r.get("group") or ""}) == VALUATION_ADJ
-                      for r in book["rows"] if isinstance(r, dict))
-        if is_cost and v["wide"] is not None:
+
+        # 獨立判定「這份 record 是成本口徑」:它的 rows 裡有評價調整/備抵損失列。
+        # 走 `adapter.bucket_row()`(分桶真正的原語),不走 adapter 算 basis 的那支,
+        # 也不走比較弱的 `buckets.is_adj` —— 理由見上面兩段。
+        def rec_is_cost(rec):
+            return any(
+                adapter.bucket_row({"name": r.get("name") or "",
+                                    "group": r.get("group") or ""}) == VALUATION_ADJ
+                for r in (rec.get("rows") or []) if isinstance(r, dict))
+
+        # ⚠️ 判準是「**每一份**來源都是成本」,不是「有任何一份是成本」。
+        # 一格常常同時有附註(成本口徑,含評價調整列)與明細表(帳面金額欄),
+        # `wide.pick(帳面)` 會正確地挑後者 —— 那種格子有 wide 是對的。
+        # 第一版寫成 any(),誤報 30 格(例:202004_5843_AI3|AC,附註 p34 成本
+        # + 明細表 p154 帳面金額)。這條對應 `wide.py`「所有來源逐項皆為成本口徑」。
+        if all(rec_is_cost(rec) for rec in recs):
             wrong.append(key)
     check("T9 沒有任何成本口徑的格把七桶寫進 wide(帳面)", not wrong,
           f"{len(wrong)} 格寫錯欄:{wrong[:3]}" if wrong else "全部走 wide_cost")
+    check("T9 這條測試不是空的(真的有格在發布 wide)",
+          any(v["pass"] and v.get("wide") is not None for v in verdict.values()))
 
 
 def a10_hard_gates_vs_hints():

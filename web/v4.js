@@ -81,15 +81,20 @@ async function viewQueue() {
   const el = $(`<div>
     <h1>複核佇列</h1>
     <div class="stats">
-      <div class="stat red"><b>${q.red.length}</b><span>RED · 硬閘門不過,擋著不發布</span></div>
-      <div class="stat"><b style="color:var(--warn)">${(q.hint||[]).length}</b><span>提示未過 · 會發布,請對圖看一眼</span></div>
+      <div class="stat red"><b>${q.red.length}</b><span>RED · 硬閘門不過</span></div>
+      <div class="stat"><b style="color:var(--warn)">${(q.hint||[]).length}</b><span>提示未過 · 請對圖看一眼</span></div>
       <div class="stat grey"><b>${q.grey.length}</b><span>GREY · 沒有資料</span></div>
     </div>
+    <p class="hint" style="margin:8px 0 0">⚠️ 2026-08-11 起，<b>這一頁的分流結果不再直接決定發布</b>。
+    發布只認 <code>facts/</code>：一格要走「歸檔進 facts/ → 通過④(合計==BS錨) → build」才會上網站。
+    原本 v4 這條路徑供應的 34 格裡，只有 6 格真的對過錨、其餘 28 格是
+    <code>check_anchor: no_witness</code>（沒有錨、根本沒驗）被當成 GREEN 發出去的，
+    因此整條路徑已移除（<code>docs/plan_v6_一台機器.md</code> R0-4）。</p>
     ${q.red.length ? `<h2 style="font-size:13px;margin:16px 0 8px">RED —— 按最大差額排序</h2>
       <table class="q" data-red></table>` : ""}
-    ${(q.hint||[]).length ? `<h2 style="font-size:13px;margin:16px 0 4px">提示未過 —— 已發布,人工複核</h2>
-      <p class="hint" style="margin:0 0 8px">抄錯數字／引錯頁／對不上 BS 這幾類,人翻到原始頁一眼就看得出來,
-      所以不擋發布(2026-08-03 裁示)。但**一定要有人看過** —— 這份清單就是那份工作清單。</p>
+    ${(q.hint||[]).length ? `<h2 style="font-size:13px;margin:16px 0 4px">提示未過 —— 人工複核</h2>
+      <p class="hint" style="margin:0 0 8px">抄錯數字／引錯頁／對不上 BS 這幾類,人翻到原始頁一眼就看得出來 ——
+      這份清單就是那份工作清單。看過沒問題就按「我看過原始頁，照這樣歸檔」寫進 <code>facts/</code>。</p>
       <table class="q" data-hint></table>` : ""}
     ${q.grey.length ? `<h2 style="font-size:13px;margin:16px 0 8px">GREY —— 沒有 book,無從驗起</h2>
       <table class="q" data-grey></table>` : ""}
@@ -188,9 +193,12 @@ async function viewCell(doc, cls) {
         <div class="card" style="margin-top:12px">
           <b>Witness(程式重算,非模型自報)</b>
           <div class="wl" data-witnesses></div>
-          ${c.status !== "RATIFIED" ? `<button class="pri" data-ratify>✓ Ratify(凍結這格)</button>` : `
+          ${c.status !== "RATIFIED" ? `
+            <button class="pri" data-ratify>✓ 我看過原始頁，照這樣歸檔</button>
+            <div class="hint">歸檔會寫進 <code>facts/</code> 並蓋上你的署名（<code>_src</code>）——
+              跟資料頁那顆按鈕是同一條路徑、同一個事實庫。</div>` : `
             <div class="hint">已於 ${esc(c.ratified_at)} 由 ${esc(c.ratified_by)} ratify。</div>
-            <button data-requeue>撤銷 ratify</button>`}
+            <button data-requeue>退回待抄佇列</button>`}
         </div>
         ${c.cost ? `<div class="card" style="margin-top:12px">
           <b>成本口徑</b>
@@ -229,12 +237,13 @@ async function viewCell(doc, cls) {
 
   const rb = el.querySelector("[data-ratify]");
   if (rb) rb.onclick = async () => {
-    try { await post("ratify", {doc, cls}); route(); }
+    // 走 /api/v4/ratify → `webdata.ratify()`(唯一的 ratify,寫 facts/)。
+    try { await post("ratify", {doc, cls, reason: "v4 複核頁人工確認歸檔"}); route(); }
     catch (e) { alert(e.message); }
   };
   const rq = el.querySelector("[data-requeue]");
   if (rq) rq.onclick = async () => {
-    if (!confirm("撤銷 ratify?這格會回到複核佇列重新分流。")) return;
+    if (!confirm("退回待抄佇列?這格會清掉卡住的標記,重新排隊。")) return;
     await post("requeue", {doc, cls}); route();
   };
 
