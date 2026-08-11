@@ -381,9 +381,18 @@ def cmd_submit(path):
         for r in recs:
             # 稽核欄位,不是事實 —— wide / buckets / verify 一律不准讀它(facts.py 已把
             # 它列為已知選填欄位,不會被 T1 的「未知欄位」檢查擋下來)。
-            r["_by"] = {"at": _now(), "retries": retries, "level": level, "via": "claude-code"}
-        cells[key] = recs
-        facts.save(cells)
+            # `via`/`at` 由 `file_cell()` 補上,這裡只放它不知道的 retries/level。
+            r["_by"] = {"retries": retries, "level": level}
+        # **走 `webdata.file_cell()`,不自己 `facts.save()`。** 那是機器寫進事實庫的
+        # 唯一一道門,帶著 append-only 保護:人工裁示過的格(帶 `_src`)機器不准覆蓋。
+        # 上面那份快照留著 —— 快照是「手滑救回」,守衛是「根本不讓它發生」,兩件事。
+        # (webdata 在模組層 import fill,所以這裡只能區域 import,不能提到檔頭。)
+        from core import webdata as _webdata
+        try:
+            _webdata.file_cell(doc, cls, recs, via="claude-code")
+        except _webdata.EditError as e:
+            print(f"REJECT    {e}")
+            return
         os.remove(PENDING)
         print(f"PASS      已歸檔進 facts/{doc}.json({cls})。")
         print("下一步:python3 fill.py next")
@@ -456,12 +465,16 @@ def cmd_revalidate():
         ok, reason, derived, hard = _attempt(
             doc, cls, loc, recs, log=lambda s: print(f"  {key}{s}"))
         if ok:
-            cells = facts.load()
             for r in derived:
-                r["_by"] = {"at": _now(), "retries": data.get("level", 0),
-                            "level": data.get("level", 0), "via": "revalidate"}
-            cells[key] = derived
-            facts.save(cells)
+                r["_by"] = {"retries": data.get("level", 0),
+                            "level": data.get("level", 0)}
+            from core import webdata as _webdata      # 同上,循環 import
+            try:
+                _webdata.file_cell(doc, cls, derived, via="revalidate")
+            except _webdata.EditError as e:
+                n_stay += 1
+                print(f"SKIP      {key} {e}")
+                continue
             os.remove(path)
             n_pass += 1
             print(f"PASS      {key} 重驗通過,已歸檔進 facts/{doc}.json({cls})。")

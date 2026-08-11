@@ -433,9 +433,14 @@ def file_cell(doc, cls, records, via, force=False, facts_dir=None):
     `via` 記進 `_by`,是稽核欄位(`facts.py` 的 OPTIONAL_REC),
     `wide`/`buckets`/`verify` 一律不准讀它。
 
-    ⚠️ **`fill.py` 還沒改走這道門**(它自己 `facts.save()`,見 fill.py:386/464)。
-    它有另一種保護 —— 覆蓋前先寫快照到 `work/history/` —— 但不會擋。
-    兩種哲學並存是待辦,不是設計。
+    機器寫進 `facts/` 的路現在只有這一條:`fill.cmd_submit`(via=`claude-code`)、
+    `fill` 的重驗迴圈(via=`revalidate`)、v4 的歸檔(via=`v4/reader`)全走這裡。
+    `fill.py` 原本覆蓋前寫快照到 `work/history/` 的保護**留著** ——
+    快照是「手滑救回」,守衛是「根本不讓它發生」,兩件不同的事。
+
+    ⚠️ **`edit_row()` 刻意不受這道守衛管。** 它是人改自己的某一列、自己蓋
+    `_src`;擋下去等於人沒辦法修正自己的裁示。守衛的語意是
+    **「機器不准無聲蓋掉人工」**,不是「人不准改自己的東西」。
     """
     key = f"{doc}|{cls}"
     recs = json.loads(json.dumps(records))
