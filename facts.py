@@ -50,6 +50,30 @@ def save(cells, facts_dir=None):
                   ensure_ascii=False, indent=1, sort_keys=True)
 
 
+def remove(key, facts_dir=None):
+    """刪掉一格,回傳有沒有刪到。
+
+    **為什麼不能只做 `del cells[key]; save(cells)`**:`save()` 只寫 `cells` 裡
+    還在的 doc,一份 doc 的格**全部**被刪光時,舊檔就留在磁碟上,下次 `load()`
+    又整份讀回來 —— 刪除靜靜失效。實測於 `core.webdata.revoke()`
+    (2026-08-10):撤銷後該格仍在事實庫裡。
+
+    檔案佈局的知識留在本檔,不外洩給呼叫端自己去 unlink。
+    """
+    d = facts_dir or DIR
+    cells = load(facts_dir)
+    if key not in cells:
+        return False
+    doc = key.split("|")[0]
+    del cells[key]
+    if not any(k.split("|")[0] == doc for k in cells):
+        p = f"{d}/{doc}.json"
+        if os.path.exists(p):
+            os.remove(p)                 # 這份 doc 一格不剩 → 連檔一起收掉
+    save(cells, facts_dir)
+    return True
+
+
 def validate(cells):
     """回傳問題清單。空 list = 通過。**不修資料,只報告。**"""
     problems = []

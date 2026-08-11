@@ -389,7 +389,41 @@ def edit_row(doc, cls, record_index, row_index, row, why, by=None, today=None,
                                       "problems": {k: v for k, v in res.items() if v}}}
 
 
-def ratify(doc, cls, records, why=None, by=None, today=None, facts_dir=None):
+def human_ratified(recs):
+    """這格**已經被人工裁示過**了嗎 —— 判準是任何一列帶 `_src`。
+
+    `_src` 只有 `ratify()`/`edit_row()` 這些人工出口會蓋(見 `facts.py`
+    OPTIONAL_ROW 的說明),機器抄列的路徑一律不蓋。所以它就是「有人動過」
+    的唯一標記,不需要另外發明一個狀態欄位。
+    """
+    return any("_src" in row
+               for rec in (recs or [])
+               for row in (rec.get("rows") or []))
+
+
+def revoke(doc, cls, why=None, by=None, facts_dir=None):
+    """撤銷一格的人工裁示 —— **顯式操作**,不是任何動作的副作用。
+
+    語意照搬 `v4/ledger.requeue()`:把該格移出事實庫,讓它回到「還沒抄」的
+    狀態,之後機器或人都可以重新填。`facts/` 全部在 git 裡(58 檔),所以
+    這個移除是可還原的,git log 就是撤銷的稽核軌跡。
+
+    為什麼要有這支:`ratify()` 現在拒絕覆蓋人工裁示過的格(2026-08-10 裁示,
+    選項 1)。沒有撤銷口的話,人一旦裁示錯就永遠改不回來 —— 那不是保護,
+    是把自己鎖在門外。
+    """
+    key = f"{doc}|{cls}"
+    cells = facts_mod.load(facts_dir)
+    if key not in cells:
+        return {"revoked": False, "reason": f"{key} 不在事實庫裡"}
+    was_human = human_ratified(cells[key])
+    facts_mod.remove(key, facts_dir)     # 不能只 del + save,見 facts.remove()
+    return {"revoked": True, "was_human_ratified": was_human,
+            "why": (why or "").strip() or None, "by": by or "henrylin"}
+
+
+def ratify(doc, cls, records, why=None, by=None, today=None, facts_dir=None,
+           force=False):
     """人工裁示放行一格被拒收的資料(`plan_web_usable.md` P4)。
 
     **為什麼需要這支**:`fill.cmd_submit` 的六道全過閘門保護了機器抄的品質,
@@ -462,6 +496,11 @@ def ratify(doc, cls, records, why=None, by=None, today=None, facts_dir=None):
         raise EditError("格式不合規,沒有寫入:\n" + "\n".join(problems))
 
     cells = facts_mod.load(facts_dir)
+    if human_ratified(cells.get(key)) and not force:
+        raise EditError(
+            f"{key} 已經人工裁示過(帶 `_src` 標記),不能直接覆蓋。\n"
+            f"  要改請先撤銷:`revoke({doc!r}, {cls!r}, why=...)`,再重新裁示。\n"
+            f"  這條是刻意的 —— 見 `human_ratified()` 的說明。")
     cells[key] = recs
     facts_mod.save(cells, facts_dir)
 
