@@ -422,6 +422,43 @@ def revoke(doc, cls, why=None, by=None, facts_dir=None):
             "why": (why or "").strip() or None, "by": by or "henrylin"}
 
 
+def file_cell(doc, cls, records, via, force=False, facts_dir=None):
+    """**機器**把一格寫進 `facts/`。人工的入口是 `ratify()`,兩者的差別只有兩點:
+
+      · 這支**不蓋 `_src`** —— 那是「有人動過」的標記,機器不准自稱人工。
+        蓋了的話這格會把自己標成人工裁示過,反而擋住之後所有機器更新。
+      · 這支**照樣受 append-only 保護** —— 人工裁示過的格,機器不准覆蓋。
+        那正是 2026-08-10 選項 1 要防的事:人確認過的東西被機器重跑蓋掉。
+
+    `via` 記進 `_by`,是稽核欄位(`facts.py` 的 OPTIONAL_REC),
+    `wide`/`buckets`/`verify` 一律不准讀它。
+
+    ⚠️ **`fill.py` 還沒改走這道門**(它自己 `facts.save()`,見 fill.py:386/464)。
+    它有另一種保護 —— 覆蓋前先寫快照到 `work/history/` —— 但不會擋。
+    兩種哲學並存是待辦,不是設計。
+    """
+    key = f"{doc}|{cls}"
+    recs = json.loads(json.dumps(records))
+    stamp = {"via": via, "at": datetime.datetime.now().isoformat(timespec="minutes")}
+    for rec in recs:
+        rec.setdefault("doc", doc)
+        rec.setdefault("class", cls)
+        rec["_by"] = dict(rec.get("_by") or {}, **stamp)
+
+    problems = facts_mod.validate({key: recs})
+    if problems:
+        raise EditError("格式不合規,沒有寫入:\n" + "\n".join(problems))
+
+    cells = facts_mod.load(facts_dir)
+    if human_ratified(cells.get(key)) and not force:
+        raise EditError(
+            f"{key} 已經人工裁示過(帶 `_src` 標記),機器不准覆蓋。\n"
+            f"  要讓機器重填請先撤銷:`revoke({doc!r}, {cls!r}, why=...)`。")
+    cells[key] = recs
+    facts_mod.save(cells, facts_dir)
+    return {"saved": True, "key": key, "via": via, "records": len(recs)}
+
+
 def ratify(doc, cls, records, why=None, by=None, today=None, facts_dir=None,
            force=False):
     """人工裁示放行一格被拒收的資料(`plan_web_usable.md` P4)。

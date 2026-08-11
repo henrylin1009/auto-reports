@@ -133,6 +133,7 @@ def main():
             eq(f"{doc} 格式檢查通過", facts_mod.validate(cells), [])
 
     _test_subtotal_rows_dropped()
+    _test_file_cell_roundtrip()
     print(f"  掃過 {docs} 份 v4/raw,驗到 {cost_seen} 份成本 record")
     eq(f"驗到的成本 record 不得少於 {COST_SEEN_MIN}(否則成本斷言是空轉)",
        cost_seen >= COST_SEEN_MIN, True)
@@ -157,6 +158,52 @@ def _test_subtotal_rows_dropped():
     recs = adapter.to_facts_records("X_AI3", "AC", blk, "113/12/31")
     names = [r["name"] for rec in recs for r in rec["rows"]]
     eq("合計/小計列不進 facts record", names, ["政府公債", "公司債"])
+
+
+def _test_file_cell_roundtrip():
+    """端到端:`v4/raw` → `to_facts_records()` → `file_cell()` → `facts/` → 讀得回來。
+
+    這是 A-1 那條接縫**真的接上了**的證據 —— 前面幾條只驗轉換結果,
+    這條驗它進得了事實庫、讀得回來、而且身分正確。
+
+    兩條身分斷言不可省:
+      · 機器寫的不准帶 `_src`(那是人工標記)—— 帶了會把自己標成人工裁示過,
+        反而擋住之後所有機器更新
+      · 人工裁示過的格,機器不准覆蓋(2026-08-10 選項 1)
+    """
+    import shutil
+    import tempfile
+    from core import webdata
+
+    raw = json.load(open("v4/raw/202502_5836_AI3.json", encoding="utf-8"))
+    doc, parsed = raw["doc"], raw["parsed"]
+    ws = tempfile.mkdtemp(prefix="fc_")
+    try:
+        for cls in ("Trading", "OCI", "AC"):
+            recs = adapter.to_facts_records(doc, cls, parsed[cls], parsed.get("bs_date"))
+            webdata.file_cell(doc, cls, recs, via="v4/reader", facts_dir=ws)
+        back = facts_mod.load(ws)
+        eq("E1 三格都進得了事實庫", len(back), 3)
+        eq("E2 機器寫的不帶 _src",
+           any("_src" in row for recs in back.values()
+               for rec in recs for row in rec["rows"]), False)
+        eq("E3 _by.via 標成 v4/reader",
+           {rec["_by"]["via"] for recs in back.values() for rec in recs}, {"v4/reader"})
+
+        key = f"{doc}|OCI"
+        cells = facts_mod.load(ws)
+        cells[key][0]["rows"][0]["_src"] = {"by": "henrylin", "at": "now"}
+        facts_mod.save(cells, ws)
+        try:
+            webdata.file_cell(doc, "OCI",
+                              adapter.to_facts_records(doc, "OCI", parsed["OCI"],
+                                                       parsed.get("bs_date")),
+                              via="v4/reader", facts_dir=ws)
+            eq("E4 機器覆蓋人工裁示過的格必須被擋", "沒擋", "要擋")
+        except webdata.EditError:
+            eq("E4 機器覆蓋人工裁示過的格被擋下", True, True)
+    finally:
+        shutil.rmtree(ws, ignore_errors=True)
 
 
 if __name__ == "__main__":
