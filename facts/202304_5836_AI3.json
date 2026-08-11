@@ -148,11 +148,12 @@
  "202304_5836_AI3|OCI": [
   {
    "_by": {
-    "at": "2026-08-11T09:54",
+    "at": "2026-08-11T10:22",
     "basis_side": "book",
     "model": "claude",
     "via": "v4/reader"
    },
+   "bs_anchor": 161093279,
    "class": "OCI",
    "doc": "202304_5836_AI3",
    "printed_total": 161093279,
@@ -216,7 +217,7 @@
   },
   {
    "_by": {
-    "at": "2026-08-11T09:54",
+    "at": "2026-08-11T10:22",
     "basis_side": "cost",
     "model": "claude",
     "via": "v4/reader"

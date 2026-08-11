@@ -309,11 +309,13 @@ def to_facts_records(doc, cls, parsed_cls, bs_date, model=None, at=None):
         return rec
 
     out = []
+    book_rec = None
     book = (parsed_cls or {}).get("book") or {}
     if book.get("rows"):
         r = _rec(book, _date_col(bs_date), "附註", "book",
                  book.get("printed_subtotal"))
         if r:
+            book_rec = r
             out.append(r)
 
     cost = (parsed_cls or {}).get("cost") or {}
@@ -321,4 +323,16 @@ def to_facts_records(doc, cls, parsed_cls, bs_date, model=None, at=None):
         r = _rec(cost, _COST_COL, "明細表", "cost", cost.get("total"))
         if r:
             out.append(r)
+
+    # **錨跟著資料走。** 抽取器整份讀過 PDF,BS 上那一行它當場就看到了
+    # (`witness.check_anchor` 用的就是這個值);不帶進 facts/ 的話,下游的
+    # ④(合計==錨)只能叫 `locate.locate(pdf)` 重新去找,而那把尺在 31/91 份
+    # 文件上一個錨都讀不到 —— 那批格因此全被判「這個類別沒有錨,無法檢查閉合」
+    # 而拒收。理由見 `facts.OPTIONAL_REC` 的 `bs_anchor` 註解。
+    #
+    # **只掛在 book 那份 record 上。** 錨是 BS 的帳面金額,拿去比成本明細表的
+    # 合計沒有意義(那是兩個口徑)。`closure.build()` 也只驗根,不逐份驗。
+    anchor = book.get("bs_anchor")
+    if book_rec is not None and not isinstance(anchor, bool) and isinstance(anchor, int):
+        book_rec["bs_anchor"] = anchor
     return out

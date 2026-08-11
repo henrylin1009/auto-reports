@@ -32,12 +32,23 @@ from core import closure
 OUT = "results"
 
 
+def anchor_of(recs, loc):
+    """這一格要拿去驗④的錨(仟元)。回 `(值, 不一致與否)`。
+
+    薄殼:實際邏輯在 `core.closure.merge_anchor()`,`core/reconcile.py`
+    (讀 `anchors/` 快取,零 PDF)共用同一支,兩邊不准各自抄一份
+    ——不然 E2 等價閘門(`test_e2_equiv.py`)會憑空冒出差異。
+    """
+    return closure.merge_anchor(recs, loc.anchors.get(recs[0]["class"]))
+
+
 def build(cells):
     """{格: recs} → (verdict, audit)。rows 是 facts/,不是這裡的產物。"""
     verdict, audit = {}, {}
     for key, recs in cells.items():
         loc = locate.locate(f"pdf_cache/{recs[0]['doc']}.pdf")
-        ok, checks = transcribe.verify(recs, loc)
+        anchor, anchor_mismatch = anchor_of(recs, loc)
+        ok, checks = transcribe.verify(recs, loc, anchor=anchor)
         # `wide.py` 認的是單根單份的形狀,章節模式的母表/子附註要先攤平
         # (`core/reconcile.py:verdict_of` 同一段理由——這裡是它的 E2 對照組,
         # 必須逐字同一種攤平方式,不然等價閘門會憑空冒出差異)。
@@ -55,7 +66,10 @@ def build(cells):
             "wide_cost": views["成本"].book if ok and views["成本"].ok else None,
             "side": {b: views["帳面"].side.get(b) for b in wide.SIDE} if ok else None,
             "others": views["帳面"].others if ok else [],
-            "anchor": loc.anchors.get(recs[0]["class"]),
+            # 報 ④ 實際拿去驗的那個錨,不是 locate 猜到的那個 ——
+            # 兩者在「只有自帶錨」的格子上不同(locate 那邊是 None),
+            # 之前這裡報的是 locate 那個,下游看到的跟閘門實際用的不一致。
+            "anchor": anchor,
         }
         audit[key] = {
             "sources": [{"page": r["source_page"], "kind": r.get("source_kind"),
@@ -63,6 +77,9 @@ def build(cells):
                         for r in recs],
             "checks": {k: (v if v else "通過") for k, v in checks.items()},
             "pass": ok,
+            # 「查無可查」與「兩邊打架」都會讓 anchor_of() 回 None ——
+            # 這個欄位讓兩者在 audit 裡分得開,不塌成同一種可觀察狀態。
+            "anchor_mismatch": anchor_mismatch,
             # 兩個口徑各自為什麼沒有值 —— 這是最常被問的問題,先答在這裡
             "basis_gap": {b: v.reason for b, v in views.items() if v.book is None},
             "unknown": [{"name": n, "amount": a, "why": w}

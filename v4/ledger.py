@@ -260,7 +260,15 @@ def review_queue():
     return {"red": red, "grey": grey, "hint": hint}
 
 
-def file_green(docs=None, dry_run=False):
+def _filed_by_v4(recs):
+    """這格現在的內容是不是 v4 自己寫進去的(而不是 v3 抄的、也不是人改的)。
+    判準只看 `_by.via`,不猜 —— 人改過的列帶 `_src`,而 `file_cell()` 本身
+    還有 append-only 守衛擋人工裁示過的格,這裡不重複那道判斷。"""
+    return bool(recs) and all(
+        (r.get("_by") or {}).get("via") == "v4/reader" for r in recs)
+
+
+def file_green(docs=None, dry_run=False, refresh=False):
     """把分流為 **GREEN / RATIFIED** 的格歸檔進 `facts/`。
 
     這是 A-1 接縫的**使用端**(docs/plan_工具化.md 階段 A):在此之前 v4 的資料
@@ -276,12 +284,17 @@ def file_green(docs=None, dry_run=False):
     抄好的內容換成 v4 的,那不是合併是取代。
 
     人工裁示過的格由 `file_cell()` 自己擋(append-only),這裡不重複判斷。
+
+    `refresh=True` 時,**`facts/` 裡已經是 v4 自己寫的那些格會重新寫一次** ——
+    給的是 adapter 改版後的新形狀(例如補上 `bs_anchor`)。v3 抄的格、人改過的
+    格一律不碰:重寫自己寫過的東西是更新,重寫別人寫的東西是取代。
     """
     import facts as facts_mod
     from core import webdata
     from v4 import adapter
 
-    existing = set(facts_mod.load())
+    cells_now = facts_mod.load()
+    existing = set(cells_now)
     targets = docs if docs is not None else [e["doc"] for e in load_all()]
     filed, skipped, blocked = [], [], []
     for doc in targets:
@@ -300,7 +313,7 @@ def file_green(docs=None, dry_run=False):
             if c.get("status") not in ("GREEN", "RATIFIED"):
                 skipped.append((key, c.get("status")))
                 continue
-            if key in existing:
+            if key in existing and not (refresh and _filed_by_v4(cells_now[key])):
                 skipped.append((key, "facts/ 已有(不覆蓋)"))
                 continue
             blk = (parsed or {}).get(cls)

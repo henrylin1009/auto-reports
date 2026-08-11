@@ -33,8 +33,10 @@ def verdict_of(cell_key, recs, anchors_mapping):
     逐欄照抄 `results.build()` 現在算的東西,一個欄位都不准加減、不准改名 ——
     這是 E2 等價閘門要比對的內容。
     """
+    fallback = anchors_mapping.get(recs[0]["class"])
+    anchor, anchor_mismatch = closure.merge_anchor(recs, fallback)
     anchors = _Anchors(anchors_mapping)
-    ok, checks = transcribe.verify(recs, anchors)
+    ok, checks = transcribe.verify(recs, anchors, anchor=anchor)
     # `wide.py` 心智模型是「一份 record 就是一整張表」,不認章節模式的母表/子附註
     # 樹狀結構 —— 2026-07-31 起先用 `core.closure.flatten()` 把樹攤平成它認得的
     # 單根單份形狀再交給它。攤不平(ok=False)就不必攤,views 本來就全部被
@@ -42,7 +44,7 @@ def verdict_of(cell_key, recs, anchors_mapping):
     # 裡了,不必在這裡重複處理。
     flat = recs
     if ok:
-        flat, flat_err = closure.flatten(recs, anchors_mapping.get(recs[0]["class"]))
+        flat, flat_err = closure.flatten(recs, fallback)
         if flat_err:
             ok, flat = False, recs
     views = wide.cell(flat)
@@ -52,13 +54,14 @@ def verdict_of(cell_key, recs, anchors_mapping):
         "wide_cost": views["成本"].book if ok and views["成本"].ok else None,
         "side": {b: views["帳面"].side.get(b) for b in wide.SIDE} if ok else None,
         "others": views["帳面"].others if ok else [],
-        "anchor": anchors_mapping.get(recs[0]["class"]),
+        "anchor": anchor,
     }, {
         "sources": [{"page": r["source_page"], "kind": r.get("source_kind"),
                      "rows": len(r["rows"]), "basis": __import__("buckets").basis_of(r)}
                     for r in recs],
         "checks": {k: (v if v else "通過") for k, v in checks.items()},
         "pass": ok,
+        "anchor_mismatch": anchor_mismatch,
         "basis_gap": {b: v.reason for b, v in views.items() if v.book is None},
         "unknown": [{"name": n, "amount": a, "why": w}
                      for v in views.values() for n, a, w in v.unknown],

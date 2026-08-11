@@ -2,11 +2,12 @@
  "202004_5847_AI3|OCI": [
   {
    "_by": {
-    "at": "2026-08-11T09:54",
+    "at": "2026-08-11T10:22",
     "basis_side": "book",
     "model": "claude",
     "via": "v4/reader"
    },
+   "bs_anchor": 249639113,
    "class": "OCI",
    "doc": "202004_5847_AI3",
    "printed_total": 249639113,
@@ -70,7 +71,7 @@
   },
   {
    "_by": {
-    "at": "2026-08-11T09:54",
+    "at": "2026-08-11T10:22",
     "basis_side": "cost",
     "model": "claude",
     "via": "v4/reader"
@@ -127,11 +128,12 @@
  "202004_5847_AI3|Trading": [
   {
    "_by": {
-    "at": "2026-08-11T09:54",
+    "at": "2026-08-11T10:22",
     "basis_side": "book",
     "model": "claude",
     "via": "v4/reader"
    },
+   "bs_anchor": 710861278,
    "class": "Trading",
    "doc": "202004_5847_AI3",
    "printed_total": 710861278,
@@ -244,7 +246,7 @@
   },
   {
    "_by": {
-    "at": "2026-08-11T09:54",
+    "at": "2026-08-11T10:22",
     "basis_side": "cost",
     "model": "claude",
     "via": "v4/reader"

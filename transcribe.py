@@ -117,7 +117,7 @@ def check_anchor(rec, loc):
     return None if rec["printed_total"] == a else f"印出合計 {rec['printed_total']:,} != 錨 {a:,}"
 
 
-def check_closure(recs, loc):
+def check_closure(recs, loc, anchor=None):
     """第 4 道(2026-07-31 改版):整格(所有 record)拼不拼得成一棵樹,根的
     合計 == 錨。取代舊的「每一份 record 自己都要 == 錨」——那條規矩把**文件
     本來就分兩層印**的東西判死(玉山 202502 OCI:母表 p24 兩列 + 子附註
@@ -126,9 +126,14 @@ def check_closure(recs, loc):
     細節與注入測試見 `core/closure.py` / `test_closure.py`。這裡只包一層
     介面:回傳 `(tree, 錯誤字串或 None)`——`tree` 是 None 時後面幾道
     (⑤ 分桶只驗葉列、③ 互對只比根)都沒有意義,呼叫端要整格判失敗。
+
+    `anchor` 由呼叫端決定(`results.anchor_of`:資料自帶的優先、定位器當退路)。
+    不傳就退回舊行為,只認 `loc.anchors` —— `core/ingest.py` 那類還沒接上
+    「錨跟著資料走」的呼叫端因此零行為改變。
     """
     import core.closure as closure_mod
-    a = loc.anchors.get(recs[0]["class"]) if recs else None
+    a = anchor if anchor is not None else (
+        loc.anchors.get(recs[0]["class"]) if recs else None)
     return closure_mod.build(recs, a)
 
 
@@ -389,7 +394,7 @@ def _by_bucket(a, b, bucket):
 # 誰對誰是猜的。新版共用第 3 道的 `align()`,守門與注入測試在 `test_synonyms.py`。
 
 
-def verify(recs, loc):
+def verify(recs, loc, anchor=None):
     """回傳 (通過?, 每道檢查的結果)。recs 是同一格的所有 record。
 
     ⚠️ `tag` 是 **1-based**(`source_page + 1`)——這是給人看的錯誤訊息,
@@ -408,7 +413,7 @@ def verify(recs, loc):
         tag = f"p{rec['source_page'] + 1}"
         res[f"①②列相加@{tag}"] = check_identity(rec)
 
-    tree, closure_err = check_closure(recs, loc)
+    tree, closure_err = check_closure(recs, loc, anchor=anchor)
     res["④合計==錨(整格拼樹)"] = closure_err
 
     if closure_err:

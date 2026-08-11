@@ -13,7 +13,17 @@ DIR = "facts"
 
 REQUIRED_REC = ("doc", "class", "source_page", "source_kind", "total_col",
                 "printed_total", "rows")
-OPTIONAL_REC = ("printed_totals", "note", "_by")
+#: `bs_anchor` = 這格在**資產負債表**上的金額(仟元),抽取當下就讀到的。
+#: 存進 record 的理由是實測出來的:`transcribe.verify` 的④(合計==錨)一向靠
+#: `locate.locate(pdf)` 現場去 PDF 裡找錨,而那個定位器在 **31/91 份文件上
+#: 一個錨都找不到**(`bs_page=None`,全是 2022H1 以前的半年報)。
+#: `closure.build()` 把「沒有錨」跟「對不上」都判 hard fail,於是那批文件的格
+#: 一律拒收 —— 拒收的理由不是資料有問題,是**驗它的那把尺沒讀到刻度**。
+#:
+#: 錨是這一格的**事實**,不是每次建置要重新推導的東西。抽取器整份讀過 PDF、
+#: 當場就看到 BS 那一行(v4 raw 34 份裡 27 份三類都報得出來),把它丟掉再叫
+#: 一個看不到那麼多的定位器去找,是這條管線分岔的具體形狀。
+OPTIONAL_REC = ("printed_totals", "note", "_by", "bs_anchor")
 REQUIRED_ROW = ("name", "cols")
 #: `_src` = 這一列是人在網頁上改 / 增的,不是機器抄的
 #: (`docs/plan_web_complete.md` §2)。形狀 `{"by", "at", "why", "evidence"?}`——
@@ -94,6 +104,12 @@ def validate(cells):
                     f"內容={rec['doc']}|{rec['class']}")
             if not rec["rows"]:
                 problems.append(f"{tag}: rows 為空")
+            a = rec.get("bs_anchor")
+            if a is not None and (isinstance(a, bool) or not isinstance(a, int)):
+                # 錨要拿去跟印出合計做整數相等比較(`closure.build`),不是整數
+                # 就驗不了。**寧可沒有錨也不要一個假的** —— 沒有錨時④會誠實說
+                # 「查無可查」,而一個字串錨會讓比較永遠不相等、變成假失敗。
+                problems.append(f"{tag}: bs_anchor 必須是整數(仟元),收到 {a!r}")
             total_col_seen = False
             for j, row in enumerate(rec["rows"]):
                 rtag = f"{tag}.rows[{j}]"

@@ -124,13 +124,59 @@ def case_沒有錨不准通過():
     yield ("回報沒有錨", err is not None and "沒有錨" in err, err)
 
 
+def case_merge_anchor_自帶優先():
+    """record 自帶 bs_anchor,且與 fallback 一致 —— 用哪個都一樣,回自帶的值。"""
+    recs = [{**yushan()[0], "bs_anchor": A}]
+    got, mismatch = closure.merge_anchor(recs, A)
+    yield ("回錨值", got == A, got)
+    yield ("不算不一致", mismatch is False, mismatch)
+
+
+def case_merge_anchor_只有_fallback():
+    """record 沒帶錨(舊資料 / v3 抄的),退回 fallback,不是恆假拒收。"""
+    got, mismatch = closure.merge_anchor(yushan(), A)
+    yield ("回 fallback", got == A, got)
+    yield ("不算不一致", mismatch is False, mismatch)
+
+
+def case_merge_anchor_只有自帶():
+    """fallback 讀不到(locate 找不到這份文件的 BS 頁),但資料自己帶了錨 —— 要能用。"""
+    recs = [{**yushan()[0], "bs_anchor": A}]
+    got, mismatch = closure.merge_anchor(recs, None)
+    yield ("回自帶的錨", got == A, got)
+    yield ("不算不一致", mismatch is False, mismatch)
+
+
+def case_merge_anchor_打架_回_None不放行():
+    """自帶錨跟 fallback 不一樣 —— 不准挑一個,值回 None,而且要標成『不一致』
+    不能跟『查無可查』塌成同一種狀態(不然後面看不出兩者的差別,這正是這支函式
+    要修的那個坑)。"""
+    recs = [{**yushan()[0], "bs_anchor": A + 1}]
+    got, mismatch = closure.merge_anchor(recs, A)
+    yield ("值回 None", got is None, got)
+    yield ("標成不一致", mismatch is True, mismatch)
+
+
+def case_merge_anchor_自帶內部不一致():
+    """多份 record 各自帶的錨彼此不同(不該發生,但要能安全處理)——同樣值回 None
+    且標成不一致,不能悄悄選第一個。"""
+    r1 = {**yushan()[0], "bs_anchor": A}
+    r2 = {**yushan()[1], "bs_anchor": A + 1}
+    got, mismatch = closure.merge_anchor([r1, r2], A)
+    yield ("值回 None", got is None, got)
+    yield ("標成不一致", mismatch is True, mismatch)
+
+
 def main():
     bad = 0
     for case in (case_兩層附註閉合, case_母表那兩列不是葉列, case_攤平給下游的是葉列,
                  case_單根單份_攤平就是自己, case_附註加明細表_兩個平行根不相加,
                  case_失敗_沒有根, case_失敗_湊得出錨但掛不上,
                  case_失敗_子表掛不上任何一列, case_失敗_父列撞名時不准猜,
-                 case_失敗_兩層的欄對不起來, case_沒有錨不准通過):
+                 case_失敗_兩層的欄對不起來, case_沒有錨不准通過,
+                 case_merge_anchor_自帶優先, case_merge_anchor_只有_fallback,
+                 case_merge_anchor_只有自帶, case_merge_anchor_打架_回_None不放行,
+                 case_merge_anchor_自帶內部不一致):
         print(f"\n{case.__doc__.splitlines()[0]}")
         for label, ok, detail in case():
             bad += not ok

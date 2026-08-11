@@ -26,6 +26,34 @@
 """
 
 
+def merge_anchor(recs, fallback):
+    """一格要拿去驗④的錨(仟元)。回 `(值, 不一致與否)`。
+
+    **資料自帶的優先,`fallback` 是退路。** 抽取器整份讀過 PDF、當場看到 BS
+    那一行;`fallback`(通常是 `locate.locate()` 或它寫進 `anchors/*.json` 的
+    快取)只看它猜到的那幾頁,實測 **31/91 份文件一個錨都讀不到**。
+
+    ⚠️ **兩個來源都有而且不一致時,值回 None 讓④誠實說查無可查,
+    但第二個回傳值標成 True。** 「查無可查」與「兩邊打架」都會讓值變 None,
+    意義不同,呼叫端要能分得出來。
+
+    這支是 `results.build()`(讀 PDF)與 `core/reconcile.py`(讀 `anchors/`
+    快取,零 PDF)共用的邏輯 —— **兩邊都要叫同一支,不准各自抄一份**,
+    否則 E2 等價閘門(`test_e2_equiv.py`)會憑空冒出差異。
+    """
+    carried = {r["bs_anchor"] for r in recs
+               if isinstance(r.get("bs_anchor"), int)
+               and not isinstance(r.get("bs_anchor"), bool)}
+    if len(carried) > 1:
+        return None, True
+    if not carried:
+        return fallback, False
+    got = carried.pop()
+    if fallback is not None and fallback != got:
+        return None, True
+    return got, False
+
+
 def _col_value(rec, row):
     return (row.get("cols") or {}).get(rec.get("total_col"))
 
@@ -83,10 +111,18 @@ def build(recs, anchor):
         if rec in roots:
             continue
         pt = rec.get("printed_total")
+        tag = f"p{rec.get('source_page', -1) + 1}"
+        if pt is None:
+            # **沒有印出合計的 record 掛不上樹,而且理由跟「掛錯地方」不同。**
+            # 文件本來就可能不印某一欄的合計(明細表的取得成本欄常常沒有),
+            # 那不是抄錯。舊寫法走到下面的訊息格式化會直接 TypeError 崩掉 ——
+            # 之前碰不到是因為錨讀不到、整格更早就被擋下;錨跟著資料走之後
+            # 這條路才真的會走到。
+            return None, (f"{tag}:這份沒有印出合計,掛不上樹"
+                          f"(文件沒印該欄合計時是正常的,但這格就驗不到閉合)")
         cand = [(p, x["name"]) for p in recs if p is not rec
                 for x in p["rows"] if _col_value(p, x) == pt]
         names = sorted({c[1] for c in cand})
-        tag = f"p{rec.get('source_page', -1) + 1}"
         if not cand:
             return None, (f"{tag}:印出合計 {pt:,} 在別的表裡找不到對應的那一列,"
                           f"掛不上去(這份是誰的子節?)")
