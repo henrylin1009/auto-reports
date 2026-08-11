@@ -17,6 +17,7 @@ import datetime
 import re
 
 import buckets
+import checks
 from config import VALUATION_ADJ, WIDE_BUCKETS
 
 SIDE = ("衍生", "評價調整")
@@ -131,10 +132,17 @@ def aggregate(raw_rows, printed_subtotal):
     book = {wb: 0 for wb in WIDE_BUCKETS}
     side = {k: 0 for k in SIDE}
     others, unknown = [], []
+    undisclosed = []
     for row in rows:
         v = row["amount"]
         if v is None:
-            unknown.append((row["name"], None, "金額是 null"))
+            # **未揭露不是分不到桶。** 舊版把它塞進 `unknown` → 整格判死,
+            # 但文件印出的合計就是見證人:那幾列若真的該有數字,恆等式不會
+            # 剛好對上。實測 `202004_5847_AI3|Trading` 成本 6 列未揭露,
+            # 其餘 686,786,752 + 衍生 481,932 == 687,268,684 == 印出合計。
+            # 這也讓本函式與 `wide.View.ok` 對同一份資料不再給相反答案
+            # (它一向是「缺欄 = 未揭露,不是 0」)。留著給人看,不當閘門。
+            undisclosed.append((row["name"], None, "未揭露"))
             continue
         b = bucket_row(row)
         if b in side:
@@ -150,10 +158,13 @@ def aggregate(raw_rows, printed_subtotal):
         if wb == "其他":
             others.append((row["name"], v))
 
-    if unknown:
-        return Aggregated(False, book=book, side=side, others=others, unknown=unknown,
-                           reason=f"{len(unknown)} 列對不到桶,錢不能悄悄消失", basis=basis)
-
+    # ── 閘門走 `checks.bucket_sum_matches()`,與 `wide.View.ok` 同一份實作 ──
+    #    (2026-08-10,P2 收斂。訊息文字因此統一,判準也不再有兩套。)
+    #
+    # 三道舊閘門(列落桶外 / 沒有小計 / Σ 對不上)全部由它回答,判準與訊息
+    # 只剩一份。「沒有小計」那條的理由字串保留原本的長版說明 —— 它記著一個
+    # 具體事故,比通用訊息有用:
+    #
     # **沒有可對帳的小計 ⇒ 不合格。**(2026-08-10 加)原本這裡是
     # `if printed_subtotal is not None:` —— 沒有小計就整段跳過、直接回 ok,
     # 等於「沒東西可以檢查」被當成「檢查過了」。
@@ -170,16 +181,15 @@ def aggregate(raw_rows, printed_subtotal):
     # (富邦 202004/202104 Trading、玉山 202104 OCI、國泰 202304 Trading)。
     if printed_subtotal is None:
         return Aggregated(False, book=book, side=side, others=others, basis=basis,
+                           unknown=unknown,
                            reason="沒有可對帳的小計 —— 少抄幾列照樣加得出七桶,"
                                   "缺的桶會靜靜變成 0")
 
-    total = sum(book.values()) + sum(side.values())
-    diff = total - printed_subtotal
-    if diff != 0:
+    bad = checks.bucket_sum_matches(list(book.values()) + list(side.values()),
+                                     unknown, printed_subtotal, "小計")
+    if bad:
         return Aggregated(False, book=book, side=side, others=others,
-                           reason=f"Σ桶+Σ衍生評價 {total:,} ≠ 小計 {printed_subtotal:,}(差 {diff:,})",
-                           basis=basis)
-
+                           unknown=unknown, reason=bad, basis=basis)
     return Aggregated(True, book=book, side=side, others=others, basis=basis)
 
 

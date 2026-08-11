@@ -68,42 +68,14 @@ def _agg_view(blk):
         sub = (blk or {}).get(side) or {}
         if not sub.get("rows"):
             return None
-        printed = sub.get("printed_subtotal") or sub.get("total")
-        return _relax(adapter.aggregate(sub["rows"], printed), printed)
+        return adapter.aggregate(sub["rows"],
+                                 sub.get("printed_subtotal") or sub.get("total"))
 
     b, c = agg("book"), agg("cost")
     book_is_cost = b is not None and b.basis == "成本"
     return {"帳面": None if book_is_cost else b,
             "成本": b if book_is_cost else c}
 
-
-class _Ok:
-    """把一個「只因 null 金額而不合格」的 Aggregated 視為合格。"""
-
-    def __init__(self, a):
-        self.book, self.side, self.basis, self.ok = a.book, a.side, a.basis, True
-
-
-def _relax(a, printed):
-    """`aggregate()` 把「金額是 null」的列一律判不合格(錢不准悄悄消失);
-    `wide.view()` 的規則是「缺欄 = 未揭露,不是 0」,跳過那幾列。
-
-    **當 unknown 全是 null 金額、而且印出的合計恆等式仍然成立時,後者才是對的。**
-    印出的合計就是見證人:那幾列若真的該有數字,等式不會剛好對上。
-    實測 `202004_5847_AI3|Trading` 成本 —— 明細表 6 列沒揭露取得成本,
-    其餘 686,786,752 + 衍生 481,932 = 687,268,684 = 文件印的成本合計。
-
-    這不是放寬閘門,是**認出 v4 那側在這個情況下過度保守**;兩條管線合併時
-    必須挑一個,挑的是有見證人的那個。恆等式**在這裡自己驗**,不是把判斷推給
-    `wide.view()` —— 推過去測試就變成套套邏輯。
-    """
-    if a is None or a.ok or not a.unknown:
-        return a
-    if not all(u[1] is None for u in a.unknown):
-        return a                                  # 有真的分不到桶的列,不放行
-    if printed is None or sum(a.book.values()) + sum(a.side.values()) != printed:
-        return a                                  # 恆等式不成立,不放行
-    return _Ok(a)
 
 
 def main():

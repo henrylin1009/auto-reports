@@ -20,6 +20,7 @@
 from config import (BUCKET_MAP, WIDE_BUCKETS, DERIVATIVE, VALUATION_ADJ,
                     BOOK_COLS, COST_COLS)
 import buckets
+import checks
 import transcribe
 
 #: 恆等式是**三段**的:`sum(wide 7 桶) + 衍生 + 評價調整 == 類別合計`。
@@ -51,10 +52,18 @@ class View:
 
     @property
     def ok(self):
-        """三段恆等式成立,而且沒有列落在 7 桶之外。"""
-        if self.book is None or self.unknown:
+        """三段恆等式成立,而且沒有列落在 7 桶之外。
+
+        **判準走 `checks.bucket_sum_matches()`,與 `v4.adapter.aggregate()`
+        同一份實作**(2026-08-10,P2 收斂)。在此之前兩邊各寫一份,對「金額是
+        null」的處置相反 —— 實測 `202004_5847_AI3|Trading` 成本同一份資料
+        兩個相反答案。
+        """
+        if self.book is None:
             return False
-        return self.total + sum(self.side.values()) == self.expected
+        return checks.bucket_sum_matches(
+            list(self.book.values()) + list(self.side.values()),
+            self.unknown, self.expected) is None
 
     @property
     def bond_mv(self):
