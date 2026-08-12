@@ -251,7 +251,7 @@ def interactive_html(prefix="", banks=None, wide=None, wide_cost=None, periods=N
 
 <div class="card">
 <h2>跨行比較 <span class="ix-sub">同一期,誰的部位大、怎麼配(可切依債種或依會計分類)</span></h2>
-<div class="ix-sub" style="margin:-4px 0 8px">本頁圖表均為<b>帳面口徑</b>:FVTPL/FVOCI 為公允價值、AC 為攤銷後成本(即資產負債表帳面金額)。取得成本見下方「數字明細」表切換鈕。</div>
+<div class="ix-sub" id="A_basis_note" style="margin:-4px 0 8px"></div>
 <div class="ix-ctl"><label>分段</label><span class="ix-seg"><button id="A_by_b" class="on">依債種</button><button id="A_by_c">依會計分類</button></span><span id="A_catwrap"><label>分類</label><span class="ix-catchk"><label><input type="checkbox" class="A_ccb" value="Trading" checked autocomplete="off">FVTPL</label><label><input type="checkbox" class="A_ccb" value="OCI" checked autocomplete="off">FVOCI</label><label><input type="checkbox" class="A_ccb" value="AC" checked autocomplete="off">AC</label></span></span><label>檢視</label><span class="ix-seg"><button id="A_amt" class="on">金額(億)</button><button id="A_pct">結構(%)</button></span></div>
 <div class="ix-legend" id="A_lg"></div><div id="A_bars"></div><div id="ix_drill"></div>
 <div style="font-size:12px;color:#8a919e;margin-top:6px">點銀行名展開該行明細;依債種檢視時,點圖例可聚焦單一債種。</div>
@@ -609,11 +609,20 @@ renderBankChips();
             [].forEach.call(seg.children,x=>x.classList.remove("on"));alt.classList.add("on");}
   }
   note.textContent=BASIS_NOTE[BASIS];
+  // 下面「跨行比較」「時間趨勢」兩張圖讀的就是這個 W(同一個 BASIS),口徑說明
+  // 因此要跟著同一個變數講,不能另外寫死一句 —— 合併報表沒有帳面資料時 BASIS
+  // 會被上面的邏輯自動切成成本,寫死「本頁圖表均為帳面口徑」會變成假話(見
+  // 2026-08-12 線上實測:合併分頁「跨行比較」畫的是成本卻標著帳面口徑)。
+  const anote=document.getElementById("A_basis_note");
+  if(anote)anote.textContent="本頁圖表口徑:"+BASIS_NOTE[BASIS]+
+    (hasData("wide")&&hasData("wide_cost")?" 取得成本見上方「取得成本」切換鈕。":"");
   seg.addEventListener("click",function(e){
     const b=e.target.closest("button");if(!b||b.disabled)return;
     [].forEach.call(seg.children,x=>x.classList.remove("on"));b.classList.add("on");
     BASIS=b.getAttribute("data-basis");W=RAW[BASIS]||{};
     note.textContent=BASIS_NOTE[BASIS];
+    if(anote)anote.textContent="本頁圖表口徑:"+BASIS_NOTE[BASIS]+
+      (hasData("wide")&&hasData("wide_cost")?" 取得成本見上方「取得成本」切換鈕。":"");
     drillBank=null;const dr=document.getElementById("ix_drill");if(dr)dr.innerHTML="";
     drawKPI();drawA();drawB();
   });
@@ -640,6 +649,7 @@ renderBankChips();
 
 # interactive_html() 內用到的元素 id,重複呼叫(第二個分頁)時要加前綴避免跟第一份撞名
 _IX_IDS = ["A_catwrap", "A_by_b", "A_by_c", "A_amt", "A_pct", "A_lg", "A_bars",
+           "A_basis_note",
            "ix_drill", "ix_kpi", "ix_concl", "ix_basis", "ix_basis_note",
            "bankchips", "inclQuick",
            "B_from", "B_to", "B_b", "B_lg", "B_cv", "B_mcross", "B_msingle", "B_cwrap",
