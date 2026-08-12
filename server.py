@@ -372,26 +372,6 @@ class Handler(SimpleHTTPRequestHandler):
             self.send_header("Location", "/workbench.html#/analysis")
             self.end_headers()
             return
-        if route == "/generic.html":
-            # R3:通用視覺化層現算現吐,不落地成檔案——`data.json` 一改,
-            # 這頁就跟著變,不會有「忘記重跑」的落地檔跟真資料不同步問題。
-            try:
-                import schema as schema_mod
-                import viz_generic
-                s = schema_mod.load(os.path.join(ROOT, "schema.yaml"))
-                d = schema_mod.load_data(os.path.join(ROOT, "data.json"))
-                table = {"wide": d.get("wide") or {}, "wide_cost": d.get("wide_cost") or {}}
-                html = viz_generic.render(s, d.get("periods") or [], table)
-            except Exception:
-                self._json({"error": traceback.format_exc().splitlines()[-1]}, 500)
-                return
-            body = html.encode("utf-8")
-            self.send_response(200)
-            self.send_header("Content-Type", "text/html; charset=utf-8")
-            self.send_header("Content-Length", str(len(body)))
-            self.end_headers()
-            self.wfile.write(body)
-            return
         if route.startswith("/site/"):
             return self._serve_analysis_file(route[len("/site/"):])
         if not (route.startswith("/api/") or route == "/page.png"):
@@ -536,6 +516,9 @@ class Handler(SimpleHTTPRequestHandler):
                 self._json(start_autofill(b.get("limit"),
                                           b.get("reader") or "claude",
                                           b.get("cell")))
+            elif route == "/api/bank/add":
+                self._json(webdata.add_bank(b.get("code"), b.get("name"),
+                                            b.get("color")))
             elif route == "/api/rebuild":
                 self._json(start_rebuild())
             elif route == "/api/autofill/cancel":

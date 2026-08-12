@@ -24,6 +24,7 @@ import transcribe
 from core import acquire
 from core import derive
 from core import queue as queue_mod
+from core import store
 
 #: 只做 2023+。≤2022 那些四大表被掃成影像、文字層沒有科目代碼,定位不到,
 #: 且已裁示不在範圍內(docs/plan_ui_redesign.md §一裁示①)。
@@ -432,6 +433,90 @@ def revoke(doc, cls, why=None, by=None, facts_dir=None):
             "why": (why or "").strip() or None, "by": by or "henrylin"}
 
 
+#: 還沒配品牌色的新銀行,從這裡依序取一個可辨識的顏色。**不是隨機**——
+#: 隨機色會讓同一家銀行每次重畫都換顏色。挑的是與現有色相距離較遠的幾個。
+_SPARE_COLORS = ["#B4341C", "#5B3FA8", "#0F766E", "#A16207", "#9D174D",
+                 "#1E40AF", "#3F6212", "#7C2D12"]
+
+#: TWSE 的上市公司代碼是四位數字。**不接受別的形狀** —— 代碼唯一的用途就是
+#: 去 TWSE 抓檔(`resolve.download()`),格式不對抓下來一定是空的。
+_CODE_RE = __import__("re").compile(r"^\d{4}$")
+
+
+def add_bank(code, name, color=None):
+    """在 `banks.json` 新增一家銀行(v7 R2-3)。**這是「加一家銀行」的唯一入口。**
+
+    `banks.json` 是資料不是程式碼(R2-2),所以新增一家不必改任何 `.py` ——
+    但在這支之前也**沒有任何 UI**,使用者得自己知道有這個檔、自己編輯 JSON。
+    這支把它變成網頁上的一個動作。
+
+    刻意**只寫 `banks.json`,不碰 `facts/` 也不抓 PDF**:加銀行只是讓這家
+    出現在網格上(以及讓 `resolve` 知道要去 TWSE 抓哪個代碼),接下來走的
+    是既有的「抓這期 → 自動抄列」那條路,不另外長一條平行流程。
+
+    回傳 `{"added": True, "bank": {...}}`。重複的代碼或名字一律 `EditError`
+    ——**不靜靜覆蓋**:代碼與名字都是 `data.json` 的資料鍵,改到既有的那筆
+    等於改資料鍵,是要人明確決定的事,不是新增順手做掉的。
+    """
+    code = (code or "").strip()
+    name = (name or "").strip()
+    if not _CODE_RE.match(code):
+        raise EditError(f"代碼 {code!r} 不是四位數字 —— TWSE 上市公司代碼固定四碼"
+                        f"(例:5844)。代碼只用來去 TWSE 抓檔。")
+    if not name:
+        raise EditError("銀行名不能空白 —— 它是檔名、事實庫、網格欄位共用的識別。")
+    if "_" in name:
+        raise EditError(f"銀行名 {name!r} 不能有底線 —— doc id 用底線分欄"
+                        f"(`YYYYMM_銀行名_個體`),名字裡有底線會解析不出來。")
+
+    data = json.load(open(config._BANKS_JSON, encoding="utf-8"))
+    for b in data["banks"]:
+        if b["code"] == code:
+            raise EditError(f"代碼 {code} 已經是「{b['name']}」了,沒有新增。"
+                            f"要改名是另一個動作(會動到既有資料鍵)。")
+        if b["name"] == name:
+            raise EditError(f"「{name}」已經在清單裡(代碼 {b['code']}),沒有新增。")
+
+    used = {b["color"] for b in data["banks"]}
+    color = (color or "").strip() or next(
+        (c for c in _SPARE_COLORS if c not in used), "#9aa0a8")
+    entry = {"code": code, "name": name, "color": color}
+    data["banks"].append(entry)
+    data["banks"].sort(key=lambda b: b["code"])
+    json.dump(data, open(config._BANKS_JSON, "w", encoding="utf-8"),
+              ensure_ascii=False, indent=1)
+
+    # 同一個行程裡的 `config` 已經載入過了,不重讀的話新銀行要重啟才看得到。
+    config.BANKS[code] = name
+    config.CODE_OF[name] = code
+    config.BANK_COLORS[name] = color
+    return {"added": True, "bank": entry}
+
+
+def _ensure_anchors(doc):
+    """新文件第一次歸檔時補上 `anchors/{doc}.json`(2026-08-12,v7 R2-3)。
+
+    **為什麼需要這支**:`anchors/` 原本只由手動 CLI(`core.cli anchors`)產生,
+    而寫進 `facts/` 的兩條路(`file_cell` 機器 / `ratify` 人工)都沒有建它。
+    於是**加一家新銀行**時 facts/ 有資料、anchors/ 卻是空的,
+    `core.reconcile.verify_all()` 一跑就 `FileNotFoundError` 整支炸掉 ——
+    v7 R2-3 華南歸檔後實測,`test_ring` / `test_rulings` / `test_jobs`
+    三支同時變紅。「facts 有這份 ⇒ anchors 有這份」是個不變量,
+    不該靠人記得手動跑一個指令來維持。
+
+    只在檔案不存在時建(要讀 PDF,不必每格重算)。**建不起來不擋歸檔** ——
+    資料已經通過驗收了,快取失敗不該讓它退回去,但要印出來讓人看到。
+    """
+    if os.path.exists(f"{store.ANCHORS_DIR}/{doc}.json"):
+        return
+    try:
+        store.build_anchors(doc)
+    except Exception as e:                       # noqa: BLE001 — 快取失敗不擋歸檔
+        print(f"⚠️ anchors/{doc}.json 建立失敗({type(e).__name__}: {e})——"
+              f"資料已歸檔,但 reconcile 會跳過這份,請手動跑 "
+              f"`python3 -m core.cli anchors`")
+
+
 def file_cell(doc, cls, records, via, force=False, facts_dir=None):
     """**機器**把一格寫進 `facts/`。人工的入口是 `ratify()`,兩者的差別只有兩點:
 
@@ -471,6 +556,7 @@ def file_cell(doc, cls, records, via, force=False, facts_dir=None):
             f"  要讓機器重填請先撤銷:`revoke({doc!r}, {cls!r}, why=...)`。")
     cells[key] = recs
     facts_mod.save(cells, facts_dir)
+    _ensure_anchors(doc)
     return {"saved": True, "key": key, "via": via, "records": len(recs)}
 
 
@@ -560,6 +646,8 @@ def ratify(doc, cls, records, why=None, by=None, today=None, facts_dir=None,
         p = f"{d}/{doc}__{cls}.json"
         if os.path.exists(p):
             os.remove(p)
+
+    _ensure_anchors(doc)
 
     loc = locate.locate(f"pdf_cache/{doc}.pdf")
     ok, res = transcribe.verify(recs, loc)
