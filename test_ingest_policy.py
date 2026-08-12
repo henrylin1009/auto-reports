@@ -152,23 +152,80 @@ def _t3_case():
 
 
 def T3():
+    """⚠️ **2026-08-12 改寫。** 這一格現在**在推導層就被攔下**,不再走到
+    `expand_policy`。
+
+    原因:`core.derive.derive_record()` 會**重新推導** `printed_total`
+    (挑出「列和 == 推導目標」的那一欄),所以「列相加 ≠ printed_total」的
+    record 根本過不了推導層 —— 換句話說 **① `check_identity` 在推導層
+    之後是打不到的**。人工路徑(`fill._attempt`)本來就是這個行為,實測
+    同一筆資料回同一句 `0 個欄命中`。
+
+    這支測試以前會過,**正是因為自動路徑 `classify_outcome` 漏跑了推導層**
+    (v7 R2-3 用第一銀行實跑才抓到,見 `core.derive.prepare()` 的說明)——
+    它測的其實是那個 bug 本身。修好之後斷言改成「推導層攔下、仍然擴頁重試」。
+    """
     rec, loc = _t3_case()
     r = ingest.classify_outcome("X", "Trading", [rec], loc, 0, [1], 0,
                                  pipeline.MAX_LEVEL, use_policy=True)
-    cond = (r["outcome"] == "RETRY") and (r["retries"] == 1)
-    return _ok(cond, "T3 ①失敗→擴頁、retries+1", r)
+    cond = (r["outcome"] == "RETRY" and r["retries"] == 1
+            and "個欄命中" in (r.get("reason") or ""))
+    return _ok(cond, "T3 ①在推導層被攔下→擴頁、retries+1", r)
 
 
 def T3_inject():
-    """注入:把 check_identity 從 TRIGGERS 拿掉 → 這一格不該再擴頁,
-    T3 的斷言(擴頁)必須變紅。"""
+    """注入:**讓 `derive.prepare` 變成直通**(模擬修好之前那個漏跑推導層的
+    bug)→ 這一格會改由 `transcribe.verify` 的 ① 判失敗,理由不再是
+    「0 個欄命中」,T3 的斷言必須變紅。
+
+    這個注入點就是真實出過的那個 bug,所以它同時是回歸鎖。"""
     rec, loc = _t3_case()
-    r = _with_triggers(ep.TRIGGERS - {"check_identity"},
-                        lambda: ingest.classify_outcome(
-                            "X", "Trading", [rec], loc, 0, [1], 0,
-                            pipeline.MAX_LEVEL, use_policy=True))
-    would_hold = (r["outcome"] == "RETRY") and (r["retries"] == 1)
+    real = ingest.derive.prepare
+    try:
+        ingest.derive.prepare = lambda recs, loc, cls, log=None: (recs, None)
+        r = ingest.classify_outcome("X", "Trading", [rec], loc, 0, [1], 0,
+                                     pipeline.MAX_LEVEL, use_policy=True)
+    finally:
+        ingest.derive.prepare = real
+    would_hold = (r["outcome"] == "RETRY" and r["retries"] == 1
+                  and "個欄命中" in (r.get("reason") or ""))
     return _ok(would_hold is False, "T3-注入(必須紅)", r)
+
+
+def T3b_model_output_shape():
+    """**回歸鎖:模型照 prompt 輸出 `record_total` 時,自動路徑必須收得下。**
+
+    `fill.py` 的 prompt 教模型每份 record 填 `record_total`,而
+    `facts.validate()` 要的是 `total_col`/`printed_total` —— 中間那一步翻譯
+    是推導層做的。自動路徑漏跑推導層時,**每一格新資料都必然
+    「缺必要欄位 ['total_col','printed_total']」**,這正是 v7 R2-3
+    第一銀行三格全 REJECT 的根因(reader 其實抄對了)。
+    """
+    rec = {"doc": "X", "class": "Trading", "source_page": 1, "source_kind": "附註",
+           "record_total": 500, "rows": [{"name": "公司債", "cols": {"c": 500}}]}
+    loc = _FakeLoc({"Trading": 500})
+    r = ingest.classify_outcome("X", "Trading", [rec], loc, 0, [1], 0,
+                                 pipeline.MAX_LEVEL, use_policy=True)
+    cond = r["outcome"] in ("PASS", "FILED")
+    return _ok(cond, "T3b 模型輸出的 record_total 會被推導成 total_col/printed_total",
+               (r["outcome"], r.get("reason") or r.get("message")))
+
+
+def T3b_inject():
+    """注入:推導層直通 → `record_total` 沒被翻譯 → 必須因缺必要欄位失敗。"""
+    rec = {"doc": "X", "class": "Trading", "source_page": 1, "source_kind": "附註",
+           "record_total": 500, "rows": [{"name": "公司債", "cols": {"c": 500}}]}
+    loc = _FakeLoc({"Trading": 500})
+    real = ingest.derive.prepare
+    try:
+        ingest.derive.prepare = lambda recs, loc, cls, log=None: (recs, None)
+        r = ingest.classify_outcome("X", "Trading", [rec], loc, 0, [1], 0,
+                                     pipeline.MAX_LEVEL, use_policy=True)
+    finally:
+        ingest.derive.prepare = real
+    would_hold = r["outcome"] in ("PASS", "FILED")
+    return _ok(would_hold is False, "T3b-注入(必須紅)",
+               (r["outcome"], r.get("reason")))
 
 
 # ── T4:①+⑤ 同時失敗 → 擴頁,理由只提 ① ──────────────────────────────────
@@ -182,27 +239,36 @@ def _t4_case():
 
 
 def T4():
+    """⚠️ **2026-08-12 改寫,理由同 T3。** ①+⑤ 同時失敗時,**①(算術)
+    在推導層就被攔下**,根本走不到「⑤ 要不要一起算進擴頁理由」那一步。
+
+    要守的不變量沒有變、只是搬家了:**算術失敗優先於分類失敗**,不會因為
+    同一格也有分類問題就改判成 FILED 歸檔。這裡就斷言這件事:
+    outcome 是 RETRY(擴頁重抄),不是 FILED(歸檔+進佇列)。
+    """
     rec, loc = _t4_case()
     r = ingest.classify_outcome("X", "Trading", [rec], loc, 0, [1], 0,
                                  pipeline.MAX_LEVEL, use_policy=True)
-    why = r.get("why") or ""
-    cond = (r["outcome"] == "RETRY" and "check_identity" in why
-            and "check_buckets" not in why)
-    return _ok(cond, "T4 ①+⑤同時失敗→擴頁,理由只提①", (r["outcome"], why))
+    cond = (r["outcome"] == "RETRY" and "個欄命中" in (r.get("reason") or ""))
+    return _ok(cond, "T4 ①+⑤同時失敗→算術優先,擴頁重抄(不是 FILED 歸檔)",
+               (r["outcome"], r.get("reason")))
 
 
 def T4_inject():
-    """注入:把 check_buckets 也塞進 TRIGGERS → 理由會提到 ⑤,
-    T4 的斷言(理由不提⑤)必須變紅。"""
+    """注入:推導層直通 → ① 不再被攔,這一格會落到 Gate2-only 的判斷、
+    被當成「只有分類沒過」而 **FILED 歸檔**(算術錯的資料進了事實庫)。
+    T4 的斷言必須變紅 —— 這正是這道閘門要擋的後果。"""
     rec, loc = _t4_case()
-    r = _with_triggers(ep.TRIGGERS | {"check_buckets"},
-                        lambda: ingest.classify_outcome(
-                            "X", "Trading", [rec], loc, 0, [1], 0,
-                            pipeline.MAX_LEVEL, use_policy=True))
-    why = r.get("why") or ""
-    would_hold = (r["outcome"] == "RETRY" and "check_identity" in why
-                  and "check_buckets" not in why)
-    return _ok(would_hold is False, "T4-注入(必須紅)", (r["outcome"], why))
+    real = ingest.derive.prepare
+    try:
+        ingest.derive.prepare = lambda recs, loc, cls, log=None: (recs, None)
+        r = ingest.classify_outcome("X", "Trading", [rec], loc, 0, [1], 0,
+                                     pipeline.MAX_LEVEL, use_policy=True)
+    finally:
+        ingest.derive.prepare = real
+    would_hold = (r["outcome"] == "RETRY" and "個欄命中" in (r.get("reason") or ""))
+    return _ok(would_hold is False, "T4-注入(必須紅)",
+               (r["outcome"], r.get("reason")))
 
 
 # ── T5:唯一觸發來源是 core.expand_policy ────────────────────────────────
@@ -271,9 +337,11 @@ def main():
     allok &= T1(); allok &= T1_inject()
     print("T2 只有 ③ 失敗 → 不擴頁、retries 不增加")
     allok &= T2(); allok &= T2_inject()
-    print("T3 ① 失敗 → 擴頁、retries+1")
+    print("T3 ① 失敗 → 在推導層被攔下、擴頁、retries+1")
     allok &= T3(); allok &= T3_inject()
-    print("T4 ①+⑤ 同時失敗 → 擴頁,理由只提 ①")
+    print("T3b 模型輸出的 record_total 必須被推導層翻譯(v7 R2-3 回歸鎖)")
+    allok &= T3b_model_output_shape(); allok &= T3b_inject()
+    print("T4 ①+⑤ 同時失敗 → 算術優先,擴頁重抄")
     allok &= T4(); allok &= T4_inject()
     print("T5 ingest 不准自己重寫觸發判斷")
     allok &= T5()

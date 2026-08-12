@@ -5,15 +5,20 @@
     apply_outcome(...)     把 classify_outcome 的結論落地(寫 facts/ / blocked/ /
                             rejected/ / pending)。
 
-`fill.py` 保留原地繼續能跑 —— 本檔是**平行**的第二個實作,靠
-`test_ingest_equiv.py` 的 E5 閘門證明兩者等價(見 docs/brief_C3a_ingest.md)。
+`fill.py` 保留原地繼續能跑 —— 本檔原本是**平行**的第二個實作,靠
+`test_ingest_equiv.py` 的 E5 閘門證明與 `fill.cmd_submit` 等價
+(見 docs/brief_C3a_ingest.md)。
 
-A1(預設 `use_policy=False`):行為與 `fill.cmd_submit` 逐字相同 ——
-`_taxonomy_gap()` 有料才 BLOCKED,其餘一律 level+1 擴頁。
+2026-08-12:那個 A1(`use_policy=False`,逐字複刻 `fill.cmd_submit`)路徑
+已經退場。它依賴的 `fill._taxonomy_gap()` 早在 2026-07-31 就被移除
+(⑤ 分桶失敗改用 FILED 出口,不再需要「擴頁救不救得回來」這個判斷),
+`fill.cmd_submit` 本身現在也不再呼叫 taxonomy_gap ——「A1 與 fill.cmd_submit
+逐字相同」這個前提已經不成立,而且**production 只用 `use_policy=True`**
+(`fill_auto.py` 是唯一呼叫點)。與其修一個沒有呼叫端、也沒有基準可比對的
+等價性分支,不如把它砍掉(鐵律:不留沒人用的第二條路)。
 
-A2(`use_policy=True`):改用 `core.expand_policy.may_expand()` /
-`consumes_budget()` 決定要不要擴頁 / 消耗預算。**這是本檔唯一的行為改變**,
-判準一律呼叫 `core.expand_policy`,不在這裡另寫一份觸發判斷(I3)。
+`use_policy` 參數本身保留(呼叫端仍需明確傳 `True`,避免默默改變行為),
+但 `False` 分支已不存在替代邏輯 —— 見 `classify_outcome` 內的說明。
 
 ⚠️ §1.2:`transcribe.verify()` 的回傳鍵是嵌了頁碼的顯示字串,不准字串比對推
 「哪一道失敗」。`_structured_checks()` 直接呼叫個別 `check_*` 函式組出結構化
@@ -42,7 +47,7 @@ import datetime
 import buckets
 import facts
 import transcribe
-from core import decision_store, decisions as decisions_mod, expand_policy
+from core import decision_store, decisions as decisions_mod, derive, expand_policy
 
 #: 結構化檢查名 —— 給 `core.expand_policy` 用的訊號集合(I3 的唯一來源仍是
 #: `expand_policy.TRIGGERS`/`NEVER`,這裡只是「怎麼把 rec 轉成失敗訊號」)。
@@ -203,21 +208,6 @@ def _write_facts_and_decisions(key, recs, retries, level, facts_dir=None,
     return {"decisions": final_decisions, "review_added": added}
 
 
-def _taxonomy_gap(recs, loc):
-    """**直接委派給 `fill._taxonomy_gap`,不再留第二份實作。**
-
-    這裡原本是一份「行為逐字相同」的複製品。它後來漂移了:`fill` 那份改成
-    「只要**至少一個**名字生得出提案就判缺口」(混合情況,見 fill.py 的說明),
-    這份還停在舊的「任一個生不出就回 None」。註解仍宣稱兩份相同,所以沒人發現 ——
-    直到 2026-07-29 新歸檔的 202304_富邦_個體|AC 同時含有生得出與生不出提案的名字,
-    E5 等價性閘門才報出 old=BLOCKED / new=RETRY。
-
-    平行實作要靠「有人記得同步兩邊」才成立,而那個假設已經被實測推翻一次。
-    """
-    import fill
-    return fill._taxonomy_gap(recs, loc)
-
-
 def _structured_checks(recs, loc, pages):
     """組出結構化的 {檢查名: 訊息 or None} 清單,以及匯總出的失敗檢查名集合
     (給 A2 的 `expand_policy` 用)。**必須跟 `transcribe.verify()` 用同一套
@@ -286,26 +276,40 @@ def consistent_with_verify(recs, loc, pages):
 
 
 def classify_outcome(doc, cls, recs, loc, level, pages, retries, max_level,
-                      use_policy=False):
+                      use_policy=True):
     """純判斷,不寫任何檔案。回傳 dict,至少含 `outcome` 與 `message`。
 
-    `use_policy=False`(A1):完全複刻 `fill.cmd_submit`——`_taxonomy_gap()` 有料
-    才 BLOCKED,其餘一律 level+1 擴頁,直到 `max_level` 或擴不出新頁才 REJECT。
+    分類失敗(⑤)一律走 FILED 出口:照樣歸檔,列進 review 佇列等人審,
+    不擴頁不消耗預算。其餘失敗問 `core.expand_policy.may_expand()`——
+    不在白名單裡的失敗(③ 混合訊號)一律不擴頁,直接進 REJECT(交人審)。
 
-    `use_policy=True`(A2):`_taxonomy_gap()` 仍然優先(BLOCKED 判準不變),
-    其餘失敗改問 `core.expand_policy.may_expand()`——不在白名單裡的失敗
-    (⑤ 分桶、③ 混合訊號)一律不擴頁、不消耗預算,直接進 REJECT(交人審)。
+    `use_policy=False` 已於 2026-08-12 移除(見檔頭說明)——傳 False 會
+    直接 `NotImplementedError`,不會悄悄退回舊行為。
     """
+    if not use_policy:
+        raise NotImplementedError(
+            "use_policy=False(A1,逐字複刻 fill.cmd_submit)已於 2026-08-12 移除 —— "
+            "它依賴的 fill._taxonomy_gap() 已不存在,production 也只用 use_policy=True。")
     key = _key(doc, cls)
     ok, reason, res, problems = False, "抄不出來(records 為空)", {}, None
     if recs:
-        problems = facts.validate({key: recs})
-        if problems:
-            reason = "; ".join(problems)
+        # 2026-08-12:**這一步以前整個不存在**,是自動抄列每一格必然失敗的根因。
+        # `fill.py` 的 prompt 教模型輸出 `record_total`,推導層才把它翻成
+        # `total_col`/`printed_total`;人工路徑(`fill._attempt`)有跑推導,
+        # 自動路徑卻直接把模型輸出丟進 `facts.validate()`,於是永遠是
+        # 「缺必要欄位 ['total_col','printed_total']」。兩條路徑現在共用
+        # `core.derive.prepare()` 這唯一一份實作,見該函式的說明。
+        recs, derive_err = derive.prepare(recs, loc, cls)
+        if derive_err:
+            problems, reason = [derive_err], derive_err
         else:
-            ok, res = transcribe.verify(recs, loc)
-            if not ok:
-                reason = "; ".join(f"{k}:{v}" for k, v in res.items() if v)
+            problems = facts.validate({key: recs})
+            if problems:
+                reason = "; ".join(problems)
+            else:
+                ok, res = transcribe.verify(recs, loc)
+                if not ok:
+                    reason = "; ".join(f"{k}:{v}" for k, v in res.items() if v)
 
     if ok:
         # 2026-07-31:歸檔閘砍成兩道(①② 與 ④)之後,⑤ 分桶未知**不再讓
@@ -318,7 +322,7 @@ def classify_outcome(doc, cls, recs, loc, level, pages, retries, max_level,
         # ——**兩者都歸檔**,差別只在 FILED 會進 review 佇列。這正是
         # 「分桶從歸檔閘移到發布閘」該有的形狀:不擋存檔,但要看得見。
         gate2 = None
-        if use_policy and recs and not problems:
+        if recs and not problems:
             _pr, _cr, gate2 = _structured_checks(recs, loc, pages)
             gate2 = {n for n in gate2 if n in expand_policy.NEVER}
         if gate2:
@@ -332,28 +336,17 @@ def classify_outcome(doc, cls, recs, loc, level, pages, retries, max_level,
                 "level": level, "retries": retries, "res": res,
                 "message": f"PASS      已歸檔進 facts/{doc}.json({cls})。"}
 
-    # `use_policy=True` 不再短路成 BLOCKED(使用者 2026-07-29 裁示,方案 B)。
+    # 分類未知(⑤)不再短路成 BLOCKED(使用者 2026-07-29 裁示,方案 B)。
     # 理由不是嫌它煩:`expand_policy` 檔頭早就裁定「分類未知一律走 facts 歸檔 +
-    # review queue」,BLOCKED 是更早期留下的、與該裁定不一致的第二條路。
-    # 分類未知擋住整格不歸檔,跟「PROVISIONAL 可以發布」也是矛盾的。
+    # review queue」。分類未知擋住整格不歸檔,跟「PROVISIONAL 可以發布」也是矛盾的。
     #
-    # `test_gap` 擔心的「兩層附註小計被當成缺口」在這裡不會發生:那種情況
+    # 「兩層附註小計被當成缺口」在這裡不會發生:那種情況
     # **算術也對不上**(①② sum(葉列) != printed_total),而算術在 TRIGGERS 裡,
     # 照樣會擴頁。只有純分類失敗(僅 ⑤)才會落到 FILED。
-    #
-    # `use_policy=False` 保持原樣 —— 那是 `fill.cmd_submit` 的等價性閘門
-    # (test_ingest_equiv 的 E5),動它等於偷偷改掉人工那條路。
-    gap = _taxonomy_gap(recs, loc) if recs and not problems and not use_policy else None
-    if gap:
-        return {"outcome": "BLOCKED", "doc": doc, "cls": cls, "reason": reason,
-                "level": level, "gap": gap, "retries": retries, "data": None,
-                "message": (
-                    "BLOCKED   這格卡在**分類表缺口**,不是你抄錯 —— "
-                    "擴頁修不好這種失敗,所以不擴了。")}
 
     failed_names = None
     why = None
-    if use_policy and recs and not problems:
+    if recs and not problems:
         _per_rec, _cross, failed_names = _structured_checks(recs, loc, pages)
         may, why = expand_policy.may_expand(failed_names)
         consumes = expand_policy.consumes_budget(failed_names)

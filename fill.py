@@ -313,30 +313,18 @@ def _attempt(doc, cls, loc, recs, log=print):
     跟 `cmd_submit` 原本 `problems`/`reason` 分開判斷是同一件事,搬進這支
     共用函式後用 `hard` 明講,不靠「problems 是不是 None」猜。
     """
-    if not recs:
-        return False, "抄不出來(records 為空)", recs, True
-
     # 推導層(`docs/plan_schema_derive.md` D1)——`total_col` / `printed_total` /
     # 破折號列一律系統算,不問模型。**推導失敗直接算「沒過」,不進 facts.validate
     # 也不進 _taxonomy_gap**:0 個欄命中代表列本身抄錯了,那不是分類問題,
     # 硬塞進分桶模擬只會產生一個查不到根因的假警報。
-    anchor = loc.anchors.get(cls)
-    other_anchors = {c: v for c, v in loc.anchors.items() if c != cls}
-    recs, foreign = derive.split_foreign_records(recs, anchor, other_anchors)
-    for rec, other_cls in foreign:
-        page = rec.get("source_page")
-        tag = f"p.{page + 1}" if isinstance(page, int) else "p.?"
-        log(f"          {tag}({rec.get('source_kind')}):"
-            f"列和對到 {other_cls} 的錨,不屬於這格,已摘除。")
-
-    if not recs:
-        return False, "擴頁抓進來的頁全部屬於別的類別,這格本身沒有可用的 record", recs, True
-
-    derived, derive_err = derive.derive_records(recs, anchor)
+    #
+    # 2026-08-12:這一整段搬進 `core.derive.prepare()` —— **自動路徑
+    # (`core.ingest.classify_outcome`)整段沒有這一步**,導致自動抄列每一格
+    # 必然失敗。收成一份、兩邊都呼叫,見 `prepare()` 的說明。
+    recs, derive_err = derive.prepare(recs, loc, cls, log=log)
     if derive_err:
         return False, derive_err, recs, True
 
-    recs = derived
     problems = facts.validate({_key(doc, cls): recs})
     if problems:
         return False, "; ".join(problems), recs, True

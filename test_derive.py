@@ -148,13 +148,13 @@ def case_records_all_or_nothing():
 
 
 def case_real_rejected_regression():
-    """全部 9 格真實拒收檔案的回歸鎖(`plan_schema_derive.md` §2 模擬結果)。
+    """真實拒收檔案的不變量閘門(`plan_schema_derive.md` §2)。
 
-    這不是抽樣,是**全部**——分母就是 `work/rejected/` 現有的每一個檔案。
-    數字改變不一定是壞事(可能是推導層變聰明了),但**改變就必須被看見**,
-    不能悄悄漂移。
+    這不是抽樣,是**全部**——分母就是 `work/rejected/` + `work/blocked/`
+    現有的每一個檔案。
 
-    ⚠️ **這個目錄是活的**,不是凍結的測試 fixture,數字動過三次:
+    ⚠️ **這個目錄是活的**,不是凍結的測試 fixture。以下是它曾經被硬編成
+    快照、然後被迫一改再改的歷史(留著當「為什麼不該鎖快照」的證據):
       · 17/2/3/3(分母 25)→ 16/2/3/3(分母 24):`202502_國泰_個體|Trading`
         被人工 `ratify()` 放行離開了這個目錄——這是進度,不是回歸。
       · 16/2/3/3 → 14/2/4/3(分母 23):`202304_國泰_個體` 的 OCI/Trading
@@ -174,13 +174,41 @@ def case_real_rejected_regression():
         更新成當下的真實理由(舊字串會指著早已修好的問題,誤導人去找不存在的
         毛病),並把分類表缺口從 `rejected/` 改路由進 `blocked/`。
         分母 8→9 是 server 在這期間新拒收了 `202502_玉山_個體|OCI`。
-    **改動這支之前先用上面的邏輯手動重算一次**,不要只是把數字改到測試
-    會過為止;如果數字改變的原因是「有 stale server 還在跑」,那是要去
-    處理的問題,不是測試該吞下去的噪音。
+      · 0/2/4/3(分母 9)→ 3/0/4/0(分母 9,2 格因 `submitted.records` 為空被
+        跳過,2026-08-12 重算):`_taxonomy_gap()` 已經整支移除(見
+        `core/ingest.py` 檔頭),BLOCKED 出口也退場(方案 B,分類未知一律
+        FILED)。「路由到裁示台」與「仍然拒收(第 5 道)」這兩個分類本身已經
+        不對應真實出口了 —— 改用 `core.ingest` 現在真正在用的判準
+        (`expand_policy.may_expand`)重分:Gate 2 訊號攔下來的算「會 FILED
+        歸檔」,其餘算「會 REJECT」。3 格現在推導完直接 `verify()` 就過
+        (`revalidate` 之後這個目錄又被同一批 stale 資料再撿了幾格)。
+      · 3/0/4/0(分母 9)→ 4/0/4/0(分母 10)→ 0/0/4/0(分母 7):
+        同一天之內又動了兩次。**到這裡我不再改數字了,見下面「改掉硬編快照」。**
+
+    ## 2026-08-12:改掉硬編快照,改成斷言真正的不變量
+
+    上面那串「數字動過 N 次」本身就是結論:**`work/rejected/` 是活目錄,
+    每一次正常操作(人工放行、revalidate、跑一次抄列、修好一個 bug)都會改變
+    它的內容**,而每次都要回來改一個硬編數字。這一天之內就改了三次,
+    最後一次是因為修好推導層之後 `revalidate` 一口氣救回 4 格 ——
+    **那是這次改動最好的成果,卻讓這支測試變紅**。
+
+    一個「做對事情就會紅」的測試不是閘門,是雜訊(鐵律 12)。所以改成斷言
+    真正該恆成立的**不變量**,不再鎖快照:
+
+        留在 work/rejected/ + work/blocked/ 裡、且 `submitted.records` 非空的格,
+        **不准有任何一格是「推導 + 六道全過」的**。
+
+    理由是自洽的:如果某格重驗會過,`fill.py revalidate` 就會把它歸檔並移出
+    這個目錄;它還留在這裡卻又能通過,只有兩種可能——推導/驗收邏輯剛剛
+    改壞了(把不該過的判成過),或者有人手動塞了東西進來。兩種都要人看。
+
+    這個判準**不隨目錄內容漂移**:今天 7 個檔、明天 3 個檔都適用,
+    修好 bug 讓格子變少只會讓它更容易成立,不會逼人回來改數字。
+    `derive_fail` 等分類仍然印出來(看得到分布變化),但**不當作斷言**。
     """
     import locate
     import transcribe
-    import fill
 
     # **兩個目錄一起看**:`fill.py revalidate`(2026-07-31)會把重驗後判定為
     # 分類表缺口的格子從 `rejected/` 搬進 `blocked/`,只 glob 前者的話那些格子
@@ -188,11 +216,13 @@ def case_real_rejected_regression():
     files = sorted(glob.glob("work/rejected/*.json") + glob.glob("work/blocked/*.json"))
     yield ("有拒收檔案可以回歸(分母不是 0)", len(files) > 0, f"{len(files)} 個檔案")
 
-    tally = {"pass": 0, "blocked": 0, "derive_fail": 0, "reject": 0}
+    tally = {"pass": 0, "derive_fail": 0, "verify_fail": 0, "empty": 0}
+    wrongly_passing = []
     for p in files:
         m = json.load(open(p, encoding="utf-8"))
         recs = copy.deepcopy((m.get("submitted") or {}).get("records") or [])
         if not recs:
+            tally["empty"] += 1
             continue
         loc = locate.locate(f"pdf_cache/{m['doc']}.pdf")
         anchor = loc.anchors.get(m["cls"])
@@ -201,20 +231,16 @@ def case_real_rejected_regression():
         if err:
             tally["derive_fail"] += 1
             continue
-        ok, res = transcribe.verify(derived, loc)
+        ok, _res = transcribe.verify(derived, loc)
         if ok:
             tally["pass"] += 1
-            continue
-        if fill._taxonomy_gap(derived, loc):
-            tally["blocked"] += 1
+            wrongly_passing.append(f"{m['doc']}|{m['cls']}")
         else:
-            tally["reject"] += 1
+            tally["verify_fail"] += 1
 
-    yield ("推導後直接通過 = 0(2026-07-31 起,已被 revalidate 撿走,見上方註記)",
-           tally["pass"] == 0, tally)
-    yield ("路由到裁示台 = 2", tally["blocked"] == 2, tally)
-    yield ("推導失敗(真的抄錯) = 4", tally["derive_fail"] == 4, tally)
-    yield ("仍然拒收(第 5 道) = 3", tally["reject"] == 3, tally)
+    yield ("留在 rejected/blocked 的格,沒有任何一格是「推導+六道全過」"
+           "(會過的早該被 revalidate 撿走)",
+           not wrongly_passing, {"tally": tally, "應該撿走卻還留著": wrongly_passing})
 
 
 def main():

@@ -176,3 +176,48 @@ def derive_records(recs, anchor):
     if fails:
         return None, "; ".join(fails)
     return derived, None
+
+
+def prepare(recs, loc, cls, log=None):
+    """**推導層的完整前處理 —— 唯一一份實作**(2026-08-12,v7)。
+
+    「摘除別類別的表 → 推導 `total_col`/`printed_total`/破折號列」這一整套,
+    在丟進 `facts.validate()` 之前一定要跑過。回傳 `(recs, err)`:
+    `err` 不是 None 代表推導失敗(硬失敗,列本身有問題,不該再進分桶模擬)。
+
+    ⚠️ **為什麼會有這支**:這一整套原本只寫在 `fill._attempt()` 裡(人工與
+    `revalidate` 路徑),而**自動路徑 `core.ingest.classify_outcome()` 整段
+    沒有**,直接把模型輸出丟給 `facts.validate()`。後果是自動抄列**每一格
+    必然失敗**:`fill.py` 的 prompt 教模型輸出 `record_total`,推導層才會把它
+    翻成 `total_col`/`printed_total`,跳過推導層就永遠是
+    「缺必要欄位 ['total_col','printed_total']」。
+
+    2026-08-12 v7 R2-3 用第一銀行(5844)端到端實跑才抓到:reader 其實抄得
+    完全正確(三份 record、小計加總 = 錨值 200,511,579),卻三格全部 REJECT。
+    這是這個 repo 反覆長出的同一種 bug(memory: `two-implementations-one-rule`)
+    的第四個實例,所以收成這一份、兩條路徑都呼叫,不要再各寫一次。
+
+    (`core/webdata.py::file_cell` 刻意只借 `fill_zero_for_col` /
+    `drop_mismatched_printed_totals` 兩個子步驟、不跑整套 —— 人工裁示不該
+    重新發現 `total_col`、覆蓋人已經選定的欄。那是有理由的差異,不是漏改。)
+    """
+    if not recs:
+        return recs, "抄不出來(records 為空)"
+
+    anchor = loc.anchors.get(cls)
+    other_anchors = {c: v for c, v in loc.anchors.items() if c != cls}
+    recs, foreign = split_foreign_records(recs, anchor, other_anchors)
+    if log:
+        for rec, other_cls in foreign:
+            page = rec.get("source_page")
+            tag = f"p.{page + 1}" if isinstance(page, int) else "p.?"
+            log(f"          {tag}({rec.get('source_kind')}):"
+                f"列和對到 {other_cls} 的錨,不屬於這格,已摘除。")
+
+    if not recs:
+        return recs, "擴頁抓進來的頁全部屬於別的類別,這格本身沒有可用的 record"
+
+    derived, err = derive_records(recs, anchor)
+    if err:
+        return recs, err
+    return derived, None
