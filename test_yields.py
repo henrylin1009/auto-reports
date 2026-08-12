@@ -35,7 +35,7 @@ def test_撿不到就拋錯不是回空dict(tmp_path, monkeypatch):
     """注入一份 period 認不得的資料,確認閘門真的會擋。"""
     import json
     p = tmp_path / "c.json"
-    p.write_text(json.dumps({"capital": {"202504_5841_AI3": [
+    p.write_text(json.dumps({"capital": {"202504_中信_個體": [
         {"period": "當期", "basis_norm": "個體", "cet1": 1, "rwa": 2}]}}),
         encoding="utf-8")
     with pytest.raises(ValueError, match="一格都沒撿到"):

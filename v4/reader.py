@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 """v4 Reader —— 整份 PDF 一次丟給模型,不切片、不 locate。
 
-    python3 -m v4.reader 202504_5835_AI3          跑一份,結果存 v4/raw/{doc}.json
+    python3 -m v4.reader 202504_國泰_個體          跑一份,結果存 v4/raw/{doc}.json
     python3 -m v4.reader --scope 2023             跑 2023+ 尚未讀過的全部
     python3 -m v4.reader --scope 2023 --force     連已讀過的也重跑
 
 背景(docs/plan_v4_dump.md):
-- 國泰年報 `202504_5835_AI3` 逐桶 24/24、總額/錨 3/3 全對,注入的兩個錯 2/2 抓到、
+- 國泰年報 `202504_國泰_個體` 逐桶 24/24、總額/錨 3/3 全對,注入的兩個錯 2/2 抓到、
   0 誤報、不竄改原值。
-- held-out 富邦半年報 `202202_5836_AI3`(未事先看答案)同樣 24/24 全對,cost 三格
+- held-out 富邦半年報 `202202_富邦_個體`(未事先看答案)同樣 24/24 全對,cost 三格
   正確填 null,且面對主報表整段是掃描圖時沒有捏造錨,誠實在散文裡宣告限制。
 - **但那次也證明 `no_witness` 不能信模型自報**:BS 頁是空白掃描圖,模型 JSON 裡
   `check_anchor` 照樣填 `"status":"OK"`。所以這支只管「讀」,`no_witness` 的強制

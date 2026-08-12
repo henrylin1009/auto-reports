@@ -1,0 +1,631 @@
+{
+ "202102_兆豐_個體|AC": [
+  {
+   "at": "2026-07-29T13:52:49.005791Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202102_兆豐_個體|AC",
+    "row_index": 0,
+    "source_page": 36
+   },
+   "mapping": "可轉讓定存單",
+   "name": "央行定期存單",
+   "occurrence": {
+    "cell_key": "202102_兆豐_個體|AC",
+    "ordinal": 0,
+    "record_fp": "6442d8c1c78a714e7aaf7a3214a1af7cba1dfb7ccc44e2d01444f6bba04b1d91",
+    "row_fp": "2a8de51f8bbe50426c666cfb75583fce7bf463808b96033e39af6f26a332f42e",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:央行定期存單"
+  },
+  {
+   "at": "2026-07-29T13:52:49.005852Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202102_兆豐_個體|AC",
+    "row_index": 1,
+    "source_page": 36
+   },
+   "mapping": "貨幣市場",
+   "name": "短期票券",
+   "occurrence": {
+    "cell_key": "202102_兆豐_個體|AC",
+    "ordinal": 1,
+    "record_fp": "6442d8c1c78a714e7aaf7a3214a1af7cba1dfb7ccc44e2d01444f6bba04b1d91",
+    "row_fp": "9fad66542c0b2c74b7540af41ad903f16ab3b5b08acee33b53d7489489db37be",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:短期票券"
+  },
+  {
+   "at": "2026-07-29T13:52:49.005867Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202102_兆豐_個體|AC",
+    "row_index": 2,
+    "source_page": 36
+   },
+   "mapping": "可轉讓定存單",
+   "name": "銀行定期存單",
+   "occurrence": {
+    "cell_key": "202102_兆豐_個體|AC",
+    "ordinal": 2,
+    "record_fp": "6442d8c1c78a714e7aaf7a3214a1af7cba1dfb7ccc44e2d01444f6bba04b1d91",
+    "row_fp": "1d379e61f0afeb0af1a5bb7821c69d061942a3fed634a0e9cbe6b67bf350953e",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:銀行定期存單"
+  },
+  {
+   "at": "2026-07-29T13:52:49.005879Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202102_兆豐_個體|AC",
+    "row_index": 3,
+    "source_page": 36
+   },
+   "mapping": "金融債",
+   "name": "金融債券",
+   "occurrence": {
+    "cell_key": "202102_兆豐_個體|AC",
+    "ordinal": 3,
+    "record_fp": "6442d8c1c78a714e7aaf7a3214a1af7cba1dfb7ccc44e2d01444f6bba04b1d91",
+    "row_fp": "84b3a448b800fc37c3e339bb1f8982f0a35783f66c6b79db449a50b5ce4c7983",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:金融債券"
+  },
+  {
+   "at": "2026-07-29T13:52:49.005890Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202102_兆豐_個體|AC",
+    "row_index": 4,
+    "source_page": 36
+   },
+   "mapping": "公債",
+   "name": "政府債券",
+   "occurrence": {
+    "cell_key": "202102_兆豐_個體|AC",
+    "ordinal": 4,
+    "record_fp": "6442d8c1c78a714e7aaf7a3214a1af7cba1dfb7ccc44e2d01444f6bba04b1d91",
+    "row_fp": "c891f4f5b1853cc62bfb9d7eda6da5d271ab9f6b3a60d213898ba044fca3f68c",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "PROVISIONAL",
+   "taxonomy_ref": "tax:政府債券"
+  },
+  {
+   "at": "2026-07-29T13:52:49.005901Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202102_兆豐_個體|AC",
+    "row_index": 5,
+    "source_page": 36
+   },
+   "mapping": "公司債",
+   "name": "公司債券",
+   "occurrence": {
+    "cell_key": "202102_兆豐_個體|AC",
+    "ordinal": 5,
+    "record_fp": "6442d8c1c78a714e7aaf7a3214a1af7cba1dfb7ccc44e2d01444f6bba04b1d91",
+    "row_fp": "535860d19027359b9ceb8b946fff015a051a3df4c7463e87e596973a09b8fb1e",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:公司債券"
+  },
+  {
+   "at": "2026-07-29T13:52:49.005912Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202102_兆豐_個體|AC",
+    "row_index": 6,
+    "source_page": 36
+   },
+   "mapping": "貨幣市場",
+   "name": "國庫券",
+   "occurrence": {
+    "cell_key": "202102_兆豐_個體|AC",
+    "ordinal": 6,
+    "record_fp": "6442d8c1c78a714e7aaf7a3214a1af7cba1dfb7ccc44e2d01444f6bba04b1d91",
+    "row_fp": "2bbaa6cdf5129514129de0543e93d972ceb8979def2690630043c4c865273e9c",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:國庫券"
+  },
+  {
+   "at": "2026-07-29T13:52:49.005923Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202102_兆豐_個體|AC",
+    "row_index": 7,
+    "source_page": 36
+   },
+   "mapping": "評價調整",
+   "name": "減：累計減損",
+   "occurrence": {
+    "cell_key": "202102_兆豐_個體|AC",
+    "ordinal": 7,
+    "record_fp": "6442d8c1c78a714e7aaf7a3214a1af7cba1dfb7ccc44e2d01444f6bba04b1d91",
+    "row_fp": "cb6346f74691d65c5828d7c5dbfc74d62e988c8c0398559cc0940111f1b941bc",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:減：累計減損"
+  }
+ ],
+ "202102_兆豐_個體|OCI": [
+  {
+   "at": "2026-07-29T13:52:46.338278Z",
+   "by": "decide",
+   "group": "債務工具",
+   "locator": {
+    "cell_key": "202102_兆豐_個體|OCI",
+    "row_index": 0,
+    "source_page": 34
+   },
+   "mapping": "公司債",
+   "name": "公司債券",
+   "occurrence": {
+    "cell_key": "202102_兆豐_個體|OCI",
+    "ordinal": 0,
+    "record_fp": "a07da8457fa4403298f7983da9d94826737d405234a212d9dd0d8a45b27929ac",
+    "row_fp": "5d6316ced8ad83dbec3d4509251e850b5a26b24a6c87e35958ff771dd5bd467d",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:公司債券"
+  },
+  {
+   "at": "2026-07-29T13:52:46.338335Z",
+   "by": "decide",
+   "group": "債務工具",
+   "locator": {
+    "cell_key": "202102_兆豐_個體|OCI",
+    "row_index": 1,
+    "source_page": 34
+   },
+   "mapping": "公債",
+   "name": "政府債券",
+   "occurrence": {
+    "cell_key": "202102_兆豐_個體|OCI",
+    "ordinal": 1,
+    "record_fp": "a07da8457fa4403298f7983da9d94826737d405234a212d9dd0d8a45b27929ac",
+    "row_fp": "b2c352229c6135412013ada6e3821834dcf5945c1e91a206a443dd5af067ec98",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "PROVISIONAL",
+   "taxonomy_ref": "tax:政府債券"
+  },
+  {
+   "at": "2026-07-29T13:52:46.338352Z",
+   "by": "decide",
+   "group": "債務工具",
+   "locator": {
+    "cell_key": "202102_兆豐_個體|OCI",
+    "row_index": 2,
+    "source_page": 34
+   },
+   "mapping": "金融債",
+   "name": "金融債券",
+   "occurrence": {
+    "cell_key": "202102_兆豐_個體|OCI",
+    "ordinal": 2,
+    "record_fp": "a07da8457fa4403298f7983da9d94826737d405234a212d9dd0d8a45b27929ac",
+    "row_fp": "c829da32dbf666c5df2729ff1b4f9268e503adbc06c8c78ae0ac064d8fc40787",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:金融債券"
+  },
+  {
+   "at": "2026-07-29T13:52:46.338365Z",
+   "by": "decide",
+   "group": "債務工具",
+   "locator": {
+    "cell_key": "202102_兆豐_個體|OCI",
+    "row_index": 3,
+    "source_page": 34
+   },
+   "mapping": null,
+   "name": "受益證券",
+   "occurrence": {
+    "cell_key": "202102_兆豐_個體|OCI",
+    "ordinal": 3,
+    "record_fp": "a07da8457fa4403298f7983da9d94826737d405234a212d9dd0d8a45b27929ac",
+    "row_fp": "b2a74f900c155bf7d61e6188ccbf4e4a064752a2827e4743aa9be44af72a7b1b",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "UNCLASSIFIED",
+   "taxonomy_ref": null
+  },
+  {
+   "at": "2026-07-29T13:52:46.338389Z",
+   "by": "decide",
+   "group": "債務工具",
+   "locator": {
+    "cell_key": "202102_兆豐_個體|OCI",
+    "row_index": 4,
+    "source_page": 34
+   },
+   "mapping": "可轉讓定存單",
+   "name": "定存單",
+   "occurrence": {
+    "cell_key": "202102_兆豐_個體|OCI",
+    "ordinal": 4,
+    "record_fp": "a07da8457fa4403298f7983da9d94826737d405234a212d9dd0d8a45b27929ac",
+    "row_fp": "aad537fa9fcdfd4c84f60947159e6e0653abf8c5fc4825cb3ad18c61c32adc83",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:定存單"
+  },
+  {
+   "at": "2026-07-29T13:52:46.338402Z",
+   "by": "decide",
+   "group": "債務工具",
+   "locator": {
+    "cell_key": "202102_兆豐_個體|OCI",
+    "row_index": 5,
+    "source_page": 34
+   },
+   "mapping": "評價調整",
+   "name": "評價調整",
+   "occurrence": {
+    "cell_key": "202102_兆豐_個體|OCI",
+    "ordinal": 5,
+    "record_fp": "a07da8457fa4403298f7983da9d94826737d405234a212d9dd0d8a45b27929ac",
+    "row_fp": "0b9f063c7108d80da2b17431f54ff63c6ca5009250ec0327839e6703f2c3f485",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:評價調整"
+  },
+  {
+   "at": "2026-07-29T13:52:46.338414Z",
+   "by": "decide",
+   "group": "權益工具",
+   "locator": {
+    "cell_key": "202102_兆豐_個體|OCI",
+    "row_index": 6,
+    "source_page": 34
+   },
+   "mapping": "股票",
+   "name": "上市櫃公司股票",
+   "occurrence": {
+    "cell_key": "202102_兆豐_個體|OCI",
+    "ordinal": 6,
+    "record_fp": "a07da8457fa4403298f7983da9d94826737d405234a212d9dd0d8a45b27929ac",
+    "row_fp": "ea9f5a0cb065e16d699c6cfa5973857954804aec473f978a5698749a4dd24b6f",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:上市櫃公司股票"
+  },
+  {
+   "at": "2026-07-29T13:52:46.338427Z",
+   "by": "decide",
+   "group": "權益工具",
+   "locator": {
+    "cell_key": "202102_兆豐_個體|OCI",
+    "row_index": 7,
+    "source_page": 34
+   },
+   "mapping": "股票",
+   "name": "非上市、上櫃、興櫃股票",
+   "occurrence": {
+    "cell_key": "202102_兆豐_個體|OCI",
+    "ordinal": 7,
+    "record_fp": "a07da8457fa4403298f7983da9d94826737d405234a212d9dd0d8a45b27929ac",
+    "row_fp": "17160a1e270dbe48336ba0c245e2716856ae99582cb6a35d72b766573ac46ce4",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:非上市、上櫃、興櫃股票"
+  },
+  {
+   "at": "2026-07-29T13:52:46.338440Z",
+   "by": "decide",
+   "group": "權益工具",
+   "locator": {
+    "cell_key": "202102_兆豐_個體|OCI",
+    "row_index": 8,
+    "source_page": 34
+   },
+   "mapping": "其他",
+   "name": "其他有價證券",
+   "occurrence": {
+    "cell_key": "202102_兆豐_個體|OCI",
+    "ordinal": 8,
+    "record_fp": "a07da8457fa4403298f7983da9d94826737d405234a212d9dd0d8a45b27929ac",
+    "row_fp": "c247a87d6c63d156ad76f2fc7b6259f20cd55b5b580423b12b47e4adc15e0a3b",
+    "scope": "row"
+   },
+   "references": [
+    {
+     "at": "2026-07-29T13:52:46.338440Z",
+     "detail": "BUCKET_RULES 關鍵字「其他」",
+     "kind": "rule",
+     "recheck": "rules.propose('其他有價證券')[0] == '其他'"
+    }
+   ],
+   "state": "PROVISIONAL",
+   "taxonomy_ref": null
+  },
+  {
+   "at": "2026-07-29T13:52:46.338469Z",
+   "by": "decide",
+   "group": "權益工具",
+   "locator": {
+    "cell_key": "202102_兆豐_個體|OCI",
+    "row_index": 9,
+    "source_page": 34
+   },
+   "mapping": "評價調整",
+   "name": "評價調整",
+   "occurrence": {
+    "cell_key": "202102_兆豐_個體|OCI",
+    "ordinal": 9,
+    "record_fp": "a07da8457fa4403298f7983da9d94826737d405234a212d9dd0d8a45b27929ac",
+    "row_fp": "dc6925d5b9808d30d54721f5f113bcc789142af38ae3a7763853f4b35cc50cc2",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:評價調整"
+  }
+ ],
+ "202102_兆豐_個體|Trading": [
+  {
+   "at": "2026-07-29T13:52:43.026468Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202102_兆豐_個體|Trading",
+    "row_index": 0,
+    "source_page": 33
+   },
+   "mapping": "股票",
+   "name": "上市櫃公司股票",
+   "occurrence": {
+    "cell_key": "202102_兆豐_個體|Trading",
+    "ordinal": 0,
+    "record_fp": "a3c59687feb4af7c39a6f60fced735dfa9e8c584d228fe6f9f25b2803eba7fea",
+    "row_fp": "bf05297aae11436308631d315d43d01c9a44adbb102efeb8e949b049eab434fa",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:上市櫃公司股票"
+  },
+  {
+   "at": "2026-07-29T13:52:43.026525Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202102_兆豐_個體|Trading",
+    "row_index": 1,
+    "source_page": 33
+   },
+   "mapping": "股票",
+   "name": "興櫃公司股票",
+   "occurrence": {
+    "cell_key": "202102_兆豐_個體|Trading",
+    "ordinal": 1,
+    "record_fp": "a3c59687feb4af7c39a6f60fced735dfa9e8c584d228fe6f9f25b2803eba7fea",
+    "row_fp": "440c92d327a5cb048ab028067411977ad44d589c01b19d32c3036ace73ac30ed",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:興櫃公司股票"
+  },
+  {
+   "at": "2026-07-29T13:52:43.026546Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202102_兆豐_個體|Trading",
+    "row_index": 2,
+    "source_page": 33
+   },
+   "mapping": "股票",
+   "name": "非上市、上櫃、興櫃股票",
+   "occurrence": {
+    "cell_key": "202102_兆豐_個體|Trading",
+    "ordinal": 2,
+    "record_fp": "a3c59687feb4af7c39a6f60fced735dfa9e8c584d228fe6f9f25b2803eba7fea",
+    "row_fp": "a1d6f1473bf2615a03da0c8025b7361ba65f5a89be2351cb63b4bd2bb674476b",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:非上市、上櫃、興櫃股票"
+  },
+  {
+   "at": "2026-07-29T13:52:43.026564Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202102_兆豐_個體|Trading",
+    "row_index": 3,
+    "source_page": 33
+   },
+   "mapping": null,
+   "name": "受益證券",
+   "occurrence": {
+    "cell_key": "202102_兆豐_個體|Trading",
+    "ordinal": 3,
+    "record_fp": "a3c59687feb4af7c39a6f60fced735dfa9e8c584d228fe6f9f25b2803eba7fea",
+    "row_fp": "bb7cb7e630f4d1606435b0e6cb6305041058d1b4e10100a117c927512fc89d73",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "UNCLASSIFIED",
+   "taxonomy_ref": null
+  },
+  {
+   "at": "2026-07-29T13:52:43.026596Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202102_兆豐_個體|Trading",
+    "row_index": 4,
+    "source_page": 33
+   },
+   "mapping": "股票",
+   "name": "受益憑證",
+   "occurrence": {
+    "cell_key": "202102_兆豐_個體|Trading",
+    "ordinal": 4,
+    "record_fp": "a3c59687feb4af7c39a6f60fced735dfa9e8c584d228fe6f9f25b2803eba7fea",
+    "row_fp": "0386c2c9fd8669284f0023acccdcc3bb20dcc0bcbabc0f6a3ead986290178174",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:受益憑證"
+  },
+  {
+   "at": "2026-07-29T13:52:43.026612Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202102_兆豐_個體|Trading",
+    "row_index": 5,
+    "source_page": 33
+   },
+   "mapping": "衍生",
+   "name": "衍生工具",
+   "occurrence": {
+    "cell_key": "202102_兆豐_個體|Trading",
+    "ordinal": 5,
+    "record_fp": "a3c59687feb4af7c39a6f60fced735dfa9e8c584d228fe6f9f25b2803eba7fea",
+    "row_fp": "abac8caa0a6ecc9138790ffd90dd66391ad701496fcf76a0221de7a842d12ca0",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:衍生工具"
+  },
+  {
+   "at": "2026-07-29T13:52:43.026627Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202102_兆豐_個體|Trading",
+    "row_index": 6,
+    "source_page": 33
+   },
+   "mapping": "公債",
+   "name": "政府債券",
+   "occurrence": {
+    "cell_key": "202102_兆豐_個體|Trading",
+    "ordinal": 6,
+    "record_fp": "a3c59687feb4af7c39a6f60fced735dfa9e8c584d228fe6f9f25b2803eba7fea",
+    "row_fp": "57cc25c2e26615daa21d050150ad18b23e490424704d97dd6d8745165b44799b",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "PROVISIONAL",
+   "taxonomy_ref": "tax:政府債券"
+  },
+  {
+   "at": "2026-07-29T13:52:43.026643Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202102_兆豐_個體|Trading",
+    "row_index": 7,
+    "source_page": 33
+   },
+   "mapping": "公司債",
+   "name": "公司債券",
+   "occurrence": {
+    "cell_key": "202102_兆豐_個體|Trading",
+    "ordinal": 7,
+    "record_fp": "a3c59687feb4af7c39a6f60fced735dfa9e8c584d228fe6f9f25b2803eba7fea",
+    "row_fp": "9182d54a501dfa83dcc8bbaae5ebcd8a652e1c88fa3dec822163387d20abc6ba",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:公司債券"
+  },
+  {
+   "at": "2026-07-29T13:52:43.026660Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202102_兆豐_個體|Trading",
+    "row_index": 8,
+    "source_page": 33
+   },
+   "mapping": "金融債",
+   "name": "金融債券",
+   "occurrence": {
+    "cell_key": "202102_兆豐_個體|Trading",
+    "ordinal": 8,
+    "record_fp": "a3c59687feb4af7c39a6f60fced735dfa9e8c584d228fe6f9f25b2803eba7fea",
+    "row_fp": "ef3921f7d0b68a5bc508f0372b785eff8bd6d0c63d7804494f6711a12e216da5",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:金融債券"
+  },
+  {
+   "at": "2026-07-29T13:52:43.026675Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202102_兆豐_個體|Trading",
+    "row_index": 9,
+    "source_page": 33
+   },
+   "mapping": "評價調整",
+   "name": "評價調整",
+   "occurrence": {
+    "cell_key": "202102_兆豐_個體|Trading",
+    "ordinal": 9,
+    "record_fp": "a3c59687feb4af7c39a6f60fced735dfa9e8c584d228fe6f9f25b2803eba7fea",
+    "row_fp": "dceeb3dc83646e0eeab3f51f47ca700b0a1ee26430ee126add36efab9fc004e4",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:評價調整"
+  }
+ ]
+}

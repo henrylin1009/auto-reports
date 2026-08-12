@@ -127,13 +127,13 @@ record 內 (norm名, group, 合計欄金額) 重複          0 筆
 ### M-B5 B2 具名 fixture 的現況 —— **多數已在 facts 裡,不能拿現況當斷言**
 
 ```
-202102_5847_AI3|OCI       已在 facts  level=None   ← 早期遷移,無 _by
+202102_玉山_個體|OCI       已在 facts  level=None   ← 早期遷移,無 _by
 202102_5847_AI2|OCI       **不在 facts**(從未抄過)
-202302_5847_AI3|OCI       **不在 facts**
-202402_5847_AI3|OCI       **不在 facts**
-202502_5847_AI3|OCI       **不在 facts**
-202504_5835_AI3|Trading   已在 facts  level=[2,2]  ← 白燒 8 輪後、SYN 補上才過
-holdout(永不進發布):202304_5847_AI3|Trading · 202502_5835_AI3|OCI · 202502_5843_AI3|OCI
+202302_玉山_個體|OCI       **不在 facts**
+202402_玉山_個體|OCI       **不在 facts**
+202502_玉山_個體|OCI       **不在 facts**
+202504_國泰_個體|Trading   已在 facts  level=[2,2]  ← 白燒 8 輪後、SYN 補上才過
+holdout(永不進發布):202304_玉山_個體|Trading · 202502_國泰_個體|OCI · 202502_兆豐_個體|OCI
 ```
 
 **這直接推翻「facts 格數上升」當閘門的寫法**:兩個主角今天都已經在 facts 裡,
@@ -187,7 +187,7 @@ Locator = (cell_key, source_page, row_index)
 
 # ② record identity —— 記錄層的穩定身分
 RecordIdentity = (
-    cell_key,           # "202404_5843_AI3|OCI" → 拆得出 bank/period/doc/class
+    cell_key,           # "202404_兆豐_個體|OCI" → 拆得出 bank/period/doc/class
     record_fp,          # sha256 of (source_kind, total_col, printed_total,
                         #            printed_totals)   ← **不含 source_page、不含 rows**
 )
@@ -525,9 +525,9 @@ M-B5 已證明「facts 格數上升」不能當閘門:兩個主角今天都已�
 
 | fixture | 輸入 | 必須成立的斷言 |
 |---|---|---|
-| **F1 玉山 202102_5847_AI3 OCI 第一層** | p23 兩列小計:權益 16,018,428 + 債務 271,692,749 = printed_total = 錨 287,711,177 | Gate 1 **通過** ∧ facts 寫入(tmp) ∧ 2 筆 Decision 皆 UNCLASSIFIED ∧ Gate 2 **不通過** ∧ review item 建立 1 筆 ∧ **未擴頁** ∧ **retries 未增加** |
+| **F1 玉山 202102_玉山_個體 OCI 第一層** | p23 兩列小計:權益 16,018,428 + 債務 271,692,749 = printed_total = 錨 287,711,177 | Gate 1 **通過** ∧ facts 寫入(tmp) ∧ 2 筆 Decision 皆 UNCLASSIFIED ∧ Gate 2 **不通過** ∧ review item 建立 1 筆 ∧ **未擴頁** ∧ **retries 未增加** |
 | **F2 玉山家族其餘 4 格** | 同型態合成(202102_AI2 / 202302 / 202402 / 202502) | 同 F1。**這 4 格今天不在 facts,fixture 是合成的,不得宣稱「已抄錄」** |
-| **F3 國泰 202504_5835_AI3 Trading** | 真實 record,但 taxonomy **移除**「基金受益憑證」 | Gate 1 通過 ∧ 歸檔 ∧ Decision PROVISIONAL(`rules.propose()` 提得出「股票」)∧ Gate 2 擋住 ∧ **未擴頁、retries 未增加**(對照:今天實測白燒 8 輪) |
+| **F3 國泰 202504_國泰_個體 Trading** | 真實 record,但 taxonomy **移除**「基金受益憑證」 | Gate 1 通過 ∧ 歸檔 ∧ Decision PROVISIONAL(`rules.propose()` 提得出「股票」)∧ Gate 2 擋住 ∧ **未擴頁、retries 未增加**(對照:今天實測白燒 8 輪) |
 | **F4 反向** | schema 壞掉的輸入(拿掉 `printed_total`) | Gate 1 **不通過** ∧ **facts 未寫入** ∧ 無 Decision ∧ 無 review item |
 
 **(2) idempotence(同一輸入重跑)**

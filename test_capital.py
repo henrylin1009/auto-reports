@@ -159,7 +159,7 @@ def test_equity_catches_bs_mismatch():
 def test_equity_null_is_a_fail_not_a_crash():
     """注入:模型照工單指示把抄不出來的格留 null。
 
-    實測 202204_5841_AI3 就是這樣回的,原本在 `abs(got - cl[k])` 直接 TypeError,
+    實測 202204_中信_個體 就是這樣回的,原本在 `abs(got - cl[k])` 直接 TypeError,
     整份變 ERROR —— 一格沒抄到卻讓另外 19 份也看不到自己的驗收結果。
     """
     close = dict(CTBC_CLOSE, 特別=None)
@@ -186,11 +186,11 @@ def test_equity_null_not_swallowed_as_zero():
 
 FV_TRUTH = {
     # doc, 帳面, 公允, 揭露範圍
-    "中信": ("202504_5841_AI3", 886_706_260, 868_442_291, "全帳"),
-    "兆豐": ("202504_5843_AI3", 89_434_819, 88_391_297, "扣貨幣市場"),
-    "國泰": ("202504_5835_AI3", 686_643_677, 661_445_489, "全帳"),
-    "富邦": ("202504_5836_AI3", 875_353_432, 848_821_775, "全帳"),
-    "玉山": ("202504_5847_AI3", 522_115_384, 511_989_932, "全帳"),
+    "中信": ("202504_中信_個體", 886_706_260, 868_442_291, "全帳"),
+    "兆豐": ("202504_兆豐_個體", 89_434_819, 88_391_297, "扣貨幣市場"),
+    "國泰": ("202504_國泰_個體", 686_643_677, 661_445_489, "全帳"),
+    "富邦": ("202504_富邦_個體", 875_353_432, 848_821_775, "全帳"),
+    "玉山": ("202504_玉山_個體", 522_115_384, 511_989_932, "全帳"),
 }
 
 
@@ -217,8 +217,8 @@ def test_fv_catches_level_table_first_tier():
     國泰 p96 兩張表同頁,等級表那列也叫「按攤銷後成本衡量之債務工具投資」。
     合計 661,445,489 / 第一等級 42,517,268 → −93.6%,量級閘門要擋下。
     """
-    r = capital.verify_fair_value(_fv("202504_5835_AI3", 661_445_489, 42_517_268),
-                                  "202504_5835_AI3")
+    r = capital.verify_fair_value(_fv("202504_國泰_個體", 661_445_489, 42_517_268),
+                                  "202504_國泰_個體")
     assert r and any("等級表" in x for x in r), f"應擋下等級表,卻回 {r}"
 
 
@@ -230,8 +230,8 @@ def test_fv_catches_level_table_second_tier():
     等級表的「合計」是公允價值不是帳面,對不上 AC 的帳面 686,764,055。
     這條就是為什麼兩道閘門都要留。
     """
-    r = capital.verify_fair_value(_fv("202504_5835_AI3", 661_445_489, 612_004_125),
-                                  "202504_5835_AI3")
+    r = capital.verify_fair_value(_fv("202504_國泰_個體", 661_445_489, 612_004_125),
+                                  "202504_國泰_個體")
     assert r and any("對不上 facts" in x for x in r), f"應由對帳擋下,卻回 {r}"
 
 
@@ -299,7 +299,7 @@ INT_ESUN = dict(
     subtotal_expense=None, net=None,
     sec_ac=12_084_194, sec_oci=10_236_439)
 
-PNL_STORE = {"202504_5841_AI3": [dict(PNL_TRUTH["中信"], basis_norm="個體")]}
+PNL_STORE = {"202504_中信_個體": [dict(PNL_TRUTH["中信"], basis_norm="個體")]}
 
 
 def test_pnl_truth_passes():
@@ -335,14 +335,14 @@ def test_pnl_null_is_fail_not_zero():
 
 
 def test_interest_truth_passes():
-    r = capital.verify_interest(INT_CTBC, "202504_5841_AI3", PNL_STORE)
+    r = capital.verify_interest(INT_CTBC, "202504_中信_個體", PNL_STORE)
     assert r is None, f"中信應通過但失敗:{r}"
 
 
 def test_interest_catches_row_sum_break():
     """注入:漏抄一個分項。分項加總 == 印出的小計,是表自己印的。"""
     bad = dict(INT_CTBC, rows=INT_CTBC["rows"][:-1])
-    r = capital.verify_interest(bad, "202504_5841_AI3", PNL_STORE)
+    r = capital.verify_interest(bad, "202504_中信_個體", PNL_STORE)
     assert r and any("!= 印出的小計" in x for x in r), f"應擋下漏抄,卻回 {r}"
 
 
@@ -352,14 +352,14 @@ def test_interest_catches_fabricated_securities():
     這是最陰的錯 —— 模型把兩列相加或估一個,加總與小計仍然對得上。
     """
     bad = dict(INT_CTBC, securities=31_000_000)
-    r = capital.verify_interest(bad, "202504_5841_AI3", PNL_STORE)
+    r = capital.verify_interest(bad, "202504_中信_個體", PNL_STORE)
     assert r and any("可能是自己算的" in x for x in r), f"應擋下,卻回 {r}"
 
 
 def test_interest_catches_bucket_break():
     """注入:AC/OCI 分桶加總對不上證券利息合計(附表自己印合計)。"""
     bad = dict(INT_ESUN, sec_ac=12_084_194, sec_oci=9_000_000)
-    r = capital.verify_interest(bad, "202504_5847_AI3", None)
+    r = capital.verify_interest(bad, "202504_玉山_個體", None)
     assert r and any("分桶" in x for x in r), f"應擋下分桶不合,卻回 {r}"
 
 
@@ -371,13 +371,13 @@ def test_interest_cross_table_catches_mismatch():
     """
     bad = dict(INT_CTBC, subtotal_income=153_560_000,
                rows=INT_CTBC["rows"][:-1] + [{"name": "其他", "amount": 1_969_079}])
-    r = capital.verify_interest(bad, "202504_5841_AI3", PNL_STORE)
+    r = capital.verify_interest(bad, "202504_中信_個體", PNL_STORE)
     assert r and any("綜合損益表" in x for x in r), f"應擋下跨表不符,卻回 {r}"
 
 
 def test_interest_no_pnl_is_not_green():
     """還沒有 pnl 可對帳時要記成 N/A 進人審,**不可以當通過**。"""
-    r = capital.verify_interest(INT_CTBC, "202504_5841_AI3", {})
+    r = capital.verify_interest(INT_CTBC, "202504_中信_個體", {})
     assert r and any("N/A" in x for x in r), f"沒得對帳時不該通過,卻回 {r}"
 
 
@@ -397,7 +397,7 @@ def test_interest_accepts_two_securities_rows():
                securities=31_302_894, subtotal_income=115_758_453,
                subtotal_expense=76_137_497, net=39_620_956,
                sec_ac=26_023_280, sec_oci=5_279_614)
-    r = capital.verify_interest(rec, "202404_5836_AI3", None)
+    r = capital.verify_interest(rec, "202404_富邦_個體", None)
     assert r == [capital.NA_NO_PNL], f"兩列相加應該被接受,卻回 {r}"
     assert rec["scope"] == "AC+OCI", f"兩桶都有時 scope 應為 AC+OCI,卻是 {rec['scope']}"
 

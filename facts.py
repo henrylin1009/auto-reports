@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """事實庫。**唯一的讀寫入口**——呼叫端一律用這支,不直接碰 `facts/*.json` 或 `facts.db`。
 
-    load()       {格key: [record, ...]},格key 形如 `202404_5843_AI3|Trading`
+    load()       {格key: [record, ...]},格key 形如 `202404_兆豐_個體|Trading`
     save(cells)  寫回
     validate()   回傳問題清單。空 list = 通過。**不修資料,只報告。**
 
@@ -80,7 +80,7 @@ def _use_db(facts_dir):
 
 
 def load(facts_dir=None):
-    """→ {格key: [record, ...]},格key 形如 `202404_5843_AI3|Trading`。
+    """→ {格key: [record, ...]},格key 形如 `202404_兆豐_個體|Trading`。
 
     `facts_dir` 只給測試用(注入 tmp 目錄,見 `test_webdata.py`)——
     production 呼叫一律用預設值,不要傳。"""

@@ -3,7 +3,7 @@ const JSDOM = require("jsdom").JSDOM;
 const dom = new JSDOM(`<!DOCTYPE html><html><body><div id="app"></div><div id="cls"></div></body></html>`);
 const window = dom.window;
 global.document = window.document;
-global.location = { hash: "#/doc/202404_5843_AI3" };
+global.location = { hash: "#/doc/202404_兆豐_個體" };
 global.addEventListener = () => {};
 global.fetch = async () => ({
   json: async () => JSON.parse(fs.readFileSync("out.json", "utf8"))
@@ -208,4 +208,4 @@ function clsTodo(doc, cls, f, status, reason, anchor, submitted, v4_cell) {
     if (stuck) await post("requeue", { cell_key: `${doc}|${cls}` });
     const m = card.querySelector("[data-model]").value;
     runCell(doc, cls, m);
-try { viewDoc("202404_5843_AI3"); console.log("OK"); } catch(e) { console.error(e); }
+try { viewDoc("202404_兆豐_個體"); console.log("OK"); } catch(e) { console.error(e); }

@@ -111,7 +111,7 @@ docstring 寫了、沒有任何呼叫端用過的退化路徑。**這是潛伏 b
 (`transcribe.align` 的 docstring 自己說了「這層相依是真的」)。
 
 **M6 —— 擴頁在實務上很罕見。** 36 格裡只有 2 格用過擴張
-(`202504_5835_AI3` 的 AC 與 Trading,level=2 retries=2),其餘 34 格 level=0。
+(`202504_國泰_個體` 的 AC 與 Trading,level=2 retries=2),其餘 34 格 level=0。
 (其中 19 格是早期遷移進來的,沒有 `_by` 稽核欄位。)
 
 ---

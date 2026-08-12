@@ -16,6 +16,7 @@ import os
 
 import buckets
 import config
+import docid
 import facts as facts_mod
 import fill
 import locate
@@ -34,9 +35,12 @@ def docs_in_scope():
 
 
 def split_doc(doc):
-    """`202504_5847_AI3` → (`202504`, `5847`, `AI3`)。"""
-    period, bank, code = doc.split("_")
-    return period, bank, code
+    """`202504_玉山_個體` → (`202504`, `玉山`, `個體`)。
+
+    薄包裝,實作在 `docid.parse()`(唯一解析入口)。保留這個名字是因為
+    本模組內有數處呼叫;**不要在這裡加第二套解析邏輯**。
+    """
+    return docid.parse(doc)
 
 
 def _marked_keys(work_dir):
@@ -77,7 +81,7 @@ def set_cellmeta(doc, cls, field, value, why, by=None, today=None, path=None):
       "pages"   → value = 頁碼清單(0-based,與 facts 的 source_page 同制)。
                   解掉兩種卡住:①錨有但候選頁是空的(grep 找不到,今天 2 格)
                   ②候選頁都在,但模型抄到彙總層不是明細層(今天 ~15 筆,
-                  例如 202502_5836_AI3 OCI 那個「透過…權益/債務工具投資」
+                  例如 202502_富邦_個體 OCI 那個「透過…權益/債務工具投資」
                   小計)。設完之後照舊點「重抄」,`fill_auto.run_key()` 會
                   自動吃到這個覆寫(見該函式的 `cellmeta` 參數)。
       "no_data" → value = true。**不是「還沒抄」**,是人已經翻過原始頁面、
@@ -199,8 +203,9 @@ def overview(basis=None):
     兩者的期別本來就不同(個體只有半年報 02 / 年報 04,合併有四季),
     混在同一個網格會長出一整排永遠空著的季報欄。跨行比較只用個體。
 
-    欄名用**銀行代碼**,不再串 AI 編號:`resolve.download()` 一律把檔改名存成
-    `_AI3`(resolve.py:37),AI 編號已經不帶意義。口徑改由封面判(`locate.basis_of`)。
+    欄名用**銀行名字**(2026-08-12,隨 doc id 改名一起換掉代碼)。代碼只剩
+    一個用途——去 TWSE 抓檔,所以格子裡仍附一個 `code` 給「抓這期」按鈕用。
+    口徑由封面判(`locate.basis_of`),不讀檔名上的口徑標籤。
     """
     cells = facts_mod.load()
     blocked_keys = set(queue_mod.by_cell())
@@ -229,9 +234,9 @@ def overview(basis=None):
     periods.sort(reverse=True)
     cols.sort()
 
-    # (期別, 代碼) → 實際檔名。**不准用 `acquire.doc_name()` 組出來的名字反查現有檔**:
-    # 那個函式回的一律是 `_AI3`(抓檔存檔用),但合併的舊檔叫 `_AI1`,
-    # 組名比對會讓整張合併矩陣變成「一份都沒有」(2026-07-29 實測踩過)。
+    # (期別, 銀行名) → 實際檔名。**不准用 `acquire.doc_name()` 組出來的名字
+    # 反查現有檔**:那個函式回的一律是「個體」,合併的檔組出來對不上,
+    # 會讓整張合併矩陣變成「一份都沒有」(2026-07-29 實測踩過,當時是 AI3/AI1)。
     by_pos = {(split_doc(d)[0], split_doc(d)[1]): d for d in docs}
 
     log = acquire.load_log()
@@ -250,10 +255,13 @@ def overview(basis=None):
                 grid[f"{period}|{bank}"] = {"doc": doc, "classes": states,
                                             "fetch": None}
                 continue
-            st = acquire.cell_fetch_state(period, bank, present, log)
+            # 欄位身分是**名字**,抓檔身分是**代碼** —— 在這裡轉一次。
+            # 設定裡沒有的銀行抓不了(`code` 為 None),按鈕由前端自己灰掉。
+            code = config.CODE_OF.get(bank)
+            st = acquire.cell_fetch_state(period, code, present, log) if code else "na"
             fetch_stats[st] = fetch_stats.get(st, 0) + 1
             grid[f"{period}|{bank}"] = {"doc": None, "classes": None,
-                                        "fetch": st, "period": period, "code": bank}
+                                        "fetch": st, "period": period, "code": code}
 
     avail = sorted({bmap.get(d) for d in docs_in_scope()} - {None, locate.UNKNOWN})
     return {"periods": periods, "cols": cols, "grid": grid, "stats": stats,
@@ -475,7 +483,7 @@ def ratify(doc, cls, records, why=None, by=None, today=None, facts_dir=None,
     在系統裡說不出口的話(`plan_web_complete.md` §1 的根因)。W2 的 `edit_row`
     只解了「已經在 facts/ 裡的列」,被擋在 facts/ 外面的格子仍然是死路。
 
-    實測的兩種假拒收(2026-07-30,202502_5835_AI3):
+    實測的兩種假拒收(2026-07-30,202502_國泰_個體):
       · 破折號列 —— Trading 逐列相加 296,338,628 正好 == 錨,唯一的問題是
         `基金受益憑證` 那列在合計欄印的是「—」,閘門①②要求每列都有值
       · total_col 挑錯 —— OCI 的 `114年6月30日` 欄列和 330,763,870 正好 == 錨,
@@ -624,7 +632,7 @@ def fill_context(doc, cls, cellmeta=None):
 
 def doc_detail(doc):
     """**一份文件的三類一起給**。這是使用者實際的工作單位 —— 你是「處理這份
-    財報」,不是「處理 202504_5847_AI3|OCI 這一格」(2026-07-29 裁示)。
+    財報」,不是「處理 202504_玉山_個體|OCI 這一格」(2026-07-29 裁示)。
 
     每類的形狀依狀態而定,前端不必再自己判斷要打哪支 API:
       done      → `cell`(逐列 + 桶),核對用

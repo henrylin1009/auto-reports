@@ -42,7 +42,7 @@ def eq(label, got, want):
     ok(label) if got == want else fail(label, f"got {got!r}, want {want!r}")
 
 
-DOC, CLS = "202504_5843_AI3", "AC"
+DOC, CLS = "202504_兆豐_個體", "AC"
 KEY = f"{DOC}|{CLS}"
 
 

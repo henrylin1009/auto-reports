@@ -87,8 +87,8 @@ def mkws(blocked=None, proposals=None, review=None, facts=None):
 
 
 BLOCKED_SAMPLE = {
-    "202504_5847_AI3__AC": {
-        "doc": "202504_5847_AI3", "cls": "AC", "level": 1,
+    "202504_玉山_個體__AC": {
+        "doc": "202504_玉山_個體", "cls": "AC", "level": 1,
         "reason": "⑤列皆可分桶@p127:3 列對不到桶",
         # ⚠️ 樣本名字**必須是 `buckets.bucket()` 現在查不到桶的** —— `pending()`
         #    會把查得到桶的篩掉(那是它的職責),拿一個查得到的當樣本,測到的就
@@ -108,7 +108,7 @@ BLOCKED_SAMPLE = {
 }
 
 REVIEW_SAMPLE = [{
-    "cell_key": "202404_5835_AI3|OCI",
+    "cell_key": "202404_國泰_個體|OCI",
     "decision": {"name": "某科目", "group": None, "state": "UNCLASSIFIED",
                  "mapping": None,
                  "occurrence": {"record_fp": "aa", "row_fp": "bb", "scope": "name"}},
@@ -131,7 +131,7 @@ def test_queue_module():
         got = Q.pending(ws)
         eq("Q2 讀得到 review/queue.jsonl", len(got), 1)
         eq("Q2b 來源標成 review", got[0]["source"], "review")
-        eq("Q2c 帶得出 cell_key", got[0]["cell_key"], "202404_5835_AI3|OCI")
+        eq("Q2c 帶得出 cell_key", got[0]["cell_key"], "202404_國泰_個體|OCI")
     finally:
         shutil.rmtree(ws)
 
@@ -142,7 +142,7 @@ def test_queue_module():
         eq("Q3 讀得到 work/blocked/ 的提案", len(got), 2)
         eq("Q3b 來源標成 blocked", {g["source"] for g in got}, {"blocked"})
         eq("Q3c cell_key 由檔名還原", {g["cell_key"] for g in got},
-           {"202504_5847_AI3|AC"})
+           {"202504_玉山_個體|AC"})
         names = {g["name"]: g["suggested"] for g in got}
         eq("Q3d 有建議桶的帶得出來", names["受益證券 CMO"], "資產基礎")
         eq("Q3e 沒建議的是 None,不准瞎猜", names["期貨交易保證金一自有資金"], None)
@@ -170,12 +170,12 @@ def test_queue_module():
 CLASS_LABEL_SAMPLE = [
     # 類別合計列 —— `check_closure`(2026-07-31)之後建樹時就會被識別成父列而
     # 排除,現在的程式不會再產生這種待辦;佇列裡的是舊快照的殘留。
-    {"cell_key": "202402_5847_AI3|OCI",
+    {"cell_key": "202402_玉山_個體|OCI",
      "decision": {"name": "透過其他綜合損益按公允價值衡量之權益工具投資",
                   "group": None, "state": "UNCLASSIFIED", "mapping": None}},
     # 同一個名字的**壞字版**(僵/價)—— 這是抽取錯誤,不是分類問題,
     # **必須留在待辦裡**。被靜靜吃掉的話,一份幻覺出來的資料就沒人會發現。
-    {"cell_key": "202502_5836_AI3|OCI",
+    {"cell_key": "202502_富邦_個體|OCI",
      "decision": {"name": "透過其他綜合損益按公允僵值衡量之權益工具投資",
                   "group": None, "state": "UNCLASSIFIED", "mapping": None}},
 ]
@@ -213,7 +213,7 @@ def test_stale_row_filtered():
     """
     import core.queue as Q
 
-    CELL = "202502_5836_AI3|OCI"
+    CELL = "202502_富邦_個體|OCI"
     OLD = "透過其他綜合損益按公允僵值衡量之權益工具投資"   # 已更正,不該再出現
     REAL = "受益證券 CMO"                                  # 真的還要人判斷
 
@@ -232,7 +232,7 @@ def test_stale_row_filtered():
         shutil.rmtree(ws)
 
     # blocked 來源:照定義就不在 facts/,不准被這道篩掉
-    ws = mkws(blocked=BLOCKED_SAMPLE, facts={"202504_5847_AI3|AC": ["完全不相干的列"]})
+    ws = mkws(blocked=BLOCKED_SAMPLE, facts={"202504_玉山_個體|AC": ["完全不相干的列"]})
     try:
         eq("Q8c blocked 來源不受這道篩選影響", Q.count(ws) > 0, True)
     finally:

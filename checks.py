@@ -10,7 +10,7 @@
 
 四份程式、四種失敗訊息,而且**同一對之內對「缺值」的處置相反**。
 後果不是嚴謹,是各驗各的、誰先跑誰決定這格死活 —— 實測
-`202004_5847_AI3|Trading` 成本:`aggregate()` 因 6 列 null 判不合格,
+`202004_玉山_個體|Trading` 成本:`aggregate()` 因 6 列 null 判不合格,
 `wide.View.ok` 判合格,同一份資料兩個答案(`v4/witness.check_rowsum` 的
 docstring 也記著同一種事故)。
 

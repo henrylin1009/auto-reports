@@ -25,6 +25,7 @@ import json
 import os
 import subprocess
 
+import docid
 import facts as facts_mod
 import holdout as holdout_mod
 import locate
@@ -61,23 +62,30 @@ TABLES = {
 
 
 def cell_of(key, basis):
-    """`(202404_5843_AI3|OCI, 個體)` → (`2024H2|兆豐`, `OCI`);認不得回 None。
+    """`(202404_兆豐_個體|OCI, 個體)` → (`2024H2|兆豐`, `OCI`);認不得回 None。
 
-    ⚠️ **`basis` 要由呼叫端從封面判好傳進來(`locate.basis_of`),不准去看 doc
-    名字裡的 AI 編號。** `resolve.py` 抓檔一律存成 `_AI3`,而合併的舊檔叫
-    `_AI1` —— AI 編號各家各年不一,早就不帶意義(`core/webdata.py:203`)。
-    舊版這裡寫 `kind != "AI3"` 就回 None,後果是**整張合併網格永遠是空的**,
-    而「永遠空的」跟「還沒抄」在畫面上長得一模一樣,沒有任何檢查抓得到。
+    ⚠️ **`basis` 要由呼叫端從封面判好傳進來(`locate.basis_of`),不准讀 doc
+    名字裡那段口徑標籤。** 檔名上的「個體/合併」是**給人看的標籤**,封面才是
+    權威(見 `docid.py` 檔頭)。舊版這裡讀檔名裡的 AI 編號(`kind != "AI3"`
+    就回 None),後果是**整張合併網格永遠是空的**,而「永遠空的」跟「還沒抄」
+    在畫面上長得一模一樣,沒有任何檢查抓得到。**改成銀行名 + 口徑的新命名
+    之後,這個誘惑更大了**(檔名上就寫著「合併」兩個字,看起來可以直接用)
+    —— 所以這段警告留著,而且 `docid.verify_basis()` 會在兩者打架時報錯。
 
     `basis` 是必填、沒有預設值:個體與合併的 `02`/`04` 都是合法期別碼
     (個體是 H1/H2、合併是 Q2/Q4),少了它就分不出來,給預設值等於猜。
     """
     doc, cls = key.split("|")
-    yr, per, code = doc[:4], doc[4:6], doc[7:11]
-    label = PERIOD_LABELS.get(basis, {}).get(per)
-    if code not in BANKS or label is None:
+    try:
+        period, bank, _fname_label = docid.parse(doc)
+    except docid.BadDocId:
         return None
-    return f"{yr}{label}|{BANKS[code]}", cls
+    label = PERIOD_LABELS.get(basis, {}).get(period[4:6])
+    # 不認得的銀行不進發布網格 —— 擋的是誤放進 `facts/` 的檔,不是新銀行
+    # (新銀行加進 `config.BANKS` 就會通過,那正是加一家銀行該做的唯一一件事)。
+    if bank not in BANKS.values() or label is None:
+        return None
+    return f"{period[:4]}{label}|{bank}", cls
 
 
 # ── sha256 —— manifest 的可追溯清單要用 ─────────────────────────────────

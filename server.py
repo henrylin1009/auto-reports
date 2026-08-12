@@ -25,6 +25,7 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+import docid
 import fill
 import locate
 from core import webdata
@@ -289,19 +290,23 @@ class Handler(SimpleHTTPRequestHandler):
     def _handle_upload(self):
         """R2-1:拖一份 PDF 進來。回傳 `{doc, dup, new}`。
 
-        **doc id 沿用現有命名慣例**(`{YYYYMM}_{代碼}_AI{n}.pdf`,`resolve.py`
-        抓檔用的同一套)——不是因為別的題目也要守這套規則,是因為這個 repo
-        現在唯一會讀 `pdf_cache/{doc}.pdf` 的下游(`v4/reader.run_doc`、
-        `locate.locate`、`report.cell_of`)全部假設這個形狀。`?doc=` 由前端從
-        檔名去掉副檔名帶來;不符合形狀就直接拒絕,不猜測、不硬湊。
+        **doc id 沿用現有命名慣例**(`{YYYYMM}_{銀行名}_{個體|合併}.pdf`,
+        `resolve.py` 抓檔用的同一套)——這個 repo 現在唯一會讀
+        `pdf_cache/{doc}.pdf` 的下游(`v4/reader.run_doc`、`locate.locate`、
+        `report.cell_of`)全部假設這個形狀。`?doc=` 由前端從檔名去掉副檔名
+        帶來;不符合形狀就直接拒絕,不猜測、不硬湊。
+
+        ⚠️ **檔名上的口徑只是標籤,封面才是權威。** 存檔之後立刻用
+        `locate.basis_of()` 讀封面比對,不一致就**拒收並刪掉剛寫的檔** ——
+        那通常代表拖錯檔(例如把合併報表命名成個體),讓它進去會在
+        發布網格上錯位一整格,而且沒有任何下游檢查看得到。
         """
-        import re
         q = self._q()
         doc = (q.get("doc") or "").strip()
-        if not re.fullmatch(r"\d{6}_\d{4,6}_AI\d", doc):
+        if not docid.is_valid(doc):
             raise PageError(
-                f"doc 參數 {doc!r} 不符合命名慣例 YYYYMM_代碼_AI{{n}}"
-                f"(例:202502_5836_AI3)。")
+                f"doc 參數 {doc!r} 不符合命名慣例 YYYYMM_銀行名_個體或合併"
+                f"(例:202502_富邦_個體)。")
 
         n = int(self.headers.get("Content-Length") or 0)
         if n <= 0:
@@ -326,6 +331,23 @@ class Handler(SimpleHTTPRequestHandler):
         os.makedirs(os.path.dirname(pdf_path), exist_ok=True)
         with open(pdf_path, "wb") as f:
             f.write(raw)
+
+        # 封面 vs 檔名標籤。**封面是權威**(`docid.py` 檔頭)。不一致就把剛
+        # 寫進去的檔刪掉再拒收 —— 留著會變成一份「名字說個體、內容是合併」
+        # 的檔,而下游一律信封面,於是它在網格上永遠對不到任何一格,
+        # 看起來就只是「這期沒抄」。
+        # **讀不到 ≠ 不一致**(鐵律 9)。PDF 打不開、或封面是掃描影像判不出
+        # 口徑時,我們無法「證明」檔名標錯了 —— 這種情況照收,讓後面的
+        # reader 在看得見的地方失敗,而不是在這裡用一個猜測擋掉真的檔。
+        try:
+            cover = locate.locate(pdf_path).basis
+        except Exception:                                    # noqa: BLE001
+            cover = None
+        mismatch = docid.verify_basis(doc, cover)
+        if mismatch:
+            os.remove(pdf_path)
+            raise PageError(mismatch)
+
         db_mod.register_document(doc, sha)
         return {"doc": doc, "dup": False, "new": not is_overwrite,
                 "note": f"已存成 pdf_cache/{doc}.pdf" + ("(覆蓋舊檔)" if is_overwrite else "")}

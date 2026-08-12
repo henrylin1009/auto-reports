@@ -26,10 +26,19 @@ PDF_DIR = "pdf_cache"
 
 
 def sha256_of(*paths):
-    """內容雜湊。Ring 1。"""
+    """**純內容**雜湊(不含路徑)。Ring 1。
+
+    ⚠️ 2026-08-12 修:原本把路徑也餵進 digest(`h.update(p.encode())`),
+    於是**檔案改名就會判定「PDF 換了」** —— 而這道防護的用途明明是
+    「內容變了要拒用快取」(見檔頭)。doc id 從 `代碼_AI{n}` 改成
+    `銀行名_口徑` 時,67 個 anchors 全部誤報 PDF 被換過,實際上一個位元組
+    都沒動。**名字說「內容雜湊」而實作不是,這種不一致本身就是 bug。**
+
+    三個呼叫端都只傳一個路徑;多路徑時仍照路徑排序決定串接次序,
+    所以結果是確定的。
+    """
     h = hashlib.sha256()
     for p in sorted(paths):
-        h.update(p.encode())
         h.update(open(p, "rb").read())
     return h.hexdigest()
 

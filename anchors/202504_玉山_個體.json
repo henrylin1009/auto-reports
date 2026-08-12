@@ -1,0 +1,31 @@
+{
+ "bs_page": 6,
+ "cells": {
+  "AC": {
+   "amount": 522115384,
+   "pages": [
+    42,
+    85,
+    94,
+    127
+   ]
+  },
+  "OCI": {
+   "amount": 365097075,
+   "pages": [
+    41,
+    126
+   ]
+  },
+  "Trading": {
+   "amount": 270336715,
+   "pages": [
+    39,
+    124
+   ]
+  }
+ },
+ "doc": "202504_玉山_個體",
+ "located_by": "locate.locate",
+ "pdf_sha256": "74a0da6786fededc6841af0aeedc1f112a4c8bfc0dc42599529adb39de88a868"
+}

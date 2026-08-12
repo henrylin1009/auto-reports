@@ -45,7 +45,7 @@ def _capture():
     return restore, captured
 
 
-DOC, CLS = "202404_5843_AI3", "Trading"
+DOC, CLS = "202404_兆豐_個體", "Trading"
 
 
 def w21_run_key_without_cellmeta_passes_none():
@@ -76,7 +76,7 @@ def w22_run_key_with_pages_override_passes_it_through():
 
 #: 這份 ≤2018 的舊檔三類錨都讀不到(掃描影像,無文字層)——固定拿來當
 #: 「錨真的沒有」的反例,不必每次現掃 pdf_cache/ 找。
-_NO_ANCHOR_DOC = "201802_5835_AI3"
+_NO_ANCHOR_DOC = "201802_國泰_個體"
 
 
 def w23_run_key_still_rejects_anchor_missing():

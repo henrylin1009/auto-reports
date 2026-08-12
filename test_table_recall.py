@@ -6,7 +6,7 @@
 
 ⚠️ 比對必須**逐 record**,不能逐格。一格常有兩份 record(附註 + 明細表),
 把兩份的列混成一個集合去比,幾何只抽到其中一頁就會被誤判成沒中
-(實測 202204_5841_AI3|AC:truth 14 列其實是 8+6 兩份)。
+(實測 202204_中信_個體|AC:truth 14 列其實是 8+6 兩份)。
 """
 import collections, glob, json, sys, time
 import pdfplumber

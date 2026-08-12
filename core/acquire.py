@@ -25,6 +25,7 @@ import json
 import os
 
 import config
+import docid
 import locate
 
 LOG = "work/fetch_log.json"
@@ -74,14 +75,18 @@ def expected_banks(basis, docs_present):
     合併根本不是它抓得到的東西(見 `fetch_one` 的 basis 檢查)。
     """
     if basis == locate.SOLO:
-        return sorted(config.BANKS)
-    return sorted({d.split("_")[1] for d in docs_present})
+        return sorted(config.BANKS.values())
+    return sorted({docid.bank_of(d) for d in docs_present if docid.is_valid(d)})
 
 
 def doc_name(period, code):
-    """預期的檔名。`resolve.download()` 一律存成 `_AI3`(resolve.py:37),
-    所以這裡也用 AI3 —— 它已經只是固定後綴,不再代表 TWSE 的原始編號。"""
-    return f"{period}_{code}_AI3"
+    """預期的檔名。**收代碼、回新式檔名** —— 代碼是 TWSE 那邊的身分,
+    檔名是我們這邊的身分,這裡是兩者唯一的轉換點(`docid.py` 檔頭)。
+
+    只回個體:這支所在的取得層本來就只抓個體(見 `fetch_one`)。
+    """
+    bank = config.BANKS.get(code, code)
+    return docid.make(period, bank, docid.SOLO)
 
 
 def cell_fetch_state(period, code, docs_present, log=None):
@@ -134,7 +139,12 @@ def missing_cells(basis, docs_present, log=None):
     log = load_log() if log is None else log
     out = []
     for period in expected_periods(basis):
-        for code in expected_banks(basis, docs_present):
+        # `expected_banks()` 回的是**名字**(畫面與檔名的身分),而抓檔要
+        # **代碼**(TWSE 的身分)。轉換只在這裡發生一次。
+        for bank in expected_banks(basis, docs_present):
+            code = config.CODE_OF.get(bank)
+            if not code:
+                continue      # 不在設定裡的銀行抓不了 —— 那是設定的事,不在這裡猜
             if cell_fetch_state(period, code, docs_present, log) == "missing":
                 out.append({"period": period, "code": code})
     return out

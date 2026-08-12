@@ -112,7 +112,7 @@ import glob, json, os
 DIR = "facts"
 
 def load():
-    """→ {格key: [record, ...]},格key 形如 `202404_5843_AI3|Trading`。"""
+    """→ {格key: [record, ...]},格key 形如 `202404_兆豐_個體|Trading`。"""
     cells = {}
     for p in sorted(glob.glob(f"{DIR}/*.json")):
         cells.update(json.load(open(p, encoding="utf-8")))
@@ -282,7 +282,7 @@ python3 fill.py status
 **`next` 印出來的內容**(順序很重要:規矩在前、資料在後):
 
 ```
-# 202404_5843_AI3 | Trading      錨(BS 合計)= 9,082,587 仟元
+# 202404_兆豐_個體 | Trading      錨(BS 合計)= 9,082,587 仟元
 
 把下面來源頁裡的表格逐列抄成 JSON,寫到 work/current.json,然後跑
     python3 fill.py submit work/current.json

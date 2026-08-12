@@ -6,7 +6,7 @@
 //                ⚠️ src 一定要寫 `/site/index.html`,**不能寫 `/analysis`** ——
 //                後者自 2026-08-10 起 302 導回本頁 `#/analysis`(讓分析頁永遠在殼裡),
 //                iframe 指過去就是工作台自己載自己,無限遞迴。
-//   #/matrix     資料 —— 總覽矩陣(期別 × 銀行+代碼),nav 上的預設頁
+//   #/matrix     資料 —— 總覽矩陣(期別 × 銀行),nav 上的預設頁
 //   #/doc/DOC    文件頁 —— 一份財報,三類攤開;已抄的核對、沒抄的一顆按鈕
 //   #/buckets    分桶 —— 十個桶 × 收進去的名字,拖曳改判;入口是「資料」頁
 //                的連結,不在 nav 上(nav 只放 分析/資料 兩個常駐頁)
@@ -173,7 +173,7 @@ function viewAnalysis() {
 const CLS = ["AC", "OCI", "Trading"];
 const SBAR = { done: "g", todo: "miss", blocked: "w", rejected: "r", no_data: "miss", na: "miss" };
 
-// ── 資料:期別(列) × 銀行+代碼(欄),一格一份檔 ─────────────────────────
+// ── 資料:期別(列) × 銀行(欄),一格一份檔 ─────────────────────────────
 async function viewMatrix() {
   S.ov = await api("overview" + (S.basis ? "?basis=" + encodeURIComponent(S.basis) : ""));
   S.basis = S.ov.basis;
@@ -215,8 +215,9 @@ async function viewMatrix() {
       <span>拖一份 PDF 到這裡上傳，或
         <label class="uplabel">選檔案<input type="file" accept="application/pdf" id="uploadfile" hidden></label>
       </span>
-      <span class="hint">檔名格式要是 <code>YYYYMM_代碼_AI{n}.pdf</code>（例：<code>202502_5836_AI3.pdf</code>）
-        ——跟 TWSE 抓下來的檔名同一套；抄一次，除非拖同一份內容否則不會重複存。</span>
+      <span class="hint">檔名格式要是 <code>YYYYMM_銀行名_個體或合併.pdf</code>（例：<code>202502_富邦_個體.pdf</code>）
+        ——跟 TWSE 抓下來的檔名同一套；抄一次，除非拖同一份內容否則不會重複存。
+        <b>口徑以封面為準</b>：檔名寫「個體」但封面是合併報表，會被擋下來不收。</span>
       <span class="hint" id="uploadhint"></span>
     </div>
     <pre class="autolog" id="autolog" hidden></pre>
@@ -259,7 +260,7 @@ async function viewMatrix() {
       const g = grid[`${p}|${c}`];
       const td = $("<td></td>");
       if (!g) td.appendChild($(`<div class="cell none"><span class="k">—</span></div>`));
-      else if (!g.doc) td.appendChild(fetchCell(g, stats));
+      else if (!g.doc) td.appendChild(fetchCell(g, c, stats));
       else {
         const st = CLS.map(x => g.classes[x]);
         const done = st.filter(x => x === "done").length;
@@ -313,14 +314,17 @@ async function showFetchLog() {
 // 客觀答案;讓使用者自己決定「現在想不想再問一次」,比系統代猜可靠。
 const FETCH_LABEL = { missing: "抓這期", absent: "查無,再試", failed: "重試" };
 
-function fetchCell(g, stats) {
+function fetchCell(g, bank, stats) {
   const st = g.fetch;
   const b = $(`<button class="cell ${st === "failed" ? "bad" : "miss"}">
     <span class="k">${FETCH_LABEL[st] || st}</span>
     <span class="s">${esc(g.period)}</span></button>`);
-  if (st === "absent") b.title = `${g.period} ${g.code}:上次問 TWSE 是「沒有」,按下去會重問一次`;
-  b.disabled = !S.ov.can_fetch;
+  // 提示文字用**銀行名**(人看的);代碼只是 TWSE 那邊的身分,不出現在畫面上。
+  if (st === "absent") b.title = `${g.period} ${bank}:上次問 TWSE 是「沒有」,按下去會重問一次`;
+  b.disabled = !S.ov.can_fetch || !g.code;
   if (!S.ov.can_fetch) b.title = "只支援抓個體財報,合併要另外處理";
+  // `code` 為 null = 這家銀行不在 config.BANKS 裡,抓不了。**說出原因,不要只是灰掉**。
+  else if (!g.code) b.title = `${bank} 不在 config.BANKS 裡,沒有 TWSE 代碼可以抓`;
   b.onclick = () => runFetch([{ period: g.period, code: g.code }], true);
   return b;
 }

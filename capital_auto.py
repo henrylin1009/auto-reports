@@ -23,6 +23,7 @@ import os
 import time
 
 import capital
+import docid
 import fill_auto
 
 OUT = "capital.json"
@@ -361,11 +362,14 @@ def main(argv=None):
     ap.add_argument("--reader", default=os.environ.get("FILL_READER", "claude"),
                     choices=sorted(fill_auto.READERS))
     ap.add_argument("--limit", type=int)
-    ap.add_argument("--docs", nargs="*", help="只跑指定的 doc(例:202504_5841_AI3)")
+    ap.add_argument("--docs", nargs="*", help="只跑指定的 doc(例:202504_中信_個體)")
     ap.add_argument("--dry", action="store_true", help="不寫 capital.json / 佇列")
     a = ap.parse_args(argv)
 
-    docs = a.docs or [f"{y}_{c}_AI3" for y in YEARS for c in capital.BANKS]
+    # 只跑真的有檔的 —— `config.BANKS` 可能含還沒有任何財報的新銀行,
+    # 對它們排工作只會排出一堆「檔案不存在」。
+    docs = a.docs or [d for y in YEARS for b in capital.BANKS.values()
+                      if os.path.exists(f"pdf_cache/{(d := docid.make(y, b, docid.SOLO))}.pdf")]
     kinds = ("capital", "equity") if a.kind == "both" else (a.kind,)
     jobs = [(k, d) for k in kinds for d in docs][:a.limit or None]
 

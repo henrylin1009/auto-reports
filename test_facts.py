@@ -11,12 +11,12 @@ import copy
 import facts
 
 #: 事實庫格數的下限(不是等於)。抄列只會讓它變大;變小代表有格子掉了。
-#: 22 = T0 搬進來的 19 格 + T3 驗收跑出的 202504_5835_AI3 三格。
+#: 22 = T0 搬進來的 19 格 + T3 驗收跑出的 202504_國泰_個體 三格。
 FLOOR = 22
 
-GOOD_KEY = "202404_5843_AI3|Trading"
+GOOD_KEY = "202404_兆豐_個體|Trading"
 GOOD_REC = {
-    "doc": "202404_5843_AI3", "class": "Trading",
+    "doc": "202404_兆豐_個體", "class": "Trading",
     "source_page": 31, "source_kind": "附註",
     "total_col": "帳面金額", "printed_total": 100,
     "rows": [{"name": "公司債", "cols": {"帳面金額": 100}}],

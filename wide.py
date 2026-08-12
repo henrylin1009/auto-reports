@@ -56,7 +56,7 @@ class View:
 
         **判準走 `checks.bucket_sum_matches()`,與 `v4.adapter.aggregate()`
         同一份實作**(2026-08-10,P2 收斂)。在此之前兩邊各寫一份,對「金額是
-        null」的處置相反 —— 實測 `202004_5847_AI3|Trading` 成本同一份資料
+        null」的處置相反 —— 實測 `202004_玉山_個體|Trading` 成本同一份資料
         兩個相反答案。
         """
         if self.book is None:
@@ -111,7 +111,7 @@ def pick(recs, basis):
             # 「公允價值總額」欄,上面 BOOK_COLS 那圈就先接走了。會踩到的是
             # v4 那種「附註(帳面)+明細表(成本)分成兩份 record」的形狀 ——
             # 附註是成本口徑時第一圈跳過它,第二圈就撿到成本明細表。
-            # 實測 202504_5843_AI3|OCI 等 10 格,成本七桶被當帳面。
+            # 實測 202504_兆豐_個體|OCI 等 10 格,成本七桶被當帳面。
             if r["total_col"] in COST_COLS:
                 continue
             if buckets.basis_of(r) == "公允":

@@ -15,10 +15,10 @@ import transcribe
 import wide
 
 CELLS = json.load(open("scratchpad/rows_v3.json", encoding="utf-8"))
-CTBC_H1 = "202302_5841_AI3|OCI"      # 單一附註、逐項成本 → 帳面在文件裡不存在
-MEGA = "202404_5843_AI3|Trading"     # 明細表雙欄,成本欄有抄欄合計 44,631,513
-CATHAY = "202404_5835_AI3|OCI"
-FUBON = "202404_5836_AI3|Trading"    # 附註把跨桶科目併成「其他」→ 來源不可用
+CTBC_H1 = "202302_中信_個體|OCI"      # 單一附註、逐項成本 → 帳面在文件裡不存在
+MEGA = "202404_兆豐_個體|Trading"     # 明細表雙欄,成本欄有抄欄合計 44,631,513
+CATHAY = "202404_國泰_個體|OCI"
+FUBON = "202404_富邦_個體|Trading"    # 附註把跨桶科目併成「其他」→ 來源不可用
 
 
 def case_cost_only_gives_null():

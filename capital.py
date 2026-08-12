@@ -43,7 +43,13 @@ import re
 
 import pdfplumber
 
-BANKS = {"5841": "中信", "5843": "兆豐", "5835": "國泰", "5836": "富邦", "5847": "玉山"}
+import config
+import docid
+
+#: **銀行清單只有一份**(`config.BANKS`)。這裡原本自己複製了一份一模一樣的
+#: 字典 —— 新增一家銀行要同步改四處(config / capital / yields / resolve),
+#: 而沒有任何檢查抓得到漏改。2026-08-12 收成一份。
+BANKS = config.BANKS
 
 #: 資本適足表的錨。實測 5 家 × 5 份年報 25/25 全中,每份命中 1~3 頁。
 CAP_ANCHOR = "加權風險性資產總額"
@@ -434,8 +440,9 @@ def verify_fair_value(rec, doc, tol_rel=0.01, max_gap=0.15):
         fails.append(f"公允/帳面 = {gap*100:+.2f}%,超出 ±{max_gap*100:.0f}% —— "
                      f"多半是抄到公允價值等級表(合計 vs 第一等級)")
     yr = str(rec.get("period") or "")[:4]
-    code = doc.split("_")[1] if "_" in doc else None
-    src = f"{yr}04_{code}_AI3" if yr.isdigit() and code else None
+    bank = docid.bank_of(doc) if docid.is_valid(doc) else None
+    # 同一家的**年報個體**才是 AC 總額的來源(半年報沒有那張明細表)。
+    src = docid.make(f"{yr}04", bank, docid.SOLO) if yr.isdigit() and bank else None
     full, exdur = ac_totals(src) if src else (None, None)
     # 那一年自己的年報沒有 facts/ 時,退到**本份年報明細表的前期欄** ——
     # 同一份 PDF 但不同張表(投資明細表 vs 公允價值附註),仍然是獨立的第二次抽取。
@@ -655,7 +662,9 @@ def survey(kind, years=("202204", "202304", "202404", "202504")):
     out = {}
     for yr in years:
         for code, name in BANKS.items():
-            path = f"pdf_cache/{yr}_{code}_AI3.pdf"
+            path = f"pdf_cache/{docid.make(yr, name, docid.SOLO)}.pdf"
+            if not os.path.exists(path):
+                continue      # 新加入的銀行還沒有那一期的檔,跳過不是錯
             out[f"{yr}|{name}"] = locate(path, kind)
     return out
 

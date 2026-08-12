@@ -1,0 +1,243 @@
+{
+ "doc": "202102_兆豐_個體",
+ "model": "claude",
+ "n_pages": 180,
+ "prompt_chars": 158915,
+ "elapsed_s": 86.6,
+ "raw_text": "```json\n{\"basis\":\"個體\",\n \"bs_date\":\"110/06/30\",\n \"Trading\":{\n   \"book\":{\"total\":56438263,\"printed_subtotal\":56438263,\"bs_anchor\":56438263,\"page\":34,\n     \"rows\":[\n       {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"上市櫃公司股票\",\"amount\":11537427},\n       {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"興櫃公司股票\",\"amount\":1073657},\n       {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"非上市、上櫃、興櫃股票\",\"amount\":5951443},\n       {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"受益證券\",\"amount\":11079},\n       {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"受益憑證\",\"amount\":612612},\n       {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"衍生工具\",\"amount\":3114489},\n       {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"政府債券\",\"amount\":1170861},\n       {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"公司債券\",\"amount\":24666731},\n       {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"金融債券\",\"amount\":3268173},\n       {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"評價調整\",\"amount\":5031791}\n     ]},\n   \"cost\":{\"total\":null,\"page\":null,\"rows\":[]},\n   \"cost_note\":\"半年報無重要會計項目明細表,附註僅揭露公允價值(含評價調整),無取得成本欄位\",\n   \"checks\":{\"check_rowsum\":{\"status\":\"OK\",\"diff\":0},\n             \"check_anchor\":{\"status\":\"OK\",\"diff\":0},\n             \"check_cost\":{\"status\":\"no_witness\",\"diff\":0}}},\n \"OCI\":{\n   \"book\":{\"total\":408678609,\"printed_subtotal\":408678609,\"bs_anchor\":408678609,\"page\":35,\n     \"rows\":[\n       {\"group\":\"債務工具\",\"name\":\"公司債券\",\"amount\":140701940},\n       {\"group\":\"債務工具\",\"name\":\"政府債券\",\"amount\":82237591},\n       {\"group\":\"債務工具\",\"name\":\"金融債券\",\"amount\":95345157},\n       {\"group\":\"債務工具\",\"name\":\"受益證券\",\"amount\":57427895},\n       {\"group\":\"債務工具\",\"name\":\"定存單\",\"amount\":9055395},\n       {\"group\":\"債務工具\",\"name\":\"評價調整\",\"amount\":715090},\n       {\"group\":\"權益工具\",\"name\":\"上市櫃公司股票\",\"amount\":6727379},\n       {\"group\":\"權益工具\",\"name\":\"非上市、上櫃、興櫃股票\",\"amount\":4748163},\n       {\"group\":\"權益工具\",\"name\":\"其他有價證券\",\"amount\":302258},\n       {\"group\":\"權益工具\",\"name\":\"評價調整\",\"amount\":11417741}\n     ]},\n   \"cost\":{\"total\":null,\"page\":null,\"rows\":[]},\n   \"cost_note\":\"半年報無重要會計項目明細表,附註僅揭露公允價值(含評價調整),無取得成本欄位\",\n   \"checks\":{\"check_rowsum\":{\"status\":\"OK\",\"diff\":0},\n             \"check_anchor\":{\"status\":\"OK\",\"diff\":0},\n             \"check_cost\":{\"status\":\"no_witness\",\"diff\":0}}},\n \"AC\":{\n   \"book\":{\"total\":599993188,\"printed_subtotal\":599993188,\"bs_anchor\":599993188,\"page\":37,\n     \"rows\":[\n       {\"group\":\"\",\"name\":\"央行定期存單\",\"amount\":412527822},\n       {\"group\":\"\",\"name\":\"短期票券\",\"amount\":137402146},\n       {\"group\":\"\",\"name\":\"銀行定期存單\",\"amount\":8387576},\n       {\"group\":\"\",\"name\":\"金融債券\",\"amount\":30877621},\n       {\"group\":\"\",\"name\":\"政府債券\",\"amount\":5245700},\n       {\"group\":\"\",\"name\":\"公司債券\",\"amount\":4093445},\n       {\"group\":\"\",\"name\":\"國庫券\",\"amount\":1497920},\n       {\"group\":\"\",\"name\":\"減：累計減損\",\"amount\":-39042}\n     ]},\n   \"cost\":{\"total\":null,\"page\":null,\"rows\":[]},\n   \"cost_note\":\"半年報無重要會計項目明細表,附註僅揭露攤銷後成本金額(逐項毛額減累計減損),無取得成本欄位\",\n   \"checks\":{\"check_rowsum\":{\"status\":\"OK\",\"diff\":0},\n             \"check_anchor\":{\"status\":\"OK\",\"diff\":0},\n             \"check_cost\":{\"status\":\"no_witness\",\"diff\":0}}}}\n```\n",
+ "parsed": {
+  "basis": "個體",
+  "bs_date": "110/06/30",
+  "Trading": {
+   "book": {
+    "total": 56438263,
+    "printed_subtotal": 56438263,
+    "bs_anchor": 56438263,
+    "page": 34,
+    "rows": [
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "上市櫃公司股票",
+      "amount": 11537427
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "興櫃公司股票",
+      "amount": 1073657
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "非上市、上櫃、興櫃股票",
+      "amount": 5951443
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "受益證券",
+      "amount": 11079
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "受益憑證",
+      "amount": 612612
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "衍生工具",
+      "amount": 3114489
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "政府債券",
+      "amount": 1170861
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "公司債券",
+      "amount": 24666731
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "金融債券",
+      "amount": 3268173
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "評價調整",
+      "amount": 5031791
+     }
+    ]
+   },
+   "cost": {
+    "total": null,
+    "page": null,
+    "rows": []
+   },
+   "cost_note": "半年報無重要會計項目明細表,附註僅揭露公允價值(含評價調整),無取得成本欄位",
+   "checks": {
+    "check_rowsum": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_anchor": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_cost": {
+     "status": "no_witness",
+     "diff": 0
+    }
+   }
+  },
+  "OCI": {
+   "book": {
+    "total": 408678609,
+    "printed_subtotal": 408678609,
+    "bs_anchor": 408678609,
+    "page": 35,
+    "rows": [
+     {
+      "group": "債務工具",
+      "name": "公司債券",
+      "amount": 140701940
+     },
+     {
+      "group": "債務工具",
+      "name": "政府債券",
+      "amount": 82237591
+     },
+     {
+      "group": "債務工具",
+      "name": "金融債券",
+      "amount": 95345157
+     },
+     {
+      "group": "債務工具",
+      "name": "受益證券",
+      "amount": 57427895
+     },
+     {
+      "group": "債務工具",
+      "name": "定存單",
+      "amount": 9055395
+     },
+     {
+      "group": "債務工具",
+      "name": "評價調整",
+      "amount": 715090
+     },
+     {
+      "group": "權益工具",
+      "name": "上市櫃公司股票",
+      "amount": 6727379
+     },
+     {
+      "group": "權益工具",
+      "name": "非上市、上櫃、興櫃股票",
+      "amount": 4748163
+     },
+     {
+      "group": "權益工具",
+      "name": "其他有價證券",
+      "amount": 302258
+     },
+     {
+      "group": "權益工具",
+      "name": "評價調整",
+      "amount": 11417741
+     }
+    ]
+   },
+   "cost": {
+    "total": null,
+    "page": null,
+    "rows": []
+   },
+   "cost_note": "半年報無重要會計項目明細表,附註僅揭露公允價值(含評價調整),無取得成本欄位",
+   "checks": {
+    "check_rowsum": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_anchor": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_cost": {
+     "status": "no_witness",
+     "diff": 0
+    }
+   }
+  },
+  "AC": {
+   "book": {
+    "total": 599993188,
+    "printed_subtotal": 599993188,
+    "bs_anchor": 599993188,
+    "page": 37,
+    "rows": [
+     {
+      "group": "",
+      "name": "央行定期存單",
+      "amount": 412527822
+     },
+     {
+      "group": "",
+      "name": "短期票券",
+      "amount": 137402146
+     },
+     {
+      "group": "",
+      "name": "銀行定期存單",
+      "amount": 8387576
+     },
+     {
+      "group": "",
+      "name": "金融債券",
+      "amount": 30877621
+     },
+     {
+      "group": "",
+      "name": "政府債券",
+      "amount": 5245700
+     },
+     {
+      "group": "",
+      "name": "公司債券",
+      "amount": 4093445
+     },
+     {
+      "group": "",
+      "name": "國庫券",
+      "amount": 1497920
+     },
+     {
+      "group": "",
+      "name": "減：累計減損",
+      "amount": -39042
+     }
+    ]
+   },
+   "cost": {
+    "total": null,
+    "page": null,
+    "rows": []
+   },
+   "cost_note": "半年報無重要會計項目明細表,附註僅揭露攤銷後成本金額(逐項毛額減累計減損),無取得成本欄位",
+   "checks": {
+    "check_rowsum": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_anchor": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_cost": {
+     "status": "no_witness",
+     "diff": 0
+    }
+   }
+  }
+ },
+ "parse_ok": true
+}

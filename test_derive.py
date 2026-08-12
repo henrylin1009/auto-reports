@@ -155,11 +155,11 @@ def case_real_rejected_regression():
     不能悄悄漂移。
 
     ⚠️ **這個目錄是活的**,不是凍結的測試 fixture,數字動過三次:
-      · 17/2/3/3(分母 25)→ 16/2/3/3(分母 24):`202502_5835_AI3|Trading`
+      · 17/2/3/3(分母 25)→ 16/2/3/3(分母 24):`202502_國泰_個體|Trading`
         被人工 `ratify()` 放行離開了這個目錄——這是進度,不是回歸。
-      · 16/2/3/3 → 14/2/4/3(分母 23):`202304_5835_AI3` 的 OCI/Trading
+      · 16/2/3/3 → 14/2/4/3(分母 23):`202304_國泰_個體` 的 OCI/Trading
         在測試過程中被**另一個還在跑舊程式碼的 server.py process** 動過
-        (`work/rejected/202304_5835_AI3__Trading.json` 的 `reason` 是
+        (`work/rejected/202304_國泰_個體__Trading.json` 的 `reason` 是
         `缺必要欄位 ['total_col','printed_total']`——這是 D1 之前
         `facts.validate()` 的舊訊息格式,D1 之後同樣的失敗會先在
         `derive.py` 就擋下來,訊息會是「0 個欄命中」。訊息格式對不上,
@@ -173,7 +173,7 @@ def case_real_rejected_regression():
         分桶失敗);同一次改動也讓 revalidate 把重驗後仍失敗的格子的 `reason`
         更新成當下的真實理由(舊字串會指著早已修好的問題,誤導人去找不存在的
         毛病),並把分類表缺口從 `rejected/` 改路由進 `blocked/`。
-        分母 8→9 是 server 在這期間新拒收了 `202502_5847_AI3|OCI`。
+        分母 8→9 是 server 在這期間新拒收了 `202502_玉山_個體|OCI`。
     **改動這支之前先用上面的邏輯手動重算一次**,不要只是把數字改到測試
     會過為止;如果數字改變的原因是「有 stale server 還在跑」,那是要去
     處理的問題,不是測試該吞下去的噪音。

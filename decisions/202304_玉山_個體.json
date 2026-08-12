@@ -1,0 +1,409 @@
+{
+ "202304_玉山_個體|AC": [
+  {
+   "at": "2026-07-29T13:42:59.252353Z",
+   "by": "decide",
+   "group": "按攤銷後成本衡量之債務工具投資",
+   "locator": {
+    "cell_key": "202304_玉山_個體|AC",
+    "row_index": 0,
+    "source_page": 39
+   },
+   "mapping": "公債",
+   "name": "國外機構發行債券",
+   "occurrence": {
+    "cell_key": "202304_玉山_個體|AC",
+    "ordinal": 0,
+    "record_fp": "2d181da85426c78c621930ed13a2ec2cd1f34716829bff60489ef2c0598d5941",
+    "row_fp": "420f61438b9ded2e7ce55f0608356f84cf40af92669fa5d2c9f81ea4db7a3c3e",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:國外機構發行債券"
+  },
+  {
+   "at": "2026-07-29T13:42:59.252409Z",
+   "by": "decide",
+   "group": "按攤銷後成本衡量之債務工具投資",
+   "locator": {
+    "cell_key": "202304_玉山_個體|AC",
+    "row_index": 1,
+    "source_page": 39
+   },
+   "mapping": "金融債",
+   "name": "金融債券",
+   "occurrence": {
+    "cell_key": "202304_玉山_個體|AC",
+    "ordinal": 1,
+    "record_fp": "2d181da85426c78c621930ed13a2ec2cd1f34716829bff60489ef2c0598d5941",
+    "row_fp": "fb06eba8cb0c3a71a9085c2cc5eec5488aae7456a20316ad68e4fc732fe028ee",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:金融債券"
+  },
+  {
+   "at": "2026-07-29T13:42:59.252432Z",
+   "by": "decide",
+   "group": "按攤銷後成本衡量之債務工具投資",
+   "locator": {
+    "cell_key": "202304_玉山_個體|AC",
+    "row_index": 2,
+    "source_page": 39
+   },
+   "mapping": "公司債",
+   "name": "公 司 債",
+   "occurrence": {
+    "cell_key": "202304_玉山_個體|AC",
+    "ordinal": 2,
+    "record_fp": "2d181da85426c78c621930ed13a2ec2cd1f34716829bff60489ef2c0598d5941",
+    "row_fp": "a6d90979448a19d0c5c631f649798561610eeab53b9aa3062a7ab02e68ab11d6",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:公司債"
+  },
+  {
+   "at": "2026-07-29T13:42:59.252452Z",
+   "by": "decide",
+   "group": "按攤銷後成本衡量之債務工具投資",
+   "locator": {
+    "cell_key": "202304_玉山_個體|AC",
+    "row_index": 3,
+    "source_page": 39
+   },
+   "mapping": "可轉讓定存單",
+   "name": "可轉讓定期存單",
+   "occurrence": {
+    "cell_key": "202304_玉山_個體|AC",
+    "ordinal": 3,
+    "record_fp": "2d181da85426c78c621930ed13a2ec2cd1f34716829bff60489ef2c0598d5941",
+    "row_fp": "3081130ff9dc849475466f244578f85201428c2baef6fa12e302ea12eaaf9c9a",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:可轉讓定期存單"
+  },
+  {
+   "at": "2026-07-29T13:42:59.252472Z",
+   "by": "decide",
+   "group": "按攤銷後成本衡量之債務工具投資",
+   "locator": {
+    "cell_key": "202304_玉山_個體|AC",
+    "row_index": 4,
+    "source_page": 39
+   },
+   "mapping": "公債",
+   "name": "政府公債",
+   "occurrence": {
+    "cell_key": "202304_玉山_個體|AC",
+    "ordinal": 4,
+    "record_fp": "2d181da85426c78c621930ed13a2ec2cd1f34716829bff60489ef2c0598d5941",
+    "row_fp": "92d28d9538e2dc1aa77bd21a6b93d18f446e56edccf5a97c09113615d5be0dc0",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:政府公債"
+  },
+  {
+   "at": "2026-07-29T13:42:59.252490Z",
+   "by": "decide",
+   "group": "按攤銷後成本衡量之債務工具投資",
+   "locator": {
+    "cell_key": "202304_玉山_個體|AC",
+    "row_index": 5,
+    "source_page": 39
+   },
+   "mapping": "資產基礎",
+   "name": "證券化商品",
+   "occurrence": {
+    "cell_key": "202304_玉山_個體|AC",
+    "ordinal": 5,
+    "record_fp": "2d181da85426c78c621930ed13a2ec2cd1f34716829bff60489ef2c0598d5941",
+    "row_fp": "45afefb0df8f6e805059ee0bf523319dcfd20c90496aa89cf38d369b44332b62",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:證券化商品"
+  },
+  {
+   "at": "2026-07-29T13:42:59.252509Z",
+   "by": "decide",
+   "group": "按攤銷後成本衡量之債務工具投資",
+   "locator": {
+    "cell_key": "202304_玉山_個體|AC",
+    "row_index": 6,
+    "source_page": 39
+   },
+   "mapping": "評價調整",
+   "name": "減：備抵損失",
+   "occurrence": {
+    "cell_key": "202304_玉山_個體|AC",
+    "ordinal": 6,
+    "record_fp": "2d181da85426c78c621930ed13a2ec2cd1f34716829bff60489ef2c0598d5941",
+    "row_fp": "1cb4fa85bd269f1aa03a30cec19304e6904c9b8f52bee9e35dd6257d01c03a64",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:減：備抵損失"
+  },
+  {
+   "at": "2026-07-29T13:42:59.252529Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202304_玉山_個體|AC",
+    "row_index": 0,
+    "source_page": 120
+   },
+   "mapping": null,
+   "name": "國外機構發行債券（註二）",
+   "occurrence": {
+    "cell_key": "202304_玉山_個體|AC",
+    "ordinal": 0,
+    "record_fp": "97defa55437403e1d5acba61378dd8bc72d717543766a5f0f3658bca822c774c",
+    "row_fp": "d44f3c4c9c4a1d72de254780dd8ba1a2c7768d65b72b20a3bf3c3aad011904cf",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "UNCLASSIFIED",
+   "taxonomy_ref": null
+  },
+  {
+   "at": "2026-07-29T13:42:59.252595Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202304_玉山_個體|AC",
+    "row_index": 1,
+    "source_page": 120
+   },
+   "mapping": "可轉讓定存單",
+   "name": "可轉讓定期存單（註三）",
+   "occurrence": {
+    "cell_key": "202304_玉山_個體|AC",
+    "ordinal": 1,
+    "record_fp": "97defa55437403e1d5acba61378dd8bc72d717543766a5f0f3658bca822c774c",
+    "row_fp": "9517c97063c679cac5a9282f538f1ac4eded44609c7cf21dff043c8f45845ac5",
+    "scope": "row"
+   },
+   "references": [
+    {
+     "at": "2026-07-29T13:42:59.252595Z",
+     "detail": "BUCKET_RULES 關鍵字「可轉讓定期存單」",
+     "kind": "rule",
+     "recheck": "rules.propose('可轉讓定期存單(註三)')[0] == '可轉讓定存單'"
+    }
+   ],
+   "state": "PROVISIONAL",
+   "taxonomy_ref": null
+  },
+  {
+   "at": "2026-07-29T13:42:59.252633Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202304_玉山_個體|AC",
+    "row_index": 2,
+    "source_page": 120
+   },
+   "mapping": "金融債",
+   "name": "金融債券",
+   "occurrence": {
+    "cell_key": "202304_玉山_個體|AC",
+    "ordinal": 2,
+    "record_fp": "97defa55437403e1d5acba61378dd8bc72d717543766a5f0f3658bca822c774c",
+    "row_fp": "e14d9437571b83906ed38775272df3d20583672e8128c7eba5a854e53d89cb11",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:金融債券"
+  },
+  {
+   "at": "2026-07-29T13:42:59.252655Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202304_玉山_個體|AC",
+    "row_index": 3,
+    "source_page": 120
+   },
+   "mapping": "公司債",
+   "name": "公 司 債",
+   "occurrence": {
+    "cell_key": "202304_玉山_個體|AC",
+    "ordinal": 3,
+    "record_fp": "97defa55437403e1d5acba61378dd8bc72d717543766a5f0f3658bca822c774c",
+    "row_fp": "6601acbde3285a40e8f6a6de76193f55adcf751f899c469844550014a988dd99",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:公司債"
+  },
+  {
+   "at": "2026-07-29T13:42:59.252676Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202304_玉山_個體|AC",
+    "row_index": 4,
+    "source_page": 120
+   },
+   "mapping": "公債",
+   "name": "政府公債",
+   "occurrence": {
+    "cell_key": "202304_玉山_個體|AC",
+    "ordinal": 4,
+    "record_fp": "97defa55437403e1d5acba61378dd8bc72d717543766a5f0f3658bca822c774c",
+    "row_fp": "c50e1614a91502f205b2408e01ff2048d81e3cd516b857a7cca28b8f9be1c690",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:政府公債"
+  }
+ ],
+ "202304_玉山_個體|OCI": [
+  {
+   "at": "2026-07-29T13:42:54.293792Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202304_玉山_個體|OCI",
+    "row_index": 0,
+    "source_page": 119
+   },
+   "mapping": "股票",
+   "name": "上市（櫃）股票",
+   "occurrence": {
+    "cell_key": "202304_玉山_個體|OCI",
+    "ordinal": 0,
+    "record_fp": "f7db81a57b05602b5b910783b7acd2cafca5042f8ac0ffbfa461db2a584e5abb",
+    "row_fp": "aae581adb9680301e45d81ef604a42c303c8633709609488bcb43a494c5a425b",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:上市(櫃)股票"
+  },
+  {
+   "at": "2026-07-29T13:42:54.293929Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202304_玉山_個體|OCI",
+    "row_index": 1,
+    "source_page": 119
+   },
+   "mapping": "股票",
+   "name": "未上市（櫃）股票",
+   "occurrence": {
+    "cell_key": "202304_玉山_個體|OCI",
+    "ordinal": 1,
+    "record_fp": "f7db81a57b05602b5b910783b7acd2cafca5042f8ac0ffbfa461db2a584e5abb",
+    "row_fp": "688ef853903b45d3e72a559d1ac2c4b40ea7b7c7399e56ac94932fe71231f4d0",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:未上市(櫃)股票"
+  },
+  {
+   "at": "2026-07-29T13:42:54.293975Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202304_玉山_個體|OCI",
+    "row_index": 2,
+    "source_page": 119
+   },
+   "mapping": "金融債",
+   "name": "金融債券（註二）",
+   "occurrence": {
+    "cell_key": "202304_玉山_個體|OCI",
+    "ordinal": 2,
+    "record_fp": "f7db81a57b05602b5b910783b7acd2cafca5042f8ac0ffbfa461db2a584e5abb",
+    "row_fp": "2832c08e1ad640bf5fb77bd3078083de172f3a57398685d2c69acbfeee644056",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:金融債券(註二)"
+  },
+  {
+   "at": "2026-07-29T13:42:54.293992Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202304_玉山_個體|OCI",
+    "row_index": 3,
+    "source_page": 119
+   },
+   "mapping": "公債",
+   "name": "政府公債（註三）",
+   "occurrence": {
+    "cell_key": "202304_玉山_個體|OCI",
+    "ordinal": 3,
+    "record_fp": "f7db81a57b05602b5b910783b7acd2cafca5042f8ac0ffbfa461db2a584e5abb",
+    "row_fp": "1523ed469ba71795d41579cf62174ec92f660766ca53aa8494479347c900b1b7",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:政府公債(註三)"
+  },
+  {
+   "at": "2026-07-29T13:42:54.294008Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202304_玉山_個體|OCI",
+    "row_index": 4,
+    "source_page": 119
+   },
+   "mapping": "公司債",
+   "name": "公 司 債",
+   "occurrence": {
+    "cell_key": "202304_玉山_個體|OCI",
+    "ordinal": 4,
+    "record_fp": "f7db81a57b05602b5b910783b7acd2cafca5042f8ac0ffbfa461db2a584e5abb",
+    "row_fp": "545296b65fc5b0307c03bb71443810dde1830da8d9d3173c80da99b1dcd0b90c",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:公司債"
+  },
+  {
+   "at": "2026-07-29T13:42:54.294024Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202304_玉山_個體|OCI",
+    "row_index": 5,
+    "source_page": 119
+   },
+   "mapping": "公債",
+   "name": "國外機構發行債券",
+   "occurrence": {
+    "cell_key": "202304_玉山_個體|OCI",
+    "ordinal": 5,
+    "record_fp": "f7db81a57b05602b5b910783b7acd2cafca5042f8ac0ffbfa461db2a584e5abb",
+    "row_fp": "dbe1e3592a11d8f2b1c07da73cb290be8d017ad89dffa8ecc59a8d5981ca8ebd",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:國外機構發行債券"
+  }
+ ]
+}

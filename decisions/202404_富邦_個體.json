@@ -1,0 +1,976 @@
+{
+ "202404_富邦_個體|AC": [
+  {
+   "at": "2026-07-29T06:39:10.676698Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_富邦_個體|AC",
+    "row_index": 0,
+    "source_page": 42
+   },
+   "mapping": "可轉讓定存單",
+   "name": "可轉讓定期存單",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|AC",
+    "ordinal": 0,
+    "record_fp": "4eef9a5a9a397693cf16bc28d1ddcfd6c607e13b126b51a72ffe5bfb7a0d421e",
+    "row_fp": "5ab540ff02acba5ac8550e48f12a21c3394b69b89af4b60bb48cd9a10c2dab86",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:可轉讓定期存單"
+  },
+  {
+   "at": "2026-07-29T06:39:10.676704Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_富邦_個體|AC",
+    "row_index": 1,
+    "source_page": 42
+   },
+   "mapping": "公司債",
+   "name": "公司債",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|AC",
+    "ordinal": 1,
+    "record_fp": "4eef9a5a9a397693cf16bc28d1ddcfd6c607e13b126b51a72ffe5bfb7a0d421e",
+    "row_fp": "ff02a8100f0004abfe8b44e7a7c4222995d51a51746ac00a038de2c94a7d07a9",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:公司債"
+  },
+  {
+   "at": "2026-07-29T06:39:10.676709Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_富邦_個體|AC",
+    "row_index": 2,
+    "source_page": 42
+   },
+   "mapping": "金融債",
+   "name": "金融債券",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|AC",
+    "ordinal": 2,
+    "record_fp": "4eef9a5a9a397693cf16bc28d1ddcfd6c607e13b126b51a72ffe5bfb7a0d421e",
+    "row_fp": "873261a9bce3ed36ce85e0629b3c08196b0489ca610582a3abbddb321e801bdc",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:金融債券"
+  },
+  {
+   "at": "2026-07-29T06:39:10.676714Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_富邦_個體|AC",
+    "row_index": 3,
+    "source_page": 42
+   },
+   "mapping": "公債",
+   "name": "政府公債",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|AC",
+    "ordinal": 3,
+    "record_fp": "4eef9a5a9a397693cf16bc28d1ddcfd6c607e13b126b51a72ffe5bfb7a0d421e",
+    "row_fp": "6b327cc4c230d853418d42f743e0bb729e9b6730c87ba69479e9b5ac4744173d",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:政府公債"
+  },
+  {
+   "at": "2026-07-29T06:39:10.676720Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_富邦_個體|AC",
+    "row_index": 4,
+    "source_page": 42
+   },
+   "mapping": "資產基礎",
+   "name": "資產證券化商品",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|AC",
+    "ordinal": 4,
+    "record_fp": "4eef9a5a9a397693cf16bc28d1ddcfd6c607e13b126b51a72ffe5bfb7a0d421e",
+    "row_fp": "f2fc33cbd09a7d2b8afa8af3291a82b928e9e51cf18ee023e50d812e46a29a74",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:資產證券化商品"
+  },
+  {
+   "at": "2026-07-29T06:39:10.676726Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_富邦_個體|AC",
+    "row_index": 5,
+    "source_page": 42
+   },
+   "mapping": "其他",
+   "name": "其他",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|AC",
+    "ordinal": 5,
+    "record_fp": "4eef9a5a9a397693cf16bc28d1ddcfd6c607e13b126b51a72ffe5bfb7a0d421e",
+    "row_fp": "ed8ce1ac97cce61a8165c29804fea684cf7e38b7b2e74ea1a8e0a0ec3ea74ab9",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:其他"
+  },
+  {
+   "at": "2026-07-29T06:39:10.676731Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_富邦_個體|AC",
+    "row_index": 6,
+    "source_page": 42
+   },
+   "mapping": "評價調整",
+   "name": "減：備抵損失",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|AC",
+    "ordinal": 6,
+    "record_fp": "4eef9a5a9a397693cf16bc28d1ddcfd6c607e13b126b51a72ffe5bfb7a0d421e",
+    "row_fp": "6125aa28d5be534feef31a975048fdc4be68081bae392a169f2bf1256080b5a4",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:減：備抵損失"
+  },
+  {
+   "at": "2026-07-29T06:39:10.676737Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_富邦_個體|AC",
+    "row_index": 0,
+    "source_page": 154
+   },
+   "mapping": "可轉讓定存單",
+   "name": "可轉讓定期存單",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|AC",
+    "ordinal": 0,
+    "record_fp": "55e9637b05b3c40795b167bcc8ca36f32853623b2791a8fb7b6276cb7198e168",
+    "row_fp": "a584f12894701f48f66de45e829ffa9e52fc22b55c261acbbb072bb4432945e7",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:可轉讓定期存單"
+  },
+  {
+   "at": "2026-07-29T06:39:10.676742Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_富邦_個體|AC",
+    "row_index": 1,
+    "source_page": 154
+   },
+   "mapping": "公司債",
+   "name": "公司債",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|AC",
+    "ordinal": 1,
+    "record_fp": "55e9637b05b3c40795b167bcc8ca36f32853623b2791a8fb7b6276cb7198e168",
+    "row_fp": "bd087ab56dfac317031acd0d2454578d1f2aadbb1d73b6c4d12e28632b9a8978",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:公司債"
+  },
+  {
+   "at": "2026-07-29T06:39:10.676747Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_富邦_個體|AC",
+    "row_index": 2,
+    "source_page": 154
+   },
+   "mapping": "金融債",
+   "name": "金融債券",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|AC",
+    "ordinal": 2,
+    "record_fp": "55e9637b05b3c40795b167bcc8ca36f32853623b2791a8fb7b6276cb7198e168",
+    "row_fp": "11306b4a16d14178f5a339ff433355f2051ccb34d1db93a759782e3da3fbd123",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:金融債券"
+  },
+  {
+   "at": "2026-07-29T06:39:10.676751Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_富邦_個體|AC",
+    "row_index": 3,
+    "source_page": 154
+   },
+   "mapping": "公債",
+   "name": "政府公債",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|AC",
+    "ordinal": 3,
+    "record_fp": "55e9637b05b3c40795b167bcc8ca36f32853623b2791a8fb7b6276cb7198e168",
+    "row_fp": "d673f49902fd1e11b8b773acd9bf31ad909df16f962a3aadd1bcb68385813a44",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:政府公債"
+  },
+  {
+   "at": "2026-07-29T06:39:10.676756Z",
+   "by": "decide",
+   "group": "資產證券化商品",
+   "locator": {
+    "cell_key": "202404_富邦_個體|AC",
+    "row_index": 4,
+    "source_page": 154
+   },
+   "mapping": "資產基礎",
+   "name": "CMO",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|AC",
+    "ordinal": 4,
+    "record_fp": "55e9637b05b3c40795b167bcc8ca36f32853623b2791a8fb7b6276cb7198e168",
+    "row_fp": "78835012fb92549af7847b40ddb87f0736b9a90ee737c933a82b91bc56485120",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:CMO"
+  },
+  {
+   "at": "2026-07-29T06:39:10.676762Z",
+   "by": "decide",
+   "group": "資產證券化商品",
+   "locator": {
+    "cell_key": "202404_富邦_個體|AC",
+    "row_index": 5,
+    "source_page": 154
+   },
+   "mapping": "資產基礎",
+   "name": "RMBS",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|AC",
+    "ordinal": 5,
+    "record_fp": "55e9637b05b3c40795b167bcc8ca36f32853623b2791a8fb7b6276cb7198e168",
+    "row_fp": "e95cd4aa7128b6ecfd4b819def066d60c04b094299f666319bc2a39453d9deaa",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:RMBS"
+  },
+  {
+   "at": "2026-07-29T06:39:10.676767Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_富邦_個體|AC",
+    "row_index": 6,
+    "source_page": 154
+   },
+   "mapping": "其他",
+   "name": "其他",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|AC",
+    "ordinal": 6,
+    "record_fp": "55e9637b05b3c40795b167bcc8ca36f32853623b2791a8fb7b6276cb7198e168",
+    "row_fp": "ed8ce1ac97cce61a8165c29804fea684cf7e38b7b2e74ea1a8e0a0ec3ea74ab9",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:其他"
+  }
+ ],
+ "202404_富邦_個體|OCI": [
+  {
+   "at": "2026-07-29T06:39:10.677258Z",
+   "by": "decide",
+   "group": "(一)權益工具投資",
+   "locator": {
+    "cell_key": "202404_富邦_個體|OCI",
+    "row_index": 0,
+    "source_page": 40
+   },
+   "mapping": "股票",
+   "name": "上市（櫃）及興櫃股票",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|OCI",
+    "ordinal": 0,
+    "record_fp": "5c1ae4b0593ebcde34b3cc9f11220dbeacbbafeb52e8bc380db473b7ea2aeec0",
+    "row_fp": "1ae03f3248ef76ff6735dc1de7234fdb874ef134ec966deaa0dae3748056785e",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:上市(櫃)及興櫃股票"
+  },
+  {
+   "at": "2026-07-29T06:39:10.677337Z",
+   "by": "decide",
+   "group": "(一)權益工具投資",
+   "locator": {
+    "cell_key": "202404_富邦_個體|OCI",
+    "row_index": 1,
+    "source_page": 40
+   },
+   "mapping": "資產基礎",
+   "name": "REITs",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|OCI",
+    "ordinal": 1,
+    "record_fp": "5c1ae4b0593ebcde34b3cc9f11220dbeacbbafeb52e8bc380db473b7ea2aeec0",
+    "row_fp": "807fb2a3ee2db89268689f6a4277eccaff50a209fc16173cc2839b0164382e10",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:REITs"
+  },
+  {
+   "at": "2026-07-29T06:39:10.677370Z",
+   "by": "decide",
+   "group": "(一)權益工具投資",
+   "locator": {
+    "cell_key": "202404_富邦_個體|OCI",
+    "row_index": 2,
+    "source_page": 40
+   },
+   "mapping": "股票",
+   "name": "未上市（櫃）股票",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|OCI",
+    "ordinal": 2,
+    "record_fp": "5c1ae4b0593ebcde34b3cc9f11220dbeacbbafeb52e8bc380db473b7ea2aeec0",
+    "row_fp": "1752d5eeadfc52349045d0747242c030aa411cb2a722e3a755922e5634e80dc3",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:未上市(櫃)股票"
+  },
+  {
+   "at": "2026-07-29T06:39:10.677378Z",
+   "by": "decide",
+   "group": "(二)債務工具投資",
+   "locator": {
+    "cell_key": "202404_富邦_個體|OCI",
+    "row_index": 3,
+    "source_page": 40
+   },
+   "mapping": "公債",
+   "name": "政府公債",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|OCI",
+    "ordinal": 3,
+    "record_fp": "5c1ae4b0593ebcde34b3cc9f11220dbeacbbafeb52e8bc380db473b7ea2aeec0",
+    "row_fp": "66af08fbb552b001a894a64d5d5dbc425915b6db24bc210222cc22d690150bb4",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:政府公債"
+  },
+  {
+   "at": "2026-07-29T06:39:10.677385Z",
+   "by": "decide",
+   "group": "(二)債務工具投資",
+   "locator": {
+    "cell_key": "202404_富邦_個體|OCI",
+    "row_index": 4,
+    "source_page": 40
+   },
+   "mapping": "公司債",
+   "name": "公司債",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|OCI",
+    "ordinal": 4,
+    "record_fp": "5c1ae4b0593ebcde34b3cc9f11220dbeacbbafeb52e8bc380db473b7ea2aeec0",
+    "row_fp": "2e403a76d9e9d37d35a0d0a0419cada31dfefc38194a380a98797ddd12a774f0",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:公司債"
+  },
+  {
+   "at": "2026-07-29T06:39:10.677390Z",
+   "by": "decide",
+   "group": "(二)債務工具投資",
+   "locator": {
+    "cell_key": "202404_富邦_個體|OCI",
+    "row_index": 5,
+    "source_page": 40
+   },
+   "mapping": "金融債",
+   "name": "金融債券",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|OCI",
+    "ordinal": 5,
+    "record_fp": "5c1ae4b0593ebcde34b3cc9f11220dbeacbbafeb52e8bc380db473b7ea2aeec0",
+    "row_fp": "cda16b37c548050d63064cb3ecbce43594f8ba0be247815da1095f69dfa3d1da",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:金融債券"
+  },
+  {
+   "at": "2026-07-29T06:39:10.677396Z",
+   "by": "decide",
+   "group": "(二)債務工具投資",
+   "locator": {
+    "cell_key": "202404_富邦_個體|OCI",
+    "row_index": 6,
+    "source_page": 40
+   },
+   "mapping": "其他",
+   "name": "其他",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|OCI",
+    "ordinal": 6,
+    "record_fp": "5c1ae4b0593ebcde34b3cc9f11220dbeacbbafeb52e8bc380db473b7ea2aeec0",
+    "row_fp": "24dfc3a45feed0f1652ae06709c342ea620dd18191938cd98980baed8f9b6e44",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:其他"
+  },
+  {
+   "at": "2026-07-29T06:39:10.677403Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_富邦_個體|OCI",
+    "row_index": 0,
+    "source_page": 152
+   },
+   "mapping": "公債",
+   "name": "政府公債",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|OCI",
+    "ordinal": 0,
+    "record_fp": "f3aa1e151645a60d9cf4b9c5acf1eeb70a5980bcb861c7d5b6ec3dc998ba0052",
+    "row_fp": "1cb166058d34a1bbcd9e6d06adbe75a3f07e635f9634656dcc8a4805f20488e0",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:政府公債"
+  },
+  {
+   "at": "2026-07-29T06:39:10.677458Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_富邦_個體|OCI",
+    "row_index": 1,
+    "source_page": 152
+   },
+   "mapping": "公司債",
+   "name": "公司債",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|OCI",
+    "ordinal": 1,
+    "record_fp": "f3aa1e151645a60d9cf4b9c5acf1eeb70a5980bcb861c7d5b6ec3dc998ba0052",
+    "row_fp": "aea70772c0bb540be692e906980a74e67280effa70e8a37cfadc0c631b525ff7",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:公司債"
+  },
+  {
+   "at": "2026-07-29T06:39:10.677467Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_富邦_個體|OCI",
+    "row_index": 2,
+    "source_page": 152
+   },
+   "mapping": "金融債",
+   "name": "金融債券",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|OCI",
+    "ordinal": 2,
+    "record_fp": "f3aa1e151645a60d9cf4b9c5acf1eeb70a5980bcb861c7d5b6ec3dc998ba0052",
+    "row_fp": "034dae51dd84952d1c0b4714c2e9cf1fe252532adad7eed26f2b45021ace7c61",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:金融債券"
+  },
+  {
+   "at": "2026-07-29T06:39:10.677473Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_富邦_個體|OCI",
+    "row_index": 3,
+    "source_page": 152
+   },
+   "mapping": "股票",
+   "name": "股票",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|OCI",
+    "ordinal": 3,
+    "record_fp": "f3aa1e151645a60d9cf4b9c5acf1eeb70a5980bcb861c7d5b6ec3dc998ba0052",
+    "row_fp": "fad34ef1ad9f9f17108af1c61f99e9ce68c63c8795ec7d49c9ceb051ff2df340",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:股票"
+  },
+  {
+   "at": "2026-07-29T06:39:10.677479Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_富邦_個體|OCI",
+    "row_index": 4,
+    "source_page": 152
+   },
+   "mapping": "資產基礎",
+   "name": "REITs",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|OCI",
+    "ordinal": 4,
+    "record_fp": "f3aa1e151645a60d9cf4b9c5acf1eeb70a5980bcb861c7d5b6ec3dc998ba0052",
+    "row_fp": "0243864e4d676fa56c46f2e931411b7f71c7aedf8daffd5438e0ea1542dc460d",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:REITs"
+  },
+  {
+   "at": "2026-07-29T06:39:10.677485Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_富邦_個體|OCI",
+    "row_index": 5,
+    "source_page": 152
+   },
+   "mapping": "其他",
+   "name": "其他",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|OCI",
+    "ordinal": 5,
+    "record_fp": "f3aa1e151645a60d9cf4b9c5acf1eeb70a5980bcb861c7d5b6ec3dc998ba0052",
+    "row_fp": "819f17352b4919065c42887c1ff8a8b0576d4ecdcab3a1ee7ccbb761090bb13a",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:其他"
+  }
+ ],
+ "202404_富邦_個體|Trading": [
+  {
+   "at": "2026-07-29T06:39:10.678017Z",
+   "by": "decide",
+   "group": "指定為透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202404_富邦_個體|Trading",
+    "row_index": 0,
+    "source_page": 38
+   },
+   "mapping": "公債",
+   "name": "政府公債",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|Trading",
+    "ordinal": 0,
+    "record_fp": "30874757465b267eb23f3c832d05c4552bc54b611adc0ed4ffa3cf1267dfefda",
+    "row_fp": "7063e295b7ab0554f878ae5752890ee735952f88733f37092582af8bbcb71910",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:政府公債"
+  },
+  {
+   "at": "2026-07-29T06:39:10.678025Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202404_富邦_個體|Trading",
+    "row_index": 1,
+    "source_page": 38
+   },
+   "mapping": "貨幣市場",
+   "name": "商業本票",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|Trading",
+    "ordinal": 1,
+    "record_fp": "30874757465b267eb23f3c832d05c4552bc54b611adc0ed4ffa3cf1267dfefda",
+    "row_fp": "196425e99b308c4daf1d0bcecd83f4c865a484eda4320a4cccb86906e0ba5c4c",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:商業本票"
+  },
+  {
+   "at": "2026-07-29T06:39:10.678031Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202404_富邦_個體|Trading",
+    "row_index": 2,
+    "source_page": 38
+   },
+   "mapping": "公司債",
+   "name": "可轉換公司債",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|Trading",
+    "ordinal": 2,
+    "record_fp": "30874757465b267eb23f3c832d05c4552bc54b611adc0ed4ffa3cf1267dfefda",
+    "row_fp": "ba957c6b0c71c997926fc72a1af01a1d6bdbe7c2802b6f9bf2a79c70dd38daad",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:可轉換公司債"
+  },
+  {
+   "at": "2026-07-29T06:39:10.678036Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202404_富邦_個體|Trading",
+    "row_index": 3,
+    "source_page": 38
+   },
+   "mapping": "其他",
+   "name": "其 他",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|Trading",
+    "ordinal": 3,
+    "record_fp": "30874757465b267eb23f3c832d05c4552bc54b611adc0ed4ffa3cf1267dfefda",
+    "row_fp": "52b54808bb32aa45797bc2fe062406d736f20f346ccbec1b90db6adaa30ca5f4",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:其他"
+  },
+  {
+   "at": "2026-07-29T06:39:10.678043Z",
+   "by": "decide",
+   "group": "衍生金融資產",
+   "locator": {
+    "cell_key": "202404_富邦_個體|Trading",
+    "row_index": 4,
+    "source_page": 38
+   },
+   "mapping": "衍生",
+   "name": "外匯換匯合約",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|Trading",
+    "ordinal": 4,
+    "record_fp": "30874757465b267eb23f3c832d05c4552bc54b611adc0ed4ffa3cf1267dfefda",
+    "row_fp": "fc266ee6091357241868f0968d27c6ff13698eda25f6103e8dfc34e8a63196b5",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "PROVISIONAL",
+   "taxonomy_ref": "tax:外匯換匯合約"
+  },
+  {
+   "at": "2026-07-29T06:39:10.678048Z",
+   "by": "decide",
+   "group": "衍生金融資產",
+   "locator": {
+    "cell_key": "202404_富邦_個體|Trading",
+    "row_index": 5,
+    "source_page": 38
+   },
+   "mapping": "衍生",
+   "name": "利率交換合約",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|Trading",
+    "ordinal": 5,
+    "record_fp": "30874757465b267eb23f3c832d05c4552bc54b611adc0ed4ffa3cf1267dfefda",
+    "row_fp": "7c94074d96d9a3991d9d08c543f05406e452d2a75b722ba8966240641939937b",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:利率交換合約"
+  },
+  {
+   "at": "2026-07-29T06:39:10.678053Z",
+   "by": "decide",
+   "group": "衍生金融資產",
+   "locator": {
+    "cell_key": "202404_富邦_個體|Trading",
+    "row_index": 6,
+    "source_page": 38
+   },
+   "mapping": "衍生",
+   "name": "其 他",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|Trading",
+    "ordinal": 6,
+    "record_fp": "30874757465b267eb23f3c832d05c4552bc54b611adc0ed4ffa3cf1267dfefda",
+    "row_fp": "7c883a736481ca40c3d8005d9198d7b28d56796eb04307ae4456a2e20f05ad53",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:group:衍生金融資產"
+  },
+  {
+   "at": "2026-07-29T06:39:10.678060Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202404_富邦_個體|Trading",
+    "row_index": 0,
+    "source_page": 151
+   },
+   "mapping": "貨幣市場",
+   "name": "商業本票",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|Trading",
+    "ordinal": 0,
+    "record_fp": "329d43edd0b9264fed74e0a8c47c362dd2d461e90ffd6bd32fa843e1bcebf193",
+    "row_fp": "196425e99b308c4daf1d0bcecd83f4c865a484eda4320a4cccb86906e0ba5c4c",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:商業本票"
+  },
+  {
+   "at": "2026-07-29T06:39:10.678065Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202404_富邦_個體|Trading",
+    "row_index": 1,
+    "source_page": 151
+   },
+   "mapping": "公司債",
+   "name": "可轉換公司債",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|Trading",
+    "ordinal": 1,
+    "record_fp": "329d43edd0b9264fed74e0a8c47c362dd2d461e90ffd6bd32fa843e1bcebf193",
+    "row_fp": "ba957c6b0c71c997926fc72a1af01a1d6bdbe7c2802b6f9bf2a79c70dd38daad",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:可轉換公司債"
+  },
+  {
+   "at": "2026-07-29T06:39:10.678070Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202404_富邦_個體|Trading",
+    "row_index": 2,
+    "source_page": 151
+   },
+   "mapping": "公債",
+   "name": "政府公債",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|Trading",
+    "ordinal": 2,
+    "record_fp": "329d43edd0b9264fed74e0a8c47c362dd2d461e90ffd6bd32fa843e1bcebf193",
+    "row_fp": "70c8a2696d8a699135056b558bfe72c97d812cd54752a1bc42ef21e00bdd7d95",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:政府公債"
+  },
+  {
+   "at": "2026-07-29T06:39:10.678076Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202404_富邦_個體|Trading",
+    "row_index": 3,
+    "source_page": 151
+   },
+   "mapping": "公司債",
+   "name": "公 司 債",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|Trading",
+    "ordinal": 3,
+    "record_fp": "329d43edd0b9264fed74e0a8c47c362dd2d461e90ffd6bd32fa843e1bcebf193",
+    "row_fp": "a395234a717e21570c9422432a43d12db8da3f63ef90673a492ef895f359619f",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:公司債"
+  },
+  {
+   "at": "2026-07-29T06:39:10.678081Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202404_富邦_個體|Trading",
+    "row_index": 4,
+    "source_page": 151
+   },
+   "mapping": "其他",
+   "name": "其他（註）",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|Trading",
+    "ordinal": 4,
+    "record_fp": "329d43edd0b9264fed74e0a8c47c362dd2d461e90ffd6bd32fa843e1bcebf193",
+    "row_fp": "4544357005512973b66bf7600cb9c2ab5234caab328bd93d6b1ea107a0e4bb66",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:其他(註)"
+  },
+  {
+   "at": "2026-07-29T06:39:10.678087Z",
+   "by": "decide",
+   "group": "衍生金融資產",
+   "locator": {
+    "cell_key": "202404_富邦_個體|Trading",
+    "row_index": 5,
+    "source_page": 151
+   },
+   "mapping": "衍生",
+   "name": "外匯換匯合約",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|Trading",
+    "ordinal": 5,
+    "record_fp": "329d43edd0b9264fed74e0a8c47c362dd2d461e90ffd6bd32fa843e1bcebf193",
+    "row_fp": "fc266ee6091357241868f0968d27c6ff13698eda25f6103e8dfc34e8a63196b5",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "PROVISIONAL",
+   "taxonomy_ref": "tax:外匯換匯合約"
+  },
+  {
+   "at": "2026-07-29T06:39:10.678092Z",
+   "by": "decide",
+   "group": "衍生金融資產",
+   "locator": {
+    "cell_key": "202404_富邦_個體|Trading",
+    "row_index": 6,
+    "source_page": 151
+   },
+   "mapping": "衍生",
+   "name": "利率交換合約",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|Trading",
+    "ordinal": 6,
+    "record_fp": "329d43edd0b9264fed74e0a8c47c362dd2d461e90ffd6bd32fa843e1bcebf193",
+    "row_fp": "7c94074d96d9a3991d9d08c543f05406e452d2a75b722ba8966240641939937b",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:利率交換合約"
+  },
+  {
+   "at": "2026-07-29T06:39:10.678100Z",
+   "by": "decide",
+   "group": "衍生金融資產",
+   "locator": {
+    "cell_key": "202404_富邦_個體|Trading",
+    "row_index": 7,
+    "source_page": 151
+   },
+   "mapping": "衍生",
+   "name": "遠期外匯合約",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|Trading",
+    "ordinal": 7,
+    "record_fp": "329d43edd0b9264fed74e0a8c47c362dd2d461e90ffd6bd32fa843e1bcebf193",
+    "row_fp": "0c1b184bd51c7d5f634cda9e020447068122ba90c66a91198eb8eceaf6bb3b05",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:遠期外匯合約"
+  },
+  {
+   "at": "2026-07-29T06:39:10.678105Z",
+   "by": "decide",
+   "group": "衍生金融資產",
+   "locator": {
+    "cell_key": "202404_富邦_個體|Trading",
+    "row_index": 8,
+    "source_page": 151
+   },
+   "mapping": "衍生",
+   "name": "其他（註）",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|Trading",
+    "ordinal": 8,
+    "record_fp": "329d43edd0b9264fed74e0a8c47c362dd2d461e90ffd6bd32fa843e1bcebf193",
+    "row_fp": "f6e3b3a5a6c649bcd14e0f1098b28a1e43d3cb6532d977a906c709e68b56ff56",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:group:衍生金融資產"
+  },
+  {
+   "at": "2026-07-29T06:39:10.678111Z",
+   "by": "decide",
+   "group": "指定透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202404_富邦_個體|Trading",
+    "row_index": 9,
+    "source_page": 151
+   },
+   "mapping": "公債",
+   "name": "政府公債",
+   "occurrence": {
+    "cell_key": "202404_富邦_個體|Trading",
+    "ordinal": 9,
+    "record_fp": "329d43edd0b9264fed74e0a8c47c362dd2d461e90ffd6bd32fa843e1bcebf193",
+    "row_fp": "7123c851be0ce26f23fe3ba1fdbe67ed410607b170608f530b5daef35ec5f853",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:政府公債"
+  }
+ ]
+}

@@ -1,0 +1,27 @@
+{
+ "bs_page": 6,
+ "cells": {
+  "AC": {
+   "amount": 796847547,
+   "pages": [
+    41,
+    99
+   ]
+  },
+  "OCI": {
+   "amount": 162099029,
+   "pages": [
+    39
+   ]
+  },
+  "Trading": {
+   "amount": 167556941,
+   "pages": [
+    38
+   ]
+  }
+ },
+ "doc": "202302_富邦_個體",
+ "located_by": "locate.locate",
+ "pdf_sha256": "a76f44d8429079b0c116dcdc1de769b5f9cd7d1546efbd6beb2c537d4918d04e"
+}

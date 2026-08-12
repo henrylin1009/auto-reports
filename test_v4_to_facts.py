@@ -146,7 +146,7 @@ def _test_subtotal_rows_dropped():
     弄壞它會讓兩條路徑一起降級,對照就看不出差異(實測:清空常數後 397 條全綠)。
     所以這裡直接餵合成資料驗結果。
 
-    這條擋的是真事故:`202302_5843_AI3|Trading` 的 v4 產出含「小計 49,737,828」
+    這條擋的是真事故:`202302_兆豐_個體|Trading` 的 v4 產出含「小計 49,737,828」
     「合計 55,717,136」兩列,漏濾就會進 `facts/`、分不到桶、落進 `View.unknown`,
     同一份資料兩個閘門給出相反答案。
     """
@@ -175,7 +175,7 @@ def _test_file_cell_roundtrip():
     import tempfile
     from core import webdata
 
-    raw = json.load(open("v4/raw/202502_5836_AI3.json", encoding="utf-8"))
+    raw = json.load(open("v4/raw/202502_富邦_個體.json", encoding="utf-8"))
     doc, parsed = raw["doc"], raw["parsed"]
     ws = tempfile.mkdtemp(prefix="fc_")
     try:

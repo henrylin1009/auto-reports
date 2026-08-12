@@ -1,0 +1,29 @@
+{
+ "bs_page": 8,
+ "cells": {
+  "AC": {
+   "amount": 722538638,
+   "pages": [
+    33,
+    130
+   ]
+  },
+  "OCI": {
+   "amount": 382852982,
+   "pages": [
+    32,
+    127
+   ]
+  },
+  "Trading": {
+   "amount": 67893839,
+   "pages": [
+    31,
+    126
+   ]
+  }
+ },
+ "doc": "202504_兆豐_個體",
+ "located_by": "locate.locate",
+ "pdf_sha256": "f3e8efe861ce69c7f7642878ee57857cfa7aa8ab56f1ca6540ff3a061f68fcb8"
+}

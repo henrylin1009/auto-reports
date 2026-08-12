@@ -31,8 +31,15 @@
 import json
 
 import capital
+import config
+import docid
 
-BANKS = {"5841": "中信", "5843": "兆豐", "5835": "國泰", "5836": "富邦", "5847": "玉山"}
+#: 銀行清單只有一份(`config.BANKS`)—— 見 `capital.py` 同一處的說明。
+BANKS = config.BANKS
+
+#: 圖表上的排列順序。**刻意不是 `config.BANKS` 的全部** —— 這是分析頁的
+#: 呈現順序,只列真的有殖利率資料的五家;新加入而還沒有資料的銀行
+#: (華南/第一)排進來只會多兩條空線。
 ORDER = ["中信", "兆豐", "國泰", "富邦", "玉山"]
 E = 1e5          # 仟元 → 億元
 CLASSES = ("AC", "OCI")
@@ -88,7 +95,7 @@ def interest(path="capital.json", kind="interest", field="securities"):
     store = all_kinds[kind]
     obs = {}
     for doc, recs in store.items():
-        bank = BANKS.get(doc.split("_")[1])
+        bank = docid.bank_of(doc) if docid.is_valid(doc) else None
         for r in recs:
             y = _year(r.get("period"))
             if bank and y and r.get("basis_norm") == "個體":

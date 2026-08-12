@@ -18,6 +18,7 @@ import os
 
 import buckets
 import config
+import docid
 from core.webdata import EditError
 
 from v4 import reader, witness
@@ -27,14 +28,15 @@ CLASSES = witness.CLASSES
 
 
 def _bank_and_kind(doc):
-    """`202504_5843_AI3` → ("兆豐", "202504")。純字串解析,不猜。"""
-    parts = doc.split("_")
-    period = parts[0] if parts else "?"
-    code = None
-    for p in parts[1:]:
-        if p in config.BANKS:
-            code = p
-    bank = config.BANKS.get(code, code or "?")
+    """`202504_兆豐_個體` → ("兆豐", "202504")。純字串解析,不猜。
+
+    解析走 `docid.parse()`(唯一入口);認不得的名字回 ("?", "?") 而不是
+    硬湊 —— 這個回傳值只拿來顯示,顯示「?」比顯示一個像模像樣的錯名字好。
+    """
+    try:
+        period, bank, _ = docid.parse(doc)
+    except docid.BadDocId:
+        return "?", "?"
     return bank, period
 
 

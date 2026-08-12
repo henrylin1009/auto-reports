@@ -51,34 +51,34 @@ ARITHMETIC_EVIDENCE = {
     #    於是驗算明明通過卻被 stale_confirmations 判成失敗。2026-07-28 改掉。
     "CMO": (
         "富邦明細表 p154: CMO+RMBS=61,332,697=附註資產證券化商品",
-        "__import__('core.recheck', fromlist=['x']).names_sum_matches('202404_5836_AI3|AC', ['CMO', 'RMBS'], '資產證券化商品')",
-        "202404_5836_AI3|AC",
+        "__import__('core.recheck', fromlist=['x']).names_sum_matches('202404_富邦_個體|AC', ['CMO', 'RMBS'], '資產證券化商品')",
+        "202404_富邦_個體|AC",
     ),
     "RMBS": (
         "富邦明細表 p154: CMO+RMBS=61,332,697=附註資產證券化商品",
-        "__import__('core.recheck', fromlist=['x']).names_sum_matches('202404_5836_AI3|AC', ['CMO', 'RMBS'], '資產證券化商品')",
-        "202404_5836_AI3|AC",
+        "__import__('core.recheck', fromlist=['x']).names_sum_matches('202404_富邦_個體|AC', ['CMO', 'RMBS'], '資產證券化商品')",
+        "202404_富邦_個體|AC",
     ),
     # 兆豐這格附註逐項成本、明細表逐項公允,要挑成本欄才比得動(prefer_cost)。
     "定存單": (
         "兆豐 202404 OCI: 銀行定存單+定期存單-可轉讓=15,396,926=附註定存單(取得成本口徑對齊)",
-        "__import__('core.recheck', fromlist=['x']).names_sum_matches('202404_5843_AI3|OCI', ['銀行定存單', '定期存單-可轉讓'], '定存單', prefer_cost=True)",
-        "202404_5843_AI3|OCI",
+        "__import__('core.recheck', fromlist=['x']).names_sum_matches('202404_兆豐_個體|OCI', ['銀行定存單', '定期存單-可轉讓'], '定存單', prefer_cost=True)",
+        "202404_兆豐_個體|OCI",
     ),
     "定期存單-可轉讓": (
         "兆豐 202404 OCI: 銀行定存單+定期存單-可轉讓=15,396,926=附註定存單(取得成本口徑對齊)",
-        "__import__('core.recheck', fromlist=['x']).names_sum_matches('202404_5843_AI3|OCI', ['銀行定存單', '定期存單-可轉讓'], '定存單', prefer_cost=True)",
-        "202404_5843_AI3|OCI",
+        "__import__('core.recheck', fromlist=['x']).names_sum_matches('202404_兆豐_個體|OCI', ['銀行定存單', '定期存單-可轉讓'], '定存單', prefer_cost=True)",
+        "202404_兆豐_個體|OCI",
     ),
     "換匯": (
         "中信明細表「衍生金融工具」段8列相加=78,086,700=附註「衍生金融資產」(202404 Trading p31/p147)",
-        "__import__('core.recheck', fromlist=['x']).group_sum_matches('202404_5841_AI3|Trading', '衍生金融工具', '衍生金融資產')",
-        "202404_5841_AI3|Trading",
+        "__import__('core.recheck', fromlist=['x']).group_sum_matches('202404_中信_個體|Trading', '衍生金融工具', '衍生金融資產')",
+        "202404_中信_個體|Trading",
     ),
     "商品交換": (
         "中信明細表「衍生金融工具」段8列相加=78,086,700=附註「衍生金融資產」(202404 Trading p31/p147)",
-        "__import__('core.recheck', fromlist=['x']).group_sum_matches('202404_5841_AI3|Trading', '衍生金融工具', '衍生金融資產')",
-        "202404_5841_AI3|Trading",
+        "__import__('core.recheck', fromlist=['x']).group_sum_matches('202404_中信_個體|Trading', '衍生金融工具', '衍生金融資產')",
+        "202404_中信_個體|Trading",
     ),
 }
 
@@ -87,8 +87,8 @@ GROUP_SYN_ARITHMETIC = {
     # 同上,recheck 必須是回傳真值的運算式。
     "衍生金融工具": (
         "中信 202504 Trading: 衍生金融工具段7列相加=56,768,874=附註衍生金融資產",
-        "__import__('core.recheck', fromlist=['x']).group_sum_matches('202504_5841_AI3|Trading', '衍生金融工具', '衍生金融資產')",
-        "202504_5841_AI3|Trading",
+        "__import__('core.recheck', fromlist=['x']).group_sum_matches('202504_中信_個體|Trading', '衍生金融工具', '衍生金融資產')",
+        "202504_中信_個體|Trading",
     ),
 }
 

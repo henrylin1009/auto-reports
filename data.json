@@ -1,8 +1,8 @@
 {
  "_build": {
   "built_by": "build.py",
-  "decisions_sha256": "69a56f00043b0abe1e24c0d42528cd0a9315ffac739e06d5b04b7afcbd57068a",
-  "facts_sha256": "0372887b6edb02264037d96512b85b647a6fe408addb874cb84ccc6d281423df",
+  "decisions_sha256": "2db9feebab6771635cc89a1617f2ff0d1e468d8fcb81212280eb3d7b9813c0e5",
+  "facts_sha256": "94825a01bfb2064dec85d4727786ab853fac72cc55fb9b862d24adcc3b918f71",
   "manifest": "build_manifest.json",
   "note": "唯一寫入者是 build.py。四張發布表全部由 facts/ 當次重建;不合格的格子寫 null(前端畫灰底斜紋),不回退舊管線的數字。",
   "publish_unit": "(期別, 銀行, 類別, 口徑)"

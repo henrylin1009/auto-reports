@@ -17,7 +17,7 @@ import json
 import locate
 import pipeline
 
-DOC, CLS = "202102_5847_AI3", "OCI"     # 玉山 2021H1:子附註在 p24,曾被誤判為「唯一死文件」
+DOC, CLS = "202102_玉山_個體", "OCI"     # 玉山 2021H1:子附註在 p24,曾被誤判為「唯一死文件」
 
 
 def _pages_in(prompt):
@@ -72,13 +72,13 @@ def case_two_layer():
 
 def case_stops_early():
     """第 1 輪就對上 → 不准再擴張(擴張是有成本的,不是免費保險)。"""
-    recs = json.load(open("scratchpad/rows_r2.json", encoding="utf-8"))["202404_5835_AI3|OCI"]
+    recs = json.load(open("scratchpad/rows_r2.json", encoding="utf-8"))["202404_國泰_個體|OCI"]
     n = []
 
     def good(doc, cls, prompt):
         n.append(_pages_in(prompt))
         return recs
-    out = pipeline.drive("202404_5835_AI3", "OCI", good)
+    out = pipeline.drive("202404_國泰_個體", "OCI", good)
     yield ("第 1 輪對上就停", len(n) == 1, f"輪數={len(n)}")
     yield ("結果標記為未擴張", out.ok and out.level == 0, repr(out))
 
@@ -86,7 +86,7 @@ def case_stops_early():
 def case_no_anchor():
     """錨讀不到的格子不該假裝試過 —— 連 prompt 都不該產生。"""
     called = []
-    out = pipeline.drive("201802_5835_AI3", "Trading",
+    out = pipeline.drive("201802_國泰_個體", "Trading",
                           lambda doc, cls, p: called.append(p))
     yield ("錨讀不到 → 直接拒收,不叫 agent", (not out.ok) and not called, repr(out))
 

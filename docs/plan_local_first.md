@@ -410,13 +410,13 @@ python3 -m core.workbench
 ```
 報表數字  玉山 2024 OCI 金融債 131,465,522
     ↓ 由哪些 decision 加總
-decision  cell=202404_5847_AI3|OCI  row_fp=a3f…  mapping=金融債  state=CONFIRMED
+decision  cell=202404_玉山_個體|OCI  row_fp=a3f…  mapping=金融債  state=CONFIRMED
     ↓ 依據哪條 taxonomy rule
 rule      tax:金融債券(註二) → 金融債   state=CONFIRMED
           references: rule「BUCKET_RULES 關鍵字『金融債券』」
                       + human「2026-07-28 使用者批准 deriv:…-v1」
     ↓ 來自哪個 raw fact
-fact      facts/202404_5847_AI3.json  rows[3]  name=金融債券（註二）
+fact      facts/202404_玉山_個體.json  rows[3]  name=金融債券（註二）
     ↓ 抄自哪一頁
 pdf       pdf_cache/…pdf  p126   [開啟 PDF 該頁]
 ```

@@ -22,7 +22,7 @@ import json
 import fill
 import locate
 
-DOC, CLS = "202504_5835_AI3", "Trading"
+DOC, CLS = "202504_國泰_個體", "Trading"
 KEY = f"{DOC}|{CLS}"
 
 #: 用**真實**的一格當底,只換名字 —— 假造金額會讓別道檢查先破,測不到要測的東西。

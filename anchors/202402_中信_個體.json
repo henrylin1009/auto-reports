@@ -1,0 +1,28 @@
+{
+ "bs_page": 6,
+ "cells": {
+  "AC": {
+   "amount": 826931820,
+   "pages": [
+    20,
+    53,
+    85
+   ]
+  },
+  "OCI": {
+   "amount": 201346518,
+   "pages": [
+    18
+   ]
+  },
+  "Trading": {
+   "amount": 378451544,
+   "pages": [
+    17
+   ]
+  }
+ },
+ "doc": "202402_中信_個體",
+ "located_by": "locate.locate",
+ "pdf_sha256": "f13c90d83f1933761650aeb6d204d61012a09e7dd38d63dfe82db54b7a8c0b21"
+}

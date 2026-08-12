@@ -1,0 +1,381 @@
+{
+ "202502_富邦_個體|AC": [
+  {
+   "at": "2026-07-29T13:36:25.620693Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202502_富邦_個體|AC",
+    "row_index": 0,
+    "source_page": 40
+   },
+   "mapping": "可轉讓定存單",
+   "name": "可轉讓定期存單",
+   "occurrence": {
+    "cell_key": "202502_富邦_個體|AC",
+    "ordinal": 0,
+    "record_fp": "65b34408cc80bdb6767d612050f9b66656f3cd932afa446ed146f2edbc009d86",
+    "row_fp": "5fff4cb8a77e1ce36f95702f029bc440a8ec04cbe854b8c15eb166dca9d61780",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:可轉讓定期存單"
+  },
+  {
+   "at": "2026-07-29T13:36:25.621267Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202502_富邦_個體|AC",
+    "row_index": 1,
+    "source_page": 40
+   },
+   "mapping": "公司債",
+   "name": "公司債（附註十一）",
+   "occurrence": {
+    "cell_key": "202502_富邦_個體|AC",
+    "ordinal": 1,
+    "record_fp": "65b34408cc80bdb6767d612050f9b66656f3cd932afa446ed146f2edbc009d86",
+    "row_fp": "370a8a62007dd7503f15fc49c15364c42b9dece05413f0b6b94875196b341570",
+    "scope": "row"
+   },
+   "references": [
+    {
+     "at": "2026-07-29T13:36:25.621267Z",
+     "detail": "BUCKET_RULES 關鍵字「公司債」",
+     "kind": "rule",
+     "recheck": "rules.propose('公司債(附註十一)')[0] == '公司債'"
+    }
+   ],
+   "state": "PROVISIONAL",
+   "taxonomy_ref": null
+  },
+  {
+   "at": "2026-07-29T13:36:25.621344Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202502_富邦_個體|AC",
+    "row_index": 2,
+    "source_page": 40
+   },
+   "mapping": "金融債",
+   "name": "金融債券（附註十一）",
+   "occurrence": {
+    "cell_key": "202502_富邦_個體|AC",
+    "ordinal": 2,
+    "record_fp": "65b34408cc80bdb6767d612050f9b66656f3cd932afa446ed146f2edbc009d86",
+    "row_fp": "a7965b350119275d4bb0a09d232468655de2ede23ee9b2daec5d75c3e3906bb4",
+    "scope": "row"
+   },
+   "references": [
+    {
+     "at": "2026-07-29T13:36:25.621344Z",
+     "detail": "BUCKET_RULES 關鍵字「金融債券」",
+     "kind": "rule",
+     "recheck": "rules.propose('金融債券(附註十一)')[0] == '金融債'"
+    }
+   ],
+   "state": "PROVISIONAL",
+   "taxonomy_ref": null
+  },
+  {
+   "at": "2026-07-29T13:36:25.621379Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202502_富邦_個體|AC",
+    "row_index": 3,
+    "source_page": 40
+   },
+   "mapping": "公債",
+   "name": "政府公債（附註十一）",
+   "occurrence": {
+    "cell_key": "202502_富邦_個體|AC",
+    "ordinal": 3,
+    "record_fp": "65b34408cc80bdb6767d612050f9b66656f3cd932afa446ed146f2edbc009d86",
+    "row_fp": "6d92ac5b8841bded2f9976b937fedbf2d7e5e8c18a13a9c37ec71dc9caf9aa26",
+    "scope": "row"
+   },
+   "references": [
+    {
+     "at": "2026-07-29T13:36:25.621379Z",
+     "detail": "BUCKET_RULES 關鍵字「政府公債」",
+     "kind": "rule",
+     "recheck": "rules.propose('政府公債(附註十一)')[0] == '公債'"
+    }
+   ],
+   "state": "PROVISIONAL",
+   "taxonomy_ref": null
+  },
+  {
+   "at": "2026-07-29T13:36:25.621408Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202502_富邦_個體|AC",
+    "row_index": 4,
+    "source_page": 40
+   },
+   "mapping": "資產基礎",
+   "name": "資產證券化商品",
+   "occurrence": {
+    "cell_key": "202502_富邦_個體|AC",
+    "ordinal": 4,
+    "record_fp": "65b34408cc80bdb6767d612050f9b66656f3cd932afa446ed146f2edbc009d86",
+    "row_fp": "5152c09b53ca2d4a1e9d1703646d53c14b813b2e95ce68d75a2bdae1451a81ff",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:資產證券化商品"
+  },
+  {
+   "at": "2026-07-29T13:36:25.621427Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202502_富邦_個體|AC",
+    "row_index": 5,
+    "source_page": 40
+   },
+   "mapping": "其他",
+   "name": "其 他",
+   "occurrence": {
+    "cell_key": "202502_富邦_個體|AC",
+    "ordinal": 5,
+    "record_fp": "65b34408cc80bdb6767d612050f9b66656f3cd932afa446ed146f2edbc009d86",
+    "row_fp": "b413a4ed4aef22a991def4821700ac266320c6b4bbe06bd53e78cee82e34deac",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:其他"
+  },
+  {
+   "at": "2026-07-29T13:36:25.621449Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202502_富邦_個體|AC",
+    "row_index": 6,
+    "source_page": 40
+   },
+   "mapping": "評價調整",
+   "name": "減：備抵損失",
+   "occurrence": {
+    "cell_key": "202502_富邦_個體|AC",
+    "ordinal": 6,
+    "record_fp": "65b34408cc80bdb6767d612050f9b66656f3cd932afa446ed146f2edbc009d86",
+    "row_fp": "85a55930d1992ea71aae0a95fabcec6ff8529614b3bee32c840ef0e11b94463d",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:減：備抵損失"
+  }
+ ],
+ "202502_富邦_個體|OCI": [
+  {
+   "at": "2026-07-29T13:36:30.674954Z",
+   "by": "decide",
+   "group": "有僵證券",
+   "locator": {
+    "cell_key": "202502_富邦_個體|OCI",
+    "row_index": 0,
+    "source_page": 38
+   },
+   "mapping": null,
+   "name": "透過其他綜合損益按公允僵值衡量之權益工具投資",
+   "occurrence": {
+    "cell_key": "202502_富邦_個體|OCI",
+    "ordinal": 0,
+    "record_fp": "22f990f56f38baae9754bf353b4081313ebd99c59711da6c6ac804276d12be97",
+    "row_fp": "1c1e59b368f6da3e613cec9eb44c273e018624f47303a12bae4351f2431e3267",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "UNCLASSIFIED",
+   "taxonomy_ref": null
+  },
+  {
+   "at": "2026-07-29T13:36:30.675072Z",
+   "by": "decide",
+   "group": "有僵證券",
+   "locator": {
+    "cell_key": "202502_富邦_個體|OCI",
+    "row_index": 1,
+    "source_page": 38
+   },
+   "mapping": null,
+   "name": "透過其他綜合損益按公允僵值衡量之債務工具投資",
+   "occurrence": {
+    "cell_key": "202502_富邦_個體|OCI",
+    "ordinal": 1,
+    "record_fp": "22f990f56f38baae9754bf353b4081313ebd99c59711da6c6ac804276d12be97",
+    "row_fp": "97484210b3a6c376263d8ff340c16ef8841a2af327c544cebad895560a44bd50",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "UNCLASSIFIED",
+   "taxonomy_ref": null
+  }
+ ],
+ "202502_富邦_個體|Trading": [
+  {
+   "at": "2026-07-29T13:36:39.443815Z",
+   "by": "decide",
+   "group": "指定為透過損益按公允僵值衡量之金融資產",
+   "locator": {
+    "cell_key": "202502_富邦_個體|Trading",
+    "row_index": 0,
+    "source_page": 36
+   },
+   "mapping": null,
+   "name": "政府公僵",
+   "occurrence": {
+    "cell_key": "202502_富邦_個體|Trading",
+    "ordinal": 0,
+    "record_fp": "77be75c1e6f633da3d671ca6d02deff5f6ffd995a5264d3428b428facb0f1eda",
+    "row_fp": "b5bb4bdf284ea42cf42f69328b9b0d49f43115ceb0283df35d1839bf27056ffd",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "UNCLASSIFIED",
+   "taxonomy_ref": null
+  },
+  {
+   "at": "2026-07-29T13:36:39.443913Z",
+   "by": "decide",
+   "group": "強制透過損益按公允僵值衡量之金融資產",
+   "locator": {
+    "cell_key": "202502_富邦_個體|Trading",
+    "row_index": 1,
+    "source_page": 36
+   },
+   "mapping": "貨幣市場",
+   "name": "商業本票",
+   "occurrence": {
+    "cell_key": "202502_富邦_個體|Trading",
+    "ordinal": 1,
+    "record_fp": "77be75c1e6f633da3d671ca6d02deff5f6ffd995a5264d3428b428facb0f1eda",
+    "row_fp": "91693529dbc0b380063dae654cc680ead85739fe9cc5fa36ce34efed618d1b49",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:商業本票"
+  },
+  {
+   "at": "2026-07-29T13:36:39.443934Z",
+   "by": "decide",
+   "group": "強制透過損益按公允僵值衡量之金融資產",
+   "locator": {
+    "cell_key": "202502_富邦_個體|Trading",
+    "row_index": 2,
+    "source_page": 36
+   },
+   "mapping": "公司債",
+   "name": "可轉換公司債",
+   "occurrence": {
+    "cell_key": "202502_富邦_個體|Trading",
+    "ordinal": 2,
+    "record_fp": "77be75c1e6f633da3d671ca6d02deff5f6ffd995a5264d3428b428facb0f1eda",
+    "row_fp": "6da2139a8ef6cb33606cad8cf4b9f4ad23d4c349bec77cf74363091463cdcbc7",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:可轉換公司債"
+  },
+  {
+   "at": "2026-07-29T13:36:39.443952Z",
+   "by": "decide",
+   "group": "強制透過損益按公允僵值衡量之金融資產",
+   "locator": {
+    "cell_key": "202502_富邦_個體|Trading",
+    "row_index": 3,
+    "source_page": 36
+   },
+   "mapping": "貨幣市場",
+   "name": "國 庫 券",
+   "occurrence": {
+    "cell_key": "202502_富邦_個體|Trading",
+    "ordinal": 3,
+    "record_fp": "77be75c1e6f633da3d671ca6d02deff5f6ffd995a5264d3428b428facb0f1eda",
+    "row_fp": "ab6844d132868c041359d588f42aeaf2c89af8d9e7d1b30e559f8c9bdfc41065",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:國庫券"
+  },
+  {
+   "at": "2026-07-29T13:36:39.443970Z",
+   "by": "decide",
+   "group": "強制透過損益按公允僵值衡量之金融資產",
+   "locator": {
+    "cell_key": "202502_富邦_個體|Trading",
+    "row_index": 4,
+    "source_page": 36
+   },
+   "mapping": "其他",
+   "name": "其 他",
+   "occurrence": {
+    "cell_key": "202502_富邦_個體|Trading",
+    "ordinal": 4,
+    "record_fp": "77be75c1e6f633da3d671ca6d02deff5f6ffd995a5264d3428b428facb0f1eda",
+    "row_fp": "50f3765b1a1ca0fa6762c3170a4335016ae858ca0810fa8fe2397eba294d78b7",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:其他"
+  },
+  {
+   "at": "2026-07-29T13:36:39.443993Z",
+   "by": "decide",
+   "group": "衍生金融資產",
+   "locator": {
+    "cell_key": "202502_富邦_個體|Trading",
+    "row_index": 5,
+    "source_page": 36
+   },
+   "mapping": "衍生",
+   "name": "外匯換叕合約",
+   "occurrence": {
+    "cell_key": "202502_富邦_個體|Trading",
+    "ordinal": 5,
+    "record_fp": "77be75c1e6f633da3d671ca6d02deff5f6ffd995a5264d3428b428facb0f1eda",
+    "row_fp": "455e5f98c4e2a519de5c9a4695fee6ca9e603b97441182ac6c767cf01857d618",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:group:衍生金融資產"
+  },
+  {
+   "at": "2026-07-29T13:36:39.444010Z",
+   "by": "decide",
+   "group": "衍生金融資產",
+   "locator": {
+    "cell_key": "202502_富邦_個體|Trading",
+    "row_index": 6,
+    "source_page": 36
+   },
+   "mapping": "衍生",
+   "name": "其 他",
+   "occurrence": {
+    "cell_key": "202502_富邦_個體|Trading",
+    "ordinal": 6,
+    "record_fp": "77be75c1e6f633da3d671ca6d02deff5f6ffd995a5264d3428b428facb0f1eda",
+    "row_fp": "1b7fdf332ef65d3f33df811c6f55901ee21e69eb4dff9ac9ab01fffc52d9e20e",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:group:衍生金融資產"
+  }
+ ]
+}

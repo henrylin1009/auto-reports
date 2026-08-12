@@ -1,0 +1,28 @@
+{
+ "bs_page": 7,
+ "cells": {
+  "AC": {
+   "amount": 1017934513,
+   "pages": [
+    36,
+    78,
+    104
+   ]
+  },
+  "OCI": {
+   "amount": 331638557,
+   "pages": [
+    34
+   ]
+  },
+  "Trading": {
+   "amount": 411313748,
+   "pages": [
+    33
+   ]
+  }
+ },
+ "doc": "202404_中信_合併",
+ "located_by": "locate.locate",
+ "pdf_sha256": "36be9b32668d55e3f6435e7b5df7cfc6abae94c969ed7a698a3844a7d495f8a8"
+}

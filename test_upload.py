@@ -8,7 +8,7 @@ routing 順序容易錯),那些東西單元測 `_handle_upload()` 測不到 —�
 之前手動用 curl 對著真的 8766 preview server 驗證過一輪,這支是把那輪
 驗證釘成可以重跑的回歸,同時保證每次都清乾淨(不留垃圾在 pdf_cache/facts.db)。
 
-⚠️ **doc id 用 `999999_9999_AI9` 這種明顯是假資料的號碼**,不會撞到任何
+⚠️ **doc id 用 `999999_測試銀行_個體` 這種明顯是假資料的名字**,不會撞到任何
 真實文件,而且一眼看得出是測試殘留(萬一清理失敗,人工也秒懂該刪什麼)。
 
 執行: python3 test_upload.py     exit 0 = 全綠
@@ -19,12 +19,13 @@ import os
 import socket
 import threading
 import time
+import urllib.parse
 
 import server as srv
 import db as db_mod
 
 PASS = FAIL = 0
-TEST_DOC = "999999_9999_AI9"
+TEST_DOC = "999999_測試銀行_個體"
 PDF_BYTES = b"%PDF-1.4\n%test upload fixture\n%%EOF"
 
 
@@ -56,7 +57,7 @@ def _cleanup():
     p = os.path.join("pdf_cache", f"{TEST_DOC}.pdf")
     if os.path.exists(p):
         os.remove(p)
-    for other in ("999999_8888_AI8",):
+    for other in ("999999_另一家_合併",):
         q = os.path.join("pdf_cache", f"{other}.pdf")
         if os.path.exists(q):
             os.remove(q)
@@ -68,6 +69,10 @@ def _cleanup():
 
 
 def _post(conn, path, body, content_type):
+    # doc id 現在含中文(銀行名),而 HTTP 請求行必須是 ASCII —— 要百分比編碼。
+    # 瀏覽器那邊本來就會編(`web/workbench.js` 用 `encodeURIComponent`),
+    # 這裡是把測試對齊真實客戶端的行為,不是為了讓測試過而放寬伺服器。
+    path = urllib.parse.quote(path, safe="/?=&")
     conn.request("POST", path, body=body, headers={"Content-Type": content_type})
     r = conn.getresponse()
     data = json.loads(r.read())
@@ -95,11 +100,11 @@ def main():
                   __import__("hashlib").sha256(PDF_BYTES).hexdigest()) == TEST_DOC)
 
         print("\nU2 同內容、不同 doc id → 去重,不重複存檔")
-        status, r = _post(conn, "/api/upload?doc=999999_8888_AI8", PDF_BYTES, "application/pdf")
+        status, r = _post(conn, "/api/upload?doc=999999_另一家_合併", PDF_BYTES, "application/pdf")
         check("回報 dup=True", r.get("dup") is True, r)
         check("回報既有的 doc", r.get("doc") == TEST_DOC, r)
         check("沒有存出第二份檔案",
-              not os.path.exists("pdf_cache/999999_8888_AI8.pdf"))
+              not os.path.exists("pdf_cache/999999_另一家_合併.pdf"))
 
         print("\nU3 doc 參數不符合命名慣例 → 拒絕(不猜、不硬湊)")
         status, r = _post(conn, "/api/upload?doc=not_a_valid_name", PDF_BYTES, "application/pdf")

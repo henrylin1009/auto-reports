@@ -105,7 +105,7 @@ def I5_inject_stale_publishable_would_be_wrong():
 # ── ratify 一條 → 某格由不可發布轉可發布,且 git diff 可審 ────────────────
 
 def I5_ratify_flips_cell_and_is_git_diffable():
-    """用真實案例示範(**不動真實 taxonomy**):`202304_5836_AI3|Trading` 這格
+    """用真實案例示範(**不動真實 taxonomy**):`202304_富邦_個體|Trading` 這格
     今天卡在「外匯換匯合約」PROVISIONAL(見 status 兩個數字裡的 25/36)。
     在 tmp 副本裡批准它,格子從不可發布轉可發布,而且改動落在
     `taxonomy/rules.json`——用 `git diff --no-index` 對照真實檔案,
@@ -118,7 +118,7 @@ def I5_ratify_flips_cell_and_is_git_diffable():
     import facts
     from core import ingest as ingest_mod
 
-    real_key = "202304_5836_AI3|Trading"
+    real_key = "202304_富邦_個體|Trading"
     cells = facts.load()
     if real_key not in cells:
         return fail("I5_ratify_flips_cell", f"real fixture {real_key} 不在 facts/ 裡(環境變了?)")

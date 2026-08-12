@@ -1,0 +1,30 @@
+{
+ "bs_page": 6,
+ "cells": {
+  "AC": {
+   "amount": 513909296,
+   "pages": [
+    36,
+    93,
+    137
+   ]
+  },
+  "OCI": {
+   "amount": 445571701,
+   "pages": [
+    35,
+    136
+   ]
+  },
+  "Trading": {
+   "amount": 230116229,
+   "pages": [
+    33,
+    135
+   ]
+  }
+ },
+ "doc": "202204_國泰_個體",
+ "located_by": "locate.locate",
+ "pdf_sha256": "c0094e0726dccf5c6f3e23ded18b6bd5f822b50fbc3848d5a280b07c46289a9d"
+}

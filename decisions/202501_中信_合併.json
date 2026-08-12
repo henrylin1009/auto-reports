@@ -1,0 +1,690 @@
+{
+ "202501_中信_合併|AC": [
+  {
+   "at": "2026-07-29T13:43:30.911684Z",
+   "by": "decide",
+   "group": "按攤銷後成本衡量之債務工具投資",
+   "locator": {
+    "cell_key": "202501_中信_合併|AC",
+    "row_index": 0,
+    "source_page": 19
+   },
+   "mapping": "可轉讓定存單",
+   "name": "可轉讓定期存單",
+   "occurrence": {
+    "cell_key": "202501_中信_合併|AC",
+    "ordinal": 0,
+    "record_fp": "e86e13d6389ce6fff90deeef833b95511c922734ad99adbdb85243a267d6955f",
+    "row_fp": "9919e731e98b613fa540d53e12c408accc487ca053e0e6dbf35b1c63a6246f19",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:可轉讓定期存單"
+  },
+  {
+   "at": "2026-07-29T13:43:30.911756Z",
+   "by": "decide",
+   "group": "按攤銷後成本衡量之債務工具投資",
+   "locator": {
+    "cell_key": "202501_中信_合併|AC",
+    "row_index": 1,
+    "source_page": 19
+   },
+   "mapping": "貨幣市場",
+   "name": "國庫券",
+   "occurrence": {
+    "cell_key": "202501_中信_合併|AC",
+    "ordinal": 1,
+    "record_fp": "e86e13d6389ce6fff90deeef833b95511c922734ad99adbdb85243a267d6955f",
+    "row_fp": "9f42ce90514cdef8865934a2fd2247362796b1d2626bb11d3d41d7c620d61e88",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:國庫券"
+  },
+  {
+   "at": "2026-07-29T13:43:30.911780Z",
+   "by": "decide",
+   "group": "按攤銷後成本衡量之債務工具投資",
+   "locator": {
+    "cell_key": "202501_中信_合併|AC",
+    "row_index": 2,
+    "source_page": 19
+   },
+   "mapping": "公債",
+   "name": "政府公債",
+   "occurrence": {
+    "cell_key": "202501_中信_合併|AC",
+    "ordinal": 2,
+    "record_fp": "e86e13d6389ce6fff90deeef833b95511c922734ad99adbdb85243a267d6955f",
+    "row_fp": "7dfdb466d82f44e370830e31ed957939b2ba963a029a5e0efdc8d3f855627cd9",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:政府公債"
+  },
+  {
+   "at": "2026-07-29T13:43:30.911799Z",
+   "by": "decide",
+   "group": "按攤銷後成本衡量之債務工具投資",
+   "locator": {
+    "cell_key": "202501_中信_合併|AC",
+    "row_index": 3,
+    "source_page": 19
+   },
+   "mapping": "公司債",
+   "name": "公司債",
+   "occurrence": {
+    "cell_key": "202501_中信_合併|AC",
+    "ordinal": 3,
+    "record_fp": "e86e13d6389ce6fff90deeef833b95511c922734ad99adbdb85243a267d6955f",
+    "row_fp": "5e552819429ce93f446de87124ee60b25a4b0b0c63e75ae61c79dd4088a5d078",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:公司債"
+  },
+  {
+   "at": "2026-07-29T13:43:30.911817Z",
+   "by": "decide",
+   "group": "按攤銷後成本衡量之債務工具投資",
+   "locator": {
+    "cell_key": "202501_中信_合併|AC",
+    "row_index": 4,
+    "source_page": 19
+   },
+   "mapping": "金融債",
+   "name": "金融債券",
+   "occurrence": {
+    "cell_key": "202501_中信_合併|AC",
+    "ordinal": 4,
+    "record_fp": "e86e13d6389ce6fff90deeef833b95511c922734ad99adbdb85243a267d6955f",
+    "row_fp": "e7e3122c882f7f884ecdbdb89455d6b8e589aa5c673789b2a96b2eba2aca52b2",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:金融債券"
+  },
+  {
+   "at": "2026-07-29T13:43:30.911837Z",
+   "by": "decide",
+   "group": "按攤銷後成本衡量之債務工具投資",
+   "locator": {
+    "cell_key": "202501_中信_合併|AC",
+    "row_index": 5,
+    "source_page": 19
+   },
+   "mapping": "資產基礎",
+   "name": "資產基礎證券",
+   "occurrence": {
+    "cell_key": "202501_中信_合併|AC",
+    "ordinal": 5,
+    "record_fp": "e86e13d6389ce6fff90deeef833b95511c922734ad99adbdb85243a267d6955f",
+    "row_fp": "6e6c00529da0a92141ff7e406974474f3b1b2a38c07f7d5f9f8a7983141c177b",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:資產基礎證券"
+  },
+  {
+   "at": "2026-07-29T13:43:30.911856Z",
+   "by": "decide",
+   "group": "按攤銷後成本衡量之債務工具投資",
+   "locator": {
+    "cell_key": "202501_中信_合併|AC",
+    "row_index": 6,
+    "source_page": 19
+   },
+   "mapping": "其他",
+   "name": "其他",
+   "occurrence": {
+    "cell_key": "202501_中信_合併|AC",
+    "ordinal": 6,
+    "record_fp": "e86e13d6389ce6fff90deeef833b95511c922734ad99adbdb85243a267d6955f",
+    "row_fp": "76867ed6862b0e5a2ae2ace0eaeb83bbace51a053a245ea5ec083c470d1266a7",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:其他"
+  },
+  {
+   "at": "2026-07-29T13:43:30.911878Z",
+   "by": "decide",
+   "group": "按攤銷後成本衡量之債務工具投資",
+   "locator": {
+    "cell_key": "202501_中信_合併|AC",
+    "row_index": 7,
+    "source_page": 19
+   },
+   "mapping": "評價調整",
+   "name": "減：備抵損失",
+   "occurrence": {
+    "cell_key": "202501_中信_合併|AC",
+    "ordinal": 7,
+    "record_fp": "e86e13d6389ce6fff90deeef833b95511c922734ad99adbdb85243a267d6955f",
+    "row_fp": "5c3322620dadd9d0347907848d0e0492cfe803dea2c6e8dcfb07dee2ac970cd1",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:減：備抵損失"
+  }
+ ],
+ "202501_中信_合併|OCI": [
+  {
+   "at": "2026-07-29T13:43:27.596567Z",
+   "by": "decide",
+   "group": "透過其他綜合損益按公允價值衡量之債務工具",
+   "locator": {
+    "cell_key": "202501_中信_合併|OCI",
+    "row_index": 0,
+    "source_page": 17
+   },
+   "mapping": "可轉讓定存單",
+   "name": "可轉讓定期存單",
+   "occurrence": {
+    "cell_key": "202501_中信_合併|OCI",
+    "ordinal": 0,
+    "record_fp": "1c14fd4aeaf90959da2784cbe52593fcb1b09de01073137bac14769b48bf8a1b",
+    "row_fp": "f0c06c7a9fffcf92549f385f5f429d13ed175372f81cac575a0a0a1ff5b58ad9",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:可轉讓定期存單"
+  },
+  {
+   "at": "2026-07-29T13:43:27.596647Z",
+   "by": "decide",
+   "group": "透過其他綜合損益按公允價值衡量之債務工具",
+   "locator": {
+    "cell_key": "202501_中信_合併|OCI",
+    "row_index": 1,
+    "source_page": 17
+   },
+   "mapping": "貨幣市場",
+   "name": "國庫券",
+   "occurrence": {
+    "cell_key": "202501_中信_合併|OCI",
+    "ordinal": 1,
+    "record_fp": "1c14fd4aeaf90959da2784cbe52593fcb1b09de01073137bac14769b48bf8a1b",
+    "row_fp": "8604bbe680d901dd17597ad6018d66604e6f9a5bf233981c3957c13fbf4853f7",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:國庫券"
+  },
+  {
+   "at": "2026-07-29T13:43:27.596671Z",
+   "by": "decide",
+   "group": "透過其他綜合損益按公允價值衡量之債務工具",
+   "locator": {
+    "cell_key": "202501_中信_合併|OCI",
+    "row_index": 2,
+    "source_page": 17
+   },
+   "mapping": "公債",
+   "name": "政府公債",
+   "occurrence": {
+    "cell_key": "202501_中信_合併|OCI",
+    "ordinal": 2,
+    "record_fp": "1c14fd4aeaf90959da2784cbe52593fcb1b09de01073137bac14769b48bf8a1b",
+    "row_fp": "30f2e920dc03cd3a2435479ee19ebc2272df034965152b429cc1aeb0d3cbe4f3",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:政府公債"
+  },
+  {
+   "at": "2026-07-29T13:43:27.596690Z",
+   "by": "decide",
+   "group": "透過其他綜合損益按公允價值衡量之債務工具",
+   "locator": {
+    "cell_key": "202501_中信_合併|OCI",
+    "row_index": 3,
+    "source_page": 17
+   },
+   "mapping": "公司債",
+   "name": "公司債",
+   "occurrence": {
+    "cell_key": "202501_中信_合併|OCI",
+    "ordinal": 3,
+    "record_fp": "1c14fd4aeaf90959da2784cbe52593fcb1b09de01073137bac14769b48bf8a1b",
+    "row_fp": "eef570a467884a53f169d5f928a24483d4810d7b3c839bb4f4c2dd4f3daa026e",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:公司債"
+  },
+  {
+   "at": "2026-07-29T13:43:27.596709Z",
+   "by": "decide",
+   "group": "透過其他綜合損益按公允價值衡量之債務工具",
+   "locator": {
+    "cell_key": "202501_中信_合併|OCI",
+    "row_index": 4,
+    "source_page": 17
+   },
+   "mapping": "金融債",
+   "name": "金融債券",
+   "occurrence": {
+    "cell_key": "202501_中信_合併|OCI",
+    "ordinal": 4,
+    "record_fp": "1c14fd4aeaf90959da2784cbe52593fcb1b09de01073137bac14769b48bf8a1b",
+    "row_fp": "baeeae2a7e739122c2ff2d2778f226f34c1c14a956afb6d6cb07eb44db69f628",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:金融債券"
+  },
+  {
+   "at": "2026-07-29T13:43:27.596730Z",
+   "by": "decide",
+   "group": "透過其他綜合損益按公允價值衡量之債務工具",
+   "locator": {
+    "cell_key": "202501_中信_合併|OCI",
+    "row_index": 5,
+    "source_page": 17
+   },
+   "mapping": "資產基礎",
+   "name": "資產基礎證券",
+   "occurrence": {
+    "cell_key": "202501_中信_合併|OCI",
+    "ordinal": 5,
+    "record_fp": "1c14fd4aeaf90959da2784cbe52593fcb1b09de01073137bac14769b48bf8a1b",
+    "row_fp": "8b3ea0721eb4fc5293f892219244de8360ccd96399bce9a3500aaea8ecf66770",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:資產基礎證券"
+  },
+  {
+   "at": "2026-07-29T13:43:27.596747Z",
+   "by": "decide",
+   "group": "透過其他綜合損益按公允價值衡量之債務工具",
+   "locator": {
+    "cell_key": "202501_中信_合併|OCI",
+    "row_index": 6,
+    "source_page": 17
+   },
+   "mapping": "其他",
+   "name": "其他證券及債券",
+   "occurrence": {
+    "cell_key": "202501_中信_合併|OCI",
+    "ordinal": 6,
+    "record_fp": "1c14fd4aeaf90959da2784cbe52593fcb1b09de01073137bac14769b48bf8a1b",
+    "row_fp": "e4af321ab2322f144f6ded96ce25de58cf363fbb121489a6912101e855a92471",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:其他證券及債券"
+  },
+  {
+   "at": "2026-07-29T13:43:27.596769Z",
+   "by": "decide",
+   "group": "透過其他綜合損益按公允價值衡量之債務工具",
+   "locator": {
+    "cell_key": "202501_中信_合併|OCI",
+    "row_index": 7,
+    "source_page": 17
+   },
+   "mapping": "評價調整",
+   "name": "金融資產評價調整",
+   "occurrence": {
+    "cell_key": "202501_中信_合併|OCI",
+    "ordinal": 7,
+    "record_fp": "1c14fd4aeaf90959da2784cbe52593fcb1b09de01073137bac14769b48bf8a1b",
+    "row_fp": "f35a0131f952eae83453c6341c32d73edbcdbae9a9a3da7509d927d5f19c309d",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:金融資產評價調整"
+  },
+  {
+   "at": "2026-07-29T13:43:27.596789Z",
+   "by": "decide",
+   "group": "透過其他綜合損益按公允價值衡量之權益工具",
+   "locator": {
+    "cell_key": "202501_中信_合併|OCI",
+    "row_index": 8,
+    "source_page": 17
+   },
+   "mapping": "股票",
+   "name": "股票",
+   "occurrence": {
+    "cell_key": "202501_中信_合併|OCI",
+    "ordinal": 8,
+    "record_fp": "1c14fd4aeaf90959da2784cbe52593fcb1b09de01073137bac14769b48bf8a1b",
+    "row_fp": "82d6e6512f679b1f2668b6dfef7c523870c15033a41812d1443e8ff8c1e02ad7",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:股票"
+  },
+  {
+   "at": "2026-07-29T13:43:27.596808Z",
+   "by": "decide",
+   "group": "透過其他綜合損益按公允價值衡量之權益工具",
+   "locator": {
+    "cell_key": "202501_中信_合併|OCI",
+    "row_index": 9,
+    "source_page": 17
+   },
+   "mapping": "股票",
+   "name": "受益憑證",
+   "occurrence": {
+    "cell_key": "202501_中信_合併|OCI",
+    "ordinal": 9,
+    "record_fp": "1c14fd4aeaf90959da2784cbe52593fcb1b09de01073137bac14769b48bf8a1b",
+    "row_fp": "e3e96f60bc88a3b0dadc7683af0ae21e23df7a8bf63a32ec33c005e41210c1bc",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:受益憑證"
+  },
+  {
+   "at": "2026-07-29T13:43:27.596825Z",
+   "by": "decide",
+   "group": "透過其他綜合損益按公允價值衡量之權益工具",
+   "locator": {
+    "cell_key": "202501_中信_合併|OCI",
+    "row_index": 10,
+    "source_page": 17
+   },
+   "mapping": "評價調整",
+   "name": "金融資產評價調整",
+   "occurrence": {
+    "cell_key": "202501_中信_合併|OCI",
+    "ordinal": 10,
+    "record_fp": "1c14fd4aeaf90959da2784cbe52593fcb1b09de01073137bac14769b48bf8a1b",
+    "row_fp": "fe6383565c5c66c1179507480afbf34be4366db2358b28a4eb37faed68f6af71",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:金融資產評價調整"
+  }
+ ],
+ "202501_中信_合併|Trading": [
+  {
+   "at": "2026-07-29T13:43:22.005404Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產：",
+   "locator": {
+    "cell_key": "202501_中信_合併|Trading",
+    "row_index": 0,
+    "source_page": 16
+   },
+   "mapping": "貨幣市場",
+   "name": "商業本票",
+   "occurrence": {
+    "cell_key": "202501_中信_合併|Trading",
+    "ordinal": 0,
+    "record_fp": "718b36e9b68daf86e88d49272950b88dc1ecfdd9d80e0688bf6a62569a9ebc95",
+    "row_fp": "58693f193b8b36128f6c6c67666206359a2c4658190851126b6053eed0b12257",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:商業本票"
+  },
+  {
+   "at": "2026-07-29T13:43:22.006620Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產：",
+   "locator": {
+    "cell_key": "202501_中信_合併|Trading",
+    "row_index": 1,
+    "source_page": 16
+   },
+   "mapping": "貨幣市場",
+   "name": "國庫券",
+   "occurrence": {
+    "cell_key": "202501_中信_合併|Trading",
+    "ordinal": 1,
+    "record_fp": "718b36e9b68daf86e88d49272950b88dc1ecfdd9d80e0688bf6a62569a9ebc95",
+    "row_fp": "d1870f315288c51462149c32d816514c9085e88df6caf4cb3a55583673edae61",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:國庫券"
+  },
+  {
+   "at": "2026-07-29T13:43:22.006639Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產：",
+   "locator": {
+    "cell_key": "202501_中信_合併|Trading",
+    "row_index": 2,
+    "source_page": 16
+   },
+   "mapping": "公債",
+   "name": "政府公債",
+   "occurrence": {
+    "cell_key": "202501_中信_合併|Trading",
+    "ordinal": 2,
+    "record_fp": "718b36e9b68daf86e88d49272950b88dc1ecfdd9d80e0688bf6a62569a9ebc95",
+    "row_fp": "ab79570d9dcc27842b09efc7ea8f091e0d08e20b2fd2d2549401c404dabc020f",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:政府公債"
+  },
+  {
+   "at": "2026-07-29T13:43:22.006653Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產：",
+   "locator": {
+    "cell_key": "202501_中信_合併|Trading",
+    "row_index": 3,
+    "source_page": 16
+   },
+   "mapping": "公司債",
+   "name": "公司債",
+   "occurrence": {
+    "cell_key": "202501_中信_合併|Trading",
+    "ordinal": 3,
+    "record_fp": "718b36e9b68daf86e88d49272950b88dc1ecfdd9d80e0688bf6a62569a9ebc95",
+    "row_fp": "d06ba10606dfa14795e94bfb9ea3effdd4a9af07d624b5c98b25104c23279af1",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:公司債"
+  },
+  {
+   "at": "2026-07-29T13:43:22.006665Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產：",
+   "locator": {
+    "cell_key": "202501_中信_合併|Trading",
+    "row_index": 4,
+    "source_page": 16
+   },
+   "mapping": "金融債",
+   "name": "金融債券",
+   "occurrence": {
+    "cell_key": "202501_中信_合併|Trading",
+    "ordinal": 4,
+    "record_fp": "718b36e9b68daf86e88d49272950b88dc1ecfdd9d80e0688bf6a62569a9ebc95",
+    "row_fp": "3cf323229304e70bbb176ea95212dba20fd03c52b800939305f986c5db662617",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:金融債券"
+  },
+  {
+   "at": "2026-07-29T13:43:22.006678Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產：",
+   "locator": {
+    "cell_key": "202501_中信_合併|Trading",
+    "row_index": 5,
+    "source_page": 16
+   },
+   "mapping": "公司債",
+   "name": "可轉換公司債",
+   "occurrence": {
+    "cell_key": "202501_中信_合併|Trading",
+    "ordinal": 5,
+    "record_fp": "718b36e9b68daf86e88d49272950b88dc1ecfdd9d80e0688bf6a62569a9ebc95",
+    "row_fp": "c2039adc4e792371a5be6b768ff2e818e5195db5a46da139f23f5ba79d67354b",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:可轉換公司債"
+  },
+  {
+   "at": "2026-07-29T13:43:22.006691Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產：",
+   "locator": {
+    "cell_key": "202501_中信_合併|Trading",
+    "row_index": 6,
+    "source_page": 16
+   },
+   "mapping": "股票",
+   "name": "受益憑證",
+   "occurrence": {
+    "cell_key": "202501_中信_合併|Trading",
+    "ordinal": 6,
+    "record_fp": "718b36e9b68daf86e88d49272950b88dc1ecfdd9d80e0688bf6a62569a9ebc95",
+    "row_fp": "70fcdee050f7595de5dbbd80517eec886ec59ccc2e26a3b9e275fc65535280a5",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:受益憑證"
+  },
+  {
+   "at": "2026-07-29T13:43:22.006703Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產：",
+   "locator": {
+    "cell_key": "202501_中信_合併|Trading",
+    "row_index": 7,
+    "source_page": 16
+   },
+   "mapping": "可轉讓定存單",
+   "name": "可轉讓定期存單",
+   "occurrence": {
+    "cell_key": "202501_中信_合併|Trading",
+    "ordinal": 7,
+    "record_fp": "718b36e9b68daf86e88d49272950b88dc1ecfdd9d80e0688bf6a62569a9ebc95",
+    "row_fp": "4d3babb3637f8b56d779e5df45dad22ae0742c7f229eebfc22de7ab5a6ec45b1",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:可轉讓定期存單"
+  },
+  {
+   "at": "2026-07-29T13:43:22.006715Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產：",
+   "locator": {
+    "cell_key": "202501_中信_合併|Trading",
+    "row_index": 8,
+    "source_page": 16
+   },
+   "mapping": "股票",
+   "name": "股票",
+   "occurrence": {
+    "cell_key": "202501_中信_合併|Trading",
+    "ordinal": 8,
+    "record_fp": "718b36e9b68daf86e88d49272950b88dc1ecfdd9d80e0688bf6a62569a9ebc95",
+    "row_fp": "b118bc89a4df4ad140cc84719b732dc4b735cb7d6503cf1c3c8677246c394c44",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:股票"
+  },
+  {
+   "at": "2026-07-29T13:43:22.006728Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產：",
+   "locator": {
+    "cell_key": "202501_中信_合併|Trading",
+    "row_index": 9,
+    "source_page": 16
+   },
+   "mapping": "其他",
+   "name": "其他證券及債券",
+   "occurrence": {
+    "cell_key": "202501_中信_合併|Trading",
+    "ordinal": 9,
+    "record_fp": "718b36e9b68daf86e88d49272950b88dc1ecfdd9d80e0688bf6a62569a9ebc95",
+    "row_fp": "6a3ac91fc0f90378cf43facc22ed15505e90dedf16f904a53f0736025c815e00",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:其他證券及債券"
+  },
+  {
+   "at": "2026-07-29T13:43:22.006740Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產：",
+   "locator": {
+    "cell_key": "202501_中信_合併|Trading",
+    "row_index": 10,
+    "source_page": 16
+   },
+   "mapping": "衍生",
+   "name": "衍生金融資產",
+   "occurrence": {
+    "cell_key": "202501_中信_合併|Trading",
+    "ordinal": 10,
+    "record_fp": "718b36e9b68daf86e88d49272950b88dc1ecfdd9d80e0688bf6a62569a9ebc95",
+    "row_fp": "93dc60c89f57263b8d06c0b54660773604fdbfafb09f73de52293ab24e580691",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:衍生金融資產"
+  },
+  {
+   "at": "2026-07-29T13:43:22.006752Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產：",
+   "locator": {
+    "cell_key": "202501_中信_合併|Trading",
+    "row_index": 11,
+    "source_page": 16
+   },
+   "mapping": "評價調整",
+   "name": "金融資產評價調整",
+   "occurrence": {
+    "cell_key": "202501_中信_合併|Trading",
+    "ordinal": 11,
+    "record_fp": "718b36e9b68daf86e88d49272950b88dc1ecfdd9d80e0688bf6a62569a9ebc95",
+    "row_fp": "8a36ba007f166e757acf20ed50eb7c3fde8c39954bf66ad486f9b95c151a5afd",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:金融資產評價調整"
+  }
+ ]
+}

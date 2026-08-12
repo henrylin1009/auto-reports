@@ -17,7 +17,7 @@ import json
 import buckets
 import transcribe as T
 
-KEY = "202404_5843_AI3|Trading"          # 兆豐 2024:附註逐項成本、明細表逐項公允
+KEY = "202404_兆豐_個體|Trading"          # 兆豐 2024:附註逐項成本、明細表逐項公允
 
 
 def _find(rec, name):

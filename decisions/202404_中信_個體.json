@@ -1,0 +1,1350 @@
+{
+ "202404_中信_個體|AC": [
+  {
+   "at": "2026-07-29T06:39:10.678594Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_中信_個體|AC",
+    "row_index": 0,
+    "source_page": 34
+   },
+   "mapping": "可轉讓定存單",
+   "name": "可轉讓定期存單",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|AC",
+    "ordinal": 0,
+    "record_fp": "ec0e9fcabfcfd4a6d1178c00dda5c38e81e8390fcade640d796ed0382d016a47",
+    "row_fp": "f9dc01917b3014649c59fb6834b9c8dde27bdf27a1427a48f44c632e5646f2f8",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:可轉讓定期存單"
+  },
+  {
+   "at": "2026-07-29T06:39:10.678601Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_中信_個體|AC",
+    "row_index": 1,
+    "source_page": 34
+   },
+   "mapping": "貨幣市場",
+   "name": "國庫券",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|AC",
+    "ordinal": 1,
+    "record_fp": "ec0e9fcabfcfd4a6d1178c00dda5c38e81e8390fcade640d796ed0382d016a47",
+    "row_fp": "12c25c8ad01bd8e77fa14228448077d6856113815f7bda36d869755a00f77b18",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:國庫券"
+  },
+  {
+   "at": "2026-07-29T06:39:10.678606Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_中信_個體|AC",
+    "row_index": 2,
+    "source_page": 34
+   },
+   "mapping": "公債",
+   "name": "政府公債",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|AC",
+    "ordinal": 2,
+    "record_fp": "ec0e9fcabfcfd4a6d1178c00dda5c38e81e8390fcade640d796ed0382d016a47",
+    "row_fp": "0db0147c1f3ea2b0d5ce8d5ebac75104cb490748ed2f1e169ed33b45103d0c5a",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:政府公債"
+  },
+  {
+   "at": "2026-07-29T06:39:10.678611Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_中信_個體|AC",
+    "row_index": 3,
+    "source_page": 34
+   },
+   "mapping": "公司債",
+   "name": "公司債",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|AC",
+    "ordinal": 3,
+    "record_fp": "ec0e9fcabfcfd4a6d1178c00dda5c38e81e8390fcade640d796ed0382d016a47",
+    "row_fp": "135f8838ee10bb922979da58b80d9f4f4f7298559de6500f0ff589e664775f78",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:公司債"
+  },
+  {
+   "at": "2026-07-29T06:39:10.678616Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_中信_個體|AC",
+    "row_index": 4,
+    "source_page": 34
+   },
+   "mapping": "金融債",
+   "name": "金融債券",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|AC",
+    "ordinal": 4,
+    "record_fp": "ec0e9fcabfcfd4a6d1178c00dda5c38e81e8390fcade640d796ed0382d016a47",
+    "row_fp": "b286bd4e64abdef981df866ef4c270d398258da76ee1748e03afed043aed5973",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:金融債券"
+  },
+  {
+   "at": "2026-07-29T06:39:10.678621Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_中信_個體|AC",
+    "row_index": 5,
+    "source_page": 34
+   },
+   "mapping": "資產基礎",
+   "name": "資產基礎證券",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|AC",
+    "ordinal": 5,
+    "record_fp": "ec0e9fcabfcfd4a6d1178c00dda5c38e81e8390fcade640d796ed0382d016a47",
+    "row_fp": "25ee4932e5875b594eb66931f48d49b71929aab724710156ad2d589abdd7dc75",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:資產基礎證券"
+  },
+  {
+   "at": "2026-07-29T06:39:10.678627Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_中信_個體|AC",
+    "row_index": 6,
+    "source_page": 34
+   },
+   "mapping": "其他",
+   "name": "其他",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|AC",
+    "ordinal": 6,
+    "record_fp": "ec0e9fcabfcfd4a6d1178c00dda5c38e81e8390fcade640d796ed0382d016a47",
+    "row_fp": "9fbdb93a8fce2f0f6b8a12e3633ee0790a03a6159bf2d644a8f7348cd4e6c6c1",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:其他"
+  },
+  {
+   "at": "2026-07-29T06:39:10.678632Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_中信_個體|AC",
+    "row_index": 7,
+    "source_page": 34
+   },
+   "mapping": "評價調整",
+   "name": "減：備抵損失",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|AC",
+    "ordinal": 7,
+    "record_fp": "ec0e9fcabfcfd4a6d1178c00dda5c38e81e8390fcade640d796ed0382d016a47",
+    "row_fp": "2029ffb83337a6d901d422b9f81c2f60e4c03cab793d7d757305adf7c63f4d9d",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:減：備抵損失"
+  },
+  {
+   "at": "2026-07-29T06:39:10.678637Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_中信_個體|AC",
+    "row_index": 0,
+    "source_page": 148
+   },
+   "mapping": "可轉讓定存單",
+   "name": "可轉讓定期存單",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|AC",
+    "ordinal": 0,
+    "record_fp": "c056e3209ba15a4bb524a7fc0fa1b6803207aeeb99534290581b1ee2095d7a0a",
+    "row_fp": "5bb17cf49407473349eac4576ddbc5239e3cfcf563c6973965344d5aab621253",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:可轉讓定期存單"
+  },
+  {
+   "at": "2026-07-29T06:39:10.678643Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_中信_個體|AC",
+    "row_index": 1,
+    "source_page": 148
+   },
+   "mapping": "貨幣市場",
+   "name": "國庫券",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|AC",
+    "ordinal": 1,
+    "record_fp": "c056e3209ba15a4bb524a7fc0fa1b6803207aeeb99534290581b1ee2095d7a0a",
+    "row_fp": "12c25c8ad01bd8e77fa14228448077d6856113815f7bda36d869755a00f77b18",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:國庫券"
+  },
+  {
+   "at": "2026-07-29T06:39:10.678649Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_中信_個體|AC",
+    "row_index": 2,
+    "source_page": 148
+   },
+   "mapping": "公債",
+   "name": "政府公債",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|AC",
+    "ordinal": 2,
+    "record_fp": "c056e3209ba15a4bb524a7fc0fa1b6803207aeeb99534290581b1ee2095d7a0a",
+    "row_fp": "c8b459150be4b89bc748a18836b7107a2391113298abc8ed4bf252f6c741d46b",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:政府公債"
+  },
+  {
+   "at": "2026-07-29T06:39:10.678654Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_中信_個體|AC",
+    "row_index": 3,
+    "source_page": 148
+   },
+   "mapping": "公司債",
+   "name": "公司債",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|AC",
+    "ordinal": 3,
+    "record_fp": "c056e3209ba15a4bb524a7fc0fa1b6803207aeeb99534290581b1ee2095d7a0a",
+    "row_fp": "24bd715889556f743ff122e5c65ce57a0993b8b9a88fc68ad03aee84911e55ef",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:公司債"
+  },
+  {
+   "at": "2026-07-29T06:39:10.678660Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_中信_個體|AC",
+    "row_index": 4,
+    "source_page": 148
+   },
+   "mapping": "資產基礎",
+   "name": "資產基礎證券",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|AC",
+    "ordinal": 4,
+    "record_fp": "c056e3209ba15a4bb524a7fc0fa1b6803207aeeb99534290581b1ee2095d7a0a",
+    "row_fp": "25ee4932e5875b594eb66931f48d49b71929aab724710156ad2d589abdd7dc75",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:資產基礎證券"
+  },
+  {
+   "at": "2026-07-29T06:39:10.678666Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_中信_個體|AC",
+    "row_index": 5,
+    "source_page": 148
+   },
+   "mapping": "金融債",
+   "name": "金融債券",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|AC",
+    "ordinal": 5,
+    "record_fp": "c056e3209ba15a4bb524a7fc0fa1b6803207aeeb99534290581b1ee2095d7a0a",
+    "row_fp": "e5599fbac90ddc3bd49c9fd604041ff583a974e41e6938b32990b5cc17b407d3",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:金融債券"
+  },
+  {
+   "at": "2026-07-29T06:39:10.678671Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_中信_個體|AC",
+    "row_index": 6,
+    "source_page": 148
+   },
+   "mapping": "其他",
+   "name": "其他證券",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|AC",
+    "ordinal": 6,
+    "record_fp": "c056e3209ba15a4bb524a7fc0fa1b6803207aeeb99534290581b1ee2095d7a0a",
+    "row_fp": "f4b2529ef87362080abf8335e076860cd35b21be6227392b278589f295706982",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:其他證券"
+  }
+ ],
+ "202404_中信_個體|OCI": [
+  {
+   "at": "2026-07-29T06:39:10.679124Z",
+   "by": "decide",
+   "group": "債務工具",
+   "locator": {
+    "cell_key": "202404_中信_個體|OCI",
+    "row_index": 0,
+    "source_page": 32
+   },
+   "mapping": "可轉讓定存單",
+   "name": "可轉讓定期存單",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|OCI",
+    "ordinal": 0,
+    "record_fp": "88de84858e78c474ae1bb8fa8df0138ebec25bde51e55689c30f1cd24e1dc532",
+    "row_fp": "c76a3adfd1f4c5ad21422fc923c931e0ae688f3d790b07d09b4e31cd559e00ea",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:可轉讓定期存單"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679130Z",
+   "by": "decide",
+   "group": "債務工具",
+   "locator": {
+    "cell_key": "202404_中信_個體|OCI",
+    "row_index": 1,
+    "source_page": 32
+   },
+   "mapping": "貨幣市場",
+   "name": "國庫券",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|OCI",
+    "ordinal": 1,
+    "record_fp": "88de84858e78c474ae1bb8fa8df0138ebec25bde51e55689c30f1cd24e1dc532",
+    "row_fp": "9bc99fcf80ad29adf51d77aac61758f378147a0d6c8157efb4b5c131b1ae724b",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:國庫券"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679135Z",
+   "by": "decide",
+   "group": "債務工具",
+   "locator": {
+    "cell_key": "202404_中信_個體|OCI",
+    "row_index": 2,
+    "source_page": 32
+   },
+   "mapping": "公債",
+   "name": "政府公債",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|OCI",
+    "ordinal": 2,
+    "record_fp": "88de84858e78c474ae1bb8fa8df0138ebec25bde51e55689c30f1cd24e1dc532",
+    "row_fp": "e9cecaa3acfba25e5dc45a3b9c37a852419eb7bc73d1459611a4b9ce19bb9318",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:政府公債"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679140Z",
+   "by": "decide",
+   "group": "債務工具",
+   "locator": {
+    "cell_key": "202404_中信_個體|OCI",
+    "row_index": 3,
+    "source_page": 32
+   },
+   "mapping": "公司債",
+   "name": "公司債",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|OCI",
+    "ordinal": 3,
+    "record_fp": "88de84858e78c474ae1bb8fa8df0138ebec25bde51e55689c30f1cd24e1dc532",
+    "row_fp": "e491aca5069daeee45c826508286c82c1e3987db2d2631eb3ed2fccfab6a7525",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:公司債"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679146Z",
+   "by": "decide",
+   "group": "債務工具",
+   "locator": {
+    "cell_key": "202404_中信_個體|OCI",
+    "row_index": 4,
+    "source_page": 32
+   },
+   "mapping": "金融債",
+   "name": "金融債券",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|OCI",
+    "ordinal": 4,
+    "record_fp": "88de84858e78c474ae1bb8fa8df0138ebec25bde51e55689c30f1cd24e1dc532",
+    "row_fp": "42dfb86c9857e57713e4b70fd4345ca72ec6de724574bf7b75f706c78cf86e17",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:金融債券"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679151Z",
+   "by": "decide",
+   "group": "債務工具",
+   "locator": {
+    "cell_key": "202404_中信_個體|OCI",
+    "row_index": 5,
+    "source_page": 32
+   },
+   "mapping": "資產基礎",
+   "name": "資產基礎證券",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|OCI",
+    "ordinal": 5,
+    "record_fp": "88de84858e78c474ae1bb8fa8df0138ebec25bde51e55689c30f1cd24e1dc532",
+    "row_fp": "edaffe1cbc2e655d76f4dd72532b2122a70c91091e3e99c5958406ec809dd17b",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:資產基礎證券"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679157Z",
+   "by": "decide",
+   "group": "債務工具",
+   "locator": {
+    "cell_key": "202404_中信_個體|OCI",
+    "row_index": 6,
+    "source_page": 32
+   },
+   "mapping": "其他",
+   "name": "其他證券及債券",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|OCI",
+    "ordinal": 6,
+    "record_fp": "88de84858e78c474ae1bb8fa8df0138ebec25bde51e55689c30f1cd24e1dc532",
+    "row_fp": "ab52e90ce6e4e390ee441f57473ab4503f9d9204cbd6af0dcdde292f4cbab002",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:其他證券及債券"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679162Z",
+   "by": "decide",
+   "group": "債務工具",
+   "locator": {
+    "cell_key": "202404_中信_個體|OCI",
+    "row_index": 7,
+    "source_page": 32
+   },
+   "mapping": "評價調整",
+   "name": "金融資產評價調整",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|OCI",
+    "ordinal": 7,
+    "record_fp": "88de84858e78c474ae1bb8fa8df0138ebec25bde51e55689c30f1cd24e1dc532",
+    "row_fp": "17bd750111341bca6617385f2d64a23a5c9de877aba80ab1126eb5a1d3549df3",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:金融資產評價調整"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679167Z",
+   "by": "decide",
+   "group": "權益工具",
+   "locator": {
+    "cell_key": "202404_中信_個體|OCI",
+    "row_index": 8,
+    "source_page": 32
+   },
+   "mapping": "股票",
+   "name": "股票",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|OCI",
+    "ordinal": 8,
+    "record_fp": "88de84858e78c474ae1bb8fa8df0138ebec25bde51e55689c30f1cd24e1dc532",
+    "row_fp": "57b66a9616f25f282d2b854555ead516af06682113560f17f0387e210549f33d",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:股票"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679172Z",
+   "by": "decide",
+   "group": "權益工具",
+   "locator": {
+    "cell_key": "202404_中信_個體|OCI",
+    "row_index": 9,
+    "source_page": 32
+   },
+   "mapping": "評價調整",
+   "name": "金融資產評價調整",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|OCI",
+    "ordinal": 9,
+    "record_fp": "88de84858e78c474ae1bb8fa8df0138ebec25bde51e55689c30f1cd24e1dc532",
+    "row_fp": "a1fe214fd985a0863dae75fe1ada1541cd27940eb98d4af65a28945ccc81fe42",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:金融資產評價調整"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679177Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_中信_個體|OCI",
+    "row_index": 0,
+    "source_page": 148
+   },
+   "mapping": "可轉讓定存單",
+   "name": "可轉讓定期存單",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|OCI",
+    "ordinal": 0,
+    "record_fp": "f360c0c951955171be87f2b2b07b0b3af7f0daf3729f85b7698b1964aa4fa456",
+    "row_fp": "5a7a67f9f202e9f1e3608ee1adb66c5d30f7edd0198cd5984e64016b9982c4d2",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:可轉讓定期存單"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679183Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_中信_個體|OCI",
+    "row_index": 1,
+    "source_page": 148
+   },
+   "mapping": "貨幣市場",
+   "name": "國庫券",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|OCI",
+    "ordinal": 1,
+    "record_fp": "f360c0c951955171be87f2b2b07b0b3af7f0daf3729f85b7698b1964aa4fa456",
+    "row_fp": "bdecd2512573fdc52b7213c7fd0265ca740ae67c8aaf9909107938c655c21a5c",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:國庫券"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679189Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_中信_個體|OCI",
+    "row_index": 2,
+    "source_page": 148
+   },
+   "mapping": "公債",
+   "name": "政府公債",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|OCI",
+    "ordinal": 2,
+    "record_fp": "f360c0c951955171be87f2b2b07b0b3af7f0daf3729f85b7698b1964aa4fa456",
+    "row_fp": "521135f7c58527493bebf2ebb955600cab939890207379224fe6c32db0ad4f1e",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:政府公債"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679194Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_中信_個體|OCI",
+    "row_index": 3,
+    "source_page": 148
+   },
+   "mapping": "公司債",
+   "name": "公司債",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|OCI",
+    "ordinal": 3,
+    "record_fp": "f360c0c951955171be87f2b2b07b0b3af7f0daf3729f85b7698b1964aa4fa456",
+    "row_fp": "047ce0ab72f91023ab336d870c24195bd84d7d2578bfce50c773c1ee9a8dd74a",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:公司債"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679199Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_中信_個體|OCI",
+    "row_index": 4,
+    "source_page": 148
+   },
+   "mapping": "金融債",
+   "name": "金融債券",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|OCI",
+    "ordinal": 4,
+    "record_fp": "f360c0c951955171be87f2b2b07b0b3af7f0daf3729f85b7698b1964aa4fa456",
+    "row_fp": "5536cc147d2b93feb03b04f18216d6528ab18472fc372f0a31a269f68ebc1d4e",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:金融債券"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679204Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_中信_個體|OCI",
+    "row_index": 5,
+    "source_page": 148
+   },
+   "mapping": "資產基礎",
+   "name": "資產基礎證券",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|OCI",
+    "ordinal": 5,
+    "record_fp": "f360c0c951955171be87f2b2b07b0b3af7f0daf3729f85b7698b1964aa4fa456",
+    "row_fp": "ae60bd4d3b159c323a58e6c6bd153b172b542a707ec468e285033adfa4cc3ab2",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:資產基礎證券"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679209Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_中信_個體|OCI",
+    "row_index": 6,
+    "source_page": 148
+   },
+   "mapping": "其他",
+   "name": "其他證券及債券",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|OCI",
+    "ordinal": 6,
+    "record_fp": "f360c0c951955171be87f2b2b07b0b3af7f0daf3729f85b7698b1964aa4fa456",
+    "row_fp": "a1cbb0935192726ae4ee0b31c62acbb4d6ac0fecae369762be6111ae1e715991",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:其他證券及債券"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679214Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_中信_個體|OCI",
+    "row_index": 7,
+    "source_page": 148
+   },
+   "mapping": "股票",
+   "name": "股票",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|OCI",
+    "ordinal": 7,
+    "record_fp": "f360c0c951955171be87f2b2b07b0b3af7f0daf3729f85b7698b1964aa4fa456",
+    "row_fp": "144c306d4e3ebc3d5e39a42524c831e0f994b7b4fce21055889e2a2ef3fdf369",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:股票"
+  }
+ ],
+ "202404_中信_個體|Trading": [
+  {
+   "at": "2026-07-29T06:39:10.679662Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_中信_個體|Trading",
+    "row_index": 0,
+    "source_page": 31
+   },
+   "mapping": "貨幣市場",
+   "name": "商業本票",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|Trading",
+    "ordinal": 0,
+    "record_fp": "18c289d576933b34376a429c0b1ed225891d8412a21915ad031e9ef26dc0d5f2",
+    "row_fp": "59b242cdb82398ed912cc2bbc1384baa4f1331d8d8da01dcd168c94059d276e5",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:商業本票"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679668Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_中信_個體|Trading",
+    "row_index": 1,
+    "source_page": 31
+   },
+   "mapping": "貨幣市場",
+   "name": "國庫券",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|Trading",
+    "ordinal": 1,
+    "record_fp": "18c289d576933b34376a429c0b1ed225891d8412a21915ad031e9ef26dc0d5f2",
+    "row_fp": "afe6c60d0b07631a57c5e693406a06d47b3f85e9b65c252ddf89e91f8e656a9f",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:國庫券"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679673Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_中信_個體|Trading",
+    "row_index": 2,
+    "source_page": 31
+   },
+   "mapping": "公債",
+   "name": "政府公債",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|Trading",
+    "ordinal": 2,
+    "record_fp": "18c289d576933b34376a429c0b1ed225891d8412a21915ad031e9ef26dc0d5f2",
+    "row_fp": "a354bbe3459db555de608235e9daf6b682c1826b4e5ecdfa501b9761ad87742c",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:政府公債"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679678Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_中信_個體|Trading",
+    "row_index": 3,
+    "source_page": 31
+   },
+   "mapping": "公司債",
+   "name": "公司債",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|Trading",
+    "ordinal": 3,
+    "record_fp": "18c289d576933b34376a429c0b1ed225891d8412a21915ad031e9ef26dc0d5f2",
+    "row_fp": "2e608eb364b42258c2c8b765583c29ba26cc2b294ace01158eb826271f159b88",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:公司債"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679682Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_中信_個體|Trading",
+    "row_index": 4,
+    "source_page": 31
+   },
+   "mapping": "金融債",
+   "name": "金融債券",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|Trading",
+    "ordinal": 4,
+    "record_fp": "18c289d576933b34376a429c0b1ed225891d8412a21915ad031e9ef26dc0d5f2",
+    "row_fp": "f2d491edcb26259949cf063284d3d6b1035651867bc30d5ffcb3961249dae781",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:金融債券"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679687Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_中信_個體|Trading",
+    "row_index": 5,
+    "source_page": 31
+   },
+   "mapping": "公司債",
+   "name": "可轉換公司債",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|Trading",
+    "ordinal": 5,
+    "record_fp": "18c289d576933b34376a429c0b1ed225891d8412a21915ad031e9ef26dc0d5f2",
+    "row_fp": "ab159e34770730ed832df431e95b711dc3fba4d42d8375b5d06d57254bf170f5",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:可轉換公司債"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679692Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_中信_個體|Trading",
+    "row_index": 6,
+    "source_page": 31
+   },
+   "mapping": "股票",
+   "name": "受益憑證",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|Trading",
+    "ordinal": 6,
+    "record_fp": "18c289d576933b34376a429c0b1ed225891d8412a21915ad031e9ef26dc0d5f2",
+    "row_fp": "c8732f17e484c7a01460f6a896fcd6abca2a1bd56acaf23cd57e0a35ea2e8685",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:受益憑證"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679697Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_中信_個體|Trading",
+    "row_index": 7,
+    "source_page": 31
+   },
+   "mapping": "可轉讓定存單",
+   "name": "可轉讓定期存單",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|Trading",
+    "ordinal": 7,
+    "record_fp": "18c289d576933b34376a429c0b1ed225891d8412a21915ad031e9ef26dc0d5f2",
+    "row_fp": "073ec8040bd20ef48cb4f710e490833a918b5887a6f33e5d0d2e6e945fca90a4",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:可轉讓定期存單"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679701Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_中信_個體|Trading",
+    "row_index": 8,
+    "source_page": 31
+   },
+   "mapping": "股票",
+   "name": "股票",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|Trading",
+    "ordinal": 8,
+    "record_fp": "18c289d576933b34376a429c0b1ed225891d8412a21915ad031e9ef26dc0d5f2",
+    "row_fp": "a2f9003df39c5933b75b374aafa9d6ba98c4022c1bcc1802e32ae87d6b9bcc49",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:股票"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679706Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_中信_個體|Trading",
+    "row_index": 9,
+    "source_page": 31
+   },
+   "mapping": "衍生",
+   "name": "衍生金融資產",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|Trading",
+    "ordinal": 9,
+    "record_fp": "18c289d576933b34376a429c0b1ed225891d8412a21915ad031e9ef26dc0d5f2",
+    "row_fp": "d99f67b362363c24508af5c39b9b23ec5d92421468ff23f461507b1466d804f9",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:衍生金融資產"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679711Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202404_中信_個體|Trading",
+    "row_index": 10,
+    "source_page": 31
+   },
+   "mapping": "評價調整",
+   "name": "金融資產評價調整",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|Trading",
+    "ordinal": 10,
+    "record_fp": "18c289d576933b34376a429c0b1ed225891d8412a21915ad031e9ef26dc0d5f2",
+    "row_fp": "a51c53cba074e5b15966c3ff658031ee642adc6d9ea7825bac5766568f437ce1",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:金融資產評價調整"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679716Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202404_中信_個體|Trading",
+    "row_index": 0,
+    "source_page": 147
+   },
+   "mapping": "貨幣市場",
+   "name": "商業本票",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|Trading",
+    "ordinal": 0,
+    "record_fp": "7f96544504a9564310a6e46f72fec4aac98b59c59df9190710a3662177d37e80",
+    "row_fp": "5e48bfd2d069fcb28f17d35836a73cfe33281fa0e1ec2de7ec42916454b91d00",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:商業本票"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679722Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202404_中信_個體|Trading",
+    "row_index": 1,
+    "source_page": 147
+   },
+   "mapping": "貨幣市場",
+   "name": "國庫券",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|Trading",
+    "ordinal": 1,
+    "record_fp": "7f96544504a9564310a6e46f72fec4aac98b59c59df9190710a3662177d37e80",
+    "row_fp": "a713506672380c72b9f22b6fe1fecf6d4186d757f9537aa3bcb2db9b19653407",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:國庫券"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679727Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202404_中信_個體|Trading",
+    "row_index": 2,
+    "source_page": 147
+   },
+   "mapping": "公債",
+   "name": "政府公債",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|Trading",
+    "ordinal": 2,
+    "record_fp": "7f96544504a9564310a6e46f72fec4aac98b59c59df9190710a3662177d37e80",
+    "row_fp": "6f89538f26fba87dddfb6a679c8908f2c09b1b449fdb1b40c6507daec0e3a097",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:政府公債"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679733Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202404_中信_個體|Trading",
+    "row_index": 3,
+    "source_page": 147
+   },
+   "mapping": "公司債",
+   "name": "公司債",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|Trading",
+    "ordinal": 3,
+    "record_fp": "7f96544504a9564310a6e46f72fec4aac98b59c59df9190710a3662177d37e80",
+    "row_fp": "c2f0d73564364d97325c83cce717a9fba06d358eadb62a14a2ad6756281c3e25",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:公司債"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679738Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202404_中信_個體|Trading",
+    "row_index": 4,
+    "source_page": 147
+   },
+   "mapping": "金融債",
+   "name": "金融債券",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|Trading",
+    "ordinal": 4,
+    "record_fp": "7f96544504a9564310a6e46f72fec4aac98b59c59df9190710a3662177d37e80",
+    "row_fp": "551bc98b3d984108ddc3946ea9287222da1c3fbf302beb68c9f3c94486770489",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:金融債券"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679748Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202404_中信_個體|Trading",
+    "row_index": 5,
+    "source_page": 147
+   },
+   "mapping": "公司債",
+   "name": "可轉換公司債",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|Trading",
+    "ordinal": 5,
+    "record_fp": "7f96544504a9564310a6e46f72fec4aac98b59c59df9190710a3662177d37e80",
+    "row_fp": "960216c50b88dd2d774193ba44b4748a471508fc1009f87bb365794ef8189e90",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:可轉換公司債"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679753Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202404_中信_個體|Trading",
+    "row_index": 6,
+    "source_page": 147
+   },
+   "mapping": "股票",
+   "name": "受益憑證",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|Trading",
+    "ordinal": 6,
+    "record_fp": "7f96544504a9564310a6e46f72fec4aac98b59c59df9190710a3662177d37e80",
+    "row_fp": "aa24df9347e0c2f106d5030302ba9cd5dd45210e6aba81da48a8e694fae83bc0",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:受益憑證"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679758Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202404_中信_個體|Trading",
+    "row_index": 7,
+    "source_page": 147
+   },
+   "mapping": "可轉讓定存單",
+   "name": "可轉讓定期存單",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|Trading",
+    "ordinal": 7,
+    "record_fp": "7f96544504a9564310a6e46f72fec4aac98b59c59df9190710a3662177d37e80",
+    "row_fp": "e8318b6312e0f2fa0375ac2760fb902c64ba1632f49831d1d89f4d460a0d21d0",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:可轉讓定期存單"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679764Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202404_中信_個體|Trading",
+    "row_index": 8,
+    "source_page": 147
+   },
+   "mapping": "股票",
+   "name": "股票投資",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|Trading",
+    "ordinal": 8,
+    "record_fp": "7f96544504a9564310a6e46f72fec4aac98b59c59df9190710a3662177d37e80",
+    "row_fp": "f19022c5577cf608a29de6a30ca5e65f835fe1f947f6b525c99824321950b86a",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:股票投資"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679769Z",
+   "by": "decide",
+   "group": "衍生金融工具",
+   "locator": {
+    "cell_key": "202404_中信_個體|Trading",
+    "row_index": 9,
+    "source_page": 147
+   },
+   "mapping": "衍生",
+   "name": "遠期外匯",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|Trading",
+    "ordinal": 9,
+    "record_fp": "7f96544504a9564310a6e46f72fec4aac98b59c59df9190710a3662177d37e80",
+    "row_fp": "faade3e131a27eb544826dd4febeffda47eee7485586c59390870fd2040599bd",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:遠期外匯"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679774Z",
+   "by": "decide",
+   "group": "衍生金融工具",
+   "locator": {
+    "cell_key": "202404_中信_個體|Trading",
+    "row_index": 10,
+    "source_page": 147
+   },
+   "mapping": "衍生",
+   "name": "無本金交割遠期外匯",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|Trading",
+    "ordinal": 10,
+    "record_fp": "7f96544504a9564310a6e46f72fec4aac98b59c59df9190710a3662177d37e80",
+    "row_fp": "3ad77e0ba28364ecc88b0368d28001656d05eab38d2b2435ce345b32f7ed2781",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:無本金交割遠期外匯"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679779Z",
+   "by": "decide",
+   "group": "衍生金融工具",
+   "locator": {
+    "cell_key": "202404_中信_個體|Trading",
+    "row_index": 11,
+    "source_page": 147
+   },
+   "mapping": "衍生",
+   "name": "換匯",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|Trading",
+    "ordinal": 11,
+    "record_fp": "7f96544504a9564310a6e46f72fec4aac98b59c59df9190710a3662177d37e80",
+    "row_fp": "8e554825eff7a58a7e4731792986f466a5cb64e2f3942f1eada03439dbdbfd7b",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:換匯"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679785Z",
+   "by": "decide",
+   "group": "衍生金融工具",
+   "locator": {
+    "cell_key": "202404_中信_個體|Trading",
+    "row_index": 12,
+    "source_page": 147
+   },
+   "mapping": "衍生",
+   "name": "換匯換利",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|Trading",
+    "ordinal": 12,
+    "record_fp": "7f96544504a9564310a6e46f72fec4aac98b59c59df9190710a3662177d37e80",
+    "row_fp": "e8e9f715801ff2468ab657311194a4f427137e56d7ea0777232eb7f0b48a9f5a",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:換匯換利"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679790Z",
+   "by": "decide",
+   "group": "衍生金融工具",
+   "locator": {
+    "cell_key": "202404_中信_個體|Trading",
+    "row_index": 13,
+    "source_page": 147
+   },
+   "mapping": "衍生",
+   "name": "利率交換",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|Trading",
+    "ordinal": 13,
+    "record_fp": "7f96544504a9564310a6e46f72fec4aac98b59c59df9190710a3662177d37e80",
+    "row_fp": "81d80506198dc2d4ee3dc35b9377d75272d04e7d8926545be61c8b209b06b93a",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:利率交換"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679795Z",
+   "by": "decide",
+   "group": "衍生金融工具",
+   "locator": {
+    "cell_key": "202404_中信_個體|Trading",
+    "row_index": 14,
+    "source_page": 147
+   },
+   "mapping": "衍生",
+   "name": "選擇權",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|Trading",
+    "ordinal": 14,
+    "record_fp": "7f96544504a9564310a6e46f72fec4aac98b59c59df9190710a3662177d37e80",
+    "row_fp": "ee2e321a01e91b88cc0111900c8bad04aab378e9c96ca94f1f79132459b0a4d7",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:選擇權"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679800Z",
+   "by": "decide",
+   "group": "衍生金融工具",
+   "locator": {
+    "cell_key": "202404_中信_個體|Trading",
+    "row_index": 15,
+    "source_page": 147
+   },
+   "mapping": "衍生",
+   "name": "期貨",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|Trading",
+    "ordinal": 15,
+    "record_fp": "7f96544504a9564310a6e46f72fec4aac98b59c59df9190710a3662177d37e80",
+    "row_fp": "37132447d0e6be69a7d7c5d35a7b6f50b10b8c74a0c1292fd39aa0e71c9753b2",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:期貨"
+  },
+  {
+   "at": "2026-07-29T06:39:10.679805Z",
+   "by": "decide",
+   "group": "衍生金融工具",
+   "locator": {
+    "cell_key": "202404_中信_個體|Trading",
+    "row_index": 16,
+    "source_page": 147
+   },
+   "mapping": "衍生",
+   "name": "商品交換",
+   "occurrence": {
+    "cell_key": "202404_中信_個體|Trading",
+    "ordinal": 16,
+    "record_fp": "7f96544504a9564310a6e46f72fec4aac98b59c59df9190710a3662177d37e80",
+    "row_fp": "7d00a874eb221c6274b9b8d1cb66a320b5b52f3feb0e52ace6c8b0edb0a41cdc",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:商品交換"
+  }
+ ]
+}

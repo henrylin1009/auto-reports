@@ -129,7 +129,7 @@ def derive_record(rec, anchor):
 
 def split_foreign_records(recs, own_anchor, other_anchors):
     """擴頁把隔壁類別的表也拉進候選頁時,模型可能把整份表照抄進來
-    (實測 202304_5835_AI3 Trading:level 2 擴到 p.131/p.132,那兩頁其實是
+    (實測 202304_國泰_個體 Trading:level 2 擴到 p.131/p.132,那兩頁其實是
     OCI、AC 的明細表三/四,模型逐頁抄了進來)。**這不是抄錯,是頁碼歸錯格**——
     `derive_records` 的「全有全無」在這種情況下太嚴格:一份對的 record 被
     兩份不屬於這格的 record 拖累一起判失敗。

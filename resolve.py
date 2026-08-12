@@ -9,6 +9,10 @@
 """
 import re, time, requests, pdfplumber
 from pathlib import Path
+
+import config
+import docid
+
 CACHE=Path("pdf_cache")
 BASE="https://doc.twse.com.tw"
 
@@ -54,9 +58,16 @@ def indiv_filename(html, yyyymm):
     return None
 
 def download(code, roc, month, tries=4):
-    """回傳個體 PDF 路徑(存成 AI3 統一名)。自動解析正確代碼。"""
+    """回傳個體 PDF 路徑。自動解析 TWSE 的原始檔名代碼。
+
+    存檔名走 `docid.make(..., 個體)` —— 這支**只抓個體**(`indiv_filename()`
+    挑的就是清單上標個體/母公司那一列),所以口徑是它自己決定的,不是猜的。
+    """
     yyyymm=f"{1911+roc}{month}"
-    dest=CACHE/f"{yyyymm}_{code}_AI3.pdf"
+    bank=config.BANKS.get(code)
+    if not bank:
+        raise ValueError(f"代碼 {code} 不在 config.BANKS —— 要抓新銀行請先加進設定")
+    dest=CACHE/f"{docid.make(yyyymm, bank, docid.SOLO)}.pdf"
     if dest.exists() and dest.stat().st_size>100000: return dest
     for a in range(tries):
         try:
@@ -75,12 +86,12 @@ def download(code, roc, month, tries=4):
     return None
 
 if __name__=="__main__":
-    BANKS=[("5841","中信"),("5836","富邦"),("5847","玉山"),("5835","國泰")]
+    # 銀行清單只有一份(`config.BANKS`)—— 這裡原本自己列了四家(還漏了兆豐)。
     miss=[]
     for roc in range(109,114):
         for month in ("02","04"):
-            for code,name in BANKS:
-                p=CACHE/f"{1911+roc}{month}_{code}_AI3.pdf"
+            for code,name in sorted(config.BANKS.items()):
+                p=CACHE/f"{docid.make(f'{1911+roc}{month}', name, docid.SOLO)}.pdf"
                 if p.exists() and p.stat().st_size>100000: continue
                 got=download(code,roc,month)
                 lbl=f"{1911+roc}{'H1' if month=='02' else 'H2'}"

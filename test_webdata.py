@@ -256,7 +256,7 @@ def w9_confirm_bucket_unsticks_fully_resolved_blocked():
 #: 用真實的 doc(pdf_cache/ 裡真的有這份 PDF),edit_row 收工時會呼叫
 #: `locate.locate()` 算即時檢查——編造一個不存在的檔名會在那一步就炸掉,
 #: 跟這裡要測的東西(row_index 對不對、_src 有沒有蓋、格式有沒有守住)無關。
-_EDIT_DOC, _EDIT_CLS = "202404_5843_AI3", "Trading"
+_EDIT_DOC, _EDIT_CLS = "202404_兆豐_個體", "Trading"
 _EDIT_KEY = f"{_EDIT_DOC}|{_EDIT_CLS}"
 
 
@@ -367,7 +367,7 @@ def w15_edit_row_reports_checks_without_blocking():
     """
     tmp = tempfile.mkdtemp()
     try:
-        _edit_fixture(tmp)  # printed_total=100,錨(真實 202404_5843_AI3 Trading)是 58,831,126,差很遠
+        _edit_fixture(tmp)  # printed_total=100,錨(真實 202404_兆豐_個體 Trading)是 58,831,126,差很遠
         r = webdata.edit_row(_EDIT_DOC, _EDIT_CLS, 0, 0,
                              {"name": "公司債", "cols": {"114年6月30日": 61}},
                              "文字層本身壞掉,人工核對過就是這個數字", facts_dir=tmp)

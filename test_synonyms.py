@@ -14,8 +14,8 @@ import buckets
 import synonyms
 
 CELLS = json.load(open("scratchpad/rows_v3.json", encoding="utf-8"))
-CATHAY = "202404_5835_AI3|OCI"          # 附註「金融債」 / 明細表「金融債券」 29,073,073
-MEGA = "202404_5843_AI3|Trading"        # 跨口徑:附註成本 ↔ 明細表「取得成本」欄
+CATHAY = "202404_國泰_個體|OCI"          # 附註「金融債」 / 明細表「金融債券」 29,073,073
+MEGA = "202404_兆豐_個體|Trading"        # 跨口徑:附註成本 ↔ 明細表「取得成本」欄
 
 
 class without:

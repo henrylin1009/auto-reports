@@ -9,7 +9,7 @@ import copy
 from core import units
 
 
-def _verdict(doc="202404_5843_AI3", cls="OCI", passed=True, wide="filled", wide_cost="filled"):
+def _verdict(doc="202404_兆豐_個體", cls="OCI", passed=True, wide="filled", wide_cost="filled"):
     def book(tag):
         if tag is None:
             return None
@@ -87,9 +87,9 @@ def U6():
 
 def U7():
     """key 在 holdout → 永不採用(即使全部合格)。"""
-    v = _verdict(doc="202502_5843_AI3", cls="OCI")
+    v = _verdict(doc="202502_兆豐_個體", cls="OCI")
     snap = _snapshot(CELL, CLS)
-    out = units.adopt(v, snap, CELL, CLS, {"202502_5843_AI3|OCI"}, {})
+    out = units.adopt(v, snap, CELL, CLS, {"202502_兆豐_個體|OCI"}, {})
     return out["provenance"] == "v2", out
 
 
@@ -114,7 +114,7 @@ def U9(invent_wide_cost=False):
     回歸測試釘住它,不要只靠棘輪的總數字。
     """
     cell, cls = "2021H1|玉山", "OCI"
-    v = _verdict(doc="202102_5847_AI3", cls=cls, wide="filled", wide_cost=None)
+    v = _verdict(doc="202102_玉山_個體", cls=cls, wide="filled", wide_cost=None)
     snap = _snapshot(cell, cls, has_wide=True, has_wide_cost=False)
     out = units.adopt(v, snap, cell, cls, (), {})
     projections = set(out["projections"])

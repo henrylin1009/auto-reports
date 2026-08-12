@@ -49,7 +49,7 @@ def run(doc, cls):
     """跑一格。generator:yield prompt,呼叫端 send(recs)。回傳 Outcome。
 
     用法:
-        gen = run("202404_5843_AI3", "Trading")
+        gen = run("202404_兆豐_個體", "Trading")
         prompt = next(gen)
         while True:
             try:
