@@ -114,6 +114,12 @@ def I5_ratify_flips_cell_and_is_git_diffable():
     ⚠️ 這**不是**在幫使用者做「外匯換匯合約該不該轉 CONFIRMED」的決定——
     那條連同政府債券、貨幣交換,使用者已經裁示永遠留 PROVISIONAL。
     本測試批准的是 tmp 副本,真實 taxonomy/rules.json 全程不變。
+
+    2026-08-12:`decisions_dir` 也要隔到 tmp——`pg.coarse_status` 會優先讀
+    `decisions/` 裡**已落地**的紀錄(見 `_decisions_for_cell`),真實
+    `decisions/` 現在已經幫這格存過一份(B2 上線後跑過 ingest),不隔開的話
+    ratify tmp taxonomy 會被真實的舊 decision 蓋過、看起來像沒生效。
+    只隔 taxonomy 而不隔 decisions,就不是真的「不動真實環境」。
     """
     import facts
     from core import ingest as ingest_mod
@@ -132,9 +138,10 @@ def I5_ratify_flips_cell_and_is_git_diffable():
     json.dump(real_rules, open(tmp_rules_path, "w", encoding="utf-8"),
               ensure_ascii=False, indent=1, sort_keys=True)
     json.dump([], open(os.path.join(tax_dir, "derivations.json"), "w", encoding="utf-8"))
+    decisions_dir = tempfile.mkdtemp()
 
     try:
-        before = pg.coarse_status(real_key, recs, taxonomy_dir=tax_dir)
+        before = pg.coarse_status(real_key, recs, decisions_dir=decisions_dir, taxonomy_dir=tax_dir)
         target_rule = [d["taxonomy_ref"] for d in
                        ingest_mod._decide_rows(real_key, recs, tax_dir)
                        if d["state"] == "PROVISIONAL"]
@@ -145,7 +152,7 @@ def I5_ratify_flips_cell_and_is_git_diffable():
             reason="B5 測試示範用——非真實批准,真實 taxonomy 從未寫入",
             taxonomy_dir=tax_dir)
 
-        after = pg.coarse_status(real_key, recs, taxonomy_dir=tax_dir)
+        after = pg.coarse_status(real_key, recs, decisions_dir=decisions_dir, taxonomy_dir=tax_dir)
         good = good and after["fully_confirmed"] is True and after["publishable"] is True
 
         diff = subprocess.run(
@@ -164,16 +171,21 @@ def I5_ratify_flips_cell_and_is_git_diffable():
                               f"before={before}, after={after}, real_untouched={real_untouched}")
     finally:
         shutil.rmtree(tax_dir, ignore_errors=True)
+        shutil.rmtree(decisions_dir, ignore_errors=True)
 
 
 def I5_sequencing_b1_5_done_before_b4():
     """順序約束(§5 的警告):B1.5 的人工 ratify 必須先做完,I5 才能上線——
     否則 I5 一開,可發布數會瞬間掉到 0(§3.4 的情境)。用真實 taxonomy 驗證
-    這個前提現在成立:80 條 CONFIRMED、derivation 已批准。"""
+    這個前提現在成立:多數規則已 CONFIRMED、derivation 已批准。
+
+    2026-08-12:`confirmed == 80` 改成比例門檻——taxonomy/rules.json 會隨時間
+    收新規則(R0-1 這次就補了 3 條),硬編絕對數字只是在測「今天剛好還是 80」。
+    真正要守的不變量是「批准過程已經跑過、CONFIRMED 佔多數」,不是某個常數。"""
     rules = json.load(open("taxonomy/rules.json", encoding="utf-8"))
     confirmed = sum(1 for r in rules if r["state"] == "CONFIRMED")
     derivations = json.load(open("taxonomy/derivations.json", encoding="utf-8"))
-    good = confirmed == 80 and len(derivations) == 1 and derivations[0]["approved_by"]
+    good = confirmed >= 0.8 * len(rules) and len(derivations) == 1 and derivations[0]["approved_by"]
     return ok(f"順序約束成立:B1.5 已完成(CONFIRMED={confirmed},"
                 f"derivation 已批准 by {derivations[0]['approved_by'] if derivations else None})"
                 "——I5 上線不會讓可發布數瞬間歸零") if good \

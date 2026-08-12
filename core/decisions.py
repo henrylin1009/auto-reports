@@ -248,6 +248,23 @@ def decide(row, group, rules_by_name, propose_fn) -> dict:
         return (s.replace(" ", "").replace("\u3000", "")
                  .replace("\uff08", "(").replace("\uff09", ")"))
 
+    # \u26a0\ufe0f \u8907\u88fd\u81ea buckets._FOOTNOTE / buckets._strip_footnote(zero-IO,\u4e0d import
+    # buckets \u662f\u523b\u610f\u7684,\u898b\u4e0a\u9762 `_norm` \u7684\u540c\u4e00\u500b\u7406\u7531)\u2014\u2014 **\u5169\u908a\u8981\u624b\u52d5\u540c\u6b65**,\u9019\u6b63\u662f
+    # \u9019\u6574\u652f\u300c\u5e73\u884c\u5be6\u4f5c\u300d\u7684\u98a8\u96aa\u672c\u8eab,\u4e0d\u662f\u9019\u88e1\u6253\u7b97\u89e3\u6c7a\u7684\u4e8b(\u5b83\u6c92\u6709\u4efb\u4f55\u4f7f\u7528\u8005
+    # \u53ef\u9054\u7684\u547c\u53eb\u7aef,\u898b 2026-08-12 test_decide_equiv.py \u7684\u8abf\u67e5\u8a18\u9304)\u3002
+    # 2026-08-12 \u88dc:\u539f\u672c\u6c92\u6709\u9019\u4e00\u6b65,taxonomy \u67e5\u4e0d\u5230\u5c31\u76f4\u63a5\u5224 UNCLASSIFIED,
+    # \u800c buckets.bucket() \u6703\u5728\u67e5\u4e0d\u5230\u6642\u525d\u4e00\u6b21\u8a3b\u8173\u8a18\u865f\u91cd\u67e5 \u2014\u2014 6 \u5217\u300c\u570b\u5916\u6a5f\u69cb
+    # \u767c\u884c\u50b5\u5238\uff08\u8a3b\u4e00\uff09\u300d\u300c\u8ca8\u5e63\u4ea4\u63db -\u300d\u9019\u985e\u6f0f\u5224\u90fd\u662f\u9019\u500b\u7f3a\u53e3,\u4e0d\u662f taxonomy
+    # \u6f0f\u6536\u8cc7\u6599\u3002
+    import re as _re
+    _FOOTNOTE = _re.compile(r"\((?:\u9644\u8a3b|\u8a3b)[^)]*\)$|[-\uff0d\u2014]\s*\u8a3b?$")
+
+    def _strip_footnote(n):
+        prev = None
+        while prev != n:
+            prev, n = n, _FOOTNOTE.sub("", n).strip()
+        return n
+
     name = row["name"]
     name_norm = _norm(name)
     now = datetime.datetime.utcnow().isoformat() + "Z"
@@ -260,31 +277,42 @@ def decide(row, group, rules_by_name, propose_fn) -> dict:
     # IMPORTANT: scope="generic" rules have mapping=None (they're boolean markers).
     # They are SKIPPED here — the actual bucket comes from scope="group" or scope="name".
 
-    # Determine if this name is "generic" by checking the taxonomy for a generic rule
-    generic_rule_key = f"generic:{name_norm}"
-    is_generic = (rules_by_name.get(generic_rule_key) is not None)
-
-    rule = None
-    if is_generic:
-        # GENERIC name: try group lookup first (matches GROUP_SYN priority)
-        group_norm = _norm(group or "")
-        if group_norm:
-            group_rule_key = f"group:{group_norm}"
-            rule = rules_by_name.get(group_rule_key)
-        # If no group match, fall through to name lookup below
-        if rule is None:
-            name_rule = rules_by_name.get(name_norm)
-            if name_rule and name_rule.get("scope") == "name":
-                rule = name_rule
-    else:
-        # Non-GENERIC: direct name lookup
-        rule = rules_by_name.get(name_norm)
-        if rule is None:
-            # Also check group (for non-generic names that might still need it)
+    # 查一次(原名 or 剝過註腳的名字)。抽成函式是因為 buckets.bucket() 對
+    # 「剝完註腳的新名字」要重跑**同一套** GENERIC/group/name 判斷,兩份邏輯
+    # 分開寫等於又製造一次漂移(這次調查的兩個 bug 都是這樣長出來的)。
+    def _lookup(nm):
+        generic_rule_key = f"generic:{nm}"
+        is_generic = (rules_by_name.get(generic_rule_key) is not None)
+        if is_generic:
+            # GENERIC name: try group lookup first (matches GROUP_SYN priority)
             group_norm = _norm(group or "")
             if group_norm:
-                group_rule_key = f"group:{group_norm}"
-                rule = rules_by_name.get(group_rule_key)
+                r = rules_by_name.get(f"group:{group_norm}")
+                if r is not None:
+                    return r
+            # If no group match, fall through to name lookup below
+            r = rules_by_name.get(nm)
+            if r and r.get("scope") == "name":
+                return r
+            return None
+        # Non-GENERIC: direct name lookup **only** — 不退回查段落。
+        #
+        # 2026-08-12 修:這裡原本有一段「查不到名字就退回查 group」的 fallback,
+        # 違反 buckets.bucket() 檔頭明文的規則(「段落不准覆蓋具名科目,否則
+        # 衍生段裡的『政府公債』會被整段吃掉」)。test_decide_equiv.py 抓到它
+        # 已經在真實資料裡產生一筆誤判:「期貨交易保證金－自有資金」段落是
+        # 「強制透過損益按公允價值衡量之金融資產」底下的衍生工具小節,名字
+        # 本身其實是保證金/現金性質的科目,被這段 fallback 誤歸進「衍生」桶
+        # (buckets.bucket() 對同一列正確回 None,判不準,等人審)。
+        # 拿掉 fallback 之後行為與 buckets.bucket() 完全一致:查不到名字就是
+        # 查不到,不准用段落去猜。
+        return rules_by_name.get(nm)
+
+    rule = _lookup(name_norm)
+    if rule is None:
+        name_norm2 = _strip_footnote(name_norm)
+        if name_norm2 != name_norm:
+            rule = _lookup(name_norm2)
 
     if rule is not None:
         # Found in taxonomy — skip scope=generic rules (they have mapping=None)

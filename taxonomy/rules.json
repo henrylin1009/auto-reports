@@ -1994,5 +1994,90 @@
     "derivation_id": null,
     "approved_by": "henrylin",
     "approved_at": "2026-07-28T15:35:44"
+  },
+  {
+    "rule_id": "tax:受益證券",
+    "scope": "name",
+    "mapping": "資產基礎",
+    "state": "CONFIRMED",
+    "references": [
+      {
+        "kind": "human",
+        "detail": "buckets.py:184 SYN 既有規則,人工佐證見同檔 174-182 行(兆豐 202104/202204 OCI 附註金額與明細表逐字相同;段落標「債務工具」段的受益證券＝金融資產證券化受益證券,非權益工具)。2026-08-12 test_decide_equiv.py 發現 taxonomy/rules.json 漏收此條,補齊",
+        "at": "2026-08-12T02:57:48.498884Z",
+        "recheck": null
+      }
+    ],
+    "derivation_id": null,
+    "approved_by": "henrylin",
+    "approved_at": "2026-08-12T02:57:48.498884Z"
+  },
+  {
+    "rule_id": "tax:結構型債券",
+    "scope": "name",
+    "mapping": "公司債",
+    "state": "CONFIRMED",
+    "references": [
+      {
+        "kind": "human",
+        "detail": "buckets.py:188 SYN 既有規則,人工佐證見同檔 186 行(結構型債券多由金融機構或企業發行,群組裡最接近公司債)。2026-08-12 test_decide_equiv.py 發現 taxonomy/rules.json 漏收此條,補齊",
+        "at": "2026-08-12T02:57:48.498884Z",
+        "recheck": null
+      }
+    ],
+    "derivation_id": null,
+    "approved_by": "henrylin",
+    "approved_at": "2026-08-12T02:57:48.498884Z"
+  },
+  {
+    "rule_id": "tax:金屬商品交換合約",
+    "scope": "name",
+    "mapping": "衍生",
+    "state": "CONFIRMED",
+    "references": [
+      {
+        "kind": "human",
+        "detail": "buckets.py:167 SYN 既有規則(商品交換合約,衍生工具的一種)。2026-08-12 test_decide_equiv.py 發現 taxonomy/rules.json 漏收此條,補齊",
+        "at": "2026-08-12T02:57:48.498884Z",
+        "recheck": null
+      }
+    ],
+    "derivation_id": null,
+    "approved_by": "henrylin",
+    "approved_at": "2026-08-12T02:57:48.498884Z"
+  },
+  {
+    "rule_id": "tax:資產證券化",
+    "scope": "name",
+    "mapping": "資產基礎",
+    "state": "CONFIRMED",
+    "references": [
+      {
+        "kind": "human",
+        "detail": "buckets.py SYN 既有規則(資產證券化商品,歸資產基礎)。2026-08-12 test_decide_equiv.py 發現 taxonomy/rules.json 漏收此條,補齊",
+        "at": "2026-08-12T03:02:19.479485+00:00",
+        "recheck": null
+      }
+    ],
+    "derivation_id": null,
+    "approved_by": "henrylin",
+    "approved_at": "2026-08-12T03:02:19.479485+00:00"
+  },
+  {
+    "rule_id": "tax:CMO擔保房貸憑證",
+    "scope": "name",
+    "mapping": "資產基礎",
+    "state": "CONFIRMED",
+    "references": [
+      {
+        "kind": "human",
+        "detail": "buckets.py SYN 既有規則(CMO=Collateralized Mortgage Obligation,不動產抵押貸款證券,歸資產基礎)。2026-08-12 test_decide_equiv.py 發現 taxonomy/rules.json 漏收此條,補齊。⚠️ rule_id 含名稱中間的空白(CMO 與擔保房貸憑證之間),這是 decide() 的 _norm() 只去掉全形/半形空白特定字元、且 taxonomy 的 name 未經同一個 norm 前處理就存 —— 這裡照 name_norm 的實際產出存,不手動改空白",
+        "at": "2026-08-12T03:02:19.479485+00:00",
+        "recheck": null
+      }
+    ],
+    "derivation_id": null,
+    "approved_by": "henrylin",
+    "approved_at": "2026-08-12T03:02:19.479485+00:00"
   }
 ]

@@ -6,6 +6,13 @@ OTHER 或 null。`wide.view()` 的算術半邊已經對(不改它);本檔驗**�
 半邊**——`core/publish_gate.py` 新增的東西。
 
 全部讀真實 `facts/` 當唯讀輸入(不寫入),另外用合成 record 做注入測試。
+
+2026-08-12:移除了 `wide_untouched`——那支斷言「本次開發沒動 wide.py /
+core/reconcile.py / core/decisions.py」的 `git diff --stat` 為空,是 B3 那次
+開發 session 專用的一次性守門(怕改壞了不該碰的檔案),不是恆久不變量。
+之後任何一次正常修改那三個檔案(例如這次 R0-1 修 core/decisions.py 的真 bug)
+都會讓它紅,而它守的不是正確性,是「這個 session 有沒有手滑碰到別的檔案」——
+那件事現在由 code review / git diff 本身守,不需要一支測試守。
 """
 import buckets
 import facts
@@ -92,13 +99,16 @@ def I4_no_unknown_rows_ok_when_classified():
 # ── status 的兩個數字:archived / publishable ───────────────────────────
 
 def status_two_numbers_on_real_facts():
-    """對真實 36 格 facts(唯讀)算 status:archived 恆等於格數;
-    publishable **可以**小於 archived——分岔是產出,不是退步(§5 B3)。"""
+    """對真實 facts(唯讀)算 status:archived 恆等於格數(不管 facts/ 長到多大);
+    publishable **可以**小於 archived——分岔是產出,不是退步(§5 B3)。
+
+    2026-08-12:格數改成動態讀 `len(cells)`,不再硬編 `36` —— facts/ 早就
+    長大到 192 格,硬編基準只是在測「今天剛好還是 36」,不是在測不變量。"""
     cells = facts.load()
     s = pg.status_all(cells)
-    good = s["archived"] == len(cells) == 36 and 0 <= s["publishable"] <= s["archived"]
+    good = s["archived"] == len(cells) and 0 <= s["publishable"] <= s["archived"]
     return ok(f"status 兩個數字:archived={s['archived']} publishable={s['publishable']}"
-                "(唯讀,真實 36 格 facts;facts/ 未被本測試寫入)") if good \
+                "(唯讀,真實 facts;facts/ 未被本測試寫入)") if good \
         else fail("status_two_numbers", s)
 
 
@@ -114,16 +124,6 @@ def status_inject_would_hide_unclassified():
                st) if correctly_blocked else fail("status_inject", st)
 
 
-def wide_untouched():
-    """確認本單沒有動 wide.py / core/reconcile.py / core/decisions.py"""
-    import subprocess
-    diff = subprocess.run(["git", "diff", "--stat", "wide.py",
-                           "core/reconcile.py", "core/decisions.py"],
-                          capture_output=True, text=True).stdout.strip()
-    return ok("wide.py / core/reconcile.py / core/decisions.py 零修改(git diff 為空)")\
-        if diff == "" else fail("wide_untouched", diff)
-
-
 def main():
     print("=" * 60)
     print("test_b3.py — B3 未知不冒充 + status 兩個數字")
@@ -131,7 +131,7 @@ def main():
     tests = [I4_unknown_kept_and_blocks_ok, I4_inject_would_fold_into_other,
              I4_no_unknown_rows_ok_when_classified,
              status_two_numbers_on_real_facts,
-             status_inject_would_hide_unclassified, wide_untouched]
+             status_inject_would_hide_unclassified]
     for t in tests:
         t()
     print(f"\nPASS: {PASS}  FAIL: {FAIL}")

@@ -15,8 +15,11 @@ from core import jobs
 #: 程式碼(sys.path 指向本 repo),這裡複製它們純粹是為了讓 `python3 -c` 那些
 #: 佔位指令能在子行程的 cwd 下 `import facts` 等模組時找得到檔案。
 _COPY = ("facts", "taxonomy", "anchors", "holdout.py", "buckets.py", "rules.py",
-         "synonyms.py", "config.py", "transcribe.py", "wide.py", "facts.py",
-         "locate.py", "bs_anchor.py")
+         "synonyms.py", "config.py", "banks.json", "transcribe.py", "wide.py",
+         "facts.py", "locate.py", "bs_anchor.py")
+#: `config.py`(R2-2 起)在自己所在目錄找 `banks.json`——複製 config.py 到
+#: workspace 卻不帶 `banks.json`,子行程 import 到的是 workspace 那份 config.py
+#: (見上方說明),它會在 workspace 目錄找不到 `banks.json` 而整支 import 失敗。
 
 
 def _make_workspace():

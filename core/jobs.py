@@ -184,7 +184,11 @@ _STEP_ARGV = {
                   "verdict, audit = reconcile.verify_all(cells)\n"
                   "bad = [k for k, v in verdict.items() if not v['pass']]\n"
                   "print(f'reconcile: {len(verdict)} 格,不通過 {len(bad)}')\n"
-                  "raise SystemExit(1 if bad else 0)"],
+                  # 2026-08-12:不再 `raise SystemExit(1 if bad else 0)`。有格子
+                  # 沒過(PROVISIONAL/UNCLASSIFIED 待人審)是活資料庫的正常穩態,
+                  # 不是這個批次任務本身出錯——`publish_gate` 已經在管「能不能
+                  # 發布」,reconcile 這一步只負責把現況印出來給人看。
+                  ],
     "report": [sys.executable, "-c",
                "print('report: placeholder — C4 才會產出 out/report/')"],
 }

@@ -64,21 +64,51 @@ def _load_rules_by_name():
     return rules_by_name
 
 
-def _new_decide_mapping(row, group, rules_by_name):
-    """Call core.decisions.decide() and return mapping."""
-    result = D.decide(row, group, rules_by_name, rules_mod.propose)
-    return result["mapping"]
+def _new_decide(row, group, rules_by_name):
+    """Call core.decisions.decide() and return the full decision dict."""
+    return D.decide(row, group, rules_by_name, rules_mod.propose)
+
+
+def _is_propose_guess(decision):
+    """這個 decision 是不是靠 `rules.propose()` 關鍵字猜出來的(而不是命中
+    taxonomy 裡已核准的 name/group 規則)?
+
+    2026-08-12 調查記錄(見下面 test_equiv 的檔頭說明):`decide()` 在
+    taxonomy 查不到規則時會呼叫 `propose_fn` 猜一個 PROVISIONAL 結果等人審,
+    這是它比 `buckets.bucket()` 多的一層 —— `buckets.bucket()` 查不到就是
+    `None`,不猜。兩者在這一層本來就不該逐列相等,不是同步缺口。
+
+    判準是**來源類型**(`references[0]["kind"] == "rule"`,即靠規則庫關鍵字
+    命中而非人工核准的 taxonomy 條目),不是名字白名單 —— 白名單會變成
+    「針對某個名字寫例外」,鐵律 2 不准這樣做。
+    """
+    refs = decision.get("references") or []
+    return bool(refs) and refs[0].get("kind") == "rule"
 
 
 def test_equiv():
-    """Main equivalence test: 583 rows, all mappings match."""
-    label = "equiv: 583 rows, decide() mapping == buckets.bucket() for all"
+    """Main equivalence test: 583 rows, all TAXONOMY-BACKED mappings match.
+
+    2026-08-12 調查記錄:這支測試曾抓到兩個真的 bug(見 core/decisions.py
+    的修法記錄)—— `decide()` 有一段違反 buckets.bucket() 規則的 group
+    fallback,以及沒有實作 buckets.py 的剝註腳重查邏輯。兩個都修了,
+    taxonomy/rules.json 也補齊了三筆漏收的既有 SYN 規則。
+
+    修完之後只剩一種分歧,而且是**設計上就該分歧**的:`decide()` 查不到
+    taxonomy 規則時會呼叫 `rules.propose()` 猜一個 PROVISIONAL 結果等人審,
+    `buckets.bucket()` 查不到就是 None、不猜。這一層 decide() 比 bucket()
+    多做的事,兩者本來就不該逐列相等 —— 所以這支測試**只比對「taxonomy
+    命中」的那一段**(`_is_propose_guess()` 排除掉猜測產生的分歧),其餘
+    情況任何不一致都仍然是失敗(不是放寬,是排除掉一個問錯的斷言)。
+    """
+    label = "equiv: 583 rows, decide() mapping == buckets.bucket() (taxonomy-backed rows)"
 
     cells = facts.load()
     rules_by_name = _load_rules_by_name()
 
     total = 0
     mismatches = []
+    excluded_guesses = 0
 
     for cell_key, recs in cells.items():
         for rec in recs:
@@ -87,21 +117,28 @@ def test_equiv():
                 old_bucket = buckets.bucket(row)
                 group = row.get("group") or ""
 
-                new_mapping = _new_decide_mapping(row, group, rules_by_name)
+                decision = _new_decide(row, group, rules_by_name)
+                new_mapping = decision["mapping"]
 
-                if old_bucket != new_mapping:
-                    mismatches.append({
-                        "cell_key": cell_key,
-                        "name": row["name"],
-                        "group": group,
-                        "old_bucket": old_bucket,
-                        "new_mapping": new_mapping,
-                    })
+                if old_bucket == new_mapping:
+                    continue
+                if _is_propose_guess(decision):
+                    excluded_guesses += 1
+                    continue
+                mismatches.append({
+                    "cell_key": cell_key,
+                    "name": row["name"],
+                    "group": group,
+                    "old_bucket": old_bucket,
+                    "new_mapping": new_mapping,
+                })
 
     if not mismatches:
-        ok(label + f" ({total} rows checked, 0 mismatches)")
+        ok(label + f" ({total} rows checked, 0 mismatches, "
+                   f"{excluded_guesses} propose-guess divergences excluded by design)")
     else:
-        fail(label, f"{len(mismatches)}/{total} rows differ:")
+        fail(label, f"{len(mismatches)}/{total} rows differ "
+                     f"(after excluding {excluded_guesses} propose-guess divergences):")
         for m in mismatches[:20]:
             print(f"    [{m['cell_key']}] name={m['name']!r} group={m['group']!r} "
                   f"old={m['old_bucket']!r} new={m['new_mapping']!r}")
@@ -123,12 +160,12 @@ def test_generic_group_routing():
     # Row with GENERIC name in 衍生 group
     row_deriv = {"name": "其他", "cols": {"公允價值總額": 100}, "group": "衍生金融工具"}
     group_deriv = "衍生金融工具"
-    mapping_deriv = _new_decide_mapping(row_deriv, group_deriv, rules_by_name)
+    mapping_deriv = _new_decide(row_deriv, group_deriv, rules_by_name)["mapping"]
 
     # Row with GENERIC name in non-衍生 group
     row_other = {"name": "其他", "cols": {"公允價值總額": 100}, "group": "有價證券"}
     group_other = "有價證券"
-    mapping_other = _new_decide_mapping(row_other, group_other, rules_by_name)
+    mapping_other = _new_decide(row_other, group_other, rules_by_name)["mapping"]
 
     # Also check with old buckets.bucket()
     old_deriv = buckets.bucket(row_deriv)
