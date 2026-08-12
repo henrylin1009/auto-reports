@@ -48,6 +48,7 @@ import buckets
 import facts
 import transcribe
 from core import decision_store, decisions as decisions_mod, derive, expand_policy
+from core import store as store_mod
 
 #: 結構化檢查名 —— 給 `core.expand_policy` 用的訊號集合(I3 的唯一來源仍是
 #: `expand_policy.TRIGGERS`/`NEVER`,這裡只是「怎麼把 rec 轉成失敗訊號」)。
@@ -193,6 +194,11 @@ def _write_facts_and_decisions(key, recs, retries, level, facts_dir=None,
 
         cells[key] = recs
         facts.save(cells)
+        # 「facts 有這份 ⇒ anchors 有這份」——**這一條以前在這裡是漏的**。
+        # 這支才是 `fill_auto` 真正的落地路徑(不經過 `webdata.file_cell()`,
+        # 所以 `fill.py` 註解說的「唯一一道門」不成立),見
+        # `core.store.ensure_anchors()` 的說明。
+        store_mod.ensure_anchors(key.split("|", 1)[0])
     finally:
         facts.DIR = orig_facts_dir
 

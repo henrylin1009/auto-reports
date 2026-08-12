@@ -493,30 +493,6 @@ def add_bank(code, name, color=None):
     return {"added": True, "bank": entry}
 
 
-def _ensure_anchors(doc):
-    """新文件第一次歸檔時補上 `anchors/{doc}.json`(2026-08-12,v7 R2-3)。
-
-    **為什麼需要這支**:`anchors/` 原本只由手動 CLI(`core.cli anchors`)產生,
-    而寫進 `facts/` 的兩條路(`file_cell` 機器 / `ratify` 人工)都沒有建它。
-    於是**加一家新銀行**時 facts/ 有資料、anchors/ 卻是空的,
-    `core.reconcile.verify_all()` 一跑就 `FileNotFoundError` 整支炸掉 ——
-    v7 R2-3 華南歸檔後實測,`test_ring` / `test_rulings` / `test_jobs`
-    三支同時變紅。「facts 有這份 ⇒ anchors 有這份」是個不變量,
-    不該靠人記得手動跑一個指令來維持。
-
-    只在檔案不存在時建(要讀 PDF,不必每格重算)。**建不起來不擋歸檔** ——
-    資料已經通過驗收了,快取失敗不該讓它退回去,但要印出來讓人看到。
-    """
-    if os.path.exists(f"{store.ANCHORS_DIR}/{doc}.json"):
-        return
-    try:
-        store.build_anchors(doc)
-    except Exception as e:                       # noqa: BLE001 — 快取失敗不擋歸檔
-        print(f"⚠️ anchors/{doc}.json 建立失敗({type(e).__name__}: {e})——"
-              f"資料已歸檔,但 reconcile 會跳過這份,請手動跑 "
-              f"`python3 -m core.cli anchors`")
-
-
 def file_cell(doc, cls, records, via, force=False, facts_dir=None):
     """**機器**把一格寫進 `facts/`。人工的入口是 `ratify()`,兩者的差別只有兩點:
 
@@ -556,7 +532,7 @@ def file_cell(doc, cls, records, via, force=False, facts_dir=None):
             f"  要讓機器重填請先撤銷:`revoke({doc!r}, {cls!r}, why=...)`。")
     cells[key] = recs
     facts_mod.save(cells, facts_dir)
-    _ensure_anchors(doc)
+    store.ensure_anchors(doc)
     return {"saved": True, "key": key, "via": via, "records": len(recs)}
 
 
@@ -647,7 +623,7 @@ def ratify(doc, cls, records, why=None, by=None, today=None, facts_dir=None,
         if os.path.exists(p):
             os.remove(p)
 
-    _ensure_anchors(doc)
+    store.ensure_anchors(doc)
 
     loc = locate.locate(f"pdf_cache/{doc}.pdf")
     ok, res = transcribe.verify(recs, loc)
