@@ -1,0 +1,30 @@
+{
+ "bs_page": 10,
+ "cells": {
+  "AC": {
+   "amount": 953041129,
+   "pages": [
+    37,
+    71,
+    137
+   ]
+  },
+  "OCI": {
+   "amount": 415981953,
+   "pages": [
+    37,
+    136
+   ]
+  },
+  "Trading": {
+   "amount": 200511579,
+   "pages": [
+    36,
+    135
+   ]
+  }
+ },
+ "doc": "202504_第一_個體",
+ "located_by": "locate.locate",
+ "pdf_sha256": "44ae77b2174f231e9409ef0c29c1b31872c260900b6f82873d1b5bbe1d265fa0"
+}

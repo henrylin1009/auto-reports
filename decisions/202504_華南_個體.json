@@ -1,0 +1,675 @@
+{
+ "202504_華南_個體|AC": [
+  {
+   "at": "2026-08-12T08:01:34.420535Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202504_華南_個體|AC",
+    "row_index": 0,
+    "source_page": 40
+   },
+   "mapping": null,
+   "name": "買入定期存單",
+   "occurrence": {
+    "cell_key": "202504_華南_個體|AC",
+    "ordinal": 0,
+    "record_fp": "87359e4a513d54a6224a986f42a14134228e2d6a20cf48dd6cb1bc726dc49d6b",
+    "row_fp": "5e26e600a4a86495b0205b540db4eac16bdac6eaf9e8b45b48fda2bb28f8c8ab",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "UNCLASSIFIED",
+   "taxonomy_ref": null
+  },
+  {
+   "at": "2026-08-12T08:01:34.423451Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202504_華南_個體|AC",
+    "row_index": 1,
+    "source_page": 40
+   },
+   "mapping": "公債",
+   "name": "政府公債",
+   "occurrence": {
+    "cell_key": "202504_華南_個體|AC",
+    "ordinal": 1,
+    "record_fp": "87359e4a513d54a6224a986f42a14134228e2d6a20cf48dd6cb1bc726dc49d6b",
+    "row_fp": "4c90cb4935f29c1bf5b82bd13ef652a877452b2e6aa01698aa31b8ccb5504d22",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:政府公債"
+  },
+  {
+   "at": "2026-08-12T08:01:34.423461Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202504_華南_個體|AC",
+    "row_index": 2,
+    "source_page": 40
+   },
+   "mapping": "金融債",
+   "name": "金融債券",
+   "occurrence": {
+    "cell_key": "202504_華南_個體|AC",
+    "ordinal": 2,
+    "record_fp": "87359e4a513d54a6224a986f42a14134228e2d6a20cf48dd6cb1bc726dc49d6b",
+    "row_fp": "10669ed367b6d694156fca5785a4793e87189d93fabf2a288ea1236387001963",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:金融債券"
+  },
+  {
+   "at": "2026-08-12T08:01:34.423473Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202504_華南_個體|AC",
+    "row_index": 3,
+    "source_page": 40
+   },
+   "mapping": "公司債",
+   "name": "公司債",
+   "occurrence": {
+    "cell_key": "202504_華南_個體|AC",
+    "ordinal": 3,
+    "record_fp": "87359e4a513d54a6224a986f42a14134228e2d6a20cf48dd6cb1bc726dc49d6b",
+    "row_fp": "3a676fc1c9da39f004771cc93a60879a78382f0f80a62baa19532084e0e02f12",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:公司債"
+  },
+  {
+   "at": "2026-08-12T08:01:34.423480Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202504_華南_個體|AC",
+    "row_index": 4,
+    "source_page": 40
+   },
+   "mapping": "貨幣市場",
+   "name": "國庫券",
+   "occurrence": {
+    "cell_key": "202504_華南_個體|AC",
+    "ordinal": 4,
+    "record_fp": "87359e4a513d54a6224a986f42a14134228e2d6a20cf48dd6cb1bc726dc49d6b",
+    "row_fp": "f861b50b729e82d9c741447fb6fbbbe3db8a16ce5bc89338e111fd6958be6140",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:國庫券"
+  },
+  {
+   "at": "2026-08-12T08:01:34.423486Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202504_華南_個體|AC",
+    "row_index": 5,
+    "source_page": 40
+   },
+   "mapping": "評價調整",
+   "name": "備抵損失",
+   "occurrence": {
+    "cell_key": "202504_華南_個體|AC",
+    "ordinal": 5,
+    "record_fp": "87359e4a513d54a6224a986f42a14134228e2d6a20cf48dd6cb1bc726dc49d6b",
+    "row_fp": "76f93e5ee87a63f53a9ee5ffbcab17908f741d0bf1772e5eaa311249e32105bf",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:備抵損失"
+  }
+ ],
+ "202504_華南_個體|OCI": [
+  {
+   "at": "2026-08-12T08:48:20.156879Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202504_華南_個體|OCI",
+    "row_index": 0,
+    "source_page": 39
+   },
+   "mapping": null,
+   "name": "權益工具投資",
+   "occurrence": {
+    "cell_key": "202504_華南_個體|OCI",
+    "ordinal": 0,
+    "record_fp": "0fd4fdaa7520cc042795f57680092e4f78cea59e7471a4bedfacb056ddb6620b",
+    "row_fp": "fe78b416e840ab91ce3977f3488be76d4f4b66700acde561ff1a110882cbea76",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "UNCLASSIFIED",
+   "taxonomy_ref": null
+  },
+  {
+   "at": "2026-08-12T08:48:20.156937Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202504_華南_個體|OCI",
+    "row_index": 1,
+    "source_page": 39
+   },
+   "mapping": null,
+   "name": "債務工具投資",
+   "occurrence": {
+    "cell_key": "202504_華南_個體|OCI",
+    "ordinal": 1,
+    "record_fp": "0fd4fdaa7520cc042795f57680092e4f78cea59e7471a4bedfacb056ddb6620b",
+    "row_fp": "5e019c17abd47fbca2bb8f6d96d400962a83449f424a6e7f52ff8662dc305ca3",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "UNCLASSIFIED",
+   "taxonomy_ref": null
+  },
+  {
+   "at": "2026-08-12T08:48:20.156951Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202504_華南_個體|OCI",
+    "row_index": 0,
+    "source_page": 39
+   },
+   "mapping": "股票",
+   "name": "上市（櫃）股票",
+   "occurrence": {
+    "cell_key": "202504_華南_個體|OCI",
+    "ordinal": 0,
+    "record_fp": "28897f76e143d03985a8b6f18113a31e7306a97e4ae0e222ada5b454605949db",
+    "row_fp": "53bf267fa0b7ea14f7b611f3351215ab4d81a46b277e06b71b16e28219f0048b",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:上市(櫃)股票"
+  },
+  {
+   "at": "2026-08-12T08:48:20.156959Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202504_華南_個體|OCI",
+    "row_index": 1,
+    "source_page": 39
+   },
+   "mapping": "股票",
+   "name": "未上市（櫃）股票",
+   "occurrence": {
+    "cell_key": "202504_華南_個體|OCI",
+    "ordinal": 1,
+    "record_fp": "28897f76e143d03985a8b6f18113a31e7306a97e4ae0e222ada5b454605949db",
+    "row_fp": "fa562a1ba2007c2838cbb2f6a76d576732028042caa6941ff8fc083d9c549409",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:未上市(櫃)股票"
+  },
+  {
+   "at": "2026-08-12T08:48:20.156966Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202504_華南_個體|OCI",
+    "row_index": 2,
+    "source_page": 39
+   },
+   "mapping": "資產基礎",
+   "name": "不動產投資信託受益證券",
+   "occurrence": {
+    "cell_key": "202504_華南_個體|OCI",
+    "ordinal": 2,
+    "record_fp": "28897f76e143d03985a8b6f18113a31e7306a97e4ae0e222ada5b454605949db",
+    "row_fp": "50196373771c7dbd8e2bd31e7381f0769b701828915fb296bc99dd09c507b7ea",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:不動產投資信託受益證券"
+  },
+  {
+   "at": "2026-08-12T08:48:20.156973Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202504_華南_個體|OCI",
+    "row_index": 0,
+    "source_page": 40
+   },
+   "mapping": "公債",
+   "name": "政府公債",
+   "occurrence": {
+    "cell_key": "202504_華南_個體|OCI",
+    "ordinal": 0,
+    "record_fp": "f318a5b7917a16763ffe8c1a5eddfe10d0ce1a3bb3dee3971f5c6f1322547ea2",
+    "row_fp": "a7923a3d7399b18ada36745d286c71964f0e81af9fc94366c8791aca7b84dc4c",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:政府公債"
+  },
+  {
+   "at": "2026-08-12T08:48:20.156979Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202504_華南_個體|OCI",
+    "row_index": 1,
+    "source_page": 40
+   },
+   "mapping": "公司債",
+   "name": "公司債",
+   "occurrence": {
+    "cell_key": "202504_華南_個體|OCI",
+    "ordinal": 1,
+    "record_fp": "f318a5b7917a16763ffe8c1a5eddfe10d0ce1a3bb3dee3971f5c6f1322547ea2",
+    "row_fp": "92d389c003bec412fa770ea59779856426168bcc403ee98a637824f7923a9162",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:公司債"
+  },
+  {
+   "at": "2026-08-12T08:48:20.156985Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202504_華南_個體|OCI",
+    "row_index": 2,
+    "source_page": 40
+   },
+   "mapping": "金融債",
+   "name": "金融債券",
+   "occurrence": {
+    "cell_key": "202504_華南_個體|OCI",
+    "ordinal": 2,
+    "record_fp": "f318a5b7917a16763ffe8c1a5eddfe10d0ce1a3bb3dee3971f5c6f1322547ea2",
+    "row_fp": "b4adee77a45ce0b1cc6320fb927a0afc7dbab3fd7c4b71e37949ad2256f9174d",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:金融債券"
+  },
+  {
+   "at": "2026-08-12T08:48:20.156991Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202504_華南_個體|OCI",
+    "row_index": 3,
+    "source_page": 40
+   },
+   "mapping": null,
+   "name": "政府機構不動產抵押證券",
+   "occurrence": {
+    "cell_key": "202504_華南_個體|OCI",
+    "ordinal": 3,
+    "record_fp": "f318a5b7917a16763ffe8c1a5eddfe10d0ce1a3bb3dee3971f5c6f1322547ea2",
+    "row_fp": "8b99463d7acea520339d2e4ca97e471d1abcb2f18c0b9492e57055e1023fe69b",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "UNCLASSIFIED",
+   "taxonomy_ref": null
+  },
+  {
+   "at": "2026-08-12T08:48:20.157000Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202504_華南_個體|OCI",
+    "row_index": 4,
+    "source_page": 40
+   },
+   "mapping": null,
+   "name": "買入定期存單",
+   "occurrence": {
+    "cell_key": "202504_華南_個體|OCI",
+    "ordinal": 4,
+    "record_fp": "f318a5b7917a16763ffe8c1a5eddfe10d0ce1a3bb3dee3971f5c6f1322547ea2",
+    "row_fp": "bb8610b2001d8ada52b074f38289892ba8a985d15812b24f1cc1df792b5a6ef1",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "UNCLASSIFIED",
+   "taxonomy_ref": null
+  }
+ ],
+ "202504_華南_個體|Trading": [
+  {
+   "at": "2026-08-12T07:54:28.400835Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202504_華南_個體|Trading",
+    "row_index": 0,
+    "source_page": 37
+   },
+   "mapping": "衍生",
+   "name": "非衍生金融資產",
+   "occurrence": {
+    "cell_key": "202504_華南_個體|Trading",
+    "ordinal": 0,
+    "record_fp": "b8a3b2c200405bf151ade6a4b125b201e6bc4405583c17878a679db73e1a7408",
+    "row_fp": "c8421b5e0d6cb7099095e6c9f0e399988586e82aff1f60c34dce4de1983a6eeb",
+    "scope": "row"
+   },
+   "references": [
+    {
+     "at": "2026-08-12T07:54:28.400835Z",
+     "detail": "BUCKET_RULES 關鍵字「衍生」",
+     "kind": "rule",
+     "recheck": "rules.propose('非衍生金融資產')[0] == '衍生'"
+    }
+   ],
+   "state": "PROVISIONAL",
+   "taxonomy_ref": null
+  },
+  {
+   "at": "2026-08-12T07:54:28.404601Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202504_華南_個體|Trading",
+    "row_index": 1,
+    "source_page": 37
+   },
+   "mapping": "衍生",
+   "name": "衍生金融資產",
+   "occurrence": {
+    "cell_key": "202504_華南_個體|Trading",
+    "ordinal": 1,
+    "record_fp": "b8a3b2c200405bf151ade6a4b125b201e6bc4405583c17878a679db73e1a7408",
+    "row_fp": "23650db2ec4f98bb0c9de66eb3e5035c356524aa541a8bcbeab471c56c369056",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:衍生金融資產"
+  },
+  {
+   "at": "2026-08-12T07:54:28.404616Z",
+   "by": "decide",
+   "group": "非衍生金融資產",
+   "locator": {
+    "cell_key": "202504_華南_個體|Trading",
+    "row_index": 0,
+    "source_page": 37
+   },
+   "mapping": null,
+   "name": "票券投資",
+   "occurrence": {
+    "cell_key": "202504_華南_個體|Trading",
+    "ordinal": 0,
+    "record_fp": "8e4419e0c6683be483977f7f37314aeb848079476a844400ff7f48e279e4c7a1",
+    "row_fp": "66bb0ee42859761c284239d2ce8b337ae51c283cdccbaf5c204c8c0e4b404e86",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "UNCLASSIFIED",
+   "taxonomy_ref": null
+  },
+  {
+   "at": "2026-08-12T07:54:28.404631Z",
+   "by": "decide",
+   "group": "非衍生金融資產",
+   "locator": {
+    "cell_key": "202504_華南_個體|Trading",
+    "row_index": 1,
+    "source_page": 37
+   },
+   "mapping": "公債",
+   "name": "政府公債",
+   "occurrence": {
+    "cell_key": "202504_華南_個體|Trading",
+    "ordinal": 1,
+    "record_fp": "8e4419e0c6683be483977f7f37314aeb848079476a844400ff7f48e279e4c7a1",
+    "row_fp": "e6318ddc5f3ce72a8fa7b4b736f2879f8e4504cf457147b5b131e61d1485e62b",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:政府公債"
+  },
+  {
+   "at": "2026-08-12T07:54:28.404638Z",
+   "by": "decide",
+   "group": "非衍生金融資產",
+   "locator": {
+    "cell_key": "202504_華南_個體|Trading",
+    "row_index": 2,
+    "source_page": 37
+   },
+   "mapping": "貨幣市場",
+   "name": "國庫券",
+   "occurrence": {
+    "cell_key": "202504_華南_個體|Trading",
+    "ordinal": 2,
+    "record_fp": "8e4419e0c6683be483977f7f37314aeb848079476a844400ff7f48e279e4c7a1",
+    "row_fp": "bb76dba836a16a1e40c4d8ad24e6364ad9402ceadca573e25f54bb18f0516ce7",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:國庫券"
+  },
+  {
+   "at": "2026-08-12T07:54:28.404647Z",
+   "by": "decide",
+   "group": "非衍生金融資產",
+   "locator": {
+    "cell_key": "202504_華南_個體|Trading",
+    "row_index": 3,
+    "source_page": 37
+   },
+   "mapping": "資產基礎",
+   "name": "受益證券",
+   "occurrence": {
+    "cell_key": "202504_華南_個體|Trading",
+    "ordinal": 3,
+    "record_fp": "8e4419e0c6683be483977f7f37314aeb848079476a844400ff7f48e279e4c7a1",
+    "row_fp": "f104acc9b8d39d46a444bfb4c732d93ac5f9f5dfbf01e0d6fa22a9865a386f30",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:受益證券"
+  },
+  {
+   "at": "2026-08-12T07:54:28.404654Z",
+   "by": "decide",
+   "group": "非衍生金融資產",
+   "locator": {
+    "cell_key": "202504_華南_個體|Trading",
+    "row_index": 4,
+    "source_page": 37
+   },
+   "mapping": "股票",
+   "name": "上市（櫃）股票",
+   "occurrence": {
+    "cell_key": "202504_華南_個體|Trading",
+    "ordinal": 4,
+    "record_fp": "8e4419e0c6683be483977f7f37314aeb848079476a844400ff7f48e279e4c7a1",
+    "row_fp": "30f71e0c4a011ea5310cf3ab36e2d4b68504b79b0e4831baec55a8f86737c8da",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:上市(櫃)股票"
+  },
+  {
+   "at": "2026-08-12T07:54:28.404661Z",
+   "by": "decide",
+   "group": "非衍生金融資產",
+   "locator": {
+    "cell_key": "202504_華南_個體|Trading",
+    "row_index": 5,
+    "source_page": 37
+   },
+   "mapping": "可轉讓定存單",
+   "name": "可轉讓定期存單",
+   "occurrence": {
+    "cell_key": "202504_華南_個體|Trading",
+    "ordinal": 5,
+    "record_fp": "8e4419e0c6683be483977f7f37314aeb848079476a844400ff7f48e279e4c7a1",
+    "row_fp": "e417374411e2c93c3d6cd66c887c9eee8cd43f9a61fb9622fb0e80d77416272d",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:可轉讓定期存單"
+  },
+  {
+   "at": "2026-08-12T07:54:28.404667Z",
+   "by": "decide",
+   "group": "非衍生金融資產",
+   "locator": {
+    "cell_key": "202504_華南_個體|Trading",
+    "row_index": 6,
+    "source_page": 37
+   },
+   "mapping": "公司債",
+   "name": "公司債",
+   "occurrence": {
+    "cell_key": "202504_華南_個體|Trading",
+    "ordinal": 6,
+    "record_fp": "8e4419e0c6683be483977f7f37314aeb848079476a844400ff7f48e279e4c7a1",
+    "row_fp": "d2d1f440da0e534176c8995deae7265cd55901b3af8a0ca2195e72d4b23ef36e",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:公司債"
+  },
+  {
+   "at": "2026-08-12T07:54:28.404673Z",
+   "by": "decide",
+   "group": "衍生金融資產",
+   "locator": {
+    "cell_key": "202504_華南_個體|Trading",
+    "row_index": 0,
+    "source_page": 37
+   },
+   "mapping": "衍生",
+   "name": "換匯",
+   "occurrence": {
+    "cell_key": "202504_華南_個體|Trading",
+    "ordinal": 0,
+    "record_fp": "859aeb4244323b9efbfd3d9aaf2f21fe7f0edc29fc811273661d1e3ab73ae8ee",
+    "row_fp": "369018628b13e00a77bc9341729797a42171e2f87d0755fe1d47fed23bba88f7",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:換匯"
+  },
+  {
+   "at": "2026-08-12T07:54:28.404679Z",
+   "by": "decide",
+   "group": "衍生金融資產",
+   "locator": {
+    "cell_key": "202504_華南_個體|Trading",
+    "row_index": 1,
+    "source_page": 37
+   },
+   "mapping": "衍生",
+   "name": "利率交換",
+   "occurrence": {
+    "cell_key": "202504_華南_個體|Trading",
+    "ordinal": 1,
+    "record_fp": "859aeb4244323b9efbfd3d9aaf2f21fe7f0edc29fc811273661d1e3ab73ae8ee",
+    "row_fp": "b47695f732729433b72a674963c59b2513b0dd9c7fbab990bcde818316cc12d4",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:利率交換"
+  },
+  {
+   "at": "2026-08-12T07:54:28.404686Z",
+   "by": "decide",
+   "group": "衍生金融資產",
+   "locator": {
+    "cell_key": "202504_華南_個體|Trading",
+    "row_index": 2,
+    "source_page": 37
+   },
+   "mapping": "衍生",
+   "name": "選擇權",
+   "occurrence": {
+    "cell_key": "202504_華南_個體|Trading",
+    "ordinal": 2,
+    "record_fp": "859aeb4244323b9efbfd3d9aaf2f21fe7f0edc29fc811273661d1e3ab73ae8ee",
+    "row_fp": "ad42dc16c72e6d6e386844ae57976712d3e03584e7838c69ec893ac4ca0d950e",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:選擇權"
+  },
+  {
+   "at": "2026-08-12T07:54:28.404692Z",
+   "by": "decide",
+   "group": "衍生金融資產",
+   "locator": {
+    "cell_key": "202504_華南_個體|Trading",
+    "row_index": 3,
+    "source_page": 37
+   },
+   "mapping": "衍生",
+   "name": "換匯換利",
+   "occurrence": {
+    "cell_key": "202504_華南_個體|Trading",
+    "ordinal": 3,
+    "record_fp": "859aeb4244323b9efbfd3d9aaf2f21fe7f0edc29fc811273661d1e3ab73ae8ee",
+    "row_fp": "65d7823b63c465642b260cd5ff1db75fb4478678bcfbe9e33b19425e3124797d",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:換匯換利"
+  },
+  {
+   "at": "2026-08-12T07:54:28.404697Z",
+   "by": "decide",
+   "group": "衍生金融資產",
+   "locator": {
+    "cell_key": "202504_華南_個體|Trading",
+    "row_index": 4,
+    "source_page": 37
+   },
+   "mapping": "衍生",
+   "name": "遠期外匯",
+   "occurrence": {
+    "cell_key": "202504_華南_個體|Trading",
+    "ordinal": 4,
+    "record_fp": "859aeb4244323b9efbfd3d9aaf2f21fe7f0edc29fc811273661d1e3ab73ae8ee",
+    "row_fp": "ac907cfc609dbd646d29c6434d5a67955e59c224f745d7c53a76d63ddedb2dd6",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:遠期外匯"
+  }
+ ]
+}

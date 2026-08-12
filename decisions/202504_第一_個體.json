@@ -1,0 +1,225 @@
+{
+ "202504_第一_個體|AC": [
+  {
+   "at": "2026-08-12T08:47:51.001257Z",
+   "by": "decide",
+   "group": null,
+   "locator": {
+    "cell_key": "202504_第一_個體|AC",
+    "row_index": 0,
+    "source_page": 71
+   },
+   "mapping": null,
+   "name": "按攤銷後成本衡量之債務工具投資",
+   "occurrence": {
+    "cell_key": "202504_第一_個體|AC",
+    "ordinal": 0,
+    "record_fp": "e8bb679d745c04201c11ac8cb545878e2750f70b196d79fc94e2ac1076e5b07a",
+    "row_fp": "ce2dab1830c711ed3827e04803bb105bfc41a82b9cdda1c6786d37115835a612",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "UNCLASSIFIED",
+   "taxonomy_ref": null
+  }
+ ],
+ "202504_第一_個體|Trading": [
+  {
+   "at": "2026-08-12T08:44:06.681002Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202504_第一_個體|Trading",
+    "row_index": 0,
+    "source_page": 36
+   },
+   "mapping": "貨幣市場",
+   "name": "短期票券",
+   "occurrence": {
+    "cell_key": "202504_第一_個體|Trading",
+    "ordinal": 0,
+    "record_fp": "932fb5806e859a682b07bc62ee3ecaf8f9283bf23fa68d69615a75b7e5eee036",
+    "row_fp": "e2afe32fad4c25390960e7f9d4e7b4830a2682756cfd5b17e51ca54c02747f9b",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:短期票券"
+  },
+  {
+   "at": "2026-08-12T08:44:06.681224Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202504_第一_個體|Trading",
+    "row_index": 1,
+    "source_page": 36
+   },
+   "mapping": "股票",
+   "name": "股票",
+   "occurrence": {
+    "cell_key": "202504_第一_個體|Trading",
+    "ordinal": 1,
+    "record_fp": "932fb5806e859a682b07bc62ee3ecaf8f9283bf23fa68d69615a75b7e5eee036",
+    "row_fp": "aac08d7b2320ab69f5bdb2e07ab080388d6c422deb87dbc28c5cdc296441f36f",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:股票"
+  },
+  {
+   "at": "2026-08-12T08:44:06.681239Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202504_第一_個體|Trading",
+    "row_index": 2,
+    "source_page": 36
+   },
+   "mapping": "公司債",
+   "name": "債券(政府、金融及公司債券)",
+   "occurrence": {
+    "cell_key": "202504_第一_個體|Trading",
+    "ordinal": 2,
+    "record_fp": "932fb5806e859a682b07bc62ee3ecaf8f9283bf23fa68d69615a75b7e5eee036",
+    "row_fp": "5f5e09b745b1379d9c9eef9d2ed3500ee8e1b963affe0f8519108d75928aa90c",
+    "scope": "row"
+   },
+   "references": [
+    {
+     "at": "2026-08-12T08:44:06.681239Z",
+     "detail": "BUCKET_RULES 關鍵字「公司債」",
+     "kind": "rule",
+     "recheck": "rules.propose('債券(政府、金融及公司債券)')[0] == '公司債'"
+    }
+   ],
+   "state": "PROVISIONAL",
+   "taxonomy_ref": null
+  },
+  {
+   "at": "2026-08-12T08:44:06.681265Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202504_第一_個體|Trading",
+    "row_index": 3,
+    "source_page": 36
+   },
+   "mapping": "其他",
+   "name": "其他",
+   "occurrence": {
+    "cell_key": "202504_第一_個體|Trading",
+    "ordinal": 3,
+    "record_fp": "932fb5806e859a682b07bc62ee3ecaf8f9283bf23fa68d69615a75b7e5eee036",
+    "row_fp": "9e0e972817c2b5476da39e3761e10e79ab9924c86a78b59f99c4ed81f8a51e71",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:其他"
+  },
+  {
+   "at": "2026-08-12T08:44:06.681274Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202504_第一_個體|Trading",
+    "row_index": 4,
+    "source_page": 36
+   },
+   "mapping": "衍生",
+   "name": "衍生工具",
+   "occurrence": {
+    "cell_key": "202504_第一_個體|Trading",
+    "ordinal": 4,
+    "record_fp": "932fb5806e859a682b07bc62ee3ecaf8f9283bf23fa68d69615a75b7e5eee036",
+    "row_fp": "4e57174458e7bb5e68ed8449d4bc963154d3c4215f7af77d8d8c57a618d376d5",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "CONFIRMED",
+   "taxonomy_ref": "tax:衍生工具"
+  },
+  {
+   "at": "2026-08-12T08:44:06.681281Z",
+   "by": "decide",
+   "group": "強制透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202504_第一_個體|Trading",
+    "row_index": 5,
+    "source_page": 36
+   },
+   "mapping": "評價調整",
+   "name": "強制透過損益按公允價值衡量之金融資產評價調整",
+   "occurrence": {
+    "cell_key": "202504_第一_個體|Trading",
+    "ordinal": 5,
+    "record_fp": "932fb5806e859a682b07bc62ee3ecaf8f9283bf23fa68d69615a75b7e5eee036",
+    "row_fp": "06e60acd9ea64d127d150a988be82e37203c94a6fdd0c18ea2d5a06e49554771",
+    "scope": "row"
+   },
+   "references": [
+    {
+     "at": "2026-08-12T08:44:06.681281Z",
+     "detail": "BUCKET_RULES 關鍵字「金融資產評價調整」",
+     "kind": "rule",
+     "recheck": "rules.propose('強制透過損益按公允價值衡量之金融資產評價調整')[0] == '評價調整'"
+    }
+   ],
+   "state": "PROVISIONAL",
+   "taxonomy_ref": null
+  },
+  {
+   "at": "2026-08-12T08:44:06.681297Z",
+   "by": "decide",
+   "group": "指定為透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202504_第一_個體|Trading",
+    "row_index": 6,
+    "source_page": 36
+   },
+   "mapping": null,
+   "name": "債券",
+   "occurrence": {
+    "cell_key": "202504_第一_個體|Trading",
+    "ordinal": 6,
+    "record_fp": "932fb5806e859a682b07bc62ee3ecaf8f9283bf23fa68d69615a75b7e5eee036",
+    "row_fp": "541beddb1d30b8a499659c7571aae3aec1e9f4429abaeafa19a633a56333bc53",
+    "scope": "row"
+   },
+   "references": [],
+   "state": "UNCLASSIFIED",
+   "taxonomy_ref": null
+  },
+  {
+   "at": "2026-08-12T08:44:06.681307Z",
+   "by": "decide",
+   "group": "指定為透過損益按公允價值衡量之金融資產",
+   "locator": {
+    "cell_key": "202504_第一_個體|Trading",
+    "row_index": 7,
+    "source_page": 36
+   },
+   "mapping": "評價調整",
+   "name": "指定為透過損益按公允價值衡量之金融資產評價調整",
+   "occurrence": {
+    "cell_key": "202504_第一_個體|Trading",
+    "ordinal": 7,
+    "record_fp": "932fb5806e859a682b07bc62ee3ecaf8f9283bf23fa68d69615a75b7e5eee036",
+    "row_fp": "9fd7b370761a4fec73e2ac8fa5e059a6b8c0a50a60064d9a69bff11fc9d8de24",
+    "scope": "row"
+   },
+   "references": [
+    {
+     "at": "2026-08-12T08:44:06.681307Z",
+     "detail": "BUCKET_RULES 關鍵字「金融資產評價調整」",
+     "kind": "rule",
+     "recheck": "rules.propose('指定為透過損益按公允價值衡量之金融資產評價調整')[0] == '評價調整'"
+    }
+   ],
+   "state": "PROVISIONAL",
+   "taxonomy_ref": null
+  }
+ ]
+}

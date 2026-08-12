@@ -1,0 +1,34 @@
+{
+ "bs_page": 6,
+ "cells": {
+  "AC": {
+   "amount": 817662717,
+   "pages": [
+    40,
+    41,
+    87,
+    104,
+    137
+   ]
+  },
+  "OCI": {
+   "amount": 373868040,
+   "pages": [
+    39,
+    104,
+    136
+   ]
+  },
+  "Trading": {
+   "amount": 190163478,
+   "pages": [
+    37,
+    102,
+    135
+   ]
+  }
+ },
+ "doc": "202504_華南_個體",
+ "located_by": "locate.locate",
+ "pdf_sha256": "5e58f9519cd3fadde4a84019aebc65fc2b3237fd8b848ac88fd4926698798bc8"
+}
