@@ -19,7 +19,7 @@ Claude Code（不需要 API key，不需要付費）。
 |---|---|---|
 | **抽取** | 把財報 PDF 讀成結構化的表格資料 | `v4/reader.py`（呼叫你自己的 `claude -p`） |
 | **核對** | 每一格數字都要有算術證明對得上資產負債表,證不了就是 `null`,不猜 | `results.py` / `core/closure.py` / `wide.py` |
-| **視覺化** | 矩陣、逐桶表、時間序列,換一份 `schema.yaml` 就能換題目 | `viz_generic.py` |
+| **視覺化** | 矩陣、逐桶表、時間序列 | `make_web.py`（公開儀表板）/ `web/workbench.js`（核對台）/ `web/sim.js`（模擬器） |
 
 資料存在三張表（`documents` / `observations` / `rulings`,見 `db.py`）：
 機器抄的進 `observations`,人在網頁上改過的進 `rulings`,**人工永遠蓋過
@@ -27,6 +27,12 @@ Claude Code（不需要 API key，不需要付費）。
 本身。
 
 ## 怎麼跑
+
+受眾是**會 clone、自己有 Claude Code 訂閱的人**——這是 2026-08-12(v7 R4)
+明確裁定的唯一分發路徑(原本另外還有一條打包 `.exe`/`.app` 給完全不寫程式的人的
+路線,已經移除:那條的核心迴圈「上傳 PDF → 抽取」需要使用者自己的
+`claude -p`,不寫程式、沒有 Claude Code 訂閱的人拿到執行檔也只能看示範資料、
+無法加自己的銀行,兩者的受眾其實互相矛盾)。
 
 ```bash
 git clone <this repo> && cd auto-reports
@@ -52,23 +58,13 @@ python3 app.py fetch            # 抓最新財報(需要台灣網路,TWSE 擋雲
 腳本仍然各自 `python3 xxx.py` 執行,不重複收進選單（例如
 `score_golden.py`、`analyze_oci_div.py` 這類一次性分析）。
 
-## 怎麼換題目
+## 通用性的範圍
 
-視覺化跟這個題目脫鉤了：`viz_generic.py`（通用層,~220 行,不 import
-`config.py`、不認得任何銀行名字）只認 `schema.yaml` 描述的形狀——實體、
-期別、維度、桶、口徑。換一個題目（例如「上市公司研發費用」）:
-
-1. 寫一份新的 `schema.yaml`（參考現有這份的形狀）
-2. 準備符合 `wide`/`wide_cost` 攤平表形狀的 `data.json`
-3. `python3 app.py serve`,開 `/generic.html` 就看得到矩陣/逐桶表/時間序列
-
-`test_viz_generic.py` 用一份跟銀行債券完全無關的假 schema（三個城市 × 四季
-降雨量）證明這件事——如果通用層真的脫鉤了,那份測試不需要改
-`viz_generic.py` 一行就會過。
-
-抽取/分桶/口徑判準（`config.py`、`buckets.py`、`wide.py`）**沒有**脫鉤,
-換題目時這幾支需要跟著改——那是下一步（R3 只做完視覺化那一半,
-詳見 `docs/plan_v6_一台機器.md`）。
+2026-08-12 起,這個 repo 的「通用性」明確收窄成**銀行財報，多幾家銀行、
+未來的期別**——不是換任意題目。曾經有一層題目無關的通用視覺化層
+（`viz_generic.py`，只認 `schema.yaml` 描述的形狀），但它零使用者、
+換來的通用性使用者從未用過，已經在 v7 計畫（`docs/plan_v7_完成品.md`
+§0.3）退場。加一家銀行的路徑見同份文件 §0.4。
 
 ## 資料誠實性
 
@@ -95,5 +91,5 @@ SQLite（三張表儲存）· pdfplumber/pypdfium2（PDF 讀取）· 手刻 HTML
 
 ## 開發文件
 
-現況與計畫見 [`docs/plan_v6_一台機器.md`](docs/plan_v6_一台機器.md)——
+現況與計畫見 [`docs/plan_v7_完成品.md`](docs/plan_v7_完成品.md)——
 體檢、目標架構、逐項驗收記錄,包含這份 README 描述的每一件事的實測證據。

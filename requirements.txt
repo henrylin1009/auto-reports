@@ -3,4 +3,4 @@ pypdfium2>=4.30   # locate.py / bs_anchor.py 讀 PDF 文字層用
 openpyxl>=3.1
 requests>=2.31
 matplotlib>=3.8   # 僅網頁版 make_web.py 需要(伺服器cron版可不裝)
-PyYAML>=6.0       # schema.py 讀 schema.yaml(R3 通用視覺化層)
+PyYAML>=6.0       # fill_auto.py 讀 golden/golden.yaml
