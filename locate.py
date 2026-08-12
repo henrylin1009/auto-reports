@@ -29,12 +29,14 @@ CLASSES = ("Trading", "OCI", "AC")
 #: 所有 pdfium 呼叫(這裡跟 server.render_png)共用同一把鎖,序列化存取。
 PDFIUM_LOCK = threading.Lock()
 
-#: expand() 的回歸基準:手動驗過的 11 格,正確頁必須落在擴張後的候選裡。
+#: expand() 的回歸基準:手動驗過的 10 格,正確頁必須落在擴張後的候選裡。
 #: 每格的正確頁都是用算術證過的(逐項相加 == 錨或其小計),不是關鍵字猜的。
 EXPAND_TRUTH = [
     ("202102_國泰_個體", "Trading", 33),   # 跨頁:p33 小計 242,645,908 + p34 45,952,869 = 錨
     ("202102_玉山_個體", "OCI", 24),       # 子附註;此格曾被誤判為「唯一死文件」
-    ("202102_5847_AI2", "OCI", 24),
+    # 這裡原本還有一條 `202102_5847_AI2` —— 那是**同一份 PDF 被重複抓兩次**
+    # (sha256 逐字相同),舊命名靠 AI 編號才分得開。2026-08-12 改名時併回同一個
+    # doc id,只留抄得完整的那份(7 列 vs 2 列),所以這條跟著移除。
     ("202302_玉山_個體", "OCI", 24),
     ("202402_玉山_個體", "OCI", 23),
     ("202502_玉山_個體", "OCI", 24),
@@ -78,7 +80,7 @@ class Located:
         「要加進候選頁的鄰頁」,呼叫端做 `set(pages) | set(more)`;現在回傳的
         就是下一輪要用的完整頁集合。理由與實測見 `section.py` 檔頭 ——
         擴頁的三種漏抓全是「頁不是文件的單位」的症狀,章節一次涵蓋
-        (`EXPAND_TRUTH` 11 格 11/11 不必逐級放寬)。
+        (`EXPAND_TRUTH` 10 格 10/10 不必逐級放寬)。
 
         方法留在 `Located` 上而不是讓呼叫端直接呼叫 `section` —— 它是
         `fill` / `core.ingest` / `fill_auto` 與測試替身共用的接縫,換成
@@ -239,7 +241,7 @@ def _main():
     ap.add_argument("paths", nargs="*", default=None)
     ap.add_argument("--census", action="store_true", help="全語料普查")
     ap.add_argument("--check", action="store_true", help="普查結果須符合基準,否則 exit 1")
-    ap.add_argument("--expand", action="store_true", help="跑 expand() 回歸(11 格),不符 exit 1")
+    ap.add_argument("--expand", action="store_true", help="跑 expand() 回歸(10 格),不符 exit 1")
     a = ap.parse_args()
 
     paths = a.paths or sorted(glob.glob("pdf_cache/*.pdf"))

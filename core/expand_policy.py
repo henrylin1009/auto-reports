@@ -15,7 +15,7 @@
 第 3 道(`check_cross`)也在 NEVER 裡:它**混合訊號,今天切不開**
 (`transcribe.check_cross(recs, bk=None)` 一跑就 AttributeError,見
 `transcribe.py:337/293` —— 潛伏 bug,禁改清單內,本單不修)。保守裁定為
-不觸發,代價已量 = 0:`locate.EXPAND_TRUTH` 11 格沒有一格靠它觸發。
+不觸發,代價已量 = 0:`locate.EXPAND_TRUTH` 10 格沒有一格靠它觸發。
 
 ⚠️ 2026-07-31:`check_anchor`(逐 record 驗合計 == 錨)換成 `check_closure`
 (整格拼樹,根 == 錨,見 `core/closure.py`)。上面提到的玉山兩層附註小計

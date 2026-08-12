@@ -112,7 +112,10 @@ def X5():
 # ── X6:算術家族行為不變 ─────────────────────────────────────────────────
 ARITH_DOCS = {"202102_國泰_個體", "202401_中信_合併", "202501_中信_合併",
               "202502_中信_合併", "202502_中信_個體"}
-CLASS_DOCS = {"202102_玉山_個體", "202102_5847_AI2", "202302_玉山_個體",
+#: 分類家族。原本有 5 格,其中 `202102_5847_AI2` 與 `202102_玉山_個體` 是
+#: **同一份 PDF 被重複抓兩次**(sha256 逐字相同),2026-08-12 doc id 改名時
+#: 併回同一個名字,所以剩 4 格 —— 少的那格不是掉了案例,是本來就重複。
+CLASS_DOCS = {"202102_玉山_個體", "202302_玉山_個體",
               "202402_玉山_個體", "202502_玉山_個體"}
 
 
@@ -156,7 +159,7 @@ def _class_fixture(doc, cls):
 
 def X7():
     truth = [t for t in locate.EXPAND_TRUTH if t[0] in CLASS_DOCS]
-    assert len(truth) == 5, f"分類家族應有 5 格,取得 {len(truth)}"
+    assert len(truth) == 4, f"分類家族應有 4 格,取得 {len(truth)}"
     allok = True
     for doc, cls, _need in truth:
         rec, anchors = _class_fixture(doc, cls)

@@ -3,7 +3,7 @@
 
 全語料回歸請跑 `python3 test_section.py --full`(約 2 分鐘):
     ① 155 格已驗收的每一份附註 record 都必須落在某個章節內(基準 144/144)
-    ② `locate.EXPAND_TRUTH` 的 11 格必須不擴頁就被涵蓋(基準 11/11)
+    ② `locate.EXPAND_TRUTH` 的 10 格必須不擴頁就被涵蓋(基準 10/10)
 兩個數字掉下來就是切分行為變了 —— 修 bug,或確認是改進後更新這裡的基準。
 
 用法:python3 test_section.py [--full]
@@ -84,7 +84,7 @@ def full():
         hit += covered
         if not covered:
             print(f"  ✗ {doc} {cls} 需 p.{need + 1} 不在章節內")
-    print(f"EXPAND_TRUTH 涵蓋 {hit}/{len(locate.EXPAND_TRUTH)}(基準 11/11)")
+    print(f"EXPAND_TRUTH 涵蓋 {hit}/{len(locate.EXPAND_TRUTH)}(基準 10/10)")
     return (miss > 0) + (hit != len(locate.EXPAND_TRUTH))
 
 

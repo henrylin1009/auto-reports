@@ -23,7 +23,7 @@
 import locate
 import transcribe
 
-#: 擴張的上限。level 1(±1 鄰頁)在 11 格手驗真值上已經 11/11,
+#: 擴張的上限。level 1(±1 鄰頁)在 10 格手驗真值上已經 10/10,
 #: level 2/3 目前**沒有任何一格用得上** —— 留著是因為原理上可能發生,
 #: 但沒有實例前不預設用。動這個數字前先看 locate.EXPAND_TRUTH 的實測表。
 MAX_LEVEL = 2
