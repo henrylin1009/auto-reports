@@ -2,31 +2,36 @@
 """全站唯一設定源:銀行、桶、分類、容差、模型。
 新增一家銀行 / 改一個桶名 / 換模型 → 只改這裡一處(不再散落 extract_v2 / batch_v2 / bridge_v2 / make_web)。
 注意:BANKS 的『名稱』與 BANK_COLORS 的鍵是 data.json 的資料鍵,改名等於改資料鍵,務必同步既有 JSON。"""
+import json
+import os
 
 # ── 銀行:代碼 → 顯示名(唯一真相)──
 #: ⚠️ **這裡是唯一真相,但 2026-08-12 之前不是** —— `capital.py`、`yields.py`、
 #: `resolve.py` 各自複製過一份一模一樣的字典,新增一家要同步改四處而沒有任何
 #: 檢查抓得到漏改。那三處已改成 import 這裡(「一道規則兩個實作」的又一實例)。
 #:
-#: 華南(5838)/第一(5844)是 2026-08-12 加入的:`pdf_cache/` 早就有它們的
-#: 2025 年報(「抓最新」順手抓的),但代碼不在這張表裡,於是 doc id 改名時
-#: 連名字都取不出來。它們目前**零筆已抄資料**,加進來不影響任何發布數字。
-BANKS = {"5835": "國泰", "5836": "富邦", "5838": "華南", "5841": "中信",
-         "5843": "兆豐", "5844": "第一", "5847": "玉山"}
+#: 2026-08-12(R2-2):銀行清單本身也從這裡的 Python dict 字面值搬到
+#: `banks.json`——**銀行清單是資料,不是程式碼**(v7 鐵律)。這裡仍然是
+#: **唯一讀取點**(其餘模組一律 `import config` 用 `config.BANKS`,不直接
+#: 讀 `banks.json`),換成資料檔只是讓「新增一家銀行」從「改程式碼」變成
+#: 「改一個 JSON 檔案」,呼叫端完全不用跟著改。
+_BANKS_JSON = os.path.join(os.path.dirname(os.path.abspath(__file__)), "banks.json")
+with open(_BANKS_JSON, encoding="utf-8") as _f:
+    _banks_data = json.load(_f)
+
+BANKS = {b["code"]: b["name"] for b in _banks_data["banks"]}
 
 #: 名字 → 代碼。**代碼只剩一個用途:去 TWSE 抓檔**(`resolve.download()`)。
 #: 其餘每一層(檔名、事實庫、發布網格、畫面欄位)一律用名字,見 `docid.py`。
 CODE_OF = {v: k for k, v in BANKS.items()}
 
 # 合併報表(AI1)白名單:只收中信,避免誤收其他家撐大批次
-AI1_CODES = {"5841"}
+AI1_CODES = set(_banks_data["ai1_codes"])
 
 # 企業品牌色(全站統一:個體圖表 / 估值視角 / matplotlib 皆用同一組)
-BANK_COLORS = {"中信": "#046A38", "中信(合併)": "#046A38", "兆豐": "#C9A227",
-               "國泰": "#00584A", "富邦": "#0072BC", "玉山": "#007A7A",
-               # 華南/第一:先給可辨識的色,不是品牌色 —— 這兩家還沒有任何資料
-               # 上圖表,等真的要畫再換成品牌色。挑的是與上面五家色相距離最遠的兩個。
-               "華南": "#B4341C", "第一": "#5B3FA8"}
+BANK_COLORS = {b["name"]: b["color"] for b in _banks_data["banks"]}
+#: 合併報表的顯示名跟個體共用同一組品牌色(目前只有中信有合併報表在跑)。
+BANK_COLORS["中信(合併)"] = BANK_COLORS["中信"]
 
 # ── 會計分類 ──
 CLASSES = ["Trading", "OCI", "AC"]

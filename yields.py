@@ -37,12 +37,25 @@ import docid
 #: 銀行清單只有一份(`config.BANKS`)—— 見 `capital.py` 同一處的說明。
 BANKS = config.BANKS
 
-#: 圖表上的排列順序。**刻意不是 `config.BANKS` 的全部** —— 這是分析頁的
-#: 呈現順序,只列真的有殖利率資料的五家;新加入而還沒有資料的銀行
-#: (華南/第一)排進來只會多兩條空線。
-ORDER = ["中信", "兆豐", "國泰", "富邦", "玉山"]
+#: 品牌色已核定的既有五家,固定這個顯示順序(視覺上的既有共識,不是資料判準)。
+#: 這五個名字本身不是名單來源 —— `order()` 才是,見下方。
+_PREFERRED = ("中信", "兆豐", "國泰", "富邦", "玉山")
 E = 1e5          # 仟元 → 億元
 CLASSES = ("AC", "OCI")
+
+
+def order(data="data.json"):
+    """圖表上的排列順序 —— **由資料算,不是寫死清單**(2026-08-12 改)。
+
+    只列真的有殖利率資料的銀行(部位與利息都撿得到才算);沒有資料的銀行
+    (例如剛加入、還沒抄過任何格的華南/第一)排進來只會多一條空線,所以
+    仍然被過濾掉 —— 但過濾的判準是「有沒有資料」,不是「名字在不在寫死的
+    清單裡」,加第 6 家銀行、抄出資料之後,它會自動出現在這裡,不必改這支。
+    `_PREFERRED` 五家維持既有視覺順序,其餘依名字排序接在後面。
+    """
+    banks_with_data = {b for _y, b in table(data=data)}
+    rest = sorted(banks_with_data - set(_PREFERRED))
+    return [b for b in _PREFERRED if b in banks_with_data] + rest
 
 
 def positions(path="data.json", classes=CLASSES):
@@ -148,17 +161,18 @@ def table(years=(2021, 2022, 2023, 2024, 2025), data="data.json"):
 
 def main():
     t = table()
+    order_ = order()
     years = sorted({y for y, _ in t})
     print("證券殖利率 = 證券利息 ÷ 平均(AC+OCI)部位")
     print(f"{'銀行':>4} {'口徑':>7} " + "".join(f"{y:>9}" for y in years))
-    for b in ORDER:
+    for b in order_:
         scopes = {t[(y, b)]["scope"] for y in years if (y, b) in t}
         row = "".join(f"{t[(y,b)]['yield']:8.2f}%" if (y, b) in t else "—".rjust(9)
                       for y in years)
         print(f"{b:>4} {'/'.join(sorted(scopes)) or '—':>7} {row}")
     print(f"{'極差':>4} {'':>7} " + "".join(
         (lambda v: f"{max(v)-min(v):8.2f}pt" if len(v) > 1 else "—".rjust(9))(
-            [t[(y, b)]["yield"] for b in ORDER
+            [t[(y, b)]["yield"] for b in order_
              if (y, b) in t and t[(y, b)]["scope"] != "僅AC"])
         for y in years))
 

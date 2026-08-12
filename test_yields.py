@@ -51,7 +51,7 @@ def test_軸三_2025_RWA除CET1():
     """§12.8 驗收:兆豐缺,其餘四家對得上報告(報告用揭露的 cet1_pct 反推)。"""
     cap = yields.interest(kind="capital", field="cet1")
     got = {b: cap[(2025, b)]["rwa"] / cap[(2025, b)]["cet1"]
-           for b in yields.ORDER if (2025, b) in cap}
+           for b in yields.order() if (2025, b) in cap}
     assert (2025, "兆豐") not in cap                 # §12.6 陷阱 8
     for b, want in {"中信": 8.39, "國泰": 7.89, "富邦": 8.29, "玉山": 8.34}.items():
         assert got[b] == pytest.approx(want, abs=0.01)

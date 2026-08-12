@@ -66,7 +66,7 @@ _beta_memo = {}
 def _betas(lens):
     """β 用**全期迴歸**(年頻,n=4),不是逐年數值 —— 同一個口徑只算一次,存起來。"""
     if lens not in _beta_memo:
-        series = {(y, b): rate(y, b, lens) for y in state.YEARS for b in state.BANKS}
+        series = {(y, b): rate(y, b, lens) for y in state.YEARS for b in state.BANKS()}
         _beta_memo[lens] = rates.betas(series, years=state.YEARS)
     return _beta_memo[lens]
 
@@ -198,7 +198,7 @@ def flags():
     """
     out = {}
     for y in state.YEARS:
-        for b in state.BANKS:
+        for b in state.BANKS():
             note = []
             if (y, b) in state.misaligned():
                 note.append("帳面與成本的分券種對不齊(兩張表顆粒度不同)→ 利率軸留白")
@@ -215,7 +215,7 @@ def flags():
 def _variant_table(fn, switchable):
     lens = {}
     for L in ([WHOLE, SHOWN] if switchable else [WHOLE]):
-        vals = {f"{y}|{b}": fn(y, b, L) for y in state.YEARS for b in state.BANKS}
+        vals = {f"{y}|{b}": fn(y, b, L) for y in state.YEARS for b in state.BANKS()}
         lens[L] = {k: round(v, 3) for k, v in vals.items() if v is not None}
     return lens
 
@@ -238,8 +238,11 @@ def payload():
         axes.append({"id": a["id"], "label": a["label"], "switchable": a["switchable"],
                      "lens_note": a.get("lens_note"),
                      "variants": variants, "default": a["variants"][0]["id"]})
-    return {"source": src, "banks": state.BANKS, "years": list(state.YEARS),
-            "colors": {b: config.BANK_COLORS[b] for b in state.BANKS},
+    return {"source": src, "banks": state.BANKS(), "years": list(state.YEARS),
+            # 2026-08-12:`config.BANK_COLORS[b]` 直接索引沒有 fallback —— 加第 6 家
+            # 銀行、還沒被人手動配色時就會整支 KeyError。灰色是明確的「還沒配色」
+            # 訊號,不是猜色;等真的要上圖表再由 config.BANK_COLORS 補一筆品牌色。
+            "colors": {b: config.BANK_COLORS.get(b, "#9aa0a8") for b in state.BANKS()},
             "axes": axes, "flags": flags()}
 
 
@@ -252,7 +255,7 @@ def main():
                 tag = f"[{L}]" if a["switchable"] else "[不切]"
                 print(f"\n{a['label']}·{v['label']} ({v['unit']}) {tag}")
                 print("     " + "".join(f"{y:>9}" for y in state.YEARS))
-                for b in state.BANKS:
+                for b in state.BANKS():
                     cells = "".join(
                         (lambda x: f"{x:8.2f} " if x is not None else "     —   ")(
                             v["fn"](y, b, L)) for y in state.YEARS)

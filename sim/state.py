@@ -29,8 +29,17 @@ E = yields.E                     # 1e5  仟元 → 億元
 #: (拿 OCI 桶的公允/成本對照過),混進來只會稀釋分母。
 K = ("GB", "公司債", "金融債", "資產基礎", "其他")
 CLASSES = ("AC", "OCI", "Trading")
-BANKS = yields.ORDER
 YEARS = (2021, 2022, 2023, 2024, 2025)
+
+
+def BANKS():
+    """2026-08-12:`yields.ORDER` 那份寫死 5 家清單已經退場,改呼叫
+    `yields.order()` 現算(哪些銀行真的有殖利率資料)。**故意是函式,不是
+    模組層常數**——常數會在 `import sim.state` 當下就讀檔,任何理由
+    (capital.json 格式還沒接上、data.json 缺資料)都會讓整個模組連 import
+    都失敗;維持函式讓失敗只發生在真的要用銀行清單的當下,跟這支模組其餘
+    I/O(`json.load(open(...))` 到處都是)一樣是呼叫時才發生。"""
+    return yields.order()
 
 _cache = {}
 
@@ -51,7 +60,7 @@ def onesided(D, years=YEARS):
     """
     bad = []
     for y in years:
-        for b in BANKS:
+        for b in BANKS():
             w = D["wide"].get(f"{y}H2|{b}") or {}
             c = D["wide_cost"].get(f"{y}H2|{b}") or {}
             if not (any(w.get(f"OCI_{k}") is not None for k in K)
