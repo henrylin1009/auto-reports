@@ -171,7 +171,27 @@ function viewAnalysis() {
 }
 
 const CLS = ["AC", "OCI", "Trading"];
-const SBAR = { done: "g", todo: "miss", blocked: "w", rejected: "r", no_data: "miss", na: "miss" };
+// R3-2(2026-08-12):`todo`/`na`/`no_data` 以前全部對到 `miss` 同一個灰條,
+// 使用者分不出「還沒抄」「抄不了」「確認過本來就沒有」—— 鐵律 9。現在各有各的樣子。
+const SBAR = { done: "g", todo: "miss", blocked: "w", rejected: "r",
+               no_data: "nodata", na: "na" };
+
+//: 每一種狀態「是什麼、為什麼、下一步」。**空格不該只是一個灰條** ——
+//: 48% 的格子沒有資料,看起來像壞掉,實際上多數是還沒排到或文件本來就沒揭露。
+const STATE_WHY = {
+  done:     "已抄並通過六道檢查,會進發布",
+  todo:     "還沒抄 —— 有候選頁,排隊中。按「自動抄列」或點進去手動抄",
+  blocked:  "卡在分類 —— 數字抄到了,但有科目名不在分類表裡。去「裁示台」補桶",
+  rejected: "擴頁到上限仍對不上 —— 抄到的數字跟資產負債表錨值兜不攏。點進去看理由",
+  no_data:  "人已確認:這份文件真的沒有這項揭露(不是漏抄,是本來就沒有)",
+  na:       "抓不到候選頁或錨值 —— 多半是該期財報這幾頁是掃描影像,沒有文字層可解析",
+};
+
+//: 圖例上的短標籤。跟 `STATE_WHY` 同一組 key —— 少一個就會在圖例上露出 undefined。
+const STATE_LABEL = {
+  done: "已抄", todo: "待抄", blocked: "卡在分類",
+  rejected: "對不上錨", no_data: "確認沒有", na: "抓不到頁",
+};
 
 // ── 資料:期別(列) × 銀行(欄),一格一份檔 ─────────────────────────────
 async function viewMatrix() {
@@ -187,8 +207,6 @@ async function viewMatrix() {
       <a href="#/buckets" class="tag" style="text-decoration:none;margin-left:8px">分桶檢視</a>
       <a href="#/queue" class="tag" style="text-decoration:none;margin-left:4px">裁示台</a>
       <a href="#/v4" class="tag" style="text-decoration:none;margin-left:4px">v4 複核</a>
-      <a href="/generic.html" target="_blank" class="tag" style="text-decoration:none;margin-left:4px"
-         title="R3 通用視覺化層：換一份 schema.yaml 就換題目，跟這個網站的其他頁不共用任何程式碼">通用層試畫</a>
     </h1>
     <div class="stats">
       <div class="stat"><b>${stats.done}</b><span>已抄</span></div>
@@ -201,6 +219,7 @@ async function viewMatrix() {
     <div class="auto">
       <button id="fetchgo"${stats && fetch_stats.missing ? "" : " disabled"}>抓最新(${fetch_stats.missing} 期)</button>
       <button id="fetchlogbtn">抓檔紀錄</button>
+      <button id="addbank">＋ 新增銀行</button>
       <button class="pri" id="autogo">自動抄列</button>
       <button id="autostop" hidden>取消</button>
       <select id="autolim">
@@ -223,10 +242,14 @@ async function viewMatrix() {
     <pre class="autolog" id="autolog" hidden></pre>
     <div class="scroll"><table class="mx"><tbody></tbody></table></div>
     <p class="hint">一格 = 一份財報檔的三個類別(AC / OCI / Trading)。
-      大字是抄到幾類,細條依序是三類的狀態(綠=已抄、黃=卡在分類、灰=還沒抄)。
+      大字是抄到幾類,細條依序是三類的狀態 ——
+      <b>把游標移到細條上會說明那一類為什麼是這個狀態</b>。
       空白代表那期沒有這份檔 —— 是沒有檔,不是沒抄。
       口徑從**封面**判(個體/合併),不從檔名推:檔名裡的 AI 編號在抓檔時已被統一改寫,
       不再帶有意義。</p>
+    <div class="mxlegend">${Object.entries(STATE_WHY).map(([k, why]) =>
+      `<span title="${esc(why)}"><i class="${SBAR[k]}"></i>${esc(STATE_LABEL[k])}</span>`
+    ).join("")}</div>
   </div>`);
 
   // 口徑切換。**跨行比較只用個體**(2026-07-29 裁示),合併另外一組 ——
@@ -236,6 +259,7 @@ async function viewMatrix() {
   });
 
   el.querySelector("#fetchlogbtn").onclick = showFetchLog;
+  el.querySelector("#addbank").onclick = addBankPrompt;
 
   const fg = el.querySelector("#fetchgo");
   if (fg) fg.onclick = () => {
@@ -259,7 +283,13 @@ async function viewMatrix() {
     for (const c of cols) {
       const g = grid[`${p}|${c}`];
       const td = $("<td></td>");
-      if (!g) td.appendChild($(`<div class="cell none"><span class="k">—</span></div>`));
+      if (!g) {
+        // 這個(期別 × 銀行)組合連格子都沒有 —— 該期日曆上不該有這家的財報
+        // (例如該行還沒上市、或這個口徑沒有這一期)。**說出來**,不要只留一個破折號。
+        const d = $(`<div class="cell none"><span class="k">—</span></div>`);
+        d.title = `${p} ${c}:這一期沒有這家銀行的財報格 —— 不是漏抄,是日曆上就沒有這一格`;
+        td.appendChild(d);
+      }
       else if (!g.doc) td.appendChild(fetchCell(g, c, stats));
       else {
         const st = CLS.map(x => g.classes[x]);
@@ -269,7 +299,8 @@ async function viewMatrix() {
         const btn = $(`<button class="cell ${blocked ? "pend" : done === live ? "ok" : ""}">
           <span class="k">${done}/${live} 類${blocked ? ' <span class="s warn">⚠</span>' : ""}</span>
           <span class="bars">${CLS.map((x, i) =>
-            `<i class="${SBAR[st[i]]}" title="${x}:${st[i]}"></i>`).join("")}</span>
+            `<i class="${SBAR[st[i]]}" title="${esc(x)} — ${esc(STATE_WHY[st[i]] || st[i])}"></i>`
+          ).join("")}</span>
         </button>`);
         btn.onclick = () => { S.page = null; S.rowIdx = 0; location.hash = `#/doc/${encodeURIComponent(g.doc)}`; };
         td.appendChild(btn);
@@ -279,6 +310,34 @@ async function viewMatrix() {
     tb.appendChild(tr);
   }
   document.getElementById("app").replaceChildren(el);
+}
+
+// 新增銀行(v7 R2-3)——「加一家銀行」以前只能自己去編輯 `banks.json`,
+// 而且要先知道有那個檔。現在是網格上的一個按鈕。
+//
+// **刻意只加清單、不順手抓 PDF**:加完之後那一欄會出現在網格上,每一格都是
+// 「抓這期」——走的是既有那條抓檔/抄列路徑,不另外長一條平行流程。
+async function addBankPrompt() {
+  const code = (prompt(
+    "TWSE 代碼(四位數字,例:5844)\n\n"
+    + "代碼只用來去 TWSE 抓財報。加完之後這家會出現在網格上,\n"
+    + "每一格按「抓這期」就會抓檔並自動抄列。") || "").trim();
+  if (!code) return;
+  const name = (prompt(
+    `銀行名(例:第一)\n\n`
+    + `這個名字會用在檔名、事實庫與網格欄位,之後改名等於改資料鍵,\n`
+    + `所以請直接用平常的簡稱。`) || "").trim();
+  if (!name) return;
+  // 失敗時 `_checked()` 已經把訊息畫成頂端的錯誤條(全站同一套),
+  // 這裡再 alert 一次會變成同一件事報兩遍 —— 只要別讓例外炸掉頁面就好。
+  let r;
+  try {
+    r = await post("bank/add", { code, name });
+  } catch { return; }
+  alert(`已新增「${r.bank.name}」(${r.bank.code})。\n\n`
+    + `下一步:在網格上找到這一欄,按「抓這期」抓財報,\n`
+    + `或按「自動抄列」讓它排進佇列。`);
+  viewMatrix();
 }
 
 // 抓檔紀錄面板 —— **不必再開終端機或問我**,每一筆都是實際問過 TWSE 的答案。

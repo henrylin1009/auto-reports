@@ -103,7 +103,7 @@ def wide_table_html():
         for(var i=0;i<WD.metrics.length;i++){{var m=WD.metrics[i];var tds='';
           for(var pi=0;pi<WD.periods.length;pi++)for(var bi=0;bi<WD.banks.length;bi++){{
             var cell=src[WD.periods[pi]+'|'+WD.banks[bi]]||{{}};var v=cell[m];
-            tds+='<td>'+(v==null?'<span style="color:#c6cbd4">—</span>':v.toLocaleString('en-US'))+'</td>';}}
+            tds+='<td>'+(v==null?'<span style="color:#c6cbd4" title="查無資料——未揭露該口徑、或該期資產負債表為掃描影像無法核對錨值,不是抓漏了不畫">—</span>':v.toLocaleString('en-US'))+'</td>';}}
           html+='<tr><th class="rowh">'+m+'</th>'+tds+'</tr>';}}
         body.innerHTML=html;note.textContent=NOTE[basis];}}
       seg.addEventListener('click',function(e){{var b=e.target.closest('button');if(!b)return;
@@ -153,14 +153,13 @@ def interactive_html(prefix="", banks=None, wide=None, wide_cost=None, periods=N
 .ix-legend{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:14px;font-size:12px;color:#5f6672;align-items:center}
 .ix-legend span{display:flex;align-items:center;gap:5px}
 .ix-sw{width:10px;height:10px;border-radius:3px;display:inline-block}
-.ix-hatch{background:repeating-linear-gradient(45deg,#f2f3f5,#f2f3f5 3px,#c4c9d1 3px,#c4c9d1 4px)}
 .ix-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
 .ix-name{width:38px;font-size:13px;color:#111827;text-align:right;flex:none}
 .ix-track{flex:1;display:flex;height:30px;border-radius:6px;overflow:hidden;background:#f2f3f5}
 .ix-s2{height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:inset -1.5px 0 0 #fff}
 .ix-s2 .s2l{font-size:10px;font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
 .ix-tot{width:82px;font-size:12px;color:#5f6672;text-align:right;flex:none;font-variant-numeric:tabular-nums}
-.ix-na{flex:1;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#8a919e;background:repeating-linear-gradient(45deg,#f5f6f8,#f5f6f8 5px,rgba(150,156,168,.25) 5px,rgba(150,156,168,.25) 7px)}
+.ix-na{flex:1;height:26px;font-size:11px}
 .ix-tip{position:fixed;z-index:99;pointer-events:none;background:#111827;color:#fff;border-radius:10px;padding:10px 12px;font-size:12px;line-height:1.6;box-shadow:0 8px 24px rgba(16,24,40,.2);max-width:230px;opacity:0;transition:opacity .1s}
 .ix-tip b{color:#a5b4fc}
 .lg-item{cursor:pointer;padding:3px 8px;border-radius:7px;transition:all .12s;user-select:none}
@@ -266,7 +265,7 @@ def interactive_html(prefix="", banks=None, wide=None, wide_cost=None, periods=N
 
 <div class="ix-legend" style="margin-top:2px">
 <span><span class="ix-sw" style="background:#f0f0f0;border:1px solid #ccc"></span>0 = 真實零部位</span>
-<span><span class="ix-sw ix-hatch"></span>無資料(當期財報為掃描影像檔)</span></div>
+<span><span class="ix-sw na-pattern-sw"></span>無資料(當期財報為掃描影像檔)</span></div>
 </div>"""
     js=r"""
 const BANKS=RAW.banks,PERIODS=RAW.periods,REVIEW=RAW.review||{};
@@ -459,7 +458,7 @@ function drawA(){
   const rows=AB().map(bk=>({bk,ok:has(p,bk),tot:SEGS.reduce((s,seg)=>s+segVal(bk,seg,p),0)}));
   const mx=Math.max(...rows.map(r=>r.tot),1);
   document.getElementById("A_bars").innerHTML=rows.map(r=>{
-    if(!r.ok)return '<div class="ix-row"><div class="ix-name">'+r.bk+'</div><div class="ix-na">無資料 · 該期財報為掃描影像檔</div><div class="ix-tot">N/A</div></div>';
+    if(!r.ok)return '<div class="ix-row"><div class="ix-name">'+r.bk+'</div><div class="ix-na na-pattern-cell">無資料 · 該期財報為掃描影像檔</div><div class="ix-tot">N/A</div></div>';
     const base=A_mode==="pct"?(r.tot||1):mx,wp=A_mode==="pct"?100:(r.tot/mx*100);
     const inner=SEGS.map(seg=>{const v=segVal(r.bk,seg,p);if(v<=0)return"";
       const pct=r.tot?Math.round(v/r.tot*100):0;
@@ -675,7 +674,7 @@ def valuation_html():
 .vcenter{position:absolute;left:50%;top:-3px;bottom:-3px;width:1px;background:#c6cbd4}
 .vfill{position:absolute;top:0;bottom:0;border-radius:4px;transition:all .2s}
 .vval{width:104px;font-size:12px;text-align:left;flex:none;font-variant-numeric:tabular-nums;color:#111827}
-.vna{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:#a0a6b0;background:repeating-linear-gradient(45deg,#f5f6f8,#f5f6f8 5px,rgba(150,156,168,.22) 5px,rgba(150,156,168,.22) 7px);border-radius:5px}
+.vna{position:absolute;inset:0;font-size:10px}
 .vhint{font-size:12px;color:#8a919e;margin-top:8px;line-height:1.7}
 </style>"""
     markup="""<div class="vw">
@@ -710,7 +709,7 @@ const sgn=n=>(n>=0?"+":"−")+fmt(Math.abs(n));
 const sel=document.getElementById("G_p");   // 期間改用全域工具列選擇器
 let vMode="amt";
 function divbar(v,mx,neg,pos){
-  if(v==null||mx<=0)return '<div class="vtrack"><div class="vna">無資料</div></div>';
+  if(v==null||mx<=0)return '<div class="vtrack"><div class="vna na-pattern-cell">無資料</div></div>';
   const w=Math.min(Math.abs(v)/mx*50,50),isn=v<0,col=isn?neg:pos;
   const left=isn?(50-w):50;
   return '<div class="vtrack"><div class="vcenter"></div><div class="vfill" style="left:'+left+'%;width:'+w+'%;background:'+col+'"></div></div>';

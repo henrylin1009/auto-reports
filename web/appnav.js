@@ -76,4 +76,26 @@
   }
   mark();
   window.addEventListener("hashchange", mark);
+
+  // ── R3-1(2026-08-12):示範資料橫幅 ─────────────────────────────────────
+  // 別人 clone 下來第一眼看到的是**你的**示範資料(五家台灣銀行的債券投資),
+  // 不是空白畫面 —— 沒有這條,會被誤會成「這個工具只做這五家銀行」。
+  // 只在四頁的**外層**畫一次(iframe 判斷已經在最上面 return 過);
+  // 關掉之後記在 localStorage,不會每次開都跳出來煩人。
+  var DISMISS_KEY = "demo-banner-dismissed-v1";
+  if (!localStorage.getItem(DISMISS_KEY)) {
+    var banner = document.createElement("div");
+    banner.className = "demo-banner";
+    banner.innerHTML =
+      '<span>這是<b>示範資料集</b>(五家台灣銀行的債券投資組合),用來證明這台機器會動 —— ' +
+      '不是你的資料。想放自己的資料:把要分析的銀行加進 ' +
+      '<code>banks.json</code>,把財報 PDF 拖進「資料」頁上傳即可,不用改程式碼。' +
+      '詳見 <a href="https://github.com/henrylin1009/auto-reports#readme" target="_blank" rel="noopener">README</a>。</span>' +
+      '<button type="button" aria-label="關閉">✕</button>';
+    banner.querySelector("button").addEventListener("click", function () {
+      localStorage.setItem(DISMISS_KEY, "1");
+      banner.remove();
+    });
+    nav.insertAdjacentElement("afterend", banner);
+  }
 })();

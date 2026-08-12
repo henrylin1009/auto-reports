@@ -45,9 +45,28 @@ button.dan{color:var(--danger)}
 .cell.none{opacity:.4;cursor:default;background:transparent}
 .cell .s.warn{color:var(--warn)}
 .bars{display:flex;gap:3px;margin-top:3px}
-.bars i{height:3px;flex:1;border-radius:2px;background:var(--line)}
-.bars i.g{background:var(--ok)} .bars i.w{background:var(--warn)}
-.bars i.r{background:var(--danger)} .bars i.miss{background:#d8dbe1}
+.bars i{height:3px;flex:1;border-radius:2px}
+/* 網格圖例:六種狀態各長什麼樣、代表什麼。之前完全沒有圖例,細條的顏色要靠猜。 */
+.mxlegend{display:flex;flex-wrap:wrap;gap:14px;margin:10px 2px 0;font-size:12px;color:var(--mut)}
+.mxlegend span{display:flex;align-items:center;gap:5px;cursor:help}
+.mxlegend i{width:14px;height:3px;border-radius:2px;flex:none}
+
+/* ── 六種格子狀態的視覺 —— **一份定義,細條與圖例共用** ──────────────────
+   R3-2(2026-08-12):`todo`/`na`/`no_data` 以前全部畫成同一個灰條,
+   「還沒抄」「抄不了(無候選頁)」「人確認過文件真的沒有」三種完全不同的
+   原因長成一模一樣,正是鐵律 9「兩種原因一種結果」。拆成可分辨的三種:
+   todo=實心灰(排隊中)、na=斜紋(系統抓不到,不是在排隊)、
+   no_data=空心加中線(人判定「本來就沒有」,是結論不是缺口)。
+   選擇器同時涵蓋 `.bars i` 與 `.mxlegend i`,免得圖例跟實際細條各畫各的
+   ——那就是同一條規則兩個實作。 */
+.bars i, .mxlegend i{background:var(--line)}
+.bars i.g, .mxlegend i.g{background:var(--ok)}
+.bars i.w, .mxlegend i.w{background:var(--warn)}
+.bars i.r, .mxlegend i.r{background:var(--danger)}
+.bars i.miss, .mxlegend i.miss{background:#d8dbe1}
+.bars i.na, .mxlegend i.na{background:repeating-linear-gradient(45deg,#e6e8ec,#e6e8ec 2px,#c4c9d1 2px,#c4c9d1 3px)}
+.bars i.nodata, .mxlegend i.nodata{background:transparent;box-shadow:inset 0 0 0 1px #c6cbd4;position:relative}
+.bars i.nodata::after, .mxlegend i.nodata::after{content:"";position:absolute;left:1px;right:1px;top:1px;height:1px;background:#c6cbd4}
 
 /* 複核 */
 .two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}
