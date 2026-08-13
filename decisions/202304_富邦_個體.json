@@ -110,15 +110,15 @@
    "taxonomy_ref": null
   },
   {
-   "at": "2026-07-29T06:24:29.087445Z",
-   "by": "decide",
+   "at": "2026-08-12T23:44:19",
+   "by": "llm_classify",
    "group": "按攤銷後成本衡量之債務工具投資",
    "locator": {
     "cell_key": "202304_富邦_個體|AC",
     "row_index": 4,
     "source_page": 41
    },
-   "mapping": null,
+   "mapping": "資產基礎",
    "name": "CMO 擔保房貸憑證",
    "occurrence": {
     "cell_key": "202304_富邦_個體|AC",
@@ -128,8 +128,8 @@
     "scope": "row"
    },
    "references": [],
-   "state": "UNCLASSIFIED",
-   "taxonomy_ref": null
+   "state": "PROVISIONAL",
+   "taxonomy_ref": "tax:CMO擔保房貸憑證"
   },
   {
    "at": "2026-07-29T06:24:29.087477Z",
@@ -264,15 +264,15 @@
    "taxonomy_ref": "tax:政府公債"
   },
   {
-   "at": "2026-07-29T14:42:32",
-   "by": "decide",
+   "at": "2026-08-12T23:44:19",
+   "by": "llm_classify",
    "group": "按攤銷後成本衡量之債務工具投資明細表",
    "locator": {
     "cell_key": "202304_富邦_個體|AC",
     "row_index": 4,
     "source_page": 166
    },
-   "mapping": null,
+   "mapping": "資產基礎",
    "name": "受益證券 CMO",
    "occurrence": {
     "cell_key": "202304_富邦_個體|AC",
@@ -282,19 +282,19 @@
     "scope": "row"
    },
    "references": [],
-   "state": "UNCLASSIFIED",
-   "taxonomy_ref": null
+   "state": "PROVISIONAL",
+   "taxonomy_ref": "tax:受益證券CMO"
   },
   {
-   "at": "2026-07-29T06:24:29.087777Z",
-   "by": "decide",
+   "at": "2026-08-12T23:44:19",
+   "by": "llm_classify",
    "group": "按攤銷後成本衡量之債務工具投資明細表",
    "locator": {
     "cell_key": "202304_富邦_個體|AC",
     "row_index": 5,
     "source_page": 166
    },
-   "mapping": null,
+   "mapping": "資產基礎",
    "name": "受益證券 RMBS",
    "occurrence": {
     "cell_key": "202304_富邦_個體|AC",
@@ -304,8 +304,8 @@
     "scope": "row"
    },
    "references": [],
-   "state": "UNCLASSIFIED",
-   "taxonomy_ref": null
+   "state": "PROVISIONAL",
+   "taxonomy_ref": "tax:受益證券RMBS"
   },
   {
    "at": "2026-07-29T06:24:29.087807Z",

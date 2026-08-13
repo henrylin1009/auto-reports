@@ -23,15 +23,15 @@
    "taxonomy_ref": null
   },
   {
-   "at": "2026-07-29T13:50:36.984486Z",
-   "by": "decide",
+   "at": "2026-08-12T23:44:19",
+   "by": "llm_classify",
    "group": null,
    "locator": {
     "cell_key": "202204_玉山_個體|AC",
     "row_index": 1,
     "source_page": 122
    },
-   "mapping": null,
+   "mapping": "可轉讓定存單",
    "name": "國外定期存單（註二）",
    "occurrence": {
     "cell_key": "202204_玉山_個體|AC",
@@ -41,8 +41,8 @@
     "scope": "row"
    },
    "references": [],
-   "state": "UNCLASSIFIED",
-   "taxonomy_ref": null
+   "state": "PROVISIONAL",
+   "taxonomy_ref": "tax:國外定期存單(註二)"
   },
   {
    "at": "2026-07-29T13:50:36.984508Z",

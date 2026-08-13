@@ -1,15 +1,15 @@
 {
  "202504_第一_個體|AC": [
   {
-   "at": "2026-08-12T08:47:51.001257Z",
-   "by": "decide",
+   "at": "2026-08-12T23:44:19",
+   "by": "llm_classify",
    "group": null,
    "locator": {
     "cell_key": "202504_第一_個體|AC",
     "row_index": 0,
     "source_page": 71
    },
-   "mapping": null,
+   "mapping": "其他",
    "name": "按攤銷後成本衡量之債務工具投資",
    "occurrence": {
     "cell_key": "202504_第一_個體|AC",
@@ -19,8 +19,8 @@
     "scope": "row"
    },
    "references": [],
-   "state": "UNCLASSIFIED",
-   "taxonomy_ref": null
+   "state": "PROVISIONAL",
+   "taxonomy_ref": "tax:按攤銷後成本衡量之債務工具投資"
   }
  ],
  "202504_第一_個體|Trading": [

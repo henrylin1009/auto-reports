@@ -70,18 +70,47 @@ def sum_matches(named_values, printed, col_label="合計"):
     return None
 
 
-def bucket_sum_matches(bucketed, unbucketed, printed, col_label="合計"):
-    """P2:Σ(分到桶的) == `printed`,且 `unbucketed` 必須是空的。
+def arithmetic_matches(bucketed, unbucketed, printed, col_label="合計"):
+    """**抄寫對不對**:Σ(已歸桶) + Σ(未歸桶) == `printed`。回 None = 通過。
 
-    `bucketed` 是所有已歸桶金額的序列(含側欄:衍生、評價調整 —— 它們不進
-    七桶但**算進恆等式**,否則等式永遠對不上)。
-    `unbucketed` 是 `(名字, 值, 原因)` 的序列。
+    ⚠️ 未歸桶的列**算進等式**。這一支問的是「這張表有沒有抄漏、抄錯」,
+    而「央行票據 7,345,878 屬於哪個桶」跟「它有沒有被抄對」是兩件事 ——
+    後者由這一支管,前者由 `unbucketed_reason()` 管(v9,見
+    `docs/plan_v9_不擋人.md` §三)。
 
-    **有列落在桶外一律不合格**,即使等式湊得起來 —— 那筆錢會悄悄從發布數字
-    裡消失,而總額仍然是對的(`adapter.aggregate` 檔頭記的富邦 202404 案例:
-    政府公債+公司債被併進「其他」,三個桶同時錯而六道檢查全綠)。
+    在此之前兩者綁在同一支 `bucket_sum_matches()` 裡,所以少一個字典詞條
+    會讓「抄寫」這道也一起判死,整格資料被丟掉 —— 實測 2026-08-12
+    富邦 202402 OCI:8 列全對、逐列相加 == 錨,只因 `央行票據` 不在
+    `buckets.SYN` 而整格不歸檔,重抄還必然撞同一道(失敗點在模型下游)。
+    """
+    named = [(None, v) for v in bucketed] + [(n, v) for n, v, _w in unbucketed]
+    return sum_matches(named, printed, col_label)
+
+
+def unbucketed_reason(unbucketed):
+    """**歸桶齊不齊**:有列落在桶外就回一句話,否則回 None。
+
+    這是 `arithmetic_matches()` 的另一半。**它不再是歸檔的閘門**(v9),
+    只是一個標記:錢沒有消失,它站在網站上「未歸桶」那一行。
+
+    原本的理由是「那筆錢會悄悄從發布數字裡消失,而總額仍然是對的」
+    (`adapter.aggregate` 檔頭的富邦 202404 案例:政府公債+公司債被併進
+    「其他」,三個桶同時錯而六道檢查全綠)。那個危害**現在由畫面擋**:
+    未歸桶永遠自己站一行、即使是 0 也顯示,所以它不再是「悄悄」的。
+    ⚠️ 那一行要是被藏起來,這道就必須變回閘門 —— 兩者只能存在一個。
     """
     if unbucketed:
         names = [n for n, _v, _w in unbucketed]
-        return f"{len(unbucketed)} 列對不到桶,錢不能悄悄消失:{names}"
-    return sum_matches([(None, v) for v in bucketed], printed, col_label)
+        return f"{len(unbucketed)} 列對不到桶:{names}"
+    return None
+
+
+def bucket_sum_matches(bucketed, unbucketed, printed, col_label="合計"):
+    """P2(**嚴格版**):抄寫對 **且** 每一列都歸得到桶。
+
+    保留原語意給還需要「全齊才算數」的呼叫端(發布資格)。**實作由上面兩支
+    組出來,不另寫一份判斷** —— 同一道規則兩個實作是這個 repo 反覆長 bug
+    的形狀(memory/two-implementations-one-rule)。
+    """
+    return (unbucketed_reason(unbucketed)
+            or arithmetic_matches(bucketed, unbucketed, printed, col_label))

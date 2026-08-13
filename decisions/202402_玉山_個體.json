@@ -157,15 +157,15 @@
  ],
  "202402_玉山_個體|OCI": [
   {
-   "at": "2026-07-29T13:46:23.518734Z",
-   "by": "decide",
+   "at": "2026-08-12T23:44:19",
+   "by": "llm_classify",
    "group": "透過其他綜合損益按公允價值衡量之金融資產",
    "locator": {
     "cell_key": "202402_玉山_個體|OCI",
     "row_index": 0,
     "source_page": 22
    },
-   "mapping": null,
+   "mapping": "股票",
    "name": "透過其他綜合損益按公允價值衡量之權益工具投資",
    "occurrence": {
     "cell_key": "202402_玉山_個體|OCI",
@@ -175,19 +175,19 @@
     "scope": "row"
    },
    "references": [],
-   "state": "UNCLASSIFIED",
-   "taxonomy_ref": null
+   "state": "PROVISIONAL",
+   "taxonomy_ref": "tax:透過其他綜合損益按公允價值衡量之權益工具投資"
   },
   {
-   "at": "2026-07-29T13:46:23.518822Z",
-   "by": "decide",
+   "at": "2026-08-12T23:44:19",
+   "by": "llm_classify",
    "group": "透過其他綜合損益按公允價值衡量之金融資產",
    "locator": {
     "cell_key": "202402_玉山_個體|OCI",
     "row_index": 1,
     "source_page": 22
    },
-   "mapping": null,
+   "mapping": "公債",
    "name": "透過其他綜合損益按公允價值衡量之債務工具投資",
    "occurrence": {
     "cell_key": "202402_玉山_個體|OCI",
@@ -197,8 +197,8 @@
     "scope": "row"
    },
    "references": [],
-   "state": "UNCLASSIFIED",
-   "taxonomy_ref": null
+   "state": "PROVISIONAL",
+   "taxonomy_ref": "tax:透過其他綜合損益按公允價值衡量之債務工具投資"
   }
  ],
  "202402_玉山_個體|Trading": [
@@ -489,15 +489,15 @@
    "taxonomy_ref": "tax:無本金交割遠期外匯合約"
   },
   {
-   "at": "2026-07-29T13:46:18.707392Z",
-   "by": "decide",
+   "at": "2026-08-12T23:44:19",
+   "by": "llm_classify",
    "group": "強制透過損益按公允價值衡量之金融資產",
    "locator": {
     "cell_key": "202402_玉山_個體|Trading",
     "row_index": 13,
     "source_page": 21
    },
-   "mapping": null,
+   "mapping": "衍生",
    "name": "金屬商品交換合約",
    "occurrence": {
     "cell_key": "202402_玉山_個體|Trading",
@@ -507,8 +507,8 @@
     "scope": "row"
    },
    "references": [],
-   "state": "UNCLASSIFIED",
-   "taxonomy_ref": null
+   "state": "PROVISIONAL",
+   "taxonomy_ref": "tax:金屬商品交換合約"
   },
   {
    "at": "2026-07-29T13:46:18.707434Z",

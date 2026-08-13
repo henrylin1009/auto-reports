@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>資本/損益/第三支柱 — 唯讀核對</title>
+<link rel="stylesheet" href="/tokens.css">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);
+  font:14px/1.5 -apple-system,"Noto Sans TC",sans-serif}
+main{padding:16px;max-width:1100px;margin:0 auto}
+h1{font-size:17px;font-weight:500;margin:0 0 4px}
+.sub{font-size:12px;color:var(--mute);margin:0 0 16px}
+.note{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+  padding:12px 16px;font-size:12px;color:var(--dim);margin-bottom:16px}
+.stats{display:flex;gap:16px;margin-bottom:16px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+  padding:10px 16px}
+.stat b{font-size:20px;display:block}
+.stat span{font-size:12px;color:var(--mute)}
+table{width:100%;border-collapse:collapse;font-size:12px;background:var(--panel);
+  border:1px solid var(--line);border-radius:10px;overflow:hidden}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+th{color:var(--mute);font-weight:500;background:var(--panel2)}
+tr:last-child td{border-bottom:none}
+.kind{display:inline-block;padding:1px 6px;border-radius:4px;font-size:11px;
+  background:var(--panel2);color:var(--dim)}
+.fails{color:var(--warn,#b8860b)}
+.fails li{margin:2px 0}
+h2{font-size:14px;margin:24px 0 8px}
+</style>
+</head>
+<body>
+<div id="appnav"></div>
+<script src="appnav.js"></script>
+<main>
+  <h1>資本 / 損益 / 第三支柱 — 唯讀核對</h1>
+  <p class="sub">v11 R2/R3(縮小版)—— 讓 <code>review/capital_queue.jsonl</code>
+    與已併進 <code>facts.db</code> 的格第一次有地方看得到。</p>
+  <div class="note">
+    這頁是唯讀的:還沒有「選桶」「重抄」「就地改列」——那些留給下一輪
+    照 <code>docs/plan_v11_一條路線.md</code> 的 R3/R4 接進 <code>/api/cell</code>
+    的核對介面時再做。這裡先解決「寫進去卻沒有出口」那個具體問題。
+  </div>
+  <div class="stats" id="stats"></div>
+  <h2>還卡在佇列裡(<code>review/capital_queue.jsonl</code>)</h2>
+  <div id="queue"></div>
+  <h2>已併進 facts.db 的格</h2>
+  <div id="migrated"></div>
+</main>
+<script>
+async function main() {
+  const r = await fetch('/api/capital_overview').then(x => x.json());
+  document.getElementById('stats').innerHTML = `
+    <div class="stat"><b>${r.migrated_count}</b><span>已併進 facts.db</span></div>
+    <div class="stat"><b>${r.queued_count}</b><span>卡在佇列,待判斷</span></div>
+  `;
+  const esc = s => String(s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+  const q = document.getElementById('queue');
+  if (!r.queued.length) {
+    q.innerHTML = '<p class="sub">(空)</p>';
+  } else {
+    const rows = r.queued.map(item => `
+      <tr>
+        <td>${esc(item.doc)}</td>
+        <td><span class="kind">${esc(item.kind)}</span></td>
+        <td>${esc((item.rec||{}).period || '')}</td>
+        <td>${esc(item.at || '')}</td>
+        <td class="fails"><ul>${(item.fails||[]).map(f => `<li>${esc(f)}</li>`).join('')}</ul></td>
+      </tr>`).join('');
+    q.innerHTML = `<table><thead><tr>
+      <th>文件</th><th>種類</th><th>期別</th><th>寫入時間</th><th>失敗理由</th>
+    </tr></thead><tbody>${rows}</tbody></table>`;
+  }
+
+  const m = document.getElementById('migrated');
+  if (!r.migrated.length) {
+    m.innerHTML = '<p class="sub">(空 —— 還沒跑過 python3 capital_db.py)</p>';
+  } else {
+    const rows = r.migrated.map(c => `
+      <tr><td>${esc(c.doc)}</td><td><span class="kind">${esc(c.cls)}</span></td></tr>`
+    ).join('');
+    m.innerHTML = `<table><thead><tr><th>文件</th><th>種類</th></tr></thead>
+      <tbody>${rows}</tbody></table>`;
+  }
+}
+main().catch(e => {
+  document.getElementById('stats').innerHTML =
+    `<p style="color:var(--warn,#b8860b)">讀取失敗:${e}</p>`;
+});
+</script>
+</body>
+</html>

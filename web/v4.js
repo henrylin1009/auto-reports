@@ -131,6 +131,10 @@ async function viewQueue() {
 
 async function viewMatrix() {
   const docs = await api("overview");
+  // 2026-08-13 v11 R0:workbench.js 已改讀後端 `class_order`(見 core/webdata.overview),
+  // 這裡沒跟著改是因為 v4 的 overview 走 `ledger.load_all()`,還沒帶這個欄位——
+  // 留著字面量,不要為了一致性多接一支 API。之後若 v4/ledger.py 也要統一,
+  // 從那裡的回傳值加 class_order 即可,做法跟 workbench.js 那邊一樣。
   const CLS = ["Trading", "OCI", "AC"];
   const el = $(`<div><h1>比較表</h1><div class="scroll"></div></div>`);
   const wrap = el.querySelector(".scroll");
@@ -191,7 +195,8 @@ async function viewCell(doc, cls) {
           </div>` : ""}
         </div>
         <div class="card" style="margin-top:12px">
-          <b>Witness(程式重算,非模型自報)</b>
+          <b>歸檔判準(v4)</b>
+          <div class="hint" style="margin:2px 0 8px">Witness,程式重算、非模型自報——這一組管歸檔,下面 workbench 的六道只顯示不擋歸檔。</div>
           <div class="wl" data-witnesses></div>
           ${c.status !== "RATIFIED" ? `
             <button class="pri" data-ratify>✓ 我看過原始頁，照這樣歸檔</button>

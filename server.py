@@ -25,6 +25,7 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+import config
 import docid
 import fill
 import locate
@@ -75,6 +76,7 @@ def _fetch_run(targets, then_fill, reader):
 
     import fill
     import fill_auto
+    import locate
     from core import acquire
 
     ok = []
@@ -82,11 +84,15 @@ def _fetch_run(targets, then_fill, reader):
         if _JOB["cancel"]:
             print(f"\n使用者取消 —— 停在 {n - 1}/{len(targets)}。")
             break
-        print(f"[{n}/{len(targets)}] 抓 {t['period']} {t['code']} ...", end=" ")
-        r = acquire.fetch_one(t["period"], t["code"])
+        # 口徑由前端隨格子送上來。**沒送就當個體**是相容用的預設,不是猜 ——
+        # 網格上每一格都帶 basis(`webdata.overview`),會走到預設值的只有
+        # 舊分頁沒重整的情況。
+        basis = t.get("basis") or locate.SOLO
+        print(f"[{n}/{len(targets)}] 抓 {t['period']} {t['code']} {basis} ...", end=" ")
+        r = acquire.fetch_one(t["period"], t["code"], basis)
         print(r["status"] + ("" if r["status"] == "ok" else f"({r.get('why', '')})"))
         if r["status"] == "ok":
-            ok.append(acquire.doc_name(t["period"], t["code"]))
+            ok.append(acquire.doc_name(t["period"], t["code"], basis))
 
     if ok:
         print(f"\n抓到 {len(ok)} 份,重建索引…")
@@ -94,7 +100,7 @@ def _fetch_run(targets, then_fill, reader):
         if then_fill:
             print("接著抄列:")
             for doc in ok:
-                for cls in ("Trading", "OCI", "AC"):
+                for cls in config.CLASSES:
                     fill_auto.run_key(f"{doc}|{cls}", reader)
     print(f"\n完成:{len(ok)}/{len(targets)} 抓到。")
 
@@ -134,11 +140,30 @@ def _job_run(limit, reader, cell=None, fetch=None, then_fill=False):
                     # **不再呼叫 `ledger.ratify()`** —— 那支 R0-3 已退場,
                     # 而且「機器自動入帳」本來就不該叫 ratify:ratify 的語意是
                     # 「人看過原始頁了」,機器沒有資格蓋那個章(`_src` 只給人工出口)。
-                    res = v4_ledger.file_green(docs=[doc_key])
-                    for k in res.get("filed", []):
+                    # `force=True`:這條路只有網頁上的「重抄」按鈕會走到,而那顆
+                    # 按鈕的確認框明講「現有內容會被覆蓋」—— 使用者按了確認,
+                    # 就該真的覆蓋。沒有它的話會讀完 PDF、算完 witness 然後
+                    # 靜靜丟掉(見 `ledger.file_green` 的說明)。
+                    #
+                    # `classes=[cls_key]`:reader 一次讀整份(三類都重讀,這點
+                    # 沒問題,raw 本來就是整份的),但**只有使用者點的那一格
+                    # 准寫進 facts/**。沒有這個限定的話,按一次「重抄 OCI」
+                    # 會連 Trading / AC 一起覆蓋 —— 確認框只列了一格的人工列,
+                    # 爆炸半徑不准比它大。
+                    res = v4_ledger.file_green(docs=[doc_key], classes=[cls_key],
+                                               force=True)
+                    filed = res.get("filed", [])
+                    for k in filed:
                         print(f"[v4] {k} Witness 判定 GREEN → 已歸檔進 facts/")
                     for k, why in res.get("skipped", []):
                         print(f"[v4] {k} 未歸檔:{why}")
+                    # **一格都沒寫就要大聲講。** 之前這裡沉默,而那格狀態仍是
+                    # `done`(舊資料還在),前端因此顯示「✓ 抄列完成」——
+                    # 使用者按了重抄、看到綠勾、資料卻沒變(鐵律 9:兩種原因
+                    # 一種結果)。
+                    if not filed:
+                        print(f"[v4] ⚠️ {doc_key} 這一輪一格都沒有寫進 facts/ ——"
+                              f"上面每一行的理由就是原因,資料維持原樣。")
             else:
                 fill_auto.run_queue(reader, limit, stop_check=lambda: _JOB["cancel"])
         _JOB["done"] = True
@@ -437,6 +462,12 @@ class Handler(SimpleHTTPRequestHandler):
             # 定位空間(web/sim.html)。取數一律在 sim/,這裡只轉 JSON。
             from sim import axes as sim_axes
             self._json(sim_axes.payload())
+        elif route == "/api/capital_overview":
+            # v11 R2/R3(縮小版)。獨立於 webdata.overview()/cell_detail() 之外
+            # ——capital_db.py 自己的表,不共用 facts.load() 那條路徑,見該檔
+            # 開頭「2026-08-13 實測炸過一次」的說明。
+            import capital_db
+            self._json(capital_db.overview())
         elif route == "/api/bucketview":
             self._json(webdata.bucket_view())
         elif route == "/api/fetchlog":
@@ -449,6 +480,9 @@ class Handler(SimpleHTTPRequestHandler):
                         "cancel": _JOB["cancel"]})
         elif route == "/api/publish_status":
             self._json(webdata.publish_status())
+        elif route == "/api/wide":
+            # 數字明細寬表(資料核對頁尾),接的資料源跟個體報表頁相同的 data.json
+            self._json(webdata.wide_table())
         elif route == "/api/v4/overview":
             from v4 import ledger
             self._json(ledger.load_all())
@@ -508,6 +542,8 @@ class Handler(SimpleHTTPRequestHandler):
             elif route == "/api/rebucket":
                 self._json(webdata.rebucket(b["name"], b["to"],
                                             bool(b.get("global"))))
+            elif route == "/api/llm_classify":
+                self._json(webdata.llm_classify(reader=b.get("reader") or "claude"))
             elif route == "/api/fetch":
                 self._json(start_autofill(reader=b.get("reader") or "claude",
                                           fetch=b["targets"],
@@ -550,6 +586,13 @@ class Handler(SimpleHTTPRequestHandler):
             elif route == "/api/v4/requeue":
                 # 撤銷改走既有的單一出口(清掉 work/ 的標記檔),不再動 v4/ledger。
                 self._json(webdata.requeue(f"{b['doc']}|{b['cls']}"))
+            elif route == "/api/revoke":
+                # 撤銷人工裁示(v10 洞②)——把這格移出 facts/,回到「還沒抄」。
+                # `why` 必填,標準跟 set_cellmeta 一樣:撤銷是丟掉一個人的判斷。
+                why = (b.get("why") or "").strip()
+                if not why:
+                    raise PageError("一定要填理由(why)才能撤銷人工裁示。")
+                self._json(webdata.revoke(b["doc"], b["cls"], why=why, by=b.get("by")))
             elif route == "/api/v4/run":
                 # 背景跑 reader。共用 _JOB 槽(同一時間只能跑一個之工)。
                 doc_run = b.get("doc", "")

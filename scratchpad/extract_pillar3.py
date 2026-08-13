@@ -59,25 +59,47 @@ def parse(text):
 
 
 def gates(d, tol=0.011):
-    """六道對帳。回 list of 失敗說明。"""
-    f = []
+    """六道對帳。回 (failed, no_witness) 兩個 list —— **不合併成一個**
+    (2026-08-13 v11 R1)。
+
+    原本 `if d.get("own_funds") and ...` 這種寫法,欄位缺就整道跳過、
+    回傳的 list 留空,呼叫端拿「list 是空的」當「六道都過」——但空清單
+    也是「這道根本沒驗」的樣子,兩者在畫面上長得一模一樣。實測 `other_t1`
+    缺 14/100 筆,那 14 筆的「自有資本加總」與「第一類比率」兩道是靜靜跳過的,
+    卻被算進「全過對帳」。這是 `build.py:133` 那段「v4 說驗不到=通過」
+    同一個 conflation,換到這支檔案。
+    """
+    failed, no_witness = [], []
     if not (d.get("rwa") and d.get("cet1")):
-        return ["缺 cet1/rwa"]
-    if abs(d["cet1"] / d["rwa"] * 100 - d["cet1_pct"]) > tol:
-        f.append(f"CET1/RWA {d['cet1']/d['rwa']*100:.4f} != {d['cet1_pct']}")
+        return ["缺 cet1/rwa"], []
+    if d.get("cet1_pct") is None:
+        no_witness.append("CET1/RWA(缺 cet1_pct)")
+    elif abs(d["cet1"] / d["rwa"] * 100 - d["cet1_pct"]) > tol:
+        failed.append(f"CET1/RWA {d['cet1']/d['rwa']*100:.4f} != {d['cet1_pct']}")
     # 容差 5 千元:中信 110H1 合併的印刷值就差 1(文件自己的四捨五入),不是抄錯
-    if d.get("own_funds") and abs(d["cet1"] + d.get("other_t1", 0) + d.get("t2", 0) - d["own_funds"]) > 5:
-        f.append("自有資本加總不符")
-    if d.get("own_funds") and abs(d["own_funds"] / d["rwa"] * 100 - d["bis_pct"]) > tol:
-        f.append("BIS 不符")
-    if d.get("rwa_credit") and d["rwa_credit"] + d["rwa_op"] + d["rwa_mkt"] != d["rwa"]:
-        f.append("RWA 三項加總不符")
-    if abs((d["cet1"] + d.get("other_t1", 0)) / d["rwa"] * 100 - d["t1_pct"]) > tol:
-        f.append("第一類比率不符")
-    if d.get("exposure") and d.get("lev_pct") and \
-            abs(d["lev_t1"] / d["exposure"] * 100 - d["lev_pct"]) > tol:
-        f.append("槓桿比率不符")
-    return f
+    if d.get("own_funds") is None:
+        no_witness.append("自有資本加總(缺 own_funds)")
+    elif abs(d["cet1"] + d.get("other_t1", 0) + d.get("t2", 0) - d["own_funds"]) > 5:
+        failed.append("自有資本加總不符")
+    if d.get("own_funds") is None:
+        no_witness.append("BIS(缺 own_funds)")
+    elif d.get("bis_pct") is None:
+        no_witness.append("BIS(缺 bis_pct)")
+    elif abs(d["own_funds"] / d["rwa"] * 100 - d["bis_pct"]) > tol:
+        failed.append("BIS 不符")
+    if d.get("rwa_credit") is None:
+        no_witness.append("RWA 三項加總(缺 rwa_credit)")
+    elif d["rwa_credit"] + d["rwa_op"] + d["rwa_mkt"] != d["rwa"]:
+        failed.append("RWA 三項加總不符")
+    if d.get("t1_pct") is None:
+        no_witness.append("第一類比率(缺 t1_pct)")
+    elif abs((d["cet1"] + d.get("other_t1", 0)) / d["rwa"] * 100 - d["t1_pct"]) > tol:
+        failed.append("第一類比率不符")
+    if not d.get("exposure") or not d.get("lev_pct"):
+        no_witness.append("槓桿比率(缺 exposure/lev_pct)")
+    elif abs(d["lev_t1"] / d["exposure"] * 100 - d["lev_pct"]) > tol:
+        failed.append("槓桿比率不符")
+    return failed, no_witness
 
 
 out, bad = {}, []
@@ -98,7 +120,7 @@ for p in sorted(CACHE.glob("*.pdf")):
         if col >= width:
             continue
         d = {f: rows[i][col] for i, f in enumerate(FIELDS[:n])}
-        d["_fails"] = gates(d)
+        d["_fails"], d["_no_witness"] = gates(d)
         rec[basis] = d
     rec["_src"] = {"file": p.name, "page": pgno, "sha1": hashlib.sha1(p.read_bytes()).hexdigest()[:8],
                    "cols": width, "rows": len(rows)}
@@ -106,14 +128,20 @@ for p in sorted(CACHE.glob("*.pdf")):
 
 Path("pillar3.json").write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
 
-ok = sum(1 for b in out.values() for r in b.values()
-         for k, v in r.items() if k != "_src" and not v["_fails"])
-tot = sum(1 for b in out.values() for r in b.values() for k in r if k != "_src")
-print(f"寫出 pillar3.json — {sum(len(v) for v in out.values())} 期 × 家,{tot} 個口徑格,{ok} 格全過對帳")
+recs = [v for b in out.values() for r in b.values() for k, v in r.items() if k != "_src"]
+ok = sum(1 for v in recs if not v["_fails"] and not v["_no_witness"])
+partial = sum(1 for v in recs if not v["_fails"] and v["_no_witness"])
+tot = len(recs)
+print(f"寫出 pillar3.json — {sum(len(v) for v in out.values())} 期 × 家,{tot} 個口徑格,"
+      f"{ok} 格六道全過,{partial} 格部分驗不到(no_witness,不算過)")
 for bank, per in out.items():
     for k, r in sorted(per.items()):
         for basis in ("個體", "合併"):
-            if basis in r and r[basis]["_fails"]:
+            if basis not in r:
+                continue
+            if r[basis]["_fails"]:
                 print(f"  ✗ {k} {bank} {basis}: {r[basis]['_fails']}")
+            if r[basis]["_no_witness"]:
+                print(f"  ?  {k} {bank} {basis} 驗不到: {r[basis]['_no_witness']}")
 for b in bad:
     print("  ✗", b)

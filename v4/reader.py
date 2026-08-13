@@ -28,11 +28,12 @@ import time
 
 import pypdfium2 as pdf
 
+import config
 import locate
 
 PDF_DIR = "pdf_cache"
 OUT_DIR = "v4/raw"
-CLASSES = ("Trading", "OCI", "AC")
+CLASSES = tuple(config.CLASSES)
 CLAUDE_TIMEOUT_S = 600  # 實測 2:53~3:43;富邦最大份留雙倍餘裕
 
 #: `witness.run_witness()` 每次都對同一份 PDF 重抽全文——實測 review_queue()

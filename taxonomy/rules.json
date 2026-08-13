@@ -1,2083 +1,2209 @@
 [
-  {
-    "rule_id": "tax:政府公債",
-    "scope": "name",
-    "mapping": "公債",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「政府公債」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('政府公債')[0] == '公債'"
-      },
-      {
-        "kind": "synonym",
-        "detail": "金額=29,223,648  政府公債=政府公債（註三）  桶=公債  [202504_5847_AI3|OCI]",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "buckets.bucket({'name': '政府公債'}) == '公債'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:政府債券",
-    "scope": "name",
-    "mapping": "公債",
-    "state": "PROVISIONAL",
-    "references": [],
-    "derivation_id": null,
-    "approved_by": null,
-    "approved_at": null
-  },
-  {
-    "rule_id": "tax:國庫券",
-    "scope": "name",
-    "mapping": "貨幣市場",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「國庫券」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('國庫券')[0] == '貨幣市場'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:可轉讓定期存單",
-    "scope": "name",
-    "mapping": "可轉讓定存單",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「可轉讓定期存單」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('可轉讓定期存單')[0] == '可轉讓定存單'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:可轉讓定存單",
-    "scope": "name",
-    "mapping": "可轉讓定存單",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「可轉讓定存單」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('可轉讓定存單')[0] == '可轉讓定存單'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:公司債",
-    "scope": "name",
-    "mapping": "公司債",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「公司債」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('公司債')[0] == '公司債'"
-      },
-      {
-        "kind": "synonym",
-        "detail": "金額=118,839,815  公司債券=公司債  桶=公司債  [202404_5843_AI3|OCI]",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "buckets.bucket({'name': '公司債'}) == '公司債'"
-      },
-      {
-        "kind": "synonym",
-        "detail": "金額=21,684,995  公司債券=公司債  桶=公司債  [202404_5843_AI3|Trading]",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "buckets.bucket({'name': '公司債'}) == '公司債'"
-      },
-      {
-        "kind": "synonym",
-        "detail": "金額=105,602,610  公司債券=公司債  桶=公司債  [202504_5843_AI3|OCI]",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "buckets.bucket({'name': '公司債'}) == '公司債'"
-      },
-      {
-        "kind": "synonym",
-        "detail": "金額=28,503,338  公司債券=公司債  桶=公司債  [202504_5843_AI3|Trading]",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "buckets.bucket({'name': '公司債'}) == '公司債'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:公司債券",
-    "scope": "name",
-    "mapping": "公司債",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「公司債」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('公司債券')[0] == '公司債'"
-      },
-      {
-        "kind": "synonym",
-        "detail": "金額=118,839,815  公司債券=公司債  桶=公司債  [202404_5843_AI3|OCI]",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "buckets.bucket({'name': '公司債券'}) == '公司債'"
-      },
-      {
-        "kind": "synonym",
-        "detail": "金額=21,684,995  公司債券=公司債  桶=公司債  [202404_5843_AI3|Trading]",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "buckets.bucket({'name': '公司債券'}) == '公司債'"
-      },
-      {
-        "kind": "synonym",
-        "detail": "金額=105,602,610  公司債券=公司債  桶=公司債  [202504_5843_AI3|OCI]",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "buckets.bucket({'name': '公司債券'}) == '公司債'"
-      },
-      {
-        "kind": "synonym",
-        "detail": "金額=28,503,338  公司債券=公司債  桶=公司債  [202504_5843_AI3|Trading]",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "buckets.bucket({'name': '公司債券'}) == '公司債'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:金融債",
-    "scope": "name",
-    "mapping": "金融債",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「金融債」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('金融債')[0] == '金融債'"
-      },
-      {
-        "kind": "synonym",
-        "detail": "金額=29,073,073  金融債=金融債券  桶=金融債  [202404_5835_AI3|OCI]",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "buckets.bucket({'name': '金融債'}) == '金融債'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:金融債券",
-    "scope": "name",
-    "mapping": "金融債",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「金融債券」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('金融債券')[0] == '金融債'"
-      },
-      {
-        "kind": "synonym",
-        "detail": "金額=29,073,073  金融債=金融債券  桶=金融債  [202404_5835_AI3|OCI]",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "buckets.bucket({'name': '金融債券'}) == '金融債'"
-      },
-      {
-        "kind": "synonym",
-        "detail": "金額=131,465,522  金融債券=金融債券（註二）  桶=金融債  [202504_5847_AI3|OCI]",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "buckets.bucket({'name': '金融債券'}) == '金融債'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:資產基礎證券",
-    "scope": "name",
-    "mapping": "資產基礎",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「資產基礎」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('資產基礎證券')[0] == '資產基礎'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:資產基礎債券",
-    "scope": "name",
-    "mapping": "資產基礎",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「資產基礎」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('資產基礎債券')[0] == '資產基礎'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:證券化商品",
-    "scope": "name",
-    "mapping": "資產基礎",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「證券化商品」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('證券化商品')[0] == '資產基礎'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:其他證券及債券",
-    "scope": "name",
-    "mapping": "其他",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「其他」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('其他證券及債券')[0] == '其他'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:其他",
-    "scope": "name",
-    "mapping": "其他",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「其他」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('其他')[0] == '其他'"
-      },
-      {
-        "kind": "synonym",
-        "detail": "金額=4,053,531  其他=其他（註一）  桶=其他  [202504_5836_AI3|OCI]",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "buckets.bucket({'name': '其他'}) == '其他'"
-      },
-      {
-        "kind": "synonym",
-        "detail": "金額=4,978,995  其他=其他（註）  桶=其他  [202504_5836_AI3|Trading]",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "buckets.bucket({'name': '其他'}) == '其他'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:上市櫃公司股票",
-    "scope": "name",
-    "mapping": "股票",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「上市櫃」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('上市櫃公司股票')[0] == '股票'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:興櫃公司股票",
-    "scope": "name",
-    "mapping": "股票",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「興櫃」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('興櫃公司股票')[0] == '股票'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:非上市、上櫃、興櫃股票",
-    "scope": "name",
-    "mapping": "股票",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「興櫃」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('非上市、上櫃、興櫃股票')[0] == '股票'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:國內上市櫃股票",
-    "scope": "name",
-    "mapping": "股票",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「上市櫃」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('國內上市櫃股票')[0] == '股票'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:國內興櫃股票",
-    "scope": "name",
-    "mapping": "股票",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「興櫃」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('國內興櫃股票')[0] == '股票'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:國外股票",
-    "scope": "name",
-    "mapping": "股票",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「股票」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('國外股票')[0] == '股票'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:國內未上市櫃股票",
-    "scope": "name",
-    "mapping": "股票",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「未上市」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('國內未上市櫃股票')[0] == '股票'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:股票",
-    "scope": "name",
-    "mapping": "股票",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「股票」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('股票')[0] == '股票'"
-      },
-      {
-        "kind": "synonym",
-        "detail": "金額=3,556,907  股票=股票投資  桶=股票  [202404_5841_AI3|Trading]",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "buckets.bucket({'name': '股票'}) == '股票'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:受益憑證",
-    "scope": "name",
-    "mapping": "股票",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「受益憑證」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('受益憑證')[0] == '股票'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:基金受益憑證",
-    "scope": "name",
-    "mapping": "股票",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「受益憑證」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('基金受益憑證')[0] == '股票'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:衍生工具",
-    "scope": "name",
-    "mapping": "衍生",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「衍生」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('衍生工具')[0] == '衍生'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:利率交換合約",
-    "scope": "name",
-    "mapping": "衍生",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「利率交換」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('利率交換合約')[0] == '衍生'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:貨幣交換",
-    "scope": "name",
-    "mapping": "衍生",
-    "state": "PROVISIONAL",
-    "references": [],
-    "derivation_id": null,
-    "approved_by": null,
-    "approved_at": null
-  },
-  {
-    "rule_id": "tax:遠期外匯合約",
-    "scope": "name",
-    "mapping": "衍生",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「遠期外匯」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('遠期外匯合約')[0] == '衍生'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:信用違約交換",
-    "scope": "name",
-    "mapping": "衍生",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「信用違約交換」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('信用違約交換')[0] == '衍生'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:選擇權",
-    "scope": "name",
-    "mapping": "衍生",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「選擇權」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('選擇權')[0] == '衍生'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:資產交換合約",
-    "scope": "name",
-    "mapping": "衍生",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「資產交換」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('資產交換合約')[0] == '衍生'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:評價調整",
-    "scope": "name",
-    "mapping": "評價調整",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「評價調整」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('評價調整')[0] == '評價調整'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:金融資產評價調整",
-    "scope": "name",
-    "mapping": "評價調整",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「金融資產評價調整」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('金融資產評價調整')[0] == '評價調整'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:上市(櫃)股票",
-    "scope": "name",
-    "mapping": "股票",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「股票」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('上市(櫃)股票')[0] == '股票'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:未上市(櫃)股票",
-    "scope": "name",
-    "mapping": "股票",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「未上市」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('未上市(櫃)股票')[0] == '股票'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:商業本票",
-    "scope": "name",
-    "mapping": "貨幣市場",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「商業本票」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('商業本票')[0] == '貨幣市場'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:可轉換公司債",
-    "scope": "name",
-    "mapping": "公司債",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「可轉換公司債」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('可轉換公司債')[0] == '公司債'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:外匯換匯合約",
-    "scope": "name",
-    "mapping": "衍生",
-    "state": "PROVISIONAL",
-    "references": [],
-    "derivation_id": null,
-    "approved_by": null,
-    "approved_at": null
-  },
-  {
-    "rule_id": "tax:REITs",
-    "scope": "name",
-    "mapping": "資產基礎",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「REITs」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('REITs')[0] == '資產基礎'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:上市(櫃)及興櫃股票",
-    "scope": "name",
-    "mapping": "股票",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「興櫃」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('上市(櫃)及興櫃股票')[0] == '股票'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:不動產投資信託受益證券",
-    "scope": "name",
-    "mapping": "資產基礎",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "human",
-        "detail": "commit 166934fe: 使用者裁示 — 名字直譯 REIT,BUCKET_RULES 資產基礎條明列 REITs",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": null
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 人工裁示(commit 166934fe):名字直譯即 REIT,BUCKET_RULES 資產基礎條已明列 REITs,歸屬與既有規則一致。 (by henrylin)",
-        "at": "2026-07-28T15:35:44",
-        "recheck": null
-      }
-    ],
-    "derivation_id": null,
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:35:44"
-  },
-  {
-    "rule_id": "tax:備抵損失",
-    "scope": "name",
-    "mapping": "評價調整",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「備抵損失」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('備抵損失')[0] == '評價調整'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:減：備抵損失",
-    "scope": "name",
-    "mapping": "評價調整",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「備抵損失」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('減：備抵損失')[0] == '評價調整'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:其他證券",
-    "scope": "name",
-    "mapping": "其他",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「其他」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('其他證券')[0] == '其他'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:國外機構發行債券",
-    "scope": "name",
-    "mapping": "公債",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "human",
-        "detail": "commit 3d7552e3: 使用者裁示 — 券號 US9128282A70/US91282CAV37 (CUSIP 912828/91282C = 美國財政部公債)",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": null
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 人工裁示(commit 3d7552e3):玉山明細表券號 US9128282A70/US91282CAV37,CUSIP 開頭 912828/91282C 為美國財政部公債,判定為公債類。 (by henrylin)",
-        "at": "2026-07-28T15:35:44",
-        "recheck": null
-      }
-    ],
-    "derivation_id": null,
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:35:44"
-  },
-  {
-    "rule_id": "tax:央行定期存單",
-    "scope": "name",
-    "mapping": "可轉讓定存單",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「央行定期存單」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('央行定期存單')[0] == '可轉讓定存單'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:銀行定期存單",
-    "scope": "name",
-    "mapping": "可轉讓定存單",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「銀行定期存單」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('銀行定期存單')[0] == '可轉讓定存單'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:短期票券",
-    "scope": "name",
-    "mapping": "貨幣市場",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「短期票券」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('短期票券')[0] == '貨幣市場'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:減：累計減損",
-    "scope": "name",
-    "mapping": "評價調整",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「累計減損」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('減：累計減損')[0] == '評價調整'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:資產證券化商品",
-    "scope": "name",
-    "mapping": "資產基礎",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「證券化商品」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('資產證券化商品')[0] == '資產基礎'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:CMO",
-    "scope": "name",
-    "mapping": "資產基礎",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "arithmetic",
-        "detail": "富邦明細表 p154: CMO+RMBS=61,332,697=附註資產證券化商品  [202404_5836_AI3|AC]",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "__import__('core.recheck', fromlist=['x']).names_sum_matches('202404_5836_AI3|AC', ['CMO', 'RMBS'], '資產證券化商品')"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 算術:富邦明細表 p154,CMO+RMBS=61,332,697=附註「資產證券化商品」,一列拆兩列的等式關係,歸屬與附註一致(資產基礎)。 (by henrylin)",
-        "at": "2026-07-28T15:35:44",
-        "recheck": null
-      }
-    ],
-    "derivation_id": null,
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:35:44"
-  },
-  {
-    "rule_id": "tax:RMBS",
-    "scope": "name",
-    "mapping": "資產基礎",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "arithmetic",
-        "detail": "富邦明細表 p154: CMO+RMBS=61,332,697=附註資產證券化商品  [202404_5836_AI3|AC]",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "__import__('core.recheck', fromlist=['x']).names_sum_matches('202404_5836_AI3|AC', ['CMO', 'RMBS'], '資產證券化商品')"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 算術:富邦明細表 p154,CMO+RMBS=61,332,697=附註「資產證券化商品」,一列拆兩列的等式關係,歸屬與附註一致(資產基礎)。 (by henrylin)",
-        "at": "2026-07-28T15:35:44",
-        "recheck": null
-      }
-    ],
-    "derivation_id": null,
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:35:44"
-  },
-  {
-    "rule_id": "tax:定存單",
-    "scope": "name",
-    "mapping": "可轉讓定存單",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "arithmetic",
-        "detail": "兆豐 202404 OCI: 銀行定存單+定期存單-可轉讓=15,396,926=附註定存單(取得成本口徑對齊)  [202404_5843_AI3|OCI]",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "__import__('core.recheck', fromlist=['x']).names_sum_matches('202404_5843_AI3|OCI', ['銀行定存單', '定期存單-可轉讓'], '定存單', prefer_cost=True)"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 算術:兆豐 202404 OCI,銀行定存單+定期存單-可轉讓=15,396,926=附註「定存單」(取得成本口徑對齊),歸屬與附註一致(可轉讓定存單)。 (by henrylin)",
-        "at": "2026-07-28T15:35:44",
-        "recheck": null
-      }
-    ],
-    "derivation_id": null,
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:35:44"
-  },
-  {
-    "rule_id": "tax:銀行定存單",
-    "scope": "name",
-    "mapping": "可轉讓定存單",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「銀行定存單」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('銀行定存單')[0] == '可轉讓定存單'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:定期存單-可轉讓",
-    "scope": "name",
-    "mapping": "可轉讓定存單",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "arithmetic",
-        "detail": "兆豐 202404 OCI: 銀行定存單+定期存單-可轉讓=15,396,926=附註定存單(取得成本口徑對齊)  [202404_5843_AI3|OCI]",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "__import__('core.recheck', fromlist=['x']).names_sum_matches('202404_5843_AI3|OCI', ['銀行定存單', '定期存單-可轉讓'], '定存單', prefer_cost=True)"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 算術:兆豐 202404 OCI,銀行定存單+定期存單-可轉讓=15,396,926=附註「定存單」(取得成本口徑對齊),歸屬與附註一致(可轉讓定存單)。 (by henrylin)",
-        "at": "2026-07-28T15:35:44",
-        "recheck": null
-      }
-    ],
-    "derivation_id": null,
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:35:44"
-  },
-  {
-    "rule_id": "tax:股票投資",
-    "scope": "name",
-    "mapping": "股票",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「股票」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('股票投資')[0] == '股票'"
-      },
-      {
-        "kind": "synonym",
-        "detail": "金額=3,556,907  股票=股票投資  桶=股票  [202404_5841_AI3|Trading]",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "buckets.bucket({'name': '股票投資'}) == '股票'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:換匯換利合約",
-    "scope": "name",
-    "mapping": "衍生",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「換匯換利」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('換匯換利合約')[0] == '衍生'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:其他(註)",
-    "scope": "name",
-    "mapping": "其他",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「其他」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('其他(註)')[0] == '其他'"
-      },
-      {
-        "kind": "synonym",
-        "detail": "金額=4,978,995  其他=其他（註）  桶=其他  [202504_5836_AI3|Trading]",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "buckets.bucket({'name': '其他（註）'}) == '其他'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:其他(註一)",
-    "scope": "name",
-    "mapping": "其他",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「其他」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('其他(註一)')[0] == '其他'"
-      },
-      {
-        "kind": "synonym",
-        "detail": "金額=4,053,531  其他=其他（註一）  桶=其他  [202504_5836_AI3|OCI]",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "buckets.bucket({'name': '其他（註一）'}) == '其他'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:衍生金融資產",
-    "scope": "name",
-    "mapping": "衍生",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「衍生」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('衍生金融資產')[0] == '衍生'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:遠期外匯",
-    "scope": "name",
-    "mapping": "衍生",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「遠期外匯」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('遠期外匯')[0] == '衍生'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:無本金交割遠期外匯",
-    "scope": "name",
-    "mapping": "衍生",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「遠期外匯」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('無本金交割遠期外匯')[0] == '衍生'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:換匯",
-    "scope": "name",
-    "mapping": "衍生",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "arithmetic",
-        "detail": "中信明細表「衍生金融工具」段8列相加=78,086,700=附註「衍生金融資產」(202404 Trading p31/p147)  [202404_5841_AI3|Trading]",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "__import__('core.recheck', fromlist=['x']).group_sum_matches('202404_5841_AI3|Trading', '衍生金融工具', '衍生金融資產')"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 算術:中信 202404 Trading,明細表「衍生金融工具」段8列相加=78,086,700=附註「衍生金融資產」,歸屬與附註一致(衍生)。 (by henrylin)",
-        "at": "2026-07-28T15:35:44",
-        "recheck": null
-      }
-    ],
-    "derivation_id": null,
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:35:44"
-  },
-  {
-    "rule_id": "tax:換匯換利",
-    "scope": "name",
-    "mapping": "衍生",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「換匯換利」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('換匯換利')[0] == '衍生'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:利率交換",
-    "scope": "name",
-    "mapping": "衍生",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「利率交換」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('利率交換')[0] == '衍生'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:期貨",
-    "scope": "name",
-    "mapping": "衍生",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「期貨」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('期貨')[0] == '衍生'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:商品交換",
-    "scope": "name",
-    "mapping": "衍生",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "arithmetic",
-        "detail": "中信明細表「衍生金融工具」段8列相加=78,086,700=附註「衍生金融資產」(202404 Trading p31/p147)  [202404_5841_AI3|Trading]",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "__import__('core.recheck', fromlist=['x']).group_sum_matches('202404_5841_AI3|Trading', '衍生金融工具', '衍生金融資產')"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 算術:中信 202404 Trading,明細表「衍生金融工具」段8列相加=78,086,700=附註「衍生金融資產」,歸屬與附註一致(衍生)。 (by henrylin)",
-        "at": "2026-07-28T15:35:44",
-        "recheck": null
-      }
-    ],
-    "derivation_id": null,
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:35:44"
-  },
-  {
-    "rule_id": "tax:外匯選擇權合約",
-    "scope": "name",
-    "mapping": "衍生",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「選擇權」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('外匯選擇權合約')[0] == '衍生'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:無本金交割遠期外匯合約",
-    "scope": "name",
-    "mapping": "衍生",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「遠期外匯」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('無本金交割遠期外匯合約')[0] == '衍生'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:期貨交易保證金－自有資金",
-    "scope": "name",
-    "mapping": "衍生",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「期貨」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('期貨交易保證金－自有資金')[0] == '衍生'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:利率選擇權合約",
-    "scope": "name",
-    "mapping": "衍生",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「選擇權」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('利率選擇權合約')[0] == '衍生'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:股票及基金",
-    "scope": "name",
-    "mapping": "股票",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「股票」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('股票及基金')[0] == '股票'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:金融債券(註二)",
-    "scope": "name",
-    "mapping": "金融債",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「金融債券」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('金融債券(註二)')[0] == '金融債'"
-      },
-      {
-        "kind": "synonym",
-        "detail": "金額=131,465,522  金融債券=金融債券（註二）  桶=金融債  [202504_5847_AI3|OCI]",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "buckets.bucket({'name': '金融債券（註二）'}) == '金融債'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:政府公債(註三)",
-    "scope": "name",
-    "mapping": "公債",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「政府公債」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('政府公債(註三)')[0] == '公債'"
-      },
-      {
-        "kind": "synonym",
-        "detail": "金額=29,223,648  政府公債=政府公債（註三）  桶=公債  [202504_5847_AI3|OCI]",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "buckets.bucket({'name': '政府公債（註三）'}) == '公債'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:group:衍生金融資產",
-    "scope": "group",
-    "mapping": "衍生",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「衍生」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('衍生金融資產')[0] == '衍生'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:group:衍生金融負債",
-    "scope": "group",
-    "mapping": "衍生",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「衍生」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('衍生金融負債')[0] == '衍生'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:group:衍生工具",
-    "scope": "group",
-    "mapping": "衍生",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「衍生」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('衍生工具')[0] == '衍生'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:group:衍生性金融商品",
-    "scope": "group",
-    "mapping": "衍生",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「衍生」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('衍生性金融商品')[0] == '衍生'"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:group:衍生金融工具",
-    "scope": "group",
-    "mapping": "衍生",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "rule",
-        "detail": "BUCKET_RULES 關鍵字「衍生」",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "rules.propose('衍生金融工具')[0] == '衍生'"
-      },
-      {
-        "kind": "arithmetic",
-        "detail": "中信 202504 Trading: 衍生金融工具段7列相加=56,768,874=附註衍生金融資產  [202504_5841_AI3|Trading]",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": "__import__('core.recheck', fromlist=['x']).group_sum_matches('202504_5841_AI3|Trading', '衍生金融工具', '衍生金融資產')"
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
-        "at": "2026-07-28T15:33:19",
-        "recheck": null
-      }
-    ],
-    "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:33:19"
-  },
-  {
-    "rule_id": "tax:generic:其他",
-    "scope": "generic",
-    "mapping": null,
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "group",
-        "detail": "『其他』是通稱,不自帶會計意義 —— 桶由所在段落的 GROUP_SYN 決定(BUCKET_RULES「其他:表上真的印著『其他』的列」),非機械可重驗,待人工確認",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": null
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 通稱判斷:『其他』不自帶會計意義,桶由所在段落的 GROUP_SYN 決定(BUCKET_RULES 已明文:「其他」限表上真的印著『其他』的列)。 (by henrylin)",
-        "at": "2026-07-28T15:35:44",
-        "recheck": null
-      }
-    ],
-    "derivation_id": null,
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:35:44"
-  },
-  {
-    "rule_id": "tax:generic:其他(註)",
-    "scope": "generic",
-    "mapping": null,
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "group",
-        "detail": "『其他』是通稱,不自帶會計意義 —— 桶由所在段落的 GROUP_SYN 決定(BUCKET_RULES「其他:表上真的印著『其他』的列」),非機械可重驗,待人工確認",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": null
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 通稱判斷:同上,『其他（註）』是註腳記號不是名稱的一部分,桶由所在段落決定。 (by henrylin)",
-        "at": "2026-07-28T15:35:44",
-        "recheck": null
-      }
-    ],
-    "derivation_id": null,
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:35:44"
-  },
-  {
-    "rule_id": "tax:generic:其他(註一)",
-    "scope": "generic",
-    "mapping": null,
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "group",
-        "detail": "『其他』是通稱,不自帶會計意義 —— 桶由所在段落的 GROUP_SYN 決定(BUCKET_RULES「其他:表上真的印著『其他』的列」),非機械可重驗,待人工確認",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": null
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 通稱判斷:同上,『其他（註一）』是註腳記號不是名稱的一部分,桶由所在段落決定。 (by henrylin)",
-        "at": "2026-07-28T15:35:44",
-        "recheck": null
-      }
-    ],
-    "derivation_id": null,
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:35:44"
-  },
-  {
-    "rule_id": "tax:generic:其他項目",
-    "scope": "generic",
-    "mapping": null,
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "group",
-        "detail": "『其他』是通稱,不自帶會計意義 —— 桶由所在段落的 GROUP_SYN 決定(BUCKET_RULES「其他:表上真的印著『其他』的列」),非機械可重驗,待人工確認",
-        "at": "2026-07-28T07:30:14.569937Z",
-        "recheck": null
-      },
-      {
-        "kind": "human",
-        "detail": "ratify: 通稱判斷:同上,『其他項目』桶由所在段落決定。 (by henrylin)",
-        "at": "2026-07-28T15:35:44",
-        "recheck": null
-      }
-    ],
-    "derivation_id": null,
-    "approved_by": "henrylin",
-    "approved_at": "2026-07-28T15:35:44"
-  },
-  {
-    "rule_id": "tax:受益證券",
-    "scope": "name",
-    "mapping": "資產基礎",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "human",
-        "detail": "buckets.py:184 SYN 既有規則,人工佐證見同檔 174-182 行(兆豐 202104/202204 OCI 附註金額與明細表逐字相同;段落標「債務工具」段的受益證券＝金融資產證券化受益證券,非權益工具)。2026-08-12 test_decide_equiv.py 發現 taxonomy/rules.json 漏收此條,補齊",
-        "at": "2026-08-12T02:57:48.498884Z",
-        "recheck": null
-      }
-    ],
-    "derivation_id": null,
-    "approved_by": "henrylin",
-    "approved_at": "2026-08-12T02:57:48.498884Z"
-  },
-  {
-    "rule_id": "tax:結構型債券",
-    "scope": "name",
-    "mapping": "公司債",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "human",
-        "detail": "buckets.py:188 SYN 既有規則,人工佐證見同檔 186 行(結構型債券多由金融機構或企業發行,群組裡最接近公司債)。2026-08-12 test_decide_equiv.py 發現 taxonomy/rules.json 漏收此條,補齊",
-        "at": "2026-08-12T02:57:48.498884Z",
-        "recheck": null
-      }
-    ],
-    "derivation_id": null,
-    "approved_by": "henrylin",
-    "approved_at": "2026-08-12T02:57:48.498884Z"
-  },
-  {
-    "rule_id": "tax:金屬商品交換合約",
-    "scope": "name",
-    "mapping": "衍生",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "human",
-        "detail": "buckets.py:167 SYN 既有規則(商品交換合約,衍生工具的一種)。2026-08-12 test_decide_equiv.py 發現 taxonomy/rules.json 漏收此條,補齊",
-        "at": "2026-08-12T02:57:48.498884Z",
-        "recheck": null
-      }
-    ],
-    "derivation_id": null,
-    "approved_by": "henrylin",
-    "approved_at": "2026-08-12T02:57:48.498884Z"
-  },
-  {
-    "rule_id": "tax:資產證券化",
-    "scope": "name",
-    "mapping": "資產基礎",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "human",
-        "detail": "buckets.py SYN 既有規則(資產證券化商品,歸資產基礎)。2026-08-12 test_decide_equiv.py 發現 taxonomy/rules.json 漏收此條,補齊",
-        "at": "2026-08-12T03:02:19.479485+00:00",
-        "recheck": null
-      }
-    ],
-    "derivation_id": null,
-    "approved_by": "henrylin",
-    "approved_at": "2026-08-12T03:02:19.479485+00:00"
-  },
-  {
-    "rule_id": "tax:CMO擔保房貸憑證",
-    "scope": "name",
-    "mapping": "資產基礎",
-    "state": "CONFIRMED",
-    "references": [
-      {
-        "kind": "human",
-        "detail": "buckets.py SYN 既有規則(CMO=Collateralized Mortgage Obligation,不動產抵押貸款證券,歸資產基礎)。2026-08-12 test_decide_equiv.py 發現 taxonomy/rules.json 漏收此條,補齊。⚠️ rule_id 含名稱中間的空白(CMO 與擔保房貸憑證之間),這是 decide() 的 _norm() 只去掉全形/半形空白特定字元、且 taxonomy 的 name 未經同一個 norm 前處理就存 —— 這裡照 name_norm 的實際產出存,不手動改空白",
-        "at": "2026-08-12T03:02:19.479485+00:00",
-        "recheck": null
-      }
-    ],
-    "derivation_id": null,
-    "approved_by": "henrylin",
-    "approved_at": "2026-08-12T03:02:19.479485+00:00"
-  }
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "公債",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「政府公債」",
+    "kind": "rule",
+    "recheck": "rules.propose('政府公債')[0] == '公債'"
+   },
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "金額=29,223,648  政府公債=政府公債（註三）  桶=公債  [202504_5847_AI3|OCI]",
+    "kind": "synonym",
+    "recheck": "buckets.bucket({'name': '政府公債'}) == '公債'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:政府公債",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": null,
+  "approved_by": null,
+  "derivation_id": null,
+  "mapping": "公債",
+  "references": [],
+  "rule_id": "tax:政府債券",
+  "scope": "name",
+  "state": "PROVISIONAL"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "貨幣市場",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「國庫券」",
+    "kind": "rule",
+    "recheck": "rules.propose('國庫券')[0] == '貨幣市場'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:國庫券",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "可轉讓定存單",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「可轉讓定期存單」",
+    "kind": "rule",
+    "recheck": "rules.propose('可轉讓定期存單')[0] == '可轉讓定存單'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:可轉讓定期存單",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "可轉讓定存單",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「可轉讓定存單」",
+    "kind": "rule",
+    "recheck": "rules.propose('可轉讓定存單')[0] == '可轉讓定存單'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:可轉讓定存單",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "公司債",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「公司債」",
+    "kind": "rule",
+    "recheck": "rules.propose('公司債')[0] == '公司債'"
+   },
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "金額=118,839,815  公司債券=公司債  桶=公司債  [202404_5843_AI3|OCI]",
+    "kind": "synonym",
+    "recheck": "buckets.bucket({'name': '公司債'}) == '公司債'"
+   },
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "金額=21,684,995  公司債券=公司債  桶=公司債  [202404_5843_AI3|Trading]",
+    "kind": "synonym",
+    "recheck": "buckets.bucket({'name': '公司債'}) == '公司債'"
+   },
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "金額=105,602,610  公司債券=公司債  桶=公司債  [202504_5843_AI3|OCI]",
+    "kind": "synonym",
+    "recheck": "buckets.bucket({'name': '公司債'}) == '公司債'"
+   },
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "金額=28,503,338  公司債券=公司債  桶=公司債  [202504_5843_AI3|Trading]",
+    "kind": "synonym",
+    "recheck": "buckets.bucket({'name': '公司債'}) == '公司債'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:公司債",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "公司債",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「公司債」",
+    "kind": "rule",
+    "recheck": "rules.propose('公司債券')[0] == '公司債'"
+   },
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "金額=118,839,815  公司債券=公司債  桶=公司債  [202404_5843_AI3|OCI]",
+    "kind": "synonym",
+    "recheck": "buckets.bucket({'name': '公司債券'}) == '公司債'"
+   },
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "金額=21,684,995  公司債券=公司債  桶=公司債  [202404_5843_AI3|Trading]",
+    "kind": "synonym",
+    "recheck": "buckets.bucket({'name': '公司債券'}) == '公司債'"
+   },
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "金額=105,602,610  公司債券=公司債  桶=公司債  [202504_5843_AI3|OCI]",
+    "kind": "synonym",
+    "recheck": "buckets.bucket({'name': '公司債券'}) == '公司債'"
+   },
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "金額=28,503,338  公司債券=公司債  桶=公司債  [202504_5843_AI3|Trading]",
+    "kind": "synonym",
+    "recheck": "buckets.bucket({'name': '公司債券'}) == '公司債'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:公司債券",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "金融債",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「金融債」",
+    "kind": "rule",
+    "recheck": "rules.propose('金融債')[0] == '金融債'"
+   },
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "金額=29,073,073  金融債=金融債券  桶=金融債  [202404_5835_AI3|OCI]",
+    "kind": "synonym",
+    "recheck": "buckets.bucket({'name': '金融債'}) == '金融債'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:金融債",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "金融債",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「金融債券」",
+    "kind": "rule",
+    "recheck": "rules.propose('金融債券')[0] == '金融債'"
+   },
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "金額=29,073,073  金融債=金融債券  桶=金融債  [202404_5835_AI3|OCI]",
+    "kind": "synonym",
+    "recheck": "buckets.bucket({'name': '金融債券'}) == '金融債'"
+   },
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "金額=131,465,522  金融債券=金融債券（註二）  桶=金融債  [202504_5847_AI3|OCI]",
+    "kind": "synonym",
+    "recheck": "buckets.bucket({'name': '金融債券'}) == '金融債'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:金融債券",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "資產基礎",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「資產基礎」",
+    "kind": "rule",
+    "recheck": "rules.propose('資產基礎證券')[0] == '資產基礎'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:資產基礎證券",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "資產基礎",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「資產基礎」",
+    "kind": "rule",
+    "recheck": "rules.propose('資產基礎債券')[0] == '資產基礎'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:資產基礎債券",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "資產基礎",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「證券化商品」",
+    "kind": "rule",
+    "recheck": "rules.propose('證券化商品')[0] == '資產基礎'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:證券化商品",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "其他",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「其他」",
+    "kind": "rule",
+    "recheck": "rules.propose('其他證券及債券')[0] == '其他'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:其他證券及債券",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "其他",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「其他」",
+    "kind": "rule",
+    "recheck": "rules.propose('其他')[0] == '其他'"
+   },
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "金額=4,053,531  其他=其他（註一）  桶=其他  [202504_5836_AI3|OCI]",
+    "kind": "synonym",
+    "recheck": "buckets.bucket({'name': '其他'}) == '其他'"
+   },
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "金額=4,978,995  其他=其他（註）  桶=其他  [202504_5836_AI3|Trading]",
+    "kind": "synonym",
+    "recheck": "buckets.bucket({'name': '其他'}) == '其他'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:其他",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "股票",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「上市櫃」",
+    "kind": "rule",
+    "recheck": "rules.propose('上市櫃公司股票')[0] == '股票'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:上市櫃公司股票",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "股票",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「興櫃」",
+    "kind": "rule",
+    "recheck": "rules.propose('興櫃公司股票')[0] == '股票'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:興櫃公司股票",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "股票",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「興櫃」",
+    "kind": "rule",
+    "recheck": "rules.propose('非上市、上櫃、興櫃股票')[0] == '股票'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:非上市、上櫃、興櫃股票",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "股票",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「上市櫃」",
+    "kind": "rule",
+    "recheck": "rules.propose('國內上市櫃股票')[0] == '股票'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:國內上市櫃股票",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "股票",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「興櫃」",
+    "kind": "rule",
+    "recheck": "rules.propose('國內興櫃股票')[0] == '股票'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:國內興櫃股票",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "股票",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「股票」",
+    "kind": "rule",
+    "recheck": "rules.propose('國外股票')[0] == '股票'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:國外股票",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "股票",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「未上市」",
+    "kind": "rule",
+    "recheck": "rules.propose('國內未上市櫃股票')[0] == '股票'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:國內未上市櫃股票",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "股票",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「股票」",
+    "kind": "rule",
+    "recheck": "rules.propose('股票')[0] == '股票'"
+   },
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "金額=3,556,907  股票=股票投資  桶=股票  [202404_5841_AI3|Trading]",
+    "kind": "synonym",
+    "recheck": "buckets.bucket({'name': '股票'}) == '股票'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:股票",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "股票",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「受益憑證」",
+    "kind": "rule",
+    "recheck": "rules.propose('受益憑證')[0] == '股票'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:受益憑證",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "股票",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「受益憑證」",
+    "kind": "rule",
+    "recheck": "rules.propose('基金受益憑證')[0] == '股票'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:基金受益憑證",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "衍生",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「衍生」",
+    "kind": "rule",
+    "recheck": "rules.propose('衍生工具')[0] == '衍生'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:衍生工具",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "衍生",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「利率交換」",
+    "kind": "rule",
+    "recheck": "rules.propose('利率交換合約')[0] == '衍生'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:利率交換合約",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": null,
+  "approved_by": null,
+  "derivation_id": null,
+  "mapping": "衍生",
+  "references": [],
+  "rule_id": "tax:貨幣交換",
+  "scope": "name",
+  "state": "PROVISIONAL"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "衍生",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「遠期外匯」",
+    "kind": "rule",
+    "recheck": "rules.propose('遠期外匯合約')[0] == '衍生'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:遠期外匯合約",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "衍生",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「信用違約交換」",
+    "kind": "rule",
+    "recheck": "rules.propose('信用違約交換')[0] == '衍生'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:信用違約交換",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "衍生",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「選擇權」",
+    "kind": "rule",
+    "recheck": "rules.propose('選擇權')[0] == '衍生'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:選擇權",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "衍生",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「資產交換」",
+    "kind": "rule",
+    "recheck": "rules.propose('資產交換合約')[0] == '衍生'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:資產交換合約",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "評價調整",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「評價調整」",
+    "kind": "rule",
+    "recheck": "rules.propose('評價調整')[0] == '評價調整'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:評價調整",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "評價調整",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「金融資產評價調整」",
+    "kind": "rule",
+    "recheck": "rules.propose('金融資產評價調整')[0] == '評價調整'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:金融資產評價調整",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "股票",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「股票」",
+    "kind": "rule",
+    "recheck": "rules.propose('上市(櫃)股票')[0] == '股票'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:上市(櫃)股票",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "股票",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「未上市」",
+    "kind": "rule",
+    "recheck": "rules.propose('未上市(櫃)股票')[0] == '股票'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:未上市(櫃)股票",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "貨幣市場",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「商業本票」",
+    "kind": "rule",
+    "recheck": "rules.propose('商業本票')[0] == '貨幣市場'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:商業本票",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "公司債",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「可轉換公司債」",
+    "kind": "rule",
+    "recheck": "rules.propose('可轉換公司債')[0] == '公司債'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:可轉換公司債",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": null,
+  "approved_by": null,
+  "derivation_id": null,
+  "mapping": "衍生",
+  "references": [],
+  "rule_id": "tax:外匯換匯合約",
+  "scope": "name",
+  "state": "PROVISIONAL"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "資產基礎",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「REITs」",
+    "kind": "rule",
+    "recheck": "rules.propose('REITs')[0] == '資產基礎'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:REITs",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "股票",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「興櫃」",
+    "kind": "rule",
+    "recheck": "rules.propose('上市(櫃)及興櫃股票')[0] == '股票'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:上市(櫃)及興櫃股票",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:35:44",
+  "approved_by": "henrylin",
+  "derivation_id": null,
+  "mapping": "資產基礎",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "commit 166934fe: 使用者裁示 — 名字直譯 REIT,BUCKET_RULES 資產基礎條明列 REITs",
+    "kind": "human",
+    "recheck": null
+   },
+   {
+    "at": "2026-07-28T15:35:44",
+    "detail": "ratify: 人工裁示(commit 166934fe):名字直譯即 REIT,BUCKET_RULES 資產基礎條已明列 REITs,歸屬與既有規則一致。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:不動產投資信託受益證券",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "評價調整",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「備抵損失」",
+    "kind": "rule",
+    "recheck": "rules.propose('備抵損失')[0] == '評價調整'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:備抵損失",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "評價調整",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「備抵損失」",
+    "kind": "rule",
+    "recheck": "rules.propose('減：備抵損失')[0] == '評價調整'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:減：備抵損失",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "其他",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「其他」",
+    "kind": "rule",
+    "recheck": "rules.propose('其他證券')[0] == '其他'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:其他證券",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:35:44",
+  "approved_by": "henrylin",
+  "derivation_id": null,
+  "mapping": "公債",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "commit 3d7552e3: 使用者裁示 — 券號 US9128282A70/US91282CAV37 (CUSIP 912828/91282C = 美國財政部公債)",
+    "kind": "human",
+    "recheck": null
+   },
+   {
+    "at": "2026-07-28T15:35:44",
+    "detail": "ratify: 人工裁示(commit 3d7552e3):玉山明細表券號 US9128282A70/US91282CAV37,CUSIP 開頭 912828/91282C 為美國財政部公債,判定為公債類。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:國外機構發行債券",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "可轉讓定存單",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「央行定期存單」",
+    "kind": "rule",
+    "recheck": "rules.propose('央行定期存單')[0] == '可轉讓定存單'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:央行定期存單",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "可轉讓定存單",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「銀行定期存單」",
+    "kind": "rule",
+    "recheck": "rules.propose('銀行定期存單')[0] == '可轉讓定存單'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:銀行定期存單",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "貨幣市場",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「短期票券」",
+    "kind": "rule",
+    "recheck": "rules.propose('短期票券')[0] == '貨幣市場'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:短期票券",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "評價調整",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「累計減損」",
+    "kind": "rule",
+    "recheck": "rules.propose('減：累計減損')[0] == '評價調整'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:減：累計減損",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "資產基礎",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「證券化商品」",
+    "kind": "rule",
+    "recheck": "rules.propose('資產證券化商品')[0] == '資產基礎'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:資產證券化商品",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:35:44",
+  "approved_by": "henrylin",
+  "derivation_id": null,
+  "mapping": "資產基礎",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "富邦明細表 p154: CMO+RMBS=61,332,697=附註資產證券化商品  [202404_5836_AI3|AC]",
+    "kind": "arithmetic",
+    "recheck": "__import__('core.recheck', fromlist=['x']).names_sum_matches('202404_5836_AI3|AC', ['CMO', 'RMBS'], '資產證券化商品')"
+   },
+   {
+    "at": "2026-07-28T15:35:44",
+    "detail": "ratify: 算術:富邦明細表 p154,CMO+RMBS=61,332,697=附註「資產證券化商品」,一列拆兩列的等式關係,歸屬與附註一致(資產基礎)。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:CMO",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:35:44",
+  "approved_by": "henrylin",
+  "derivation_id": null,
+  "mapping": "資產基礎",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "富邦明細表 p154: CMO+RMBS=61,332,697=附註資產證券化商品  [202404_5836_AI3|AC]",
+    "kind": "arithmetic",
+    "recheck": "__import__('core.recheck', fromlist=['x']).names_sum_matches('202404_5836_AI3|AC', ['CMO', 'RMBS'], '資產證券化商品')"
+   },
+   {
+    "at": "2026-07-28T15:35:44",
+    "detail": "ratify: 算術:富邦明細表 p154,CMO+RMBS=61,332,697=附註「資產證券化商品」,一列拆兩列的等式關係,歸屬與附註一致(資產基礎)。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:RMBS",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:35:44",
+  "approved_by": "henrylin",
+  "derivation_id": null,
+  "mapping": "可轉讓定存單",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "兆豐 202404 OCI: 銀行定存單+定期存單-可轉讓=15,396,926=附註定存單(取得成本口徑對齊)  [202404_5843_AI3|OCI]",
+    "kind": "arithmetic",
+    "recheck": "__import__('core.recheck', fromlist=['x']).names_sum_matches('202404_5843_AI3|OCI', ['銀行定存單', '定期存單-可轉讓'], '定存單', prefer_cost=True)"
+   },
+   {
+    "at": "2026-07-28T15:35:44",
+    "detail": "ratify: 算術:兆豐 202404 OCI,銀行定存單+定期存單-可轉讓=15,396,926=附註「定存單」(取得成本口徑對齊),歸屬與附註一致(可轉讓定存單)。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:定存單",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "可轉讓定存單",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「銀行定存單」",
+    "kind": "rule",
+    "recheck": "rules.propose('銀行定存單')[0] == '可轉讓定存單'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:銀行定存單",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:35:44",
+  "approved_by": "henrylin",
+  "derivation_id": null,
+  "mapping": "可轉讓定存單",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "兆豐 202404 OCI: 銀行定存單+定期存單-可轉讓=15,396,926=附註定存單(取得成本口徑對齊)  [202404_5843_AI3|OCI]",
+    "kind": "arithmetic",
+    "recheck": "__import__('core.recheck', fromlist=['x']).names_sum_matches('202404_5843_AI3|OCI', ['銀行定存單', '定期存單-可轉讓'], '定存單', prefer_cost=True)"
+   },
+   {
+    "at": "2026-07-28T15:35:44",
+    "detail": "ratify: 算術:兆豐 202404 OCI,銀行定存單+定期存單-可轉讓=15,396,926=附註「定存單」(取得成本口徑對齊),歸屬與附註一致(可轉讓定存單)。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:定期存單-可轉讓",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "股票",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「股票」",
+    "kind": "rule",
+    "recheck": "rules.propose('股票投資')[0] == '股票'"
+   },
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "金額=3,556,907  股票=股票投資  桶=股票  [202404_5841_AI3|Trading]",
+    "kind": "synonym",
+    "recheck": "buckets.bucket({'name': '股票投資'}) == '股票'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:股票投資",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "衍生",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「換匯換利」",
+    "kind": "rule",
+    "recheck": "rules.propose('換匯換利合約')[0] == '衍生'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:換匯換利合約",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "其他",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「其他」",
+    "kind": "rule",
+    "recheck": "rules.propose('其他(註)')[0] == '其他'"
+   },
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "金額=4,978,995  其他=其他（註）  桶=其他  [202504_5836_AI3|Trading]",
+    "kind": "synonym",
+    "recheck": "buckets.bucket({'name': '其他（註）'}) == '其他'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:其他(註)",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "其他",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「其他」",
+    "kind": "rule",
+    "recheck": "rules.propose('其他(註一)')[0] == '其他'"
+   },
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "金額=4,053,531  其他=其他（註一）  桶=其他  [202504_5836_AI3|OCI]",
+    "kind": "synonym",
+    "recheck": "buckets.bucket({'name': '其他（註一）'}) == '其他'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:其他(註一)",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "衍生",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「衍生」",
+    "kind": "rule",
+    "recheck": "rules.propose('衍生金融資產')[0] == '衍生'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:衍生金融資產",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "衍生",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「遠期外匯」",
+    "kind": "rule",
+    "recheck": "rules.propose('遠期外匯')[0] == '衍生'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:遠期外匯",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "衍生",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「遠期外匯」",
+    "kind": "rule",
+    "recheck": "rules.propose('無本金交割遠期外匯')[0] == '衍生'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:無本金交割遠期外匯",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:35:44",
+  "approved_by": "henrylin",
+  "derivation_id": null,
+  "mapping": "衍生",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "中信明細表「衍生金融工具」段8列相加=78,086,700=附註「衍生金融資產」(202404 Trading p31/p147)  [202404_5841_AI3|Trading]",
+    "kind": "arithmetic",
+    "recheck": "__import__('core.recheck', fromlist=['x']).group_sum_matches('202404_5841_AI3|Trading', '衍生金融工具', '衍生金融資產')"
+   },
+   {
+    "at": "2026-07-28T15:35:44",
+    "detail": "ratify: 算術:中信 202404 Trading,明細表「衍生金融工具」段8列相加=78,086,700=附註「衍生金融資產」,歸屬與附註一致(衍生)。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:換匯",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "衍生",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「換匯換利」",
+    "kind": "rule",
+    "recheck": "rules.propose('換匯換利')[0] == '衍生'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:換匯換利",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "衍生",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「利率交換」",
+    "kind": "rule",
+    "recheck": "rules.propose('利率交換')[0] == '衍生'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:利率交換",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "衍生",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「期貨」",
+    "kind": "rule",
+    "recheck": "rules.propose('期貨')[0] == '衍生'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:期貨",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:35:44",
+  "approved_by": "henrylin",
+  "derivation_id": null,
+  "mapping": "衍生",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "中信明細表「衍生金融工具」段8列相加=78,086,700=附註「衍生金融資產」(202404 Trading p31/p147)  [202404_5841_AI3|Trading]",
+    "kind": "arithmetic",
+    "recheck": "__import__('core.recheck', fromlist=['x']).group_sum_matches('202404_5841_AI3|Trading', '衍生金融工具', '衍生金融資產')"
+   },
+   {
+    "at": "2026-07-28T15:35:44",
+    "detail": "ratify: 算術:中信 202404 Trading,明細表「衍生金融工具」段8列相加=78,086,700=附註「衍生金融資產」,歸屬與附註一致(衍生)。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:商品交換",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "衍生",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「選擇權」",
+    "kind": "rule",
+    "recheck": "rules.propose('外匯選擇權合約')[0] == '衍生'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:外匯選擇權合約",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "衍生",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「遠期外匯」",
+    "kind": "rule",
+    "recheck": "rules.propose('無本金交割遠期外匯合約')[0] == '衍生'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:無本金交割遠期外匯合約",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "衍生",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「期貨」",
+    "kind": "rule",
+    "recheck": "rules.propose('期貨交易保證金－自有資金')[0] == '衍生'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:期貨交易保證金－自有資金",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "衍生",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「選擇權」",
+    "kind": "rule",
+    "recheck": "rules.propose('利率選擇權合約')[0] == '衍生'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:利率選擇權合約",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "股票",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「股票」",
+    "kind": "rule",
+    "recheck": "rules.propose('股票及基金')[0] == '股票'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:股票及基金",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "金融債",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「金融債券」",
+    "kind": "rule",
+    "recheck": "rules.propose('金融債券(註二)')[0] == '金融債'"
+   },
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "金額=131,465,522  金融債券=金融債券（註二）  桶=金融債  [202504_5847_AI3|OCI]",
+    "kind": "synonym",
+    "recheck": "buckets.bucket({'name': '金融債券（註二）'}) == '金融債'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:金融債券(註二)",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "公債",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「政府公債」",
+    "kind": "rule",
+    "recheck": "rules.propose('政府公債(註三)')[0] == '公債'"
+   },
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "金額=29,223,648  政府公債=政府公債（註三）  桶=公債  [202504_5847_AI3|OCI]",
+    "kind": "synonym",
+    "recheck": "buckets.bucket({'name': '政府公債（註三）'}) == '公債'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:政府公債(註三)",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "衍生",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「衍生」",
+    "kind": "rule",
+    "recheck": "rules.propose('衍生金融資產')[0] == '衍生'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:group:衍生金融資產",
+  "scope": "group",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "衍生",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「衍生」",
+    "kind": "rule",
+    "recheck": "rules.propose('衍生金融負債')[0] == '衍生'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:group:衍生金融負債",
+  "scope": "group",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "衍生",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「衍生」",
+    "kind": "rule",
+    "recheck": "rules.propose('衍生工具')[0] == '衍生'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:group:衍生工具",
+  "scope": "group",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "衍生",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「衍生」",
+    "kind": "rule",
+    "recheck": "rules.propose('衍生性金融商品')[0] == '衍生'"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:group:衍生性金融商品",
+  "scope": "group",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:33:19",
+  "approved_by": "henrylin",
+  "derivation_id": "deriv:BUCKET_RULES-keyword-v1",
+  "mapping": "衍生",
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "BUCKET_RULES 關鍵字「衍生」",
+    "kind": "rule",
+    "recheck": "rules.propose('衍生金融工具')[0] == '衍生'"
+   },
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "中信 202504 Trading: 衍生金融工具段7列相加=56,768,874=附註衍生金融資產  [202504_5841_AI3|Trading]",
+    "kind": "arithmetic",
+    "recheck": "__import__('core.recheck', fromlist=['x']).group_sum_matches('202504_5841_AI3|Trading', '衍生金融工具', '衍生金融資產')"
+   },
+   {
+    "at": "2026-07-28T15:33:19",
+    "detail": "ratify: 確認推導成立:rules.propose(norm(name)) 算出的桶與 taxonomy 的桶逐條相同,且 rules.audit(config.BUCKET_RULES) 無夾帶詞。批准的是這條可重跑的推導本身,不是逐一相信 68 個名字 —— 每條 rule 附著 recheck,BUCKET_RULES 一改(revision hash 變)或某條 recheck 不成立,該條自動降回 PROVISIONAL 並報錯。經 Claude Code 依使用者 2026-07-28 明示指示代為執行。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:group:衍生金融工具",
+  "scope": "group",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:35:44",
+  "approved_by": "henrylin",
+  "derivation_id": null,
+  "mapping": null,
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "『其他』是通稱,不自帶會計意義 —— 桶由所在段落的 GROUP_SYN 決定(BUCKET_RULES「其他:表上真的印著『其他』的列」),非機械可重驗,待人工確認",
+    "kind": "group",
+    "recheck": null
+   },
+   {
+    "at": "2026-07-28T15:35:44",
+    "detail": "ratify: 通稱判斷:『其他』不自帶會計意義,桶由所在段落的 GROUP_SYN 決定(BUCKET_RULES 已明文:「其他」限表上真的印著『其他』的列)。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:generic:其他",
+  "scope": "generic",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:35:44",
+  "approved_by": "henrylin",
+  "derivation_id": null,
+  "mapping": null,
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "『其他』是通稱,不自帶會計意義 —— 桶由所在段落的 GROUP_SYN 決定(BUCKET_RULES「其他:表上真的印著『其他』的列」),非機械可重驗,待人工確認",
+    "kind": "group",
+    "recheck": null
+   },
+   {
+    "at": "2026-07-28T15:35:44",
+    "detail": "ratify: 通稱判斷:同上,『其他（註）』是註腳記號不是名稱的一部分,桶由所在段落決定。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:generic:其他(註)",
+  "scope": "generic",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:35:44",
+  "approved_by": "henrylin",
+  "derivation_id": null,
+  "mapping": null,
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "『其他』是通稱,不自帶會計意義 —— 桶由所在段落的 GROUP_SYN 決定(BUCKET_RULES「其他:表上真的印著『其他』的列」),非機械可重驗,待人工確認",
+    "kind": "group",
+    "recheck": null
+   },
+   {
+    "at": "2026-07-28T15:35:44",
+    "detail": "ratify: 通稱判斷:同上,『其他（註一）』是註腳記號不是名稱的一部分,桶由所在段落決定。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:generic:其他(註一)",
+  "scope": "generic",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-07-28T15:35:44",
+  "approved_by": "henrylin",
+  "derivation_id": null,
+  "mapping": null,
+  "references": [
+   {
+    "at": "2026-07-28T07:30:14.569937Z",
+    "detail": "『其他』是通稱,不自帶會計意義 —— 桶由所在段落的 GROUP_SYN 決定(BUCKET_RULES「其他:表上真的印著『其他』的列」),非機械可重驗,待人工確認",
+    "kind": "group",
+    "recheck": null
+   },
+   {
+    "at": "2026-07-28T15:35:44",
+    "detail": "ratify: 通稱判斷:同上,『其他項目』桶由所在段落決定。 (by henrylin)",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:generic:其他項目",
+  "scope": "generic",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-08-12T02:57:48.498884Z",
+  "approved_by": "henrylin",
+  "derivation_id": null,
+  "mapping": "資產基礎",
+  "references": [
+   {
+    "at": "2026-08-12T02:57:48.498884Z",
+    "detail": "buckets.py:184 SYN 既有規則,人工佐證見同檔 174-182 行(兆豐 202104/202204 OCI 附註金額與明細表逐字相同;段落標「債務工具」段的受益證券＝金融資產證券化受益證券,非權益工具)。2026-08-12 test_decide_equiv.py 發現 taxonomy/rules.json 漏收此條,補齊",
+    "kind": "human",
+    "recheck": null
+   },
+   {
+    "at": "2026-08-12T23:44:19",
+    "detail": "受益證券屬於證券化商品（如ABS/MBS），依會計意義歸入資產基礎類。",
+    "kind": "llm",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:受益證券",
+  "scope": "name",
+  "state": "PROVISIONAL"
+ },
+ {
+  "approved_at": "2026-08-12T02:57:48.498884Z",
+  "approved_by": "henrylin",
+  "derivation_id": null,
+  "mapping": "公司債",
+  "references": [
+   {
+    "at": "2026-08-12T02:57:48.498884Z",
+    "detail": "buckets.py:188 SYN 既有規則,人工佐證見同檔 186 行(結構型債券多由金融機構或企業發行,群組裡最接近公司債)。2026-08-12 test_decide_equiv.py 發現 taxonomy/rules.json 漏收此條,補齊",
+    "kind": "human",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:結構型債券",
+  "scope": "name",
+  "state": "CONFIRMED"
+ },
+ {
+  "approved_at": "2026-08-12T02:57:48.498884Z",
+  "approved_by": "henrylin",
+  "derivation_id": null,
+  "mapping": "衍生",
+  "references": [
+   {
+    "at": "2026-08-12T02:57:48.498884Z",
+    "detail": "buckets.py:167 SYN 既有規則(商品交換合約,衍生工具的一種)。2026-08-12 test_decide_equiv.py 發現 taxonomy/rules.json 漏收此條,補齊",
+    "kind": "human",
+    "recheck": null
+   },
+   {
+    "at": "2026-08-12T23:44:19",
+    "detail": "科目名含「交換合約」，屬衍生性金融商品（商品交換）。",
+    "kind": "llm",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:金屬商品交換合約",
+  "scope": "name",
+  "state": "PROVISIONAL"
+ },
+ {
+  "approved_at": "2026-08-12T03:02:19.479485+00:00",
+  "approved_by": "henrylin",
+  "derivation_id": null,
+  "mapping": "資產基礎",
+  "references": [
+   {
+    "at": "2026-08-12T03:02:19.479485+00:00",
+    "detail": "buckets.py SYN 既有規則(資產證券化商品,歸資產基礎)。2026-08-12 test_decide_equiv.py 發現 taxonomy/rules.json 漏收此條,補齊",
+    "kind": "human",
+    "recheck": null
+   },
+   {
+    "at": "2026-08-12T23:44:19",
+    "detail": "資產證券化商品屬於證券化商品，依會計意義歸入資產基礎類別。",
+    "kind": "llm",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:資產證券化",
+  "scope": "name",
+  "state": "PROVISIONAL"
+ },
+ {
+  "approved_at": "2026-08-12T03:02:19.479485+00:00",
+  "approved_by": "henrylin",
+  "derivation_id": null,
+  "mapping": "資產基礎",
+  "references": [
+   {
+    "at": "2026-08-12T03:02:19.479485+00:00",
+    "detail": "buckets.py SYN 既有規則(CMO=Collateralized Mortgage Obligation,不動產抵押貸款證券,歸資產基礎)。2026-08-12 test_decide_equiv.py 發現 taxonomy/rules.json 漏收此條,補齊。⚠️ rule_id 含名稱中間的空白(CMO 與擔保房貸憑證之間),這是 decide() 的 _norm() 只去掉全形/半形空白特定字元、且 taxonomy 的 name 未經同一個 norm 前處理就存 —— 這裡照 name_norm 的實際產出存,不手動改空白",
+    "kind": "human",
+    "recheck": null
+   },
+   {
+    "at": "2026-08-12T23:44:19",
+    "detail": "CMO（擔保房貸憑證）屬於不動產抵押貸款證券化商品（MBS），依會計意義歸入資產基礎證券。",
+    "kind": "llm",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:CMO擔保房貸憑證",
+  "scope": "name",
+  "state": "PROVISIONAL"
+ },
+ {
+  "approved_at": null,
+  "approved_by": null,
+  "derivation_id": null,
+  "mapping": "資產基礎",
+  "references": [
+   {
+    "at": "2026-08-12T23:44:19",
+    "detail": "CMO為不動產抵押貸款證券化商品，屬資產基礎證券。",
+    "kind": "llm",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:受益證券CMO",
+  "scope": "name",
+  "state": "PROVISIONAL"
+ },
+ {
+  "approved_at": null,
+  "approved_by": null,
+  "derivation_id": null,
+  "mapping": "資產基礎",
+  "references": [
+   {
+    "at": "2026-08-12T23:44:19",
+    "detail": "RMBS 為不動產抵押貸款證券化商品，屬資產基礎證券。",
+    "kind": "llm",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:受益證券RMBS",
+  "scope": "name",
+  "state": "PROVISIONAL"
+ },
+ {
+  "approved_at": null,
+  "approved_by": null,
+  "derivation_id": null,
+  "mapping": "可轉讓定存單",
+  "references": [
+   {
+    "at": "2026-08-12T23:44:19",
+    "detail": "科目名含『定期存單』，且未指明為政府或企業發行，依會計意義歸類為可轉讓定存單。",
+    "kind": "llm",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:國外定期存單(註二)",
+  "scope": "name",
+  "state": "PROVISIONAL"
+ },
+ {
+  "approved_at": null,
+  "approved_by": null,
+  "derivation_id": null,
+  "mapping": "資產基礎",
+  "references": [
+   {
+    "at": "2026-08-12T23:44:19",
+    "detail": "科目名稱含『不動產抵押證券』，屬MBS，歸類於資產基礎證券。",
+    "kind": "llm",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:政府機構不動產抵押證券",
+  "scope": "name",
+  "state": "PROVISIONAL"
+ },
+ {
+  "approved_at": null,
+  "approved_by": null,
+  "derivation_id": null,
+  "mapping": "貨幣市場",
+  "references": [
+   {
+    "at": "2026-08-12T23:44:19",
+    "detail": "票券投資通常指短期票券，屬貨幣市場工具。",
+    "kind": "llm",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:票券投資",
+  "scope": "name",
+  "state": "PROVISIONAL"
+ },
+ {
+  "approved_at": null,
+  "approved_by": null,
+  "derivation_id": null,
+  "mapping": "可轉讓定存單",
+  "references": [
+   {
+    "at": "2026-08-12T23:44:19",
+    "detail": "科目名「買入定期存單」屬銀行發行之定期存單，依會計意義歸入可轉讓定存單類別。",
+    "kind": "llm",
+    "recheck": null
+   }
+  ],
+  "rule_id": "tax:買入定期存單",
+  "scope": "name",
+  "state": "PROVISIONAL"
+ }
 ]

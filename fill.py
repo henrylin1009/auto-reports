@@ -18,7 +18,6 @@
 ⚠️ 不准呼叫任何模型 API(使用者已定案)。讀表的是外部的 Claude Code agent,
    這支程式只做確定性的機械工作:找頁、驗收、擴張、歸檔、記進度。
 """
-import datetime
 import glob
 import json
 import os
@@ -130,10 +129,6 @@ RULES = """## 事實層規矩(違反會被退回)
 （`total_col` = 哪一欄的列和等於錨,`printed_total` = 錨本身——兩者都是
 系統已經知道或推導得出來的東西,問模型只會多一個出錯的地方。）
 你只要專心把 rows 抄對:名字、當期金額、group。"""
-
-
-def _now():
-    return datetime.datetime.now().strftime("%Y-%m-%dT%H:%M")
 
 
 def _key(doc, cls):
@@ -355,25 +350,16 @@ def cmd_submit(path):
     problems = [reason] if (reason and hard) else None
 
     if ok:
-        cells = facts.load()
-        key = _key(doc, cls)
-        old = cells.get(key)
-        if old:
-            # 重抄整格覆蓋(見下面 `cells[key] = recs`)——如果這格本來就有內容
-            # (包含人工列,`row._src` 不是機器抄的),覆蓋前先留一份快照。
-            # git log 是最終稽核軌跡沒錯,但那要求「先 commit」;這裡是給
-            # 還沒 commit 就手滑重抄的那個當下一個救回來的機會(plan_web_usable.md P3)。
-            os.makedirs(HISTORY_DIR, exist_ok=True)
-            snap = f"{HISTORY_DIR}/{doc}__{cls}__{_now().replace(':', '')}.json"
-            json.dump(old, open(snap, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
         for r in recs:
             # 稽核欄位,不是事實 —— wide / buckets / verify 一律不准讀它(facts.py 已把
             # 它列為已知選填欄位,不會被 T1 的「未知欄位」檢查擋下來)。
             # `via`/`at` 由 `file_cell()` 補上,這裡只放它不知道的 retries/level。
             r["_by"] = {"retries": retries, "level": level}
         # **走 `webdata.file_cell()`,不自己 `facts.save()`。** 那是機器寫進事實庫的
-        # 唯一一道門,帶著 append-only 保護:人工裁示過的格(帶 `_src`)機器不准覆蓋。
-        # 上面那份快照留著 —— 快照是「手滑救回」,守衛是「根本不讓它發生」,兩件事。
+        # 唯一一道門,帶著 append-only 保護:人工裁示過的格(帶 `_src`)機器不准覆蓋,
+        # 以及覆蓋前寫 `work/history/` 快照。**快照原本寫在這裡,2026-08-12 搬進門裡** ——
+        # 留在這裡的話 v4 那條路(網頁「重抄」)就沒有快照,而確認框對兩條路講的是
+        # 同一句話。快照是「手滑救回」,守衛是「根本不讓它發生」,兩件事。
         # (webdata 在模組層 import fill,所以這裡只能區域 import,不能提到檔頭。)
         from core import webdata as _webdata
         try:

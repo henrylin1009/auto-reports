@@ -177,15 +177,15 @@
    "taxonomy_ref": "tax:減：備抵損失"
   },
   {
-   "at": "2026-07-29T13:49:56.723276Z",
-   "by": "decide",
+   "at": "2026-08-12T23:44:19",
+   "by": "llm_classify",
    "group": null,
    "locator": {
     "cell_key": "202204_中信_個體|AC",
     "row_index": 0,
     "source_page": 97
    },
-   "mapping": null,
+   "mapping": "其他",
    "name": "按攤銷後成本衡量之債務工具投資",
    "occurrence": {
     "cell_key": "202204_中信_個體|AC",
@@ -195,8 +195,8 @@
     "scope": "row"
    },
    "references": [],
-   "state": "UNCLASSIFIED",
-   "taxonomy_ref": null
+   "state": "PROVISIONAL",
+   "taxonomy_ref": "tax:按攤銷後成本衡量之債務工具投資"
   },
   {
    "at": "2026-07-29T13:49:56.723365Z",

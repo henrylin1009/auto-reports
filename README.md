@@ -36,6 +36,7 @@ Claude Code（不需要 API key，不需要付費）。
 
 ```bash
 git clone <this repo> && cd auto-reports
+pip install -r requirements.txt   # 少這一步會缺 openpyxl/pdfplumber 起不來
 python3 app.py          # 起工作台,自動開瀏覽器 http://127.0.0.1:8765
 ```
 
@@ -91,5 +92,9 @@ SQLite（三張表儲存）· pdfplumber/pypdfium2（PDF 讀取）· 手刻 HTML
 
 ## 開發文件
 
-現況與計畫見 [`docs/plan_v7_完成品.md`](docs/plan_v7_完成品.md)——
-體檢、目標架構、逐項驗收記錄,包含這份 README 描述的每一件事的實測證據。
+**先看 [`docs/現況.md`](docs/現況.md)** —— 它是唯一的入口索引,說明 34 份計畫
+文件哪幾份還有效、哪幾份已作廢。不要直接挑一份 `plan_*.md` 讀,編號大的不一定
+是最新的結論(v8 在寫完當天就被自己作廢了)。
+
+逐項驗收記錄與實測證據見 [`docs/plan_v7_完成品.md`](docs/plan_v7_完成品.md)
+(R0–R4 全部完成),之後的增修見 v9/v10/v11。

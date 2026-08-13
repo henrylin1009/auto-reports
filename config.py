@@ -34,7 +34,14 @@ BANK_COLORS = {b["name"]: b["color"] for b in _banks_data["banks"]}
 BANK_COLORS["中信(合併)"] = BANK_COLORS["中信"]
 
 # ── 會計分類 ──
+#: 權威清單(2026-08-13 v11 R0)。原本這份清單被逐字複製在 15 個地方,
+#: 加一個 kind 就得踩 15 處 —— 這裡是唯一的來源,其餘全部改成 import 這個。
 CLASSES = ["Trading", "OCI", "AC"]
+#: 顯示順序 —— 跟 `CLASSES` 分開是因為兩個既有前端(workbench.js 的分頁條、
+#: sim/state.py 的預設 classes)用的是 AC/OCI/Trading,跟 CLASSES 的
+#: Trading/OCI/AC 顛倒。**不確定是有意的視覺順序還是巧合**,保守分開兩個名字,
+#: 不要把其中一邊的順序當成「錯的」偷偷改掉。
+CLASS_ORDER = ["AC", "OCI", "Trading"]
 CLS_TITLE = {
     "Trading": "透過損益按公允價值衡量之金融資產明細表",
     "OCI": "透過其他綜合損益按公允價值衡量之金融資產明細表",

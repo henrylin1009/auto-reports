@@ -156,15 +156,15 @@
  ],
  "202204_富邦_個體|OCI": [
   {
-   "at": "2026-07-29T13:49:30.645088Z",
-   "by": "decide",
+   "at": "2026-08-12T23:44:19",
+   "by": "llm_classify",
    "group": "透過其他綜合損益按公允價值衡量之金融資產",
    "locator": {
     "cell_key": "202204_富邦_個體|OCI",
     "row_index": 0,
     "source_page": 38
    },
-   "mapping": null,
+   "mapping": "股票",
    "name": "透過其他綜合損益按公允價值衡量之權益工具投資",
    "occurrence": {
     "cell_key": "202204_富邦_個體|OCI",
@@ -174,19 +174,19 @@
     "scope": "row"
    },
    "references": [],
-   "state": "UNCLASSIFIED",
-   "taxonomy_ref": null
+   "state": "PROVISIONAL",
+   "taxonomy_ref": "tax:透過其他綜合損益按公允價值衡量之權益工具投資"
   },
   {
-   "at": "2026-07-29T13:49:30.645292Z",
-   "by": "decide",
+   "at": "2026-08-12T23:44:19",
+   "by": "llm_classify",
    "group": "透過其他綜合損益按公允價值衡量之金融資產",
    "locator": {
     "cell_key": "202204_富邦_個體|OCI",
     "row_index": 1,
     "source_page": 38
    },
-   "mapping": null,
+   "mapping": "公債",
    "name": "透過其他綜合損益按公允價值衡量之債務工具投資",
    "occurrence": {
     "cell_key": "202204_富邦_個體|OCI",
@@ -196,8 +196,8 @@
     "scope": "row"
    },
    "references": [],
-   "state": "UNCLASSIFIED",
-   "taxonomy_ref": null
+   "state": "PROVISIONAL",
+   "taxonomy_ref": "tax:透過其他綜合損益按公允價值衡量之債務工具投資"
   },
   {
    "at": "2026-07-29T13:49:30.645319Z",
@@ -288,15 +288,15 @@
    "taxonomy_ref": "tax:政府公債"
   },
   {
-   "at": "2026-07-29T13:49:30.645378Z",
-   "by": "decide",
+   "at": "2026-08-12T23:44:19",
+   "by": "llm_classify",
    "group": "透過其他綜合損益按公允價值衡量之金融資產明細表",
    "locator": {
     "cell_key": "202204_富邦_個體|OCI",
     "row_index": 4,
     "source_page": 146
    },
-   "mapping": null,
+   "mapping": "資產基礎",
    "name": "受益證券",
    "occurrence": {
     "cell_key": "202204_富邦_個體|OCI",
@@ -306,8 +306,8 @@
     "scope": "row"
    },
    "references": [],
-   "state": "UNCLASSIFIED",
-   "taxonomy_ref": null
+   "state": "PROVISIONAL",
+   "taxonomy_ref": "tax:受益證券"
   },
   {
    "at": "2026-07-29T13:49:30.645397Z",

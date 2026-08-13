@@ -20,8 +20,9 @@ import threading
 import pypdfium2 as pdf
 
 import bs_anchor
+import config
 
-CLASSES = ("Trading", "OCI", "AC")
+CLASSES = tuple(config.CLASSES)
 
 #: pypdfium2 包的 PDFium 不是 thread-safe 的 —— server.py 用 ThreadingHTTPServer,
 #: 一個文件頁面同時打出 /api/doc、/page.png、加上背景輪詢,並發開檔會讓整個

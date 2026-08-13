@@ -1,0 +1,248 @@
+{
+ "doc": "202502_玉山_個體",
+ "model": "claude",
+ "n_pages": 144,
+ "prompt_chars": 137418,
+ "elapsed_s": 58.4,
+ "raw_text": "```json\n{\"basis\":\"個體\",\n \"bs_date\":\"114/06/30\",\n \"Trading\":{\"book\":{\"total\":252890908,\"printed_subtotal\":252890908,\"bs_anchor\":252890908,\"page\":23,\n            \"rows\":[\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"可轉讓定期存單\",\"amount\":17243444},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"商業本票\",\"amount\":113369456},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"國庫券\",\"amount\":19969604},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"公司債\",\"amount\":33483630},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"金融債券\",\"amount\":32764158},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"上市（櫃）股票\",\"amount\":1057013},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"外匯換匯合約\",\"amount\":17587048},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"利率交換合約\",\"amount\":11870595},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"外匯選擇權合約\",\"amount\":3346030},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"遠期外匯合約\",\"amount\":931186},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"期貨交易保證金－自有資金\",\"amount\":223977},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"無本金交割遠期外匯合約\",\"amount\":609718},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"金屬商品交換合約\",\"amount\":0},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"換匯換利合約\",\"amount\":423788},\n              {\"group\":\"強制透過損益按公允價值衡量之金融資產\",\"name\":\"利率選擇權合約\",\"amount\":11261}\n            ]},\n            \"cost\":{\"total\":null,\"page\":null,\"rows\":[]},\n            \"cost_note\":\"此為114年上半年度個體財務報告(半年報),目錄頁明列'九、重要會計項目明細表'欄位為空白(-),本期未編製該類明細表,故無成本欄位可查,cost全部填null\",\n            \"checks\":{\"check_rowsum\":{\"status\":\"OK\",\"diff\":0},\n                      \"check_anchor\":{\"status\":\"OK\",\"diff\":0},\n                      \"check_cost\":{\"status\":\"no_witness\",\"diff\":0}}},\n \"OCI\":{\"book\":{\"total\":316073868,\"printed_subtotal\":316073868,\"bs_anchor\":316073868,\"page\":24,\n            \"rows\":[\n              {\"group\":\"權益工具投資\",\"name\":\"上市（櫃）及興櫃股票\",\"amount\":21709081},\n              {\"group\":\"權益工具投資\",\"name\":\"未上市（櫃）股票\",\"amount\":1420988},\n              {\"group\":\"債務工具投資\",\"name\":\"金融債券\",\"amount\":120654702},\n              {\"group\":\"債務工具投資\",\"name\":\"政府公債\",\"amount\":31606624},\n              {\"group\":\"債務工具投資\",\"name\":\"公司債\",\"amount\":113298779},\n              {\"group\":\"債務工具投資\",\"name\":\"國外機構發行債券\",\"amount\":25036937},\n              {\"group\":\"債務工具投資\",\"name\":\"證券化商品\",\"amount\":2346757}\n            ]},\n            \"cost\":{\"total\":null,\"page\":null,\"rows\":[]},\n            \"cost_note\":\"此為114年上半年度個體財務報告(半年報),目錄頁明列'九、重要會計項目明細表'欄位為空白(-),本期未編製該類明細表,故無成本欄位可查,cost全部填null\",\n            \"checks\":{\"check_rowsum\":{\"status\":\"OK\",\"diff\":0},\n                      \"check_anchor\":{\"status\":\"OK\",\"diff\":0},\n                      \"check_cost\":{\"status\":\"no_witness\",\"diff\":0}}},\n \"AC\":{\"book\":{\"total\":493942145,\"printed_subtotal\":493942145,\"bs_anchor\":493942145,\"page\":26,\n            \"rows\":[\n              {\"group\":\"\",\"name\":\"國外機構發行債券\",\"amount\":52965524},\n              {\"group\":\"\",\"name\":\"金融債券\",\"amount\":66378118},\n              {\"group\":\"\",\"name\":\"公司債\",\"amount\":23227877},\n              {\"group\":\"\",\"name\":\"可轉讓定期存單\",\"amount\":276630000},\n              {\"group\":\"\",\"name\":\"政府公債\",\"amount\":23839794},\n              {\"group\":\"\",\"name\":\"證券化商品\",\"amount\":50926977},\n              {\"group\":\"\",\"name\":\"減：備抵損失\",\"amount\":-26145}\n            ]},\n            \"cost\":{\"total\":null,\"page\":null,\"rows\":[]},\n            \"cost_note\":\"此為114年上半年度個體財務報告(半年報),目錄頁明列'九、重要會計項目明細表'欄位為空白(-),本期未編製該類明細表,故無成本欄位可查,cost全部填null\",\n            \"checks\":{\"check_rowsum\":{\"status\":\"OK\",\"diff\":0},\n                      \"check_anchor\":{\"status\":\"OK\",\"diff\":0},\n                      \"check_cost\":{\"status\":\"no_witness\",\"diff\":0}}}\n}\n```\n",
+ "parsed": {
+  "basis": "個體",
+  "bs_date": "114/06/30",
+  "Trading": {
+   "book": {
+    "total": 252890908,
+    "printed_subtotal": 252890908,
+    "bs_anchor": 252890908,
+    "page": 23,
+    "rows": [
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "可轉讓定期存單",
+      "amount": 17243444
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "商業本票",
+      "amount": 113369456
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "國庫券",
+      "amount": 19969604
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "公司債",
+      "amount": 33483630
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "金融債券",
+      "amount": 32764158
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "上市（櫃）股票",
+      "amount": 1057013
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "外匯換匯合約",
+      "amount": 17587048
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "利率交換合約",
+      "amount": 11870595
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "外匯選擇權合約",
+      "amount": 3346030
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "遠期外匯合約",
+      "amount": 931186
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "期貨交易保證金－自有資金",
+      "amount": 223977
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "無本金交割遠期外匯合約",
+      "amount": 609718
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "金屬商品交換合約",
+      "amount": 0
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "換匯換利合約",
+      "amount": 423788
+     },
+     {
+      "group": "強制透過損益按公允價值衡量之金融資產",
+      "name": "利率選擇權合約",
+      "amount": 11261
+     }
+    ]
+   },
+   "cost": {
+    "total": null,
+    "page": null,
+    "rows": []
+   },
+   "cost_note": "此為114年上半年度個體財務報告(半年報),目錄頁明列'九、重要會計項目明細表'欄位為空白(-),本期未編製該類明細表,故無成本欄位可查,cost全部填null",
+   "checks": {
+    "check_rowsum": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_anchor": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_cost": {
+     "status": "no_witness",
+     "diff": 0
+    }
+   }
+  },
+  "OCI": {
+   "book": {
+    "total": 316073868,
+    "printed_subtotal": 316073868,
+    "bs_anchor": 316073868,
+    "page": 24,
+    "rows": [
+     {
+      "group": "權益工具投資",
+      "name": "上市（櫃）及興櫃股票",
+      "amount": 21709081
+     },
+     {
+      "group": "權益工具投資",
+      "name": "未上市（櫃）股票",
+      "amount": 1420988
+     },
+     {
+      "group": "債務工具投資",
+      "name": "金融債券",
+      "amount": 120654702
+     },
+     {
+      "group": "債務工具投資",
+      "name": "政府公債",
+      "amount": 31606624
+     },
+     {
+      "group": "債務工具投資",
+      "name": "公司債",
+      "amount": 113298779
+     },
+     {
+      "group": "債務工具投資",
+      "name": "國外機構發行債券",
+      "amount": 25036937
+     },
+     {
+      "group": "債務工具投資",
+      "name": "證券化商品",
+      "amount": 2346757
+     }
+    ]
+   },
+   "cost": {
+    "total": null,
+    "page": null,
+    "rows": []
+   },
+   "cost_note": "此為114年上半年度個體財務報告(半年報),目錄頁明列'九、重要會計項目明細表'欄位為空白(-),本期未編製該類明細表,故無成本欄位可查,cost全部填null",
+   "checks": {
+    "check_rowsum": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_anchor": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_cost": {
+     "status": "no_witness",
+     "diff": 0
+    }
+   }
+  },
+  "AC": {
+   "book": {
+    "total": 493942145,
+    "printed_subtotal": 493942145,
+    "bs_anchor": 493942145,
+    "page": 26,
+    "rows": [
+     {
+      "group": "",
+      "name": "國外機構發行債券",
+      "amount": 52965524
+     },
+     {
+      "group": "",
+      "name": "金融債券",
+      "amount": 66378118
+     },
+     {
+      "group": "",
+      "name": "公司債",
+      "amount": 23227877
+     },
+     {
+      "group": "",
+      "name": "可轉讓定期存單",
+      "amount": 276630000
+     },
+     {
+      "group": "",
+      "name": "政府公債",
+      "amount": 23839794
+     },
+     {
+      "group": "",
+      "name": "證券化商品",
+      "amount": 50926977
+     },
+     {
+      "group": "",
+      "name": "減：備抵損失",
+      "amount": -26145
+     }
+    ]
+   },
+   "cost": {
+    "total": null,
+    "page": null,
+    "rows": []
+   },
+   "cost_note": "此為114年上半年度個體財務報告(半年報),目錄頁明列'九、重要會計項目明細表'欄位為空白(-),本期未編製該類明細表,故無成本欄位可查,cost全部填null",
+   "checks": {
+    "check_rowsum": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_anchor": {
+     "status": "OK",
+     "diff": 0
+    },
+    "check_cost": {
+     "status": "no_witness",
+     "diff": 0
+    }
+   }
+  }
+ },
+ "parse_ok": true
+}

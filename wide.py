@@ -51,8 +51,32 @@ class View:
             self.col, self.rec["printed_total"])
 
     @property
+    def unbucketed_total(self):
+        """未歸桶的金額合計。**永遠是個數字(可能是 0),不會是 None** ——
+        它要能無條件顯示在網站上,而 `None` 在畫面上會塌成「沒有這個東西」,
+        跟「這格未歸桶是 0」是兩件事(v9 §二原則 3)。"""
+        return sum(v for _n, v, _w in self.unknown if v is not None)
+
+    @property
+    def arithmetic_ok(self):
+        """**抄寫對不對** —— 未歸桶算進等式。這是 v9 的發布判準。
+
+        跟 `ok` 的差別只有一項:這一支不要求 unknown 是空的。少一個字典詞條
+        時它仍然是 True,於是七桶照樣發布、未歸桶站自己那一行。
+        """
+        if self.book is None:
+            return False
+        return checks.arithmetic_matches(
+            list(self.book.values()) + list(self.side.values()),
+            self.unknown, self.expected) is None
+
+    @property
     def ok(self):
         """三段恆等式成立,而且沒有列落在 7 桶之外。
+
+        ⚠️ **這是嚴格版,v9 之後不再是發布閘門** —— 發布看 `arithmetic_ok`,
+        這一支留給「要求七桶全齊」的呼叫端(`core/publish_gate.py` 的
+        `fully_confirmed` 那半邊)。兩者的差別就是 `unknown` 空不空。
 
         **判準走 `checks.bucket_sum_matches()`,與 `v4.adapter.aggregate()`
         同一份實作**(2026-08-10,P2 收斂)。在此之前兩邊各寫一份,對「金額是

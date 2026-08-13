@@ -1,15 +1,19 @@
 "use strict";
 // 複核台前端:零框架、零 CDN。只跟 /api/* 說話,不自己算業務邏輯。
 //
-// 四個畫面(2026-07-29 重構,原本五個;同日再加「分析」):
-//   #/analysis   分析 —— 前台本體(make_web.py 的產出)用 iframe 掛進來。
+// 五個畫面(2026-07-29 重構,原本五個;同日再加「分析」;2026-08-13 R2
+// 把「分析」拆成個體/合併兩個一級項目,見 docs/plan_ui_一層導覽.md):
+//   #/analysis   個體報表 —— 前台本體(make_web.py 的產出)用 iframe 掛進來。
 //                ⚠️ src 一定要寫 `/site/index.html`,**不能寫 `/analysis`** ——
 //                後者自 2026-08-10 起 302 導回本頁 `#/analysis`(讓分析頁永遠在殼裡),
 //                iframe 指過去就是工作台自己載自己,無限遞迴。
-//   #/matrix     資料 —— 總覽矩陣(期別 × 銀行),nav 上的預設頁
+//   #/consol     合併報表 —— 同一顆 iframe、同一份產出,只差 hash 指到
+//                `/site/index.html#p3`(季度軸,那頁本來就認這個 hash 切分頁)。
+//   #/matrix     資料核對 —— 總覽矩陣(期別 × 銀行),nav 上的 fallback 頁
+//                (空 hash、#/buckets、#/doc/…、#/v4 這些沒被前面兩項認領的都算它)
 //   #/doc/DOC    文件頁 —— 一份財報,三類攤開;已抄的核對、沒抄的一顆按鈕
-//   #/buckets    分桶 —— 十個桶 × 收進去的名字,拖曳改判;入口是「資料」頁
-//                的連結,不在 nav 上(nav 只放 分析/資料 兩個常駐頁)
+//   #/buckets    分桶 —— 十個桶 × 收進去的名字,拖曳改判;入口是「資料核對」頁
+//                的連結,不在 nav 上(nav 只放常駐頁,見 web/appnav.js)
 //
 // 「核對 / 抄列 / 裁示」三頁退場:前兩者是同一個畫面的兩個狀態(左數字右頁圖,
 // 只差有沒有資料),裁示則被分桶檢視取代(一次看全部,不是一次問一個名字)。
@@ -97,19 +101,6 @@ function showEvidence(doc, page) {
   return true;
 }
 
-// 一個出現處(cell_key/doc/cls/page)畫成一個可點連結,點了跳去證據頁。
-// `page == null` 時印成灰字不可點——**明講沒有證據**,不是沉默省略
-// (`docs/plan_schema_derive.md` §5 規矩 1)。
-function evidenceChip(c) {
-  if (c.page == null) {
-    const s = $(`<span class="muted" style="margin-right:8px" title="找不到頁級證據——可能已改名或這格還沒歸檔">${esc(c.cell_key)}(無證據頁)</span>`);
-    return s;
-  }
-  const a = $(`<a href="#" style="margin-right:8px">${esc(c.cell_key)} · p.${c.page + 1}</a>`);
-  a.onclick = (e) => { e.preventDefault(); showEvidence(c.doc, c.page); };
-  return a;
-}
-
 function nav(r) {
   // 只挑頁內路由的連結(有 data-r);全站導覽列(.appnav)由 web/appnav.js 自己標記,
   // 這裡碰它會把它剛標好的 .on 拔掉。
@@ -127,15 +118,12 @@ async function route() {
   nav(r);
   try {
     if (r === "buckets") await viewBuckets();
-    else if (r === "queue") await viewQueue();
-    // v4 讀取/複核的實作仍在 /v4.html(2026-08-03 收成一份,原本兩邊各打一份
-    // 同樣的 /api/v4/*)。2026-08-10 起它從一級導覽降成「資料」頁底下的入口
-    // (`#/v4`,用 iframe 掛)—— 它跟資料頁做的是同一件事(把文件變成可發布的
-    // 數字),只是走另一條管線,並排在最上層會讓人以為是兩個功能領域。
     // 從網址進來(或 hashchange)算一次新的導覽 —— 重拉,免得看到過期的內容。
     else if (r === "doc") await viewDoc(decodeURIComponent(parts[1] || ""), { reload: true });
-    else if (r === "analysis") await viewAnalysis();
-    else if (r === "v4") viewV4();
+    else if (r === "analysis") await viewAnalysis(false);
+    // 合併報表(2026-08-13 R2):跟個體報表同一顆 iframe、同一份分析頁產出,
+    // 只差 hash 指到 site/index.html 的 #p3(那頁本來就認這個 hash 切分頁)。
+    else if (r === "consol") await viewAnalysis(true);
     else await viewMatrix();
   } catch (e) {
     // `_checked()` 已經彈過紅字條——這裡只負責把畫面從「載入中…」
@@ -149,28 +137,23 @@ async function route() {
 // 不是真融合 —— 分析頁的 JS 跟這裡是兩個世界,互相看不到對方的變數。
 // 換到這個好處是分析頁完全不用改,壞處是「點分析頁某格跳到後台去改」做不到,
 // 見 docs/plan_ui_unify.md 步驟 5。
-// ── v4 複核:同樣用 iframe 掛(理由同 viewAnalysis)────────────────────────
-// iframe 裡的 web/appnav.js 會自己不畫全站導覽列(它判 window.self !== window.top),
-// 所以不會出現兩條導覽疊著;v4 自己的三個分頁(佇列/比較表/讀取)是第三層,留著。
-function viewV4() {
-  nav("v4");
-  document.getElementById("app").replaceChildren($(`
-    <div style="margin:-16px;height:calc(100vh - 42px)">
-      <iframe src="/v4.html" title="v4 複核台"
-              style="width:100%;height:100%;border:0;display:block"></iframe>
-    </div>`));
-}
+// v4 複核台(2026-08-12 起不掛入口):它的「讀取」「比較表」跟資料頁做的是
+// 同一件事(把文件變成可發布的數字),「複核佇列」量出來的問題是數字對不對
+// (RED/GREY),不是分桶——跟這裡的分桶檢視不是同一種東西,並排只會多一個
+// 要記的地方。/v4.html 仍可直接開,只是不在導覽裡。
 
-function viewAnalysis() {
-  nav("analysis");
+function viewAnalysis(consol) {
+  nav(consol ? "consol" : "analysis");
   const el = $(`<div style="margin:-16px;height:calc(100vh - 42px)">
-    <iframe src="/site/index.html" title="分析頁"
+    <iframe src="/site/index.html${consol ? "#p3" : ""}" title="${consol ? "合併報表" : "個體報表"}"
       style="width:100%;height:100%;border:0;display:block"></iframe>
   </div>`);
   document.getElementById("app").replaceChildren(el);
 }
 
-const CLS = ["AC", "OCI", "Trading"];
+// 2026-08-13 v11 R0:預設值是 fallback(overview() 回來前用),真正的權威來自
+// 後端 `class_order`(config.py 統一維護)—— 見下面 S.ov 賦值處的覆寫。
+let CLS = ["AC", "OCI", "Trading"];
 // R3-2(2026-08-12):`todo`/`na`/`no_data` 以前全部對到 `miss` 同一個灰條,
 // 使用者分不出「還沒抄」「抄不了」「確認過本來就沒有」—— 鐵律 9。現在各有各的樣子。
 const SBAR = { done: "g", todo: "miss", blocked: "w", rejected: "r",
@@ -181,7 +164,7 @@ const SBAR = { done: "g", todo: "miss", blocked: "w", rejected: "r",
 const STATE_WHY = {
   done:     "已抄並通過六道檢查,會進發布",
   todo:     "還沒抄 —— 有候選頁,排隊中。按「自動抄列」或點進去手動抄",
-  blocked:  "卡在分類 —— 數字抄到了,但有科目名不在分類表裡。去「裁示台」補桶",
+  blocked:  "卡在分類 —— 數字抄到了,但有科目名不在分類表裡。去「分桶檢視」補桶",
   rejected: "擴頁到上限仍對不上 —— 抄到的數字跟資產負債表錨值兜不攏。點進去看理由",
   no_data:  "人已確認:這份文件真的沒有這項揭露(不是漏抄,是本來就沒有)",
   na:       "抓不到候選頁或錨值 —— 多半是該期財報這幾頁是掃描影像,沒有文字層可解析",
@@ -197,6 +180,7 @@ const STATE_LABEL = {
 async function viewMatrix() {
   S.ov = await api("overview" + (S.basis ? "?basis=" + encodeURIComponent(S.basis) : ""));
   S.basis = S.ov.basis;
+  if (S.ov.class_order) CLS = S.ov.class_order;
   const { periods, cols, grid, stats, bases, fetch_stats } = S.ov;
   nav("matrix");
 
@@ -205,8 +189,6 @@ async function viewMatrix() {
       <span class="bsw">${bases.map(b =>
         `<button data-b="${esc(b)}" class="${b === S.basis ? "pri" : ""}">${esc(b)}</button>`).join("")}</span>
       <a href="#/buckets" class="tag" style="text-decoration:none;margin-left:8px">分桶檢視</a>
-      <a href="#/queue" class="tag" style="text-decoration:none;margin-left:4px">裁示台</a>
-      <a href="#/v4" class="tag" style="text-decoration:none;margin-left:4px">v4 複核</a>
     </h1>
     <div class="stats">
       <div class="stat"><b>${stats.done}</b><span>已抄</span></div>
@@ -264,9 +246,10 @@ async function viewMatrix() {
   const fg = el.querySelector("#fetchgo");
   if (fg) fg.onclick = () => {
     const targets = Object.values(grid)
-      .filter(g => g.fetch === "missing").map(g => ({ period: g.period, code: g.code }));
+      .filter(g => g.fetch === "missing")
+      .map(g => ({ period: g.period, code: g.code, basis: g.basis }));
     if (!targets.length) return;
-    if (!confirm(`抓 ${targets.length} 期,抓到的接著自動抄列。\n\n`
+    if (!confirm(`抓 ${targets.length} 期「${S.basis}」財報,抓到的接著自動抄列。\n\n`
       + `TWSE 對連續請求會擋,這會慢慢跑。`)) return;
     runFetch(targets, true);
   };
@@ -309,7 +292,61 @@ async function viewMatrix() {
     }
     tb.appendChild(tr);
   }
+  el.appendChild(await wideTableCard());
   document.getElementById("app").replaceChildren(el);
+}
+
+// 數字明細寬表(2026-08-13 從分析頁「個體更多」搬來 —— 那頁另外兩張卡接的是死檔,
+// 整頁拿掉了,見 docs/plan_ui_一層導覽.md。這張表是活的,跟個體報表頁的
+// KPI/跨行比較/時間趨勢同一個 data.json,不能跟著陪葬,所以先搬新家再拆舊的。
+// 口徑鈕是**這張表自己的**——分析頁那邊也有一顆,是同一個口徑分兩個地方切,
+// 不是同一份實作;字串來源统一在 webdata.wide_table() 的 notes,前端不再各寫一份。
+async function wideTableCard() {
+  let WD;
+  try { WD = await api("wide"); }
+  catch { return $(`<div class="card"><p class="hint">數字明細載入失敗</p></div>`); }
+  if (!WD.metrics || !WD.metrics.length) return $(`<div style="display:none"></div>`);
+
+  const thP = WD.periods.map(p => `<th colspan="${WD.banks.length}">${esc(p)}</th>`).join("");
+  const thB = "<th>指標＼期間</th>" +
+    WD.periods.map(() => WD.banks.map(b => `<th>${esc(b)}</th>`).join("")).join("");
+  const card = $(`<div class="card">
+    <div class="ix-kpihead" style="margin-bottom:10px">
+      <h2 style="margin:0">數字明細(億元)</h2>
+      <span class="ix-seg" id="wbasis"><button data-basis="book" class="on">帳面/公允</button><button data-basis="cost">取得成本</button></span>
+    </div>
+    <div class="ix-sub" id="wbasis_note" style="margin:0 0 8px"></div>
+    <div class="tblwrap"><table class="wide">
+      <thead><tr><th></th>${thP}</tr><tr>${thB}</tr></thead>
+      <tbody id="wbody"></tbody>
+    </table></div>
+  </div>`);
+  const seg = card.querySelector("#wbasis"), body = card.querySelector("#wbody"),
+        note = card.querySelector("#wbasis_note");
+  function render(basis) {
+    const src = WD[basis] || {};
+    let html = "";
+    for (const m of WD.metrics) {
+      let tds = "";
+      for (const p of WD.periods) for (const b of WD.banks) {
+        const cell = src[`${p}|${b}`] || {};
+        const v = cell[m];
+        tds += `<td>${v == null
+          ? `<span style="color:#c6cbd4" title="查無資料——未揭露該口徑、或該期資產負債表為掃描影像無法核對錨值,不是抓漏了不畫">—</span>`
+          : num(v)}</td>`;
+      }
+      html += `<tr><th class="rowh">${esc(m)}</th>${tds}</tr>`;
+    }
+    body.innerHTML = html;
+    note.textContent = WD.notes?.[basis] || "";
+  }
+  seg.addEventListener("click", (e) => {
+    const b = e.target.closest("button"); if (!b) return;
+    [...seg.children].forEach(x => x.classList.remove("on")); b.classList.add("on");
+    render(b.dataset.basis);
+  });
+  render("book");
+  return card;
 }
 
 // 新增銀行(v7 R2-3)——「加一家銀行」以前只能自己去編輯 `banks.json`,
@@ -379,12 +416,13 @@ function fetchCell(g, bank, stats) {
     <span class="k">${FETCH_LABEL[st] || st}</span>
     <span class="s">${esc(g.period)}</span></button>`);
   // 提示文字用**銀行名**(人看的);代碼只是 TWSE 那邊的身分,不出現在畫面上。
-  if (st === "absent") b.title = `${g.period} ${bank}:上次問 TWSE 是「沒有」,按下去會重問一次`;
-  b.disabled = !S.ov.can_fetch || !g.code;
-  if (!S.ov.can_fetch) b.title = "只支援抓個體財報,合併要另外處理";
+  if (st === "absent") b.title = `${g.period} ${bank} ${g.basis}:上次問 TWSE 是「沒有」,按下去會重問一次`;
+  // **合併的格子一樣可以按**(2026-08-12)。以前這裡是 `!S.ov.can_fetch` 把整張
+  // 合併矩陣的空格全部灰掉,理由是取得層只抓個體 —— 那個限制已經拿掉了。
   // `code` 為 null = 這家銀行不在 config.BANKS 裡,抓不了。**說出原因,不要只是灰掉**。
-  else if (!g.code) b.title = `${bank} 不在 config.BANKS 裡,沒有 TWSE 代碼可以抓`;
-  b.onclick = () => runFetch([{ period: g.period, code: g.code }], true);
+  b.disabled = !g.code;
+  if (!g.code) b.title = `${bank} 不在 config.BANKS 裡,沒有 TWSE 代碼可以抓`;
+  b.onclick = () => runFetch([{ period: g.period, code: g.code, basis: g.basis }], true);
   return b;
 }
 
@@ -443,15 +481,23 @@ async function viewBuckets() {
   const el = $(`<div>
     <h1>分桶 · 每個桶收了哪些科目名
       <a href="#/matrix" class="tag" style="text-decoration:none;margin-left:8px">← 資料</a>
+      <select id="llmreader" style="margin-left:10px">
+        <option value="claude">Claude(用你的 Claude Code 訂閱)</option>
+        <option value="deepseek">DeepSeek(需要 DEEPSEEK_API_KEY)</option>
+      </select>
+      <button id="llmgo"${v.unclassified.length ? "" : " disabled"}>
+        🤖 LLM 分類${v.unclassified.length ? `(${v.unclassified.length} 個還沒有桶)` : ""}</button>
     </h1>
     <div class="stats">
       <div class="stat"><b>${t.confirmed}</b><span>已確認</span></div>
       <div class="stat ${t.provisional ? "w" : ""}"><b>${t.provisional}</b><span>提案待確認</span></div>
       <div class="stat ${t.unclassified ? "w" : ""}"><b>${t.unclassified}</b><span>還沒有桶</span></div>
     </div>
+    <p class="hint" id="llmhint" hidden></p>
     <div class="bkcols"></div>
     <p class="hint">一張卡 = 一個科目名在一個桶裡（×N 是出現在幾列）。
-      黃卡是提案、還沒人確認；紅卡是提不出桶。拖到別欄可以改桶。
+      黃卡是提案(規則猜的,或按了「🤖 LLM 分類」)、還沒人確認 —— 卡片上的「✓ 同意」
+      直接把它升成白卡(已確認);紅卡是提不出桶。拖到別欄可以改桶。
       <b>同名不同桶是正常的</b> —— 同一份附註裡「其他」可能一個在有價證券段、一個在衍生段。</p>
   </div>`);
 
@@ -462,10 +508,19 @@ async function viewBuckets() {
   const mkChip = (g) => {
     const cls = g.state === "PROVISIONAL" ? "prov" : g.state === "UNCLASSIFIED" ? "uncl" : "";
     const withPage = g.cells.find(c => c.page != null);
-    const c = $(`<div class="chip ${cls}" draggable="true">${esc(g.name)}<b>×${g.n}</b></div>`);
+    const c = $(`<div class="chip ${cls}" draggable="true">${esc(g.name)}<b>×${g.n}</b>
+      ${g.state === "PROVISIONAL" ? '<button data-ok title="同意這個桶 → 升成已確認" style="margin-left:6px;font-size:10px;padding:1px 6px">✓ 同意</button>' : ""}
+    </div>`);
     c.title = `${g.state}\n出現在 ${g.cells.length} 格`
       + (withPage ? `\n點一下看第一個出現處(${withPage.cell_key} p.${withPage.page + 1})` : "");
-    c.onclick = () => { if (withPage) showEvidence(withPage.doc, withPage.page); };
+    c.onclick = (e) => { if (e.target.closest("[data-ok]")) return; if (withPage) showEvidence(withPage.doc, withPage.page); };
+    const okBtn = c.querySelector("[data-ok]");
+    if (okBtn) okBtn.onclick = async (e) => {
+      e.stopPropagation();
+      const r = await post("rebucket", { name: g.name, to: g.bucket, global: false });
+      if (r.error) { alert(r.error); return; }
+      viewBuckets();
+    };
     c.ondragstart = (e) => {
       e.dataTransfer.setData("text/plain", JSON.stringify({ name: g.name, from: g.bucket }));
       c.classList.add("drag");
@@ -493,6 +548,33 @@ async function viewBuckets() {
   if (v.unclassified.length) wrap.appendChild(mkCol("還沒有桶", v.unclassified, true));
   for (const b of v.buckets) wrap.appendChild(mkCol(b, v.cols[b] || false));
   document.getElementById("app").replaceChildren(el);
+
+  // LLM 分類 —— 對「還沒有桶」的每個名字問一次,寫成黃卡(PROVISIONAL)。
+  // 不是自動生效:黃卡仍要人按「✓ 同意」或拖去別欄,才會變已確認。
+  const llmBtn = el.querySelector("#llmgo");
+  const llmHint = el.querySelector("#llmhint");
+  const llmReader = el.querySelector("#llmreader");
+  if (llmBtn) llmBtn.onclick = async () => {
+    const reader = llmReader.value;
+    llmBtn.disabled = true; llmReader.disabled = true;
+    llmBtn.textContent = "分類中…（每個名字約幾十秒，請等待）";
+    llmHint.hidden = false;
+    llmHint.textContent = reader === "deepseek"
+      ? "跑起來了，用 DeepSeek 逐一問名字…"
+      : "跑起來了，用你自己的 Claude Code 逐一問名字…";
+    try {
+      const r = await post("llm_classify", { reader });
+      if (r.error) { alert(r.error); return; }
+      const unknown = r.results.filter(x => !x.bucket);
+      llmHint.textContent = `分完了：${r.n_classified} 個有桶（黃卡待確認）、`
+        + `${r.n_unknown} 個 LLM 也判不出來（維持還沒有桶）`
+        + (unknown.length ? `：${unknown.map(x => x.name).join("、")}` : "");
+      viewBuckets();
+    } finally {
+      llmBtn.disabled = false;
+      llmReader.disabled = false;
+    }
+  };
 }
 
 // 拖曳落地 —— 選項 C:預設只改「這個名字目前所有出現處的 Decision」,
@@ -505,64 +587,6 @@ async function moveBucket(name, from, to) {
   const r = await post("rebucket", { name, to, global });
   if (r.error) { alert(r.error); return; }
   viewBuckets();
-}
-
-// ── 裁示台:待裁示佇列按名字批次(2026-07-30 加,plan_web_complete.md W1)──
-// 一張卡 = 一個不重複名字(不是一個出現處)——裁示一次對整個名字生效,
-// 138 筆出現處今天只對應 31 張卡。沒建議的排最前面,因為那才是真的要想的。
-async function viewQueue() {
-  const v = await api("queue");
-  nav("queue");
-  const el = $(`<div>
-    <h1>裁示台 · 待收錄的科目名
-      <a href="#/matrix" class="tag" style="text-decoration:none;margin-left:8px">← 資料</a>
-    </h1>
-    <div class="stats">
-      <div class="stat"><b>${v.groups.length}</b><span>待裁示名字</span></div>
-      <div class="stat"><b>${v.occurrences}</b><span>共出現處</span></div>
-    </div>
-    <div class="qlist" style="display:flex;flex-direction:column;gap:12px"></div>
-    <p class="hint">收錄一個名字,立刻對它出現過的每一格生效(寫進 buckets.SYN)。
-      有黃底建議的是規則猜的,**猜的不等於對的,按下去才算數**。
-      收錄後如果讓某格「分類表缺口」的全部名字都解了,那格會自動放回待抄佇列。</p>
-  </div>`);
-  if (!v.groups.length) {
-    el.querySelector(".qlist").appendChild($(`<p class="hint">沒有待裁示的名字。</p>`));
-  }
-  el.querySelector(".qlist").append(...v.groups.map(g => queueCard(g)));
-  document.getElementById("app").replaceChildren(el);
-}
-
-function queueCard(g) {
-  const card = $(`<div class="card" style="margin:0;padding:14px 18px">
-    <div class="bar" style="margin:0 0 6px">
-      <b>${esc(g.name)}</b>
-      <span class="tag">×${g.n}</span>
-      ${g.suggested ? `<span class="chip prov" style="cursor:default">建議:${esc(g.suggested)}</span>` : ""}
-    </div>
-    ${g.suggested_why ? `<p class="hint" style="margin:0 0 8px">${esc(g.suggested_why)}</p>` : ""}
-    <div class="bkts" style="display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px"></div>
-    <details>
-      <summary class="muted" style="cursor:pointer;font-size:12px">出現在 ${g.cells.length} 格</summary>
-      <div class="hint" data-cells style="margin:6px 0 0;display:flex;flex-wrap:wrap"></div>
-    </details>
-  </div>`);
-  card.querySelector("[data-cells]").append(...g.cells.map(evidenceChip));
-  const row = card.querySelector(".bkts");
-  S.buckets.forEach(b => {
-    const btn = $(`<button${b === g.suggested ? ' class="pri"' : ""}>${esc(b)}</button>`);
-    btn.onclick = async () => {
-      const reason = g.suggested_why || prompt(`「${g.name}」歸「${b}」的理由(會寫進 buckets.py 的註解):`, "") || "複核台裁示";
-      const r = await post("dispose", { name: g.name, bucket: b, reason });
-      if (r.error) { alert(r.error); return; }
-      if (r.unstuck && r.unstuck.length) {
-        alert(`已收錄。順帶放行了 ${r.unstuck.length} 格(分類表缺口全部解了):\n` + r.unstuck.join("\n"));
-      }
-      viewQueue();
-    };
-    row.appendChild(btn);
-  });
-  return card;
 }
 
 // ── 自動抄列:按鈕 + 輪詢進度 ──────────────────────────────────────────
@@ -848,6 +872,21 @@ function confirmOverwrite(doc, cls, cell) {
     `未 commit 前可以救回)。${warn}`);
 }
 
+// 「這格為什麼發不到分析頁」——v10 洞③。`build.py` 早就逐單位記了理由
+// (`build_manifest.json`),這裡只讀出來顯示,不重算(理由由 build.eligible()
+// 一處產生)。`publish` 是 null 代表還沒 build 過,不畫任何東西。
+function publishLine(publish) {
+  if (!publish) return "";
+  const staleNote = publish.stale
+    ? `<span style="color:var(--warn)">(這是上次重建時的結果,facts 已經更新——按「重建」看現況)</span> `
+    : "";
+  if (publish.published) {
+    return `<p class="hint" style="margin:0 0 8px">發布:<span style="color:var(--ok)">✓ 已發布</span> ${staleNote}</p>`;
+  }
+  const reasons = publish.reasons.join(' · ') || "(manifest 沒有記理由)";
+  return `<p class="hint" style="margin:0 0 8px">發布:<span style="color:var(--danger)">✗ 未發布</span> —— ${esc(reasons)} ${staleNote}</p>`;
+}
+
 // 已抄的一類:逐列 + 桶。未收錄的列標紅,因為那是要你處理的東西。
 function clsDone(doc, cls, cell, flat) {
   const bad = cell.records.reduce((n, r) => n + r.rows.filter(x => !x.bucket).length, 0);
@@ -863,11 +902,13 @@ function clsDone(doc, cls, cell, flat) {
           <option value="deepseek">DeepSeek API</option>
         </select>
         <button class="dan" data-re>重抄</button>
+        ${cell.human_ratified ? `<button class="dan" data-revoke title="把這格移出 facts/,回到還沒抄的狀態(git 可還原)">撤銷人工裁示</button>` : ""}
       </div>
     </div>
     ${!checks.ok ? `<p class="hint" style="margin:0 0 8px;color:var(--warn)">
-        檢查未全過:
+        品質檢查(v3,不擋歸檔)未全過:
         ${Object.entries(checks.problems).map(([k, v]) => esc(`${k}:${v}`)).join(' · ')}</p>` : ""}
+    ${publishLine(cell.publish)}
     <div class="tabs" data-tabs></div>
     <div data-panels></div>
   </div>`);
@@ -914,11 +955,30 @@ function clsDone(doc, cls, cell, flat) {
     [...panels.children].forEach((p, i) => p.style.display = i === active ? "" : "none");
     tabs.children[active].classList.add("on");
   }
+  const tally = tallyView(cell.tally);
+  if (tally) card.appendChild(tally);
   card.querySelector("[data-re]").onclick = async () => {
     if (!confirmOverwrite(doc, cls, cell)) return;
     const m = card.querySelector("[data-model]").value;
     await runCell(doc, cls, m);
   };
+  const revokeBtn = card.querySelector("[data-revoke]");
+  if (revokeBtn) {
+    revokeBtn.onclick = async () => {
+      const manual = cell.records.flatMap(r => r.rows).filter(r => r.manual).map(r => r.name);
+      const warn = manual.length
+        ? `\n\n這些人工列會被丟掉:\n` + manual.map(n => `· ${n}`).join("\n")
+        : "";
+      if (!confirm(`撤銷 ${doc} ${cls} 的人工裁示?${warn}\n\n` +
+        `撤銷後這格會變成「還沒抄」,可以重新抄或重新裁示;git log 可還原。`)) return;
+      const why = prompt("撤銷理由(必填——撤銷是丟掉一個人的判斷):", "");
+      if (why == null) return;
+      if (!why.trim()) { alert("理由不能空白,已取消。"); return; }
+      const r = await post("revoke", { doc, cls, why: why.trim() }).catch(e => ({ error: e.message }));
+      if (r.error) { alert(r.error); return; }
+      viewDoc(doc, { reload: true });
+    };
+  }
   const optBtn = card.querySelector("[data-pageopt]");
   if (optBtn) {
     optBtn.onclick = async () => {
@@ -937,6 +997,65 @@ function clsDone(doc, cls, cell, flat) {
     };
   }
   return card;
+}
+
+// 就地歸桶(v9 S4)。走既有的 `/api/dispose` → `webdata.confirm_bucket()`,
+// **不另開一條寫入路徑**:那支已經是「唯一的寫入點」,會把裁示連同理由寫進
+// `buckets.SYN` 原始碼(git diff 就是審核介面)、本 process 立刻生效、並且
+// 自動解套 `work/blocked/` 裡因為這個名字卡住的格。
+//
+// ⚠️ **這會影響所有文件**,不只眼前這一格 —— SYN 是全域對照表。所以確認框
+// 要把這件事講明白,不能只說「歸到 X 桶」。
+async function pickBucket(doc, name) {
+  const to = prompt(
+    `「${name}」歸到哪個桶?\n\n` +
+    S.buckets.map((b, i) => `${i + 1}. ${b}`).join("\n") +
+    `\n\n輸入編號或桶名。⚠️ 這是全域同義詞表,會影響所有文件與往後每一次抄列。`,
+    "");
+  if (to == null) return;
+  const v = to.trim();
+  if (!v) return;
+  const bucket = /^\d+$/.test(v) ? S.buckets[Number(v) - 1] : v;
+  if (!S.buckets.includes(bucket)) { alert(`「${v}」不是有效的桶。`); return; }
+  const reason = prompt(`理由(會寫進 buckets.SYN 的註解,選填但建議寫依據):`, "") || "複核台就地歸桶";
+  const r = await post("dispose", { name, bucket, reason });
+  if (r.error) { alert(r.error); return; }
+  if (!r.written) { alert(r.why || "沒有寫入"); return; }
+  const un = (r.unstuck || []).length;
+  alert(`已收錄:「${name}」→ ${bucket}` + (un ? `\n順帶解套 ${un} 格卡住的資料。` : ""));
+  await viewDoc(doc, { reload: true });
+}
+
+// 三段合計(v9,`docs/plan_v9_不擋人.md` §四 S1)。**「未歸桶」那一行永遠顯示,
+// 即使是 0** —— 這是取代閘門的安全網:原本「有列對不到桶就整格擋掉」的理由是
+// 「那筆錢會悄悄從發布數字裡消失」,而只要它永遠自己站一行,就不再是悄悄的。
+// ⚠️ **這一行不准因為是 0 就藏起來**,藏了那道閘門就得變回去(見
+// `checks.unbucketed_reason` 的註解)。
+//
+// 數字一律來自後端的 `cell.tally`(它走 `wide.view()`),**前端不自己加總** ——
+// 複核台跟發布站對同一格算出不同數字是這個 repo 踩過的形狀。
+function tallyView(t) {
+  if (!t) return null;
+  if (t.error) return $(`<p class="hint" style="color:var(--warn)">${esc(t.error)}</p>`);
+  const line = (label, v, extra = "") =>
+    `<div style="display:flex;gap:8px"><span style="width:7em;color:var(--dim)">${label}</span>
+     <span style="flex:1;text-align:right;font-variant-numeric:tabular-nums">${num(v)}</span>
+     <span style="width:10em">${extra}</span></div>`;
+  const diffOk = t.diff === 0;
+  const wrap = $(`<div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--line);font-size:13px">
+    ${line("已歸桶", t.bucketed,
+           t.basis && t.basis !== "帳面"
+             ? `<span style="color:var(--dim)">口徑:${esc(t.basis)}</span>` : "")}
+    ${t.side ? line("衍生/評價調整", t.side) : ""}
+    ${line("未歸桶", t.unbucketed,
+           t.unbucketed ? `<span style="color:var(--warn)">${t.unknown.length} 列待歸桶</span>` : "")}
+    ${line("紙上印的合計", t.printed)}
+    ${line("差額", t.diff,
+           t.diff === null ? '<span style="color:var(--dim)">紙上沒印合計,驗不到</span>'
+           : diffOk ? '<span style="color:var(--ok,#3a3)">✅ 抄寫對得上</span>'
+                    : '<span style="color:var(--warn)">⚠️ 抄寫對不上</span>')}
+  </div>`);
+  return wrap;
 }
 
 // 「用目前頁重抄」(plan_web_usable.md P1)——取代「指定候選頁」原本要求先
@@ -958,10 +1077,17 @@ function rowView(doc, cls, rec, r, n) {
   const div = $(`<div class="row ${n === S.rowIdx ? "cur" : ""} ${r.bucket ? "" : "p"}">
     <span class="nm">${r.manual ? '<span title="人工改過" style="margin-right:4px">✎</span>' : ""}${esc(r.name)}</span>
     <span class="vl">${num(r.value)}</span>
-    <span class="bk">${r.bucket ? esc(r.bucket) : "未收錄"}</span>
+    <span class="bk">${r.bucket ? esc(r.bucket)
+      : r.expanded ? '<span style="color:var(--dim)" title="這是兩層附註的母表列,底下的明細已經算進去了 —— 再給它一個桶會讓同一筆錢算兩次">彙總列</span>'
+      : '<span data-pick style="cursor:pointer;color:var(--warn);text-decoration:underline dotted">選桶 ▾</span>'}</span>
     <span class="i" data-e title="編輯">✎</span>
     <span class="i" data-d title="刪除">×</span>
   </div>`);
+  // 未歸桶的列就地歸桶(v9 S4)——**不重讀 PDF、不呼叫任何模型**。
+  // 缺一個字典詞條跟「模型抄錯了」是兩件事,前者的待辦是點一個下拉,
+  // 不是重抄(2026-08-12 實測:重抄必然撞同一道,失敗點在模型下游)。
+  const pick = div.querySelector("[data-pick]");
+  if (pick) pick.onclick = (e) => { e.stopPropagation(); pickBucket(doc, r.name); };
   div.onclick = (e) => {
     if (e.target.closest("[data-e],[data-d]")) return;
     S.rowIdx = n; S.page = rec.source_page; viewDoc(doc);
@@ -1430,8 +1556,19 @@ async function runCell(doc, cls, model = "claude") {
       newTag.classList.add("w");
       newTag.textContent = `✗ ${cls} 重抄失敗(${after === "blocked" ? "分類表缺口" : "擴頁到上限仍對不上"})——見下方卡片`;
     } else if (after === "done") {
-      newTag.textContent = `✓ ${cls} 抄列完成`;
-      setTimeout(() => { if (document.getElementById("jobtag") === newTag) newTag.hidden = true; }, 4000);
+      // ⚠️ `after === "done"` **不代表這次有寫入**:重抄前那格本來就是 done,
+      // 若這一輪一格都沒寫(例如 v4 的「facts/ 已有」保護擋下),狀態還是 done,
+      // 舊寫法就會顯示「✓ 抄列完成」——使用者看到綠勾、資料卻沒變。
+      // 所以要看 log 有沒有真的說「已歸檔」,不能只看狀態(鐵律 9)。
+      const wrote = s.lines.some(l => l.includes("已歸檔進 facts/"));
+      if (wrote) {
+        newTag.textContent = `✓ ${cls} 抄列完成`;
+        setTimeout(() => { if (document.getElementById("jobtag") === newTag) newTag.hidden = true; }, 4000);
+      } else {
+        newTag.classList.add("w");
+        const why = s.lines.filter(l => l.includes("未歸檔")).slice(-1)[0] || lastLine;
+        newTag.textContent = `⚠️ ${cls} 沒有寫入任何資料 —— ${why.slice(0, 90)}`;
+      }
     } else {
       newTag.textContent = lastLine.slice(0, 80);
     }

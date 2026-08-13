@@ -1,5 +1,11 @@
-"""穩健取檔:不寫死 AI3,改去 TWSE 清單找「個體」那個檔(代碼各家/各年不一,如 AI2/AI3)。
-補回缺檔,並統一存成 {YYYYMM}_{code}_AI3.pdf 讓下游照吃。
+"""穩健取檔:不寫死 AI3,改去 TWSE 清單找該口徑那個檔(代碼各家/各年不一,如 AI2/AI3)。
+補回缺檔,並統一存成 `{YYYYMM}_{銀行名}_{口徑}.pdf` 讓下游照吃。
+
+**兩個口徑都抓得到**(2026-08-12)。原本只抓個體 —— 但 TWSE 清單上本來就
+同時標著「個體」與「合併」,`report_filename()` 的最近標籤演算法一直都算出了
+兩者,只是把合併那個丟掉。丟掉的代價是合併變成一個死結:沒檔就沒欄、
+沒欄就沒格可按,唯一進料口只剩拖放上傳,而且順序是反的(要先有檔,
+那一欄才會長出來)。
 
 ⚠️ **這是一個取得器外掛,不是唯一入口**(2026-08-11,`docs/plan_v6_一台機器.md` R2-3)。
 還有一條路:網頁「資料」頁的拖放上傳(`/api/upload`,見 `server.py`)——
@@ -31,15 +37,25 @@ def list_year(code, roc):
         params={"step":"1","colorchg":"1","mtype":"A","co_id":code,"year":roc},timeout=30)
     r.encoding="big5"; return r.text
 
-#: 清單上的口徑標籤。**2014 以前叫「母公司財報」,不叫「個體」** —— 只認「個體」
-#: 的話,2014 以前的每一期都會回 None,`acquire.fetch_one()` 就把它記成 absent
-#: (「TWSE 清單上沒有這期的個體檔」),而檔案其實一直都在。
+#: 清單上的口徑標籤 → `docid` 的口徑值。**2014 以前叫「母公司財報」,不叫「個體」**
+#: —— 只認「個體」的話,2014 以前的每一期都會回 None,`acquire.fetch_one()` 就把它
+#: 記成 absent(「TWSE 清單上沒有這期的個體檔」),而檔案其實一直都在。
 #: 舊時代四季都申報母公司財報,比現在的個體(只有半年報/年報)還密。
-_SOLO_TAGS = ("個體", "個別", "母公司財報")
-_CONS_TAGS = ("合併",)                                    # 涵蓋「母子公司合併報表」等寫法
+#: 合併只有一個寫法,但它涵蓋「母子公司合併報表」等變體。
+_TAGS = {
+    docid.SOLO: ("個體", "個別", "母公司財報"),
+    docid.CONSOLIDATED: ("合併",),
+}
 
-def indiv_filename(html, yyyymm):
-    """從清單找該期(YYYYMM 前綴)標為個體/母公司的檔名。"""
+def report_filename(html, yyyymm, basis=docid.SOLO):
+    """從清單找該期(YYYYMM 前綴)標為 `basis` 的檔名。
+
+    **口徑是參數,不是寫死的**:同一套「最近標籤」判斷同時認得個體與合併,
+    兩者共用一個實作 —— 分成兩支各自 rfind 是這個 repo 一再出事的形狀
+    (一道規則兩個實作,改了一邊忘了另一邊)。
+    """
+    if basis not in _TAGS:
+        raise ValueError(f"口徑 {basis!r} 不認得 —— 只有 {tuple(_TAGS)}")
     for m in re.finditer(r'readfile2\("A","\d+","('+re.escape(yyyymm)+r'_\d+_[A-Z0-9]+\.pdf)"\)', html):
         fn=m.group(1)
         win=html[max(0,m.start()-600):m.start()]          # 該檔連結前的列描述
@@ -48,32 +64,34 @@ def indiv_filename(html, yyyymm):
         # 「母公司財報」,而它自己的「合併」在 63 字處。用 `in` 判斷會把合併
         # 報表當成個體收下來,是靜默抓錯口徑的檔。
         best, kind = None, None
-        for tags, k in ((_SOLO_TAGS, "solo"), (_CONS_TAGS, "cons")):
+        for b, tags in _TAGS.items():
             for t in tags:
                 i = win.rfind(t)
                 if i >= 0 and (best is None or i > best):
-                    best, kind = i, k
-        if kind == "solo":
+                    best, kind = i, b
+        if kind == basis:
             return fn
     return None
 
-def download(code, roc, month, tries=4):
-    """回傳個體 PDF 路徑。自動解析 TWSE 的原始檔名代碼。
+def download(code, roc, month, tries=4, basis=docid.SOLO):
+    """回傳該口徑的 PDF 路徑。自動解析 TWSE 的原始檔名代碼。
 
-    存檔名走 `docid.make(..., 個體)` —— 這支**只抓個體**(`indiv_filename()`
-    挑的就是清單上標個體/母公司那一列),所以口徑是它自己決定的,不是猜的。
+    存檔名走 `docid.make(..., basis)`,而 `basis` 也就是 `report_filename()`
+    去清單上比對的那個標籤 —— 檔名上的口徑因此**是問出來的,不是猜的**:
+    抓下來的一定是清單標著那個口徑的那一列。(封面仍是最終權威,見 `docid.py`;
+    這裡保證的是「沒有抓錯列」,不是「封面一定同意」。)
     """
     yyyymm=f"{1911+roc}{month}"
     bank=config.BANKS.get(code)
     if not bank:
         raise ValueError(f"代碼 {code} 不在 config.BANKS —— 要抓新銀行請先加進設定")
-    dest=CACHE/f"{docid.make(yyyymm, bank, docid.SOLO)}.pdf"
+    dest=CACHE/f"{docid.make(yyyymm, bank, basis)}.pdf"
     if dest.exists() and dest.stat().st_size>100000: return dest
     for a in range(tries):
         try:
             html=list_year(code,roc)
-            fn=indiv_filename(html,yyyymm)
-            if not fn: return None                        # 該期無個體檔(真的沒有)
+            fn=report_filename(html,yyyymm,basis)
+            if not fn: return None                        # 該期無此口徑的檔(真的沒有)
             s=_sess()
             r=s.post(f"{BASE}/server-java/t57sb01",
                 data={"step":"9","kind":"A","co_id":code,"filename":fn,"colorchg":"1"},timeout=30)

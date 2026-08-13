@@ -30,6 +30,7 @@ import re
 import sys
 import time
 
+import config
 import facts
 import fill
 import locate
@@ -37,7 +38,7 @@ import transcribe
 
 GOLDEN = "golden/golden.yaml"
 OUT_DIR = "out"
-CLASSES = ("Trading", "OCI", "AC")
+CLASSES = tuple(config.CLASSES)
 
 # 工單本體是文字(`context_pages` 給的是頁文字,不是圖),所以這裡不需要處理 PDF。
 #

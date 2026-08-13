@@ -12,6 +12,25 @@ import config
 import rules
 
 
+#: `rules.propose()` 推不出來、由人審裁示進 SYN 的名字。**每一條在 buckets.py
+#: 都附了出處**(哪家銀行、哪一年、哪一頁、金額),這裡只登記名字。
+#: 加名字進來 = 宣告「這是人審過的判斷,不是規則轉抄」,請連同證據一起 review。
+HUMAN_RULINGS = {
+    # 使用者裁示(buckets.py 逐條有長註解說明依據)
+    "國外機構發行債券", "不動產投資信託受益證券", "受益證券", "結構型債券",
+    "CMO 擔保房貸憑證", "其他衍生金融資產", "金屬商品交換合約",
+    # 同一份文件的算術推定(一列 = 多列,金額對得上)
+    "CMO", "RMBS", "資產證券化", "定存單", "定期存單-可轉讓", "換匯", "商品交換",
+    # 使用者裁示永遠留 PROVISIONAL 的三條(見 test_b5.py 檔頭)
+    "政府債券", "貨幣交換", "外匯換匯合約",
+    # 2026-08-14 華南/第一上線後補的四條。BUCKET_RULES 寫的是例示名字
+    # (「銀行定期存單」「短期票券」「不動產抵押貸款證券」),沒寫通用工具詞,
+    # 所以子字串比對推不出來 —— 不是沒有依據。改 BUCKET_RULES 文字會動到
+    # derivations 的 revision hash、把 68 條已批准規則全降級,代價不成比例。
+    "買入定期存單", "國外定期存單", "政府機構不動產抵押證券", "票券投資",
+}
+
+
 def case_no_smuggling():
     """表裡的每個關鍵字都要真的寫在 BUCKET_RULES 裡。"""
     extra = rules.audit(config.BUCKET_RULES)
@@ -32,9 +51,25 @@ def case_agrees_with_syn():
         elif got is not None:
             bad.append((name, want, got, why))
     yield ("與 SYN 零矛盾", not bad, f"{bad}")
-    # 覆蓋率不是門檻,是**看得見的維護指標**:掉下來代表有人往 SYN 塞了規則外的東西
-    yield (f"SYN 有 {hit}/{len(buckets.SYN)} 條推得出來(其餘是規則沒寫的判斷)",
-           hit >= len(buckets.SYN) * 0.8, f"{hit}/{len(buckets.SYN)}")
+
+    # 覆蓋率的目的是「掉下來代表有人往 SYN 塞了規則外的東西」。
+    # ⚠️ 2026-08-14:原本寫成 `hit >= len(SYN) * 0.8`,而**比例門檻量不到那件事**。
+    #    推不出來的那些不是髒東西,是逐條附了證據的人審裁示(國外機構發行債券、
+    #    受益證券、CMO…),它們只會越積越多 —— 分母漲、比例掉,棘輪會在
+    #    「又審了一批」的時候變紅,而真正要抓的「偷塞一條沒證據的」如果數量少,
+    #    比例反而不會動。實測:本次補 4 條有出處的名字就從 69/86 掉到 69/90 變紅。
+    #
+    #    改成**逐條列名凍結**:推不出來的集合必須恰好等於下面這張清單。
+    #    多一個沒登記的名字就紅(比 80% 嚴格得多 —— 一條就抓),
+    #    少一個(規則層進步到推得出來了)也提醒你把它從清單刪掉。
+    #    要加名字進這張清單,SYN 那邊必須同時附上出處(哪家、哪年、哪頁、金額)。
+    undevirable = {n for n, want in buckets.SYN.items()
+                   if rules.propose(buckets.norm(n))[0] != want}
+    yield (f"SYN 有 {hit}/{len(buckets.SYN)} 條推得出來;推不出來的 "
+           f"{len(undevirable)} 條必須逐條登記在案",
+           undevirable == HUMAN_RULINGS,
+           f"未登記:{sorted(undevirable - HUMAN_RULINGS)}  "
+           f"清單裡已不需要:{sorted(HUMAN_RULINGS - undevirable)}")
 
 
 def case_refuses():

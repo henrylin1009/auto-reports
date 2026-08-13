@@ -30,6 +30,39 @@ from core import store
 #: 且已裁示不在範圍內(docs/plan_ui_redesign.md §一裁示①)。
 CUTOFF_YEAR = 2023
 
+#: `build.py` 逐單位記的發布理由(v10 洞③)。**只讀,不重算** —— 理由由
+#: `build.eligible()` 一處產生,這裡再算一套就是「一道規則兩個實作」。
+_MANIFEST_PATH = "build_manifest.json"
+
+
+def _publish_status(key):
+    """`key`(`{doc}|{cls}`)有沒有發到 `data.json`,沒有的話為什麼——
+    直接讀 `build_manifest.json` 裡 `units[].facts_key`,不重算。
+
+    回傳 `None` 代表沒有 manifest 可查(還沒 build 過)。`stale=True` 代表
+    `facts/{doc}.json` 比這份 manifest 新——manifest 記的是上次 build 當下
+    的理由,可能已經跟不上,呼叫端要明講「這是上次重建時的結果」,不能
+    當成現況。
+    """
+    if not os.path.exists(_MANIFEST_PATH):
+        return None
+    try:
+        manifest = json.load(open(_MANIFEST_PATH, encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+    units = [u for u in manifest.get("units", []) if u.get("facts_key") == key]
+    if not units:
+        return None
+    published = any(u.get("provenance") == "v3" for u in units)
+    reasons = sorted({u["reason"] for u in units if u.get("provenance") != "v3"})
+
+    doc = key.split("|", 1)[0]
+    fp = f"facts/{doc}.json"
+    stale = (os.path.exists(fp)
+              and os.path.getmtime(fp) > os.path.getmtime(_MANIFEST_PATH))
+
+    return {"published": published, "reasons": reasons, "stale": stale}
+
 
 def docs_in_scope():
     return sorted(d for d in fill._all_docs() if int(d[:4]) >= CUTOFF_YEAR)
@@ -223,7 +256,7 @@ def overview(basis=None):
     # 所以新年度那一列根本不會出現,使用者沒有地方可以說「這期我要」。
     # 現有檔案現在只決定每格的狀態,不決定格子存不存在。
     periods = acquire.expected_periods(basis)
-    cols = acquire.expected_banks(basis, present)
+    cols = acquire.expected_banks()
     # 已經抓到但不在預期清單裡的(例如手動放進來的舊檔)仍要看得到 —— 補進去,
     # 不然它會從畫面上無聲消失,那正是「寫死列舉」踩過兩次的坑。
     for d in docs:
@@ -235,9 +268,10 @@ def overview(basis=None):
     periods.sort(reverse=True)
     cols.sort()
 
-    # (期別, 銀行名) → 實際檔名。**不准用 `acquire.doc_name()` 組出來的名字
-    # 反查現有檔**:那個函式回的一律是「個體」,合併的檔組出來對不上,
-    # 會讓整張合併矩陣變成「一份都沒有」(2026-07-29 實測踩過,當時是 AI3/AI1)。
+    # (期別, 銀行名) → 實際檔名。**用真的存在的檔去建對照,不要用組出來的名字
+    # 反查**:2026-07-29 實測踩過一次,當時 `doc_name()` 回的一律是個體,
+    # 合併的檔組出來對不上,整張合併矩陣變成「一份都沒有」。`doc_name()` 現在
+    # 收 basis 了,但這裡照樣不用它 —— 檔名的權威是磁碟上真有的那份。
     by_pos = {(split_doc(d)[0], split_doc(d)[1]): d for d in docs}
 
     log = acquire.load_log()
@@ -259,15 +293,22 @@ def overview(basis=None):
             # 欄位身分是**名字**,抓檔身分是**代碼** —— 在這裡轉一次。
             # 設定裡沒有的銀行抓不了(`code` 為 None),按鈕由前端自己灰掉。
             code = config.CODE_OF.get(bank)
-            st = acquire.cell_fetch_state(period, code, present, log) if code else "na"
+            st = (acquire.cell_fetch_state(period, code, present, log, basis)
+                  if code else "na")
             fetch_stats[st] = fetch_stats.get(st, 0) + 1
-            grid[f"{period}|{bank}"] = {"doc": None, "classes": None,
-                                        "fetch": st, "period": period, "code": code}
+            # `basis` 要跟著格子走:前端按「抓這期」時原樣送回來,
+            # 少了它 `fetch_one()` 會用預設值把合併那格當成個體去抓。
+            grid[f"{period}|{bank}"] = {"doc": None, "classes": None, "fetch": st,
+                                        "period": period, "code": code, "basis": basis}
 
     avail = sorted({bmap.get(d) for d in docs_in_scope()} - {None, locate.UNKNOWN})
+    # 不再回 `can_fetch` —— 那是「只抓得到個體」時代的旗標,前端拿它把合併
+    # 所有空格灰掉。兩個口徑都抓得到之後留著它只會是一個永遠為真的欄位。
     return {"periods": periods, "cols": cols, "grid": grid, "stats": stats,
             "fetch_stats": fetch_stats, "basis": basis, "bases": avail,
-            "can_fetch": basis == locate.SOLO}
+            # 2026-08-13 v11 R0:前端 CLS 清單原本寫死,跟這裡各自維護一份。
+            # 這裡是權威(locate.CLASSES ← config.CLASSES),前端改讀這個欄位。
+            "class_order": list(config.CLASS_ORDER)}
 
 
 def cell_detail(key):
@@ -294,6 +335,13 @@ def cell_detail(key):
     ok, problems = transcribe.verify(cells[key], loc)
     checks = {"ok": ok, "problems": {k: v for k, v in problems.items() if v}}
 
+    # 兩層附註的母表列(已經被子附註展開的那幾列)要標出來 —— 它們**不該被歸桶**:
+    # 明細已經算進去了,再給母表一個桶就是同一筆錢算兩次。判準借
+    # `closure.Tree.is_leaf()`,**不在這裡另寫一套「這列是不是彙總」的猜測**。
+    # (沒有這個標記的話,畫面會對「債務工具投資」這種標題列顯示「選桶 ▾」,
+    # 點下去會寫進全域 `buckets.SYN`,而那是會重複計算的錯規則。)
+    expanded = _expanded_rows(cells[key], loc.anchors.get(cls))
+
     records = []
     for ri, rec in enumerate(cells[key]):
         rows = []
@@ -307,6 +355,7 @@ def cell_detail(key):
                 "bucket": buckets.bucket(row),
                 "manual": bool(row.get("_src")),
                 "src": row.get("_src"),
+                "expanded": (rec["source_page"], row["name"]) in expanded,
             })
         records.append({
             "record_index": ri,
@@ -324,6 +373,81 @@ def cell_detail(key):
         "pages": sorted({r["source_page"] for r in records}),
         "records": records,
         "checks": checks,
+        "tally": _tally(cells[key]),
+        "human_ratified": human_ratified(cells[key]),
+        "publish": _publish_status(key),
+    }
+
+
+def _expanded_rows(recs, anchor):
+    """→ `{(source_page, row_name), ...}`:已經被子附註展開的母表列。
+
+    這些列在攤平後的視圖裡**不存在**(`closure.Tree.leaves()` 會濾掉),所以
+    畫面不該邀請人去替它們選桶 —— 那筆錢是由它底下的明細代表的。
+    樹建不起來(單層 record、或子節欄位對不上)就回空集合:那時每一列都是葉。
+    """
+    from core import closure
+    try:
+        tree, err = closure.build(recs, anchor)
+        if err or tree is None:
+            return set()
+        leaves = {(id(r), x["name"]) for r, x in tree.leaves()}
+        return {(r["source_page"], x["name"]) for r in recs for x in r["rows"]
+                if (id(r), x["name"]) not in leaves}
+    except Exception:
+        return set()
+
+
+def _tally(recs):
+    """一格的三段合計:已歸桶 / 未歸桶 / 紙上印的合計(v9)。
+
+    **未歸桶永遠是個數字,即使是 0** —— 它要能無條件顯示在畫面上。
+    「這格未歸桶是 0」與「這格沒有這個欄位」在畫面上長得一樣,而那正是
+    v9 要修的病(`docs/plan_v9_不擋人.md` §二原則 3)。
+
+    **算術走 `wide.view()`,不在這裡另寫一份加總** —— 網站的七桶就是它算的,
+    複核台跟發布站對同一格給出不同數字是這個 repo 踩過的形狀
+    (memory/two-implementations-one-rule)。
+
+    `bucketed is None` 代表該口徑在文件裡不存在(`View.book is None`),
+    那時未歸桶仍然照算 —— 「桶取不到」與「有錢沒歸桶」是兩件事。
+    """
+    import wide
+    from core import closure
+    # ⚠️ **一定要先攤平**(`results.build()` / `core.reconcile` 都是這樣做的)。
+    # 兩層附註(母表 2 列彙總 + 子附註逐項)不攤平的話,`wide.pick()` 會挑中母表
+    # 那份,於是整格看起來「100% 未歸桶」—— 而真相是明細全都抄到了,只是分成
+    # 三份 record。實測 `202504_華南_個體|OCI`:不攤平 未歸桶 373,868,040(100%),
+    # 攤平後 未歸桶 7,341,572(2%),已歸桶 366,526,468 分佈在 5 個桶。
+    # 少這一步會讓複核台對使用者說謊,而且是往「東西沒抓到」的方向說謊。
+    try:
+        doc = recs[0]["doc"]
+        anchor = locate.locate(f"pdf_cache/{doc}.pdf").anchors.get(recs[0]["class"])
+        flat, err = closure.flatten(recs, anchor)
+        if err:
+            flat = recs
+        views = wide.cell(flat)
+    except Exception as e:
+        return {"error": f"算不出合計:{e}"}
+    # **挑真的有值的那個口徑**,帳面優先。AC 的附註逐項常常是成本口徑
+    # (有「減:備抵損失」那一列),`wide.pick("帳面")` 因此回 None —— 只看帳面
+    # 的話這張卡片會顯示「已歸桶 —」,而每一列明明都歸到桶了,人會以為壞掉。
+    # 哪個口徑存在是文件決定的,不是這裡決定的,所以照它給的挑。
+    basis = "帳面" if views["帳面"].book is not None else "成本"
+    v = views[basis]
+    bucketed = v.total
+    side = sum(v.side.values())
+    unb = v.unbucketed_total
+    printed = v.expected if v.rec else None
+    got = (bucketed or 0) + side + unb
+    return {
+        "basis": basis,
+        "bucketed": bucketed, "side": side, "unbucketed": unb,
+        "printed": printed,
+        # 差額 = 紙上 - (已歸桶 + 側欄 + 未歸桶)。**0 代表抄寫是對的**,
+        # 跟歸桶齊不齊無關(v9 §三:兩個問題分開問)。
+        "diff": None if printed is None else printed - got,
+        "unknown": [{"name": n, "amount": a, "why": w} for n, a, w in v.unknown],
     }
 
 
@@ -493,6 +617,24 @@ def add_bank(code, name, color=None):
     return {"added": True, "bank": entry}
 
 
+def _snapshot(doc, cls, old, facts_dir=None):
+    """整格覆蓋前留一份舊版到 `work/history/`(`plan_web_usable.md` P3)。
+
+    git log 是最終稽核軌跡沒錯,但那要求「先 commit」;這裡是給還沒 commit
+    就手滑重抄的那個當下一個救回來的機會。不進版控。
+
+    `facts_dir` 有值代表呼叫端指定了別的事實庫(測試),那時不寫快照 ——
+    快照的路徑是寫死的 `work/history/`,對著別人的事實庫寫進正式目錄沒有意義。
+    """
+    if not old or facts_dir is not None:
+        return None
+    os.makedirs(fill.HISTORY_DIR, exist_ok=True)
+    stamp = datetime.datetime.now().isoformat(timespec="seconds").replace(":", "")
+    snap = f"{fill.HISTORY_DIR}/{doc}__{cls}__{stamp}.json"
+    json.dump(old, open(snap, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    return snap
+
+
 def file_cell(doc, cls, records, via, force=False, facts_dir=None):
     """**機器**把一格寫進 `facts/`。人工的入口是 `ratify()`,兩者的差別只有兩點:
 
@@ -506,8 +648,11 @@ def file_cell(doc, cls, records, via, force=False, facts_dir=None):
 
     機器寫進 `facts/` 的路現在只有這一條:`fill.cmd_submit`(via=`claude-code`)、
     `fill` 的重驗迴圈(via=`revalidate`)、v4 的歸檔(via=`v4/reader`)全走這裡。
-    `fill.py` 原本覆蓋前寫快照到 `work/history/` 的保護**留著** ——
-    快照是「手滑救回」,守衛是「根本不讓它發生」,兩件不同的事。
+    **覆蓋前寫快照到 `work/history/` 的保護也搬進來了**(2026-08-12)——
+    原本只寫在 `fill.cmd_submit` 裡,所以 v4 那條路覆蓋時沒有快照,而網頁上
+    的確認框對兩條路講的是同一句「舊版存進 work/history/」。同一條規則兩個
+    實作(其中一個沒實作)是這個 repo 反覆長 bug 的形狀,所以規則放在門上,
+    不放在某個呼叫端。快照是「手滑救回」,守衛是「根本不讓它發生」,兩件事。
 
     ⚠️ **`edit_row()` 刻意不受這道守衛管。** 它是人改自己的某一列、自己蓋
     `_src`;擋下去等於人沒辦法修正自己的裁示。守衛的語意是
@@ -530,6 +675,7 @@ def file_cell(doc, cls, records, via, force=False, facts_dir=None):
         raise EditError(
             f"{key} 已經人工裁示過(帶 `_src` 標記),機器不准覆蓋。\n"
             f"  要讓機器重填請先撤銷:`revoke({doc!r}, {cls!r}, why=...)`。")
+    _snapshot(doc, cls, cells.get(key), facts_dir)
     cells[key] = recs
     facts_mod.save(cells, facts_dir)
     store.ensure_anchors(doc)
@@ -955,6 +1101,69 @@ def bucket_view():
             "cols": cols, "unclassified": loose, "tally": tally}
 
 
+def llm_classify(today=None, reader="claude"):
+    """分桶檢視「🤖 LLM 分類」按鈕的落地。對目前**還沒有桶**的每個名字問一次
+    LLM(`core/llm_propose.py`),寫成 **PROVISIONAL**(不是 CONFIRMED)——
+
+    `core/decisions.py` 鐵則 2:「decide() 不得憑機器推論產生 CONFIRMED」,
+    這支雖然不是走 `decide()`,但同一條原則適用:機器不能自稱人工確認過。
+    寫成黃卡(PROVISIONAL)之後,人要核對再點分桶檢視既有的拖曳/確認動作
+    (`rebucket()`)才會變白卡(CONFIRMED)——**這支不取代人核對,只是把
+    「還沒有桶」變成「有桶可以核對」**。
+
+    判不出來(`llm_propose.propose()` 回 `None`)的名字保持 UNCLASSIFIED 不動,
+    不會寫入任何規則 —— 那是誠實的「不知道」,不是失敗。
+
+    `reader`:`"claude"`(預設)或 `"deepseek"`,見 `llm_propose.propose()`。
+    """
+    from core import decision_store
+    from core import decisions as dmod
+    from core import llm_propose
+
+    today = today or datetime.datetime.now().isoformat(timespec="seconds")
+    view = bucket_view()
+    names = sorted({g["name"] for g in view["unclassified"]})
+
+    path = os.path.join("taxonomy", "rules.json")
+    rules = json.load(open(path, encoding="utf-8"))
+    rules_by_id = {r["rule_id"]: r for r in rules}
+    cells = decision_store.load()
+
+    results = []
+    for name in names:
+        bucket, why = llm_propose.propose(name, reader=reader)
+        if bucket is None:
+            results.append({"name": name, "bucket": None, "why": why})
+            continue
+
+        norm = buckets.norm(name)
+        rule_id = f"tax:{norm}"
+        ref = dmod.make_reference("llm", why, today)
+        hit = rules_by_id.get(rule_id)
+        if hit:
+            hit.update(mapping=bucket, state=dmod.PROVISIONAL)
+            hit["references"] = list(hit.get("references") or []) + [ref]
+        else:
+            hit = dmod.make_rule(rule_id, "name", bucket, dmod.PROVISIONAL, [ref])
+            rules.append(hit)
+            rules_by_id[rule_id] = hit
+
+        for decs in cells.values():
+            for d in decs:
+                if buckets.norm(d["name"]) == norm and d["state"] == dmod.UNCLASSIFIED:
+                    d.update(mapping=bucket, state=dmod.PROVISIONAL,
+                             taxonomy_ref=rule_id, at=today, by="llm_classify")
+
+        results.append({"name": name, "bucket": bucket, "why": why})
+
+    json.dump(rules, open(path, "w", encoding="utf-8"),
+              ensure_ascii=False, indent=1, sort_keys=True)
+    decision_store.save(cells)
+    return {"results": results,
+            "n_classified": sum(1 for r in results if r["bucket"]),
+            "n_unknown": sum(1 for r in results if not r["bucket"])}
+
+
 def fetch_log():
     """抓檔紀錄,新到舊。**給網頁看的**,不必再問我或開終端機 ——
     每一筆都是 acquire.fetch_one() 實際問過 TWSE 之後記下的答案
@@ -1060,4 +1269,27 @@ def publish_status():
         "sources": sources,
         "stale": bool(newer),
         "newer_than_data": list(newer),
+    }
+
+
+#: 帳面/成本兩個口徑各自的說明文字。**唯一一份** —— 分析頁那張同款寬表已經拿掉了
+#: (docs/plan_ui_一層導覽.md R1),全 repo 現在只剩這裡畫這張表,不准再抄一份字串。
+_WIDE_NOTES = {
+    "book": "帳面口徑:Trading/OCI 為公允價值、AC 為攤銷後成本(資產負債表帳面金額)。",
+    "cost": "取得成本口徑:僅年報 Trading/OCI 有揭露;半年報與 AC(攤銷成本表無取得成本欄)顯示「—」。",
+}
+
+
+def wide_table():
+    """數字明細寬表:指標 ×(期別 × 銀行)。跟個體報表頁的 KPI/跨行比較/時間趨勢
+    同一個資料源(`data.json` 的 `wide`/`wide_cost`)——搬來這裡純粹是換位置,
+    不是另開一條算法。"""
+    d = json.load(open("data.json", encoding="utf-8"))
+    return {
+        "metrics": d.get("wide_metrics", []),
+        "periods": d["periods"],
+        "banks": d["banks"],
+        "book": d.get("wide", {}),
+        "cost": d.get("wide_cost", {}),
+        "notes": _WIDE_NOTES,
     }

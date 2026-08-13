@@ -77,12 +77,18 @@ HARD_GATES = ("check_bucket_complete", "check_basis")
 
 
 def _witness_counts(checks):
-    """回傳 (n_ok, n_mismatch, n_no_witness)。**注意這是全部 witness 的計數,
-    不是分流判準** —— 分流只看 `HARD_GATES`(見 `classify_cell`)。"""
+    """回傳 (n_ok, n_mismatch, n_no_witness, n_unbucketed)。**注意這是全部
+    witness 的計數,不是分流判準** —— 分流只看 `HARD_GATES`(見 `classify_cell`)。
+
+    `UNBUCKETED`(v9)自己一個計數,**不併進 n_ok 也不併進 n_mismatch** ——
+    它兩者都不是:抄寫是對的(所以不是 mismatch),但還有列沒歸桶(所以不是
+    全過)。併進任何一邊都會讓畫面把兩種不同的狀況顯示成同一種。
+    """
     ok = sum(1 for c in checks.values() if c["status"] == "OK")
     bad = sum(1 for c in checks.values() if c["status"] == "MISMATCH")
     nw = sum(1 for c in checks.values() if c["status"] == "no_witness")
-    return ok, bad, nw
+    ub = sum(1 for c in checks.values() if c["status"] == "UNBUCKETED")
+    return ok, bad, nw, ub
 
 
 def classify_cell(doc, cls, checks, book):
@@ -94,7 +100,10 @@ def classify_cell(doc, cls, checks, book):
     GREEN= 硬閘門都過了 —— 意思是「機器沒有意見」,**不等於這格一定對**,
            最終仍由人對著頁面影像複核。提示類 witness 沒過會照樣顯示在畫面上。
     """
-    ok, bad, nw = _witness_counts(checks)
+    ok, bad, nw, ub = _witness_counts(checks)
+    # **只有 MISMATCH 判 RED。** `UNBUCKETED`(v9)不在此列 —— 那是字典缺字,
+    # 待辦是點一個下拉,不是重抄;判 RED 的話使用者會去重抄,而重抄必然撞
+    # 同一道(失敗點在模型下游)。見 `docs/plan_v9_不擋人.md` §一。
     hard_bad = [g for g in HARD_GATES
                 if (checks.get(g) or {}).get("status") == "MISMATCH"]
     if hard_bad:
@@ -107,7 +116,11 @@ def classify_cell(doc, cls, checks, book):
         "status": status,
         "witnesses": checks,
         "n_ok": ok, "n_mismatch": bad, "n_no_witness": nw,
+        "n_unbucketed": ub,
         "hard_failed": hard_bad,
+        # 未歸桶的總額 —— 給畫面直接顯示,不必自己去 witness 裡挖
+        # (「錢要看得見」在每一層都要成立,不是只有複核台那一頁)。
+        "unbucketed": (checks.get("check_bucket_complete") or {}).get("unbucketed", 0),
         "book": book,
     }
 
@@ -267,7 +280,7 @@ def _filed_by_v4(recs):
         (r.get("_by") or {}).get("via") == "v4/reader" for r in recs)
 
 
-def file_green(docs=None, dry_run=False, refresh=False):
+def file_green(docs=None, dry_run=False, refresh=False, force=False, classes=None):
     """把分流為 **GREEN / RATIFIED** 的格歸檔進 `facts/`。
 
     這是 A-1 接縫的**使用端**(docs/plan_工具化.md 階段 A):在此之前 v4 的資料
@@ -287,6 +300,23 @@ def file_green(docs=None, dry_run=False, refresh=False):
     `refresh=True` 時,**`facts/` 裡已經是 v4 自己寫的那些格會重新寫一次** ——
     給的是 adapter 改版後的新形狀(例如補上 `bs_anchor`)。v3 抄的格、人改過的
     格一律不碰:重寫自己寫過的東西是更新,重寫別人寫的東西是取代。
+
+    `force=True` 時**連別人寫的格也覆蓋** —— 2026-08-12 加,給網頁上的
+    「重抄」按鈕用。**理由**:那顆按鈕的確認框明講「現有內容會被覆蓋
+    (舊版存進 work/history/)」,而使用者按了確認。上面那條「不覆蓋」是為了
+    防止批次遷移時 v4 靜靜取代 v3 的資料 —— **它防的是機器自作主張,不是
+    使用者明確要求**。沒有這個參數的話,重抄會讀完 PDF、算完 witness,然後
+    靜靜丟掉結果,而 UI 因為那格狀態仍是 `done` 還顯示「✓ 抄列完成」
+    (實測:`202402_玉山_個體|OCI` 停在 7/29 的 gemini 資料,重抄多次都沒變)。
+
+    ⚠️ **人工裁示過的格仍然擋著** —— 那道 append-only 保護在 `file_cell()`
+    自己身上(帶 `_src` 的格機器不准覆蓋),`force` 不會、也不該穿透它。
+
+    `classes=[...]` 限定只歸檔這幾類。**跟 `force` 是一組的**:網頁上按的是
+    「重抄 這一格」,確認框列的也只有這一格的人工列,但 v4 的 reader 一次讀
+    整份文件、`classify()` 一次回三類 —— 不限定的話按一次 OCI 會把 Trading
+    跟 AC 也一起覆蓋掉,而那兩格使用者從來沒確認過。爆炸半徑要等於確認框
+    講的範圍。
     """
     import facts as facts_mod
     from core import webdata
@@ -301,12 +331,15 @@ def file_green(docs=None, dry_run=False, refresh=False):
         # `load_all()` 才包上去的。
         info = classify(doc) or {}
         for cls, c in info.items():
+            if classes is not None and cls not in classes:
+                continue
             key = f"{doc}|{cls}"
             if c.get("status") not in ("GREEN", "RATIFIED"):
                 skipped.append((key, c.get("status")))
                 continue
-            if key in existing and not (refresh and _filed_by_v4(cells_now[key])):
-                skipped.append((key, "facts/ 已有(不覆蓋)"))
+            if key in existing and not force and not (refresh and _filed_by_v4(cells_now[key])):
+                skipped.append((key, "facts/ 已有(不覆蓋);這是批次歸檔的保護,"
+                                     "要覆蓋請用網頁上的「重抄」(會帶 force)"))
                 continue
             # 轉換走 `records_of()` —— 跟 `/api/v4/ratify` 同一支,不各自轉一次。
             recs = records_of(doc, cls)

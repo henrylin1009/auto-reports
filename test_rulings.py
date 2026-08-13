@@ -25,13 +25,19 @@ from core import reconcile, units
 
 BASELINE = {
     "mixed_provenance_cells": 0,
-    "data_wide_inconsistencies": 21,
+    # 2026-08-14 重新定義:只數「兩邊都有值卻不同」。舊基準 21 是舊定義
+    # (含一邊缺值)算出來的,不可比;新定義下今天實測 0。
+    "data_wide_inconsistencies": 0,
+    # 「四桶未齊全所以整格不進 data」的計數點。**刻意設 direction=None**:
+    # 它會隨發布覆蓋率上升而上升,上升是好事不是惡化,所以印出來但不當閘門。
+    "four_bucket_incomplete_points": 105,
     "adopted_units_triple_rule": 25,
     "conflicts_classified_as_NOT_YET": 8,
 }
 TARGET = {
     "mixed_provenance_cells": 0,
     "data_wide_inconsistencies": 0,
+    "four_bucket_incomplete_points": 0,
     "adopted_units_triple_rule": 25,
     "conflicts_classified_as_NOT_YET": 0,
 }
@@ -39,6 +45,7 @@ TARGET = {
 DIRECTION = {
     "mixed_provenance_cells": "down",
     "data_wide_inconsistencies": "down",
+    "four_bucket_incomplete_points": None,   # 只印不當閘門(見 BASELINE 上方說明)
     "adopted_units_triple_rule": "up",
     "conflicts_classified_as_NOT_YET": "down",
 }
@@ -76,7 +83,20 @@ def compute():
     #    取 1:1 對得上的三個桶,比 data[cell][cls][舊桶] 與 wide[cell][f"{cls}_{新桶}"]。
     v3_wide_units = [u["unit"] for u in manifest["units"]
                       if u["provenance"] == "v3" and u["unit"].endswith("|wide")]
-    bad = 0
+    #
+    # ⚠️ 2026-08-14 修正:這一項原本把「一邊有值一邊沒有」也算成不一致,
+    #    而那**問錯了問題**。實測今天的 105 個計數點 **105 個全部**是同一種
+    #    情形:`wide` 有值,但那格因為 `build.py` 的「四桶齊全才進 data」規則
+    #    整格不在 `data` 裡(例:2020H2|兆豐|Trading 三個桶都是 None vs 13/275/53)。
+    #    那是刻意的設計 —— 半齊的格子會畫出一根偏低卻看起來正常的長條,所以
+    #    整格不出現。把設計決策數成「不一致」,數字只會隨著發布覆蓋率上升而
+    #    上升,棘輪因此會在**做對事的時候**變紅(這次 102→105 就是華南上線)。
+    #
+    #    真正該守的不變量是「兩邊都有值時不准分岔」。`build.py` 已經把
+    #    `data`(四桶)改成由 `wide` 推導,所以這件事結構上不該再發生 ——
+    #    本項就是在驗那個結構保證沒有被繞過,而不是在數覆蓋率。
+    #    覆蓋率另立 `four_bucket_incomplete_points` 一項,看得見但不當成惡化。
+    bad = incomplete = 0
     for u in v3_wide_units:
         cell, cls, _basis = u.rsplit("|", 2)
         old = ((data.get("data") or {}).get(cell) or {}).get(cls) or {}
@@ -85,11 +105,12 @@ def compute():
             a, b = old.get(old_b), new.get(f"{cls}_{new_b}")
             if a is None and b is None:
                 continue
-            # 93 個比對點 = 31 個單位 × 3 個桶,一個有值一個沒有也算不一致
-            # (M1 的 93 個比對點就是 31×3,沒有排除任何一邊缺值的情形)。
-            if a is None or b is None or abs(a - b) > 1:
-                bad += 1
+            if a is None or b is None:
+                incomplete += 1          # 四桶未齊全 → 整格不進 data(設計如此)
+            elif abs(a - b) > 1:
+                bad += 1                 # 兩邊都有值卻不同 → 真的分岔
     data_wide_inconsistencies = bad
+    four_bucket_incomplete_points = incomplete
 
     # ── adopted_units_triple_rule:用 core.units.adopt 對真實 verdict + 快照重算,
     #    數 provenance == v3 的三元組。
@@ -116,6 +137,7 @@ def compute():
     return {
         "mixed_provenance_cells": mixed_provenance_cells,
         "data_wide_inconsistencies": data_wide_inconsistencies,
+        "four_bucket_incomplete_points": four_bucket_incomplete_points,
         "adopted_units_triple_rule": adopted_units_triple_rule,
         "conflicts_classified_as_NOT_YET": conflicts_classified_as_NOT_YET,
     }
@@ -127,11 +149,15 @@ def main():
     worse = []
     for k in BASELINE:
         v, base, tgt = got[k], BASELINE[k], TARGET[k]
-        if DIRECTION[k] == "down":
+        if DIRECTION[k] is None:
+            regressed = False
+        elif DIRECTION[k] == "down":
             regressed = v > base
         else:
             regressed = v < base
-        mark = "✗ 惡化" if regressed else ("=" if v == base else "△ 與文件基準不同(非惡化)")
+        mark = "✗ 惡化" if regressed else (
+            "(僅供參考,不當閘門)" if DIRECTION[k] is None
+            else "=" if v == base else "△ 與文件基準不同(非惡化)")
         print(f"{k:<32}{v:>8}{base:>8}{tgt:>8}   {mark}")
         if regressed:
             worse.append(k)

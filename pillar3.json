@@ -16,7 +16,8 @@
     "lev_t1": 263985800,
     "exposure": 4058137872,
     "lev_pct": 6.51,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 276942126,
@@ -33,7 +34,8 @@
     "lev_t1": 304387928,
     "exposure": 4788155750,
     "lev_pct": 6.36,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "110H1_中信.pdf",
@@ -59,7 +61,8 @@
     "lev_t1": 275997926,
     "exposure": 4222099156,
     "lev_pct": 6.54,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 287978522,
@@ -76,7 +79,8 @@
     "lev_t1": 320691734,
     "exposure": 5181215744,
     "lev_pct": 6.19,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "110H2_中信.pdf",
@@ -102,7 +106,8 @@
     "lev_t1": 267820563,
     "exposure": 4460468000,
     "lev_pct": 6.0,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 287927291,
@@ -119,7 +124,8 @@
     "lev_t1": 321526123,
     "exposure": 5426498392,
     "lev_pct": 5.93,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "111H1_中信.pdf",
@@ -145,7 +151,8 @@
     "lev_t1": 289214346,
     "exposure": 4837943098,
     "lev_pct": 5.98,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 311875189,
@@ -162,7 +169,8 @@
     "lev_t1": 345675258,
     "exposure": 5864260579,
     "lev_pct": 5.89,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "111H2_中信.pdf",
@@ -188,7 +196,8 @@
     "lev_t1": 285506409,
     "exposure": 5075617043,
     "lev_pct": 5.63,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 308446009,
@@ -205,7 +214,8 @@
     "lev_t1": 342189285,
     "exposure": 6087512403,
     "lev_pct": 5.62,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "112H1_中信.pdf",
@@ -231,7 +241,8 @@
     "lev_t1": 308009479,
     "exposure": 5390267575,
     "lev_pct": 5.71,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 332500898,
@@ -248,7 +259,8 @@
     "lev_t1": 366382277,
     "exposure": 6426142632,
     "lev_pct": 5.7,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "112H2_中信.pdf",
@@ -274,7 +286,8 @@
     "lev_t1": 312894013,
     "exposure": 5512393937,
     "lev_pct": 5.68,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 336882716,
@@ -291,7 +304,8 @@
     "lev_t1": 370715331,
     "exposure": 6519760117,
     "lev_pct": 5.69,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "113H1_中信.pdf",
@@ -317,7 +331,8 @@
     "lev_t1": 340392361,
     "exposure": 5752791376,
     "lev_pct": 5.92,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 367958196,
@@ -334,7 +349,8 @@
     "lev_t1": 402020056,
     "exposure": 6885388601,
     "lev_pct": 5.84,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "113H2_中信.pdf",
@@ -360,7 +376,8 @@
     "lev_t1": 337390457,
     "exposure": 5772464542,
     "lev_pct": 5.84,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 360730529,
@@ -377,7 +394,8 @@
     "lev_t1": 395387657,
     "exposure": 6873365749,
     "lev_pct": 5.75,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "114H1_中信.pdf",
@@ -403,7 +421,8 @@
     "lev_t1": 380706104,
     "exposure": 5992800453,
     "lev_pct": 6.35,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 398372097,
@@ -420,7 +439,8 @@
     "lev_t1": 442685095,
     "exposure": 7202872416,
     "lev_pct": 6.15,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "114H2_中信.pdf",
@@ -448,7 +468,8 @@
     "lev_t1": 268315204,
     "exposure": 4087326641,
     "lev_pct": 6.56,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 270705095,
@@ -465,7 +486,8 @@
     "lev_t1": 270705095,
     "exposure": 4110591929,
     "lev_pct": 6.59,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "110H1_兆豐.pdf",
@@ -491,7 +513,8 @@
     "lev_t1": 286087120,
     "exposure": 4057421948,
     "lev_pct": 7.05,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 288441523,
@@ -508,7 +531,8 @@
     "lev_t1": 288441523,
     "exposure": 4081867748,
     "lev_pct": 7.07,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "110H2_兆豐.pdf",
@@ -534,7 +558,8 @@
     "lev_t1": 274259901,
     "exposure": 4251092198,
     "lev_pct": 6.45,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 274256290,
@@ -551,7 +576,8 @@
     "lev_t1": 274256290,
     "exposure": 4274611459,
     "lev_pct": 6.42,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "111H1_兆豐.pdf",
@@ -577,7 +603,8 @@
     "lev_t1": 283547215,
     "exposure": 4019047815,
     "lev_pct": 7.06,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 283543847,
@@ -594,7 +621,8 @@
     "lev_t1": 283543847,
     "exposure": 4043548597,
     "lev_pct": 7.01,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "111H2_兆豐.pdf",
@@ -620,7 +648,8 @@
     "lev_t1": 302391067,
     "exposure": 4167630757,
     "lev_pct": 7.26,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 302388437,
@@ -637,7 +666,8 @@
     "lev_t1": 302388437,
     "exposure": 4192541745,
     "lev_pct": 7.21,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "112H1_兆豐.pdf",
@@ -663,7 +693,8 @@
     "lev_t1": 314867906,
     "exposure": 4320591977,
     "lev_pct": 7.29,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 314865920,
@@ -680,7 +711,8 @@
     "lev_t1": 314865920,
     "exposure": 4348783585,
     "lev_pct": 7.24,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "112H2_兆豐.pdf",
@@ -706,7 +738,8 @@
     "lev_t1": 313653155,
     "exposure": 4460603611,
     "lev_pct": 7.03,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 313651839,
@@ -723,7 +756,8 @@
     "lev_t1": 313651839,
     "exposure": 4488964645,
     "lev_pct": 6.99,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "113H1_兆豐.pdf",
@@ -749,7 +783,8 @@
     "lev_t1": 332178089,
     "exposure": 4549588047,
     "lev_pct": 7.3,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 328977225,
@@ -766,7 +801,8 @@
     "lev_t1": 332177225,
     "exposure": 4583850053,
     "lev_pct": 7.25,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "113H2_兆豐.pdf",
@@ -792,7 +828,8 @@
     "lev_t1": 341542002,
     "exposure": 4353210109,
     "lev_pct": 7.85,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 338341079,
@@ -809,7 +846,8 @@
     "lev_t1": 341541079,
     "exposure": 4382759842,
     "lev_pct": 7.79,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "114H1_兆豐.pdf",
@@ -835,7 +873,8 @@
     "lev_t1": 363219689,
     "exposure": 4826253417,
     "lev_pct": 7.53,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 360019005,
@@ -852,7 +891,8 @@
     "lev_t1": 363219005,
     "exposure": 4864903989,
     "lev_pct": 7.47,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "114H2_兆豐.pdf",
@@ -880,7 +920,8 @@
     "lev_t1": 231583776,
     "exposure": 3450397796,
     "lev_pct": 6.71,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 212054979,
@@ -897,7 +938,8 @@
     "lev_t1": 243856620,
     "exposure": 3589656580,
     "lev_pct": 6.79,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "110H1_國泰.pdf",
@@ -923,7 +965,8 @@
     "lev_t1": 241134166,
     "exposure": 3568162220,
     "lev_pct": 6.76,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 222191384,
@@ -940,7 +983,8 @@
     "lev_t1": 253861999,
     "exposure": 3711428967,
     "lev_pct": 6.84,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "110H2_國泰.pdf",
@@ -966,7 +1010,8 @@
     "lev_t1": 231198029,
     "exposure": 3749186549,
     "lev_pct": 6.17,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 204923017,
@@ -983,7 +1028,8 @@
     "lev_t1": 239540177,
     "exposure": 3885477709,
     "lev_pct": 6.17,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "111H1_國泰.pdf",
@@ -1009,7 +1055,8 @@
     "lev_t1": 243198809,
     "exposure": 3945202642,
     "lev_pct": 6.16,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 214850222,
@@ -1026,7 +1073,8 @@
     "lev_t1": 250115502,
     "exposure": 4088233779,
     "lev_pct": 6.12,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "111H2_國泰.pdf",
@@ -1052,7 +1100,8 @@
     "lev_t1": 263149683,
     "exposure": 4293115211,
     "lev_pct": 6.13,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 232456454,
@@ -1069,7 +1118,8 @@
     "lev_t1": 268003554,
     "exposure": 4458703604,
     "lev_pct": 6.01,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "112H1_國泰.pdf",
@@ -1095,7 +1145,8 @@
     "lev_t1": 281042910,
     "exposure": 4308054275,
     "lev_pct": 6.52,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 249264018,
@@ -1112,7 +1163,8 @@
     "lev_t1": 284547118,
     "exposure": 4471034229,
     "lev_pct": 6.36,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "112H2_國泰.pdf",
@@ -1138,7 +1190,8 @@
     "lev_t1": 284392448,
     "exposure": 4360509991,
     "lev_pct": 6.52,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 251466553,
@@ -1155,7 +1208,8 @@
     "lev_t1": 287881553,
     "exposure": 4528603287,
     "lev_pct": 6.36,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "113H1_國泰.pdf",
@@ -1181,7 +1235,8 @@
     "lev_t1": 304860446,
     "exposure": 4659568927,
     "lev_pct": 6.54,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 271892948,
@@ -1198,7 +1253,8 @@
     "lev_t1": 308526408,
     "exposure": 4894722305,
     "lev_pct": 6.3,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "113H2_國泰.pdf",
@@ -1224,7 +1280,8 @@
     "lev_t1": 303951189,
     "exposure": 4958765042,
     "lev_pct": 6.13,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 272460662,
@@ -1241,7 +1298,8 @@
     "lev_t1": 307193982,
     "exposure": 5164755458,
     "lev_pct": 5.95,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "114H1_國泰.pdf",
@@ -1267,7 +1325,8 @@
     "lev_t1": 328965593,
     "exposure": 5146970089,
     "lev_pct": 6.39,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 297135048,
@@ -1284,7 +1343,8 @@
     "lev_t1": 332882128,
     "exposure": 5401683482,
     "lev_pct": 6.16,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "114H2_國泰.pdf",
@@ -1312,7 +1372,8 @@
     "lev_t1": 210436087,
     "exposure": 3067463941,
     "lev_pct": 6.86,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 211924300,
@@ -1329,7 +1390,8 @@
     "lev_t1": 232547498,
     "exposure": 3619797613,
     "lev_pct": 6.42,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "110H1_富邦.pdf",
@@ -1355,7 +1417,8 @@
     "lev_t1": 220234688,
     "exposure": 3351398271,
     "lev_pct": 6.57,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 222669900,
@@ -1372,7 +1435,8 @@
     "lev_t1": 243318351,
     "exposure": 3973545714,
     "lev_pct": 6.12,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "110H2_富邦.pdf",
@@ -1398,7 +1462,8 @@
     "lev_t1": 227102256,
     "exposure": 3475225025,
     "lev_pct": 6.53,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 225521701,
@@ -1415,7 +1480,8 @@
     "lev_t1": 249852226,
     "exposure": 4093201955,
     "lev_pct": 6.1,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "111H1_富邦.pdf",
@@ -1441,7 +1507,8 @@
     "lev_t1": 240847919,
     "exposure": 3505692298,
     "lev_pct": 6.87,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 235059680,
@@ -1458,7 +1525,8 @@
     "lev_t1": 262353051,
     "exposure": 4105910334,
     "lev_pct": 6.39,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "111H2_富邦.pdf",
@@ -1484,7 +1552,8 @@
     "lev_t1": 284142361,
     "exposure": 3922397727,
     "lev_pct": 7.24,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 267447842,
@@ -1501,7 +1570,8 @@
     "lev_t1": 302014327,
     "exposure": 4520881481,
     "lev_pct": 6.68,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "112H1_富邦.pdf",
@@ -1527,7 +1597,8 @@
     "lev_t1": 300012459,
     "exposure": 4041174011,
     "lev_pct": 7.42,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 282458923,
@@ -1544,7 +1615,8 @@
     "lev_t1": 318825495,
     "exposure": 4646666624,
     "lev_pct": 6.86,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "112H2_富邦.pdf",
@@ -1570,7 +1642,8 @@
     "lev_t1": 290408169,
     "exposure": 4246677105,
     "lev_pct": 6.84,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 275777206,
@@ -1587,7 +1660,8 @@
     "lev_t1": 312370126,
     "exposure": 4875771940,
     "lev_pct": 6.41,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "113H1_富邦.pdf",
@@ -1613,7 +1687,8 @@
     "lev_t1": 305994313,
     "exposure": 4400501153,
     "lev_pct": 6.95,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 291955899,
@@ -1630,7 +1705,8 @@
     "lev_t1": 328652161,
     "exposure": 5046164480,
     "lev_pct": 6.51,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "113H2_富邦.pdf",
@@ -1656,7 +1732,8 @@
     "lev_t1": 300550216,
     "exposure": 4426570529,
     "lev_pct": 6.79,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 284633818,
@@ -1673,7 +1750,8 @@
     "lev_t1": 320656144,
     "exposure": 5066887549,
     "lev_pct": 6.33,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "114H1_富邦.pdf",
@@ -1699,7 +1777,8 @@
     "lev_t1": 321350341,
     "exposure": 4737714312,
     "lev_pct": 6.78,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 307773340,
@@ -1716,7 +1795,8 @@
     "lev_t1": 344857969,
     "exposure": 5461394957,
     "lev_pct": 6.31,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "114H2_富邦.pdf",
@@ -1744,7 +1824,8 @@
     "lev_t1": 194220482,
     "exposure": 3087577869,
     "lev_pct": 6.29,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 172081233,
@@ -1761,7 +1842,8 @@
     "lev_t1": 200053432,
     "exposure": 3153120625,
     "lev_pct": 6.34,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "110H1_玉山.pdf",
@@ -1787,7 +1869,8 @@
     "lev_t1": 201080213,
     "exposure": 3340756870,
     "lev_pct": 6.02,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 179167854,
@@ -1804,7 +1887,8 @@
     "lev_t1": 207140053,
     "exposure": 3410643731,
     "lev_pct": 6.07,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "110H2_玉山.pdf",
@@ -1830,7 +1914,8 @@
     "lev_t1": 200195038,
     "exposure": 3461124036,
     "lev_pct": 5.78,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 170962939,
@@ -1847,7 +1932,8 @@
     "lev_t1": 198935138,
     "exposure": 3395275081,
     "lev_pct": 5.86,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "111H1_玉山.pdf",
@@ -1873,7 +1959,8 @@
     "lev_t1": 207122942,
     "exposure": 3533844012,
     "lev_pct": 5.86,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 177847945,
@@ -1890,7 +1977,8 @@
     "lev_t1": 205820144,
     "exposure": 3616077033,
     "lev_pct": 5.69,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "111H2_玉山.pdf",
@@ -1916,7 +2004,8 @@
     "lev_t1": 233107103,
     "exposure": 3618014209,
     "lev_pct": 6.44,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 203786226,
@@ -1933,7 +2022,8 @@
     "lev_t1": 231758425,
     "exposure": 3698835385,
     "lev_pct": 6.27,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "112H1_玉山.pdf",
@@ -1959,7 +2049,8 @@
     "lev_t1": 245422608,
     "exposure": 3713842634,
     "lev_pct": 6.61,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 216085514,
@@ -1976,7 +2067,8 @@
     "lev_t1": 244057713,
     "exposure": 3796930594,
     "lev_pct": 6.43,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "112H2_玉山.pdf",
@@ -2002,7 +2094,8 @@
     "lev_t1": 254760722,
     "exposure": 3960506446,
     "lev_pct": 6.43,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 225366806,
@@ -2019,7 +2112,8 @@
     "lev_t1": 253339005,
     "exposure": 4056555721,
     "lev_pct": 6.25,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "113H1_玉山.pdf",
@@ -2045,7 +2139,8 @@
     "lev_t1": 271402055,
     "exposure": 4133495271,
     "lev_pct": 6.57,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 241966084,
@@ -2062,7 +2157,8 @@
     "lev_t1": 269938283,
     "exposure": 4233460694,
     "lev_pct": 6.38,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "113H2_玉山.pdf",
@@ -2088,7 +2184,8 @@
     "lev_t1": 281902099,
     "exposure": 4178175290,
     "lev_pct": 6.75,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 252557267,
@@ -2105,7 +2202,8 @@
     "lev_t1": 280529466,
     "exposure": 4273253394,
     "lev_pct": 6.56,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "114H1_玉山.pdf",
@@ -2131,7 +2229,8 @@
     "lev_t1": 302293501,
     "exposure": 4495226107,
     "lev_pct": 6.72,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "合併": {
     "cet1": 272904042,
@@ -2148,7 +2247,8 @@
     "lev_t1": 300876241,
     "exposure": 4613382937,
     "lev_pct": 6.52,
-    "_fails": []
+    "_fails": [],
+    "_no_witness": []
    },
    "_src": {
     "file": "114H2_玉山.pdf",

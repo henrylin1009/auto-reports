@@ -64,6 +64,42 @@ def case_單根單份_攤平就是自己():
         yield ("rows 原封不動", flat[0]["rows"] == one[0]["rows"], flat[0]["rows"])
 
 
+def _cost_record():
+    """跟 yushan() 同一格但另一個口徑(成本)的明細表——真實案例取自華南
+    202504_華南_個體 OCI(v10 洞①):p137 明細表**合計欄本身就叫「取得成本」**
+    (`config.COST_COLS`,`closure.build()` 判口徑的唯一訊號——不是
+    `buckets.basis_of()`,見 `build()` docstring 為什麼),合計 378,456,348。
+    這裡數字改小,但形狀一樣:合計既不等於錨,也不等於公允口徑任何一列的
+    金額——它是另一個口徑的平行根,不是誰的子節點。"""
+    r = rec(137, 999_000_000,
+            [("公司債", 500_000_000), ("金融債券", 500_000_000)])
+    r["total_col"] = "取得成本"
+    r["rows"] = [{"name": n, "cols": {"取得成本": v}} for n, v in
+                 [("公司債", 500_000_000), ("金融債券", 500_000_000)]]
+    return r
+
+
+def case_跨口徑不是子節點():
+    """公允口徑(yushan)之外混進一份成本口徑的表——不該被硬湊成子節點
+    (v10 洞①,實測:華南 202504 OCI 等 5 格原本在這裡誤判掛不上樹)。"""
+    two = yushan() + [_cost_record()]
+    tree, err = closure.build(two, A)
+    yield ("build 成功(不再誤判掛不上樹)", err is None, err)
+    if not err:
+        yield ("成本口徑那份自己也是根(平行根)", len(tree.roots) == 2, len(tree.roots))
+        pages = [x[0]["source_page"] for x in tree.leaves() if x[1]["name"] == "公司債"]
+        yield ("成本口徑的列仍是葉列(沒被誰吃掉)", 137 in pages, pages)
+
+
+def case_失敗_跨口徑存在時同口徑對不上仍要報錯():
+    """洞①只讓跨口徑那條路過,**不能連帶放寬同口徑的閉合檢查**——公允口徑
+    子表被改掉 1 元,即使旁邊混了一份成本口徑的表,照樣要報錯。"""
+    r = yushan() + [_cost_record()]
+    r[2]["printed_total"] = 292_943_798
+    _, err = closure.build(r, A)
+    yield ("回報掛不上去", err is not None and "掛不上去" in err, err)
+
+
 def case_附註加明細表_兩個平行根不相加():
     """年報常見附註+明細表兩份都印著錨——它們是平行來源,不是父子,不能加成兩倍。"""
     two = yushan() + [rec(130, A, [("股票及受益證券", 23_130_069 + 1), ("債券", 292_943_799 - 1)])]
@@ -109,11 +145,14 @@ def case_失敗_父列撞名時不准猜():
 
 
 def case_失敗_兩層的欄對不起來():
-    """子表的合計欄跟根不同名(例如子附註只印取得成本)——攤平要停下來,不能生假資料。"""
+    """子表的合計欄跟根不同名(同口徑,只是換了一期的欄名)——攤平要停下來,
+    不能生假資料。**故意不用「取得成本」**:那會被 `rec_basis()` 判成另一個
+    口徑的平行根,不再是「兩層欄對不起來」這個情境,見 `case_跨口徑不是子節點`。
+    """
     r = yushan()
-    r[2]["total_col"] = "取得成本"
+    r[2]["total_col"] = "112年12月31日"
     for x in r[2]["rows"]:
-        x["cols"] = {"取得成本": x["cols"][COL]}
+        x["cols"] = {"112年12月31日": x["cols"][COL]}
     _, err = closure.flatten(r, A)
     yield ("flatten 回報欄對不起來", err is not None and "欄對不起來" in err, err)
 
@@ -171,6 +210,7 @@ def main():
     bad = 0
     for case in (case_兩層附註閉合, case_母表那兩列不是葉列, case_攤平給下游的是葉列,
                  case_單根單份_攤平就是自己, case_附註加明細表_兩個平行根不相加,
+                 case_跨口徑不是子節點, case_失敗_跨口徑存在時同口徑對不上仍要報錯,
                  case_失敗_沒有根, case_失敗_湊得出錨但掛不上,
                  case_失敗_子表掛不上任何一列, case_失敗_父列撞名時不准猜,
                  case_失敗_兩層的欄對不起來, case_沒有錨不准通過,

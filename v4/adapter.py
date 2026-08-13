@@ -106,12 +106,21 @@ class Aggregated:
     """
 
     def __init__(self, ok, book=None, side=None, others=None, unknown=None, reason=None,
-                 basis="公允"):
+                 basis="公允", arithmetic_ok=None):
         self.ok, self.book, self.side = ok, book, side
         self.others = others or []
         self.unknown = unknown or []
         self.reason = reason
         self.basis = basis
+        #: **抄寫對不對**(未歸桶算進等式)。與 `ok` 的差別只有一項:這一支
+        #: 不要求 `unknown` 是空的。名字與語意刻意跟 `wide.View.arithmetic_ok`
+        #: 一字不差 —— 兩邊對同一件事必須是同一組概念、同一組名字。
+        #:
+        #: ⚠️ 2026-08-13 踩過:v9 一度把 `ok` 本身改成寬鬆版,於是
+        #: `aggregate().ok` 與 `wide.View.ok` 對同一份資料給出相反答案,
+        #: `test_v4_to_facts` 的等價命題當場破掉(6 格)。**一道規則兩個實作**
+        #: 是這個 repo 反覆長 bug 的形狀,不要用「改掉其中一邊的定義」來解。
+        self.arithmetic_ok = ok if arithmetic_ok is None else arithmetic_ok
 
 
 def aggregate(raw_rows, printed_subtotal):
@@ -185,12 +194,28 @@ def aggregate(raw_rows, printed_subtotal):
                            reason="沒有可對帳的小計 —— 少抄幾列照樣加得出七桶,"
                                   "缺的桶會靜靜變成 0")
 
-    bad = checks.bucket_sum_matches(list(book.values()) + list(side.values()),
-                                     unknown, printed_subtotal, "小計")
+    # ── v9:抄寫與歸桶分開問(`docs/plan_v9_不擋人.md` §三)────────────────
+    # **抄寫對不對**用 `arithmetic_matches`(未歸桶算進等式)。對不上就是真的
+    # 抄錯或抄漏 —— 兩個旗標一起倒,`book` 照舊不給。
+    bad = checks.arithmetic_matches(list(book.values()) + list(side.values()),
+                                    unknown, printed_subtotal, "小計")
     if bad:
         return Aggregated(False, book=book, side=side, others=others,
-                           unknown=unknown, reason=bad, basis=basis)
-    return Aggregated(True, book=book, side=side, others=others, basis=basis)
+                           unknown=unknown, reason=bad, basis=basis,
+                           arithmetic_ok=False)
+
+    # 抄寫過了。**`ok` 仍然是嚴格版**(要求每一列都歸得到桶)—— 它是
+    # `wide.View.ok` 的對照組,兩邊必須同義,否則 `test_v4_to_facts` 的等價
+    # 命題就破了。放寬的是**呼叫端怎麼用它**:
+    #   · `witness.check_bucket_complete` 改看 `arithmetic_ok` + `unknown`,
+    #     缺字回 `UNBUCKETED`(標記)而不是 `MISMATCH`(判紅)
+    #   · 於是缺字的格不再是 RED,可以歸檔,而那筆錢在 `unknown` 裡帶著走,
+    #     複核台的三段合計會把它顯示成自己的一行(`core/webdata._tally`)
+    # 2026-08-12 富邦 202402 OCI 實例:8 列全對、逐列相加 == 錨,只因為
+    # `央行票據` 不在 `buckets.SYN` 就整格不歸檔,而重抄必然撞同一道。
+    return Aggregated(not unknown, book=book, side=side, others=others,
+                      basis=basis, unknown=unknown, arithmetic_ok=True,
+                      reason=checks.unbucketed_reason(unknown))
 
 
 def _to_wide(bucket_name):

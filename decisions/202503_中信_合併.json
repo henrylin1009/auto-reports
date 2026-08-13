@@ -533,15 +533,15 @@
    "taxonomy_ref": "tax:金融債券"
   },
   {
-   "at": "2026-07-29T13:44:35.519856Z",
-   "by": "decide",
+   "at": "2026-08-12T23:44:19",
+   "by": "llm_classify",
    "group": "強制透過損益按公允僱值衡量之金融資產：",
    "locator": {
     "cell_key": "202503_中信_合併|Trading",
     "row_index": 5,
     "source_page": 14
    },
-   "mapping": null,
+   "mapping": "公司債",
    "name": "可轉換公司僵",
    "occurrence": {
     "cell_key": "202503_中信_合併|Trading",
@@ -551,8 +551,8 @@
     "scope": "row"
    },
    "references": [],
-   "state": "UNCLASSIFIED",
-   "taxonomy_ref": null
+   "state": "PROVISIONAL",
+   "taxonomy_ref": "tax:可轉換公司僵"
   },
   {
    "at": "2026-07-29T13:44:35.519875Z",

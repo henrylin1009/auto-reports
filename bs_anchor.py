@@ -77,10 +77,11 @@ def read(path):
 
 if __name__ == "__main__":
     import sys
+    import config
     for p in sys.argv[1:]:
         vals, page = read(p)
         if page is None:
             print(f"{p}: BS 不在文字層(需視覺路徑)")
         else:
-            got = "  ".join(f"{k}={vals[k]:,}" for k in ("Trading", "OCI", "AC") if k in vals)
+            got = "  ".join(f"{k}={vals[k]:,}" for k in config.CLASSES if k in vals)
             print(f"{p}: p{page}  {got or '(頁找到但沒抓到科目)'}")

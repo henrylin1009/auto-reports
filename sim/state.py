@@ -22,13 +22,16 @@ working tree 的 `data.json` 有單邊分桶(某券種公允有值、成本 0,�
 import json
 import subprocess
 
+import config
 import yields
 
 E = yields.E                     # 1e5  仟元 → 億元
 #: 有久期的券種。**排除 股票 與 貨幣市場** —— 貨幣市場是存單票券,浮虧實測 0.00%
 #: (拿 OCI 桶的公允/成本對照過),混進來只會稀釋分母。
 K = ("GB", "公司債", "金融債", "資產基礎", "其他")
-CLASSES = ("AC", "OCI", "Trading")
+#: 這裡只拿來 sum(),順序不影響結果 —— 沿用 config.CLASS_ORDER 純粹因為
+#: 這支原本就是 AC/OCI/Trading 排列,沒有理由跟 config.CLASSES 對著調。
+CLASSES = tuple(config.CLASS_ORDER)
 YEARS = (2021, 2022, 2023, 2024, 2025)
 
 
@@ -125,17 +128,22 @@ def gov(y, b, classes=CLASSES):
     return sum(r.get(f"{c}_GB", 0) or 0 for c in classes)
 
 
-def has_basis(y, b, kind):
-    """這一格的 OCI 在 `kind`(wide / wide_cost)裡**真的有揭露**嗎。
+def has_basis(y, b, kind, cls="OCI"):
+    """這一格的 `cls` 券種在 `kind`(wide / wide_cost)裡**真的有揭露**嗎。
 
     `bonds()` 是 `or 0` 加總,分不出「部位是 0」與「這個口徑不存在」——
     兩者都回 0。分不出來的後果是 `100*(p-q)/p` 在 q 這邊整個口徑不存在時
     算出 **100% 浮虧**(實測玉山 2021/2022 就是這樣冒出兩個 100.00),
     所以要看的是「有沒有非 null 的桶」,不是「加起來是不是 0」。
+
+    `cls="AC"` 版本(2026-08-13 加)防的是同一個洞的另一邊:`ac_hidden()`
+    的分母原本直接 `bonds(y,b,("AC",))`,AC 逐桶整片 null 時一樣被 `or 0`
+    吃成 0,分子(capital.json 的浮虧)還在,除出來的浮虧率就被放大好幾倍
+    (實測 2022 中信 −28% vs 補上這道防線後 −3.7%)。
     """
     D, _ = wide()
     r = _row(D, y, b, kind)
-    return any(r.get(f"OCI_{k}") is not None for k in K)
+    return any(r.get(f"{cls}_{k}") is not None for k in K)
 
 
 def oci_unrealized(y, b):
@@ -167,6 +175,8 @@ def ac_hidden(y, b):
     rec = yields.interest(kind="fair_value", field="fair").get((y, b))
     if not rec:
         return None
+    if not has_basis(y, b, "wide", "AC"):
+        return None                       # AC 逐桶整片 null,分母不准回 0(見 has_basis)
     loss = (rec["fair"] - rec["book"]) / E
     return loss, bonds(y, b, ("AC",)), rec.get("scope")
 

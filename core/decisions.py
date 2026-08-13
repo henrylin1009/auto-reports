@@ -14,7 +14,7 @@ CONFIRMED    = "CONFIRMED"
 PROVISIONAL  = "PROVISIONAL"
 UNCLASSIFIED = "UNCLASSIFIED"
 
-REFERENCE_KINDS = ("human", "rule", "synonym", "arithmetic", "prior_year", "group")
+REFERENCE_KINDS = ("human", "rule", "synonym", "arithmetic", "prior_year", "group", "llm")
 RULE_SCOPES     = ("name", "group", "generic", "column")
 OCC_SCOPES      = ("row", "column", "record")
 

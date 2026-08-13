@@ -38,11 +38,12 @@ import shutil
 import subprocess
 import sys
 
+import config
 import facts
 import fill
 import holdout
 import results
-from config import WIDE_BUCKETS
+from config import CLASSES, WIDE_BUCKETS
 from core import report
 
 SNAP_DIR = "snapshots"
@@ -221,7 +222,7 @@ def build():
             for cell in cells:
                 cur = old.get(cell) or {}
                 table[cell] = {}
-                for cls in ("Trading", "OCI", "AC"):
+                for cls in CLASSES:
                     key, v, ok, why = pick(by_cell.get((rep_basis, cell, cls), []),
                                            basis, "v3")
                     src = "v3"
@@ -245,6 +246,28 @@ def build():
                                                             if x is not None]})
             data[table_name] = table
 
+    # `banks`/`periods` 也要從當次算出來的格子長出來,**不能沿用凍結骨架**。
+    # ⚠️ 這是「新銀行永遠上不了網站」的根因(2026-08-14 修):格的宇宙上面已經
+    #    取聯集、華南 2025H2 的 28 個欄位確實算出來了,但 `data["banks"]` 整份
+    #    是從 2026-07-27 的骨架深拷貝來的,而那份骨架比華南/第一上線還早。
+    #    結果是「有資料、但前端的銀行清單裡沒有這家」—— 網站什麼都不會顯示,
+    #    也不會報錯,看起來就跟「這家沒抄」一模一樣。
+    # 判準是**有沒有算出格子**,不是 banks.json 的完整名冊 —— 名冊裡列了但一格
+    # 都沒抄的銀行(今天的第一銀行)不該在網站上長出一整排空欄位。
+    # 排序照 banks.json 的代號,跟 `core/webdata.py` 的既有做法一致。
+    # (`periods` 刻意不一起動 —— 它現在是半年度的固定座標軸,而格子裡另有
+    #  2023Q1…2025Q4 這些季別;把季別併進去會整個換掉前端的 x 軸,是另一件事。)
+    seen_banks = set()
+    for table_name in (t for ts in report.TABLES.values() for t in ts):
+        for cell, cols in (data.get(table_name) or {}).items():
+            if "|" in cell and any(v is not None for v in (cols or {}).values()):
+                seen_banks.add(cell.split("|")[1])
+    roster = config.CODE_OF               # 銀行名 → 代號(來源:banks.json)
+    unknown = seen_banks - set(roster)
+    if unknown:                       # 抄出了名冊上沒有的銀行 → 是抄列或 docid 出錯
+        raise SystemExit(f"build: 有資料但不在 banks.json 名冊裡的銀行:{sorted(unknown)}")
+    data["banks"] = sorted(seen_banks, key=lambda n: roster[n])
+
     # 主儀表板讀的 `data`(四桶)**由 `wide` 推導**,不再是獨立來源。
     # 這欄原本只有 bridge_v2 寫過,build.py 從來沒動過它 —— 實測 2020H2|兆豐
     # Trading 的 `data.其他` 是 1.95 而 `wide.其他` 是 0,兩張圖各說各話而
@@ -259,7 +282,7 @@ def build():
     four_bucket = {}
     for cell, w in (data.get("wide") or {}).items():
         cols = {cls: {k: w.get(f"{cls}_{src}") for k, src in FOUR.items()}
-                for cls in ("Trading", "OCI", "AC")}
+                for cls in CLASSES}
         if all(v is not None for c in cols.values() for v in c.values()):
             four_bucket[cell] = cols
     data["data"] = four_bucket
@@ -326,6 +349,58 @@ def summarize(manifest, diff):
             print(f"    {n:>4}  {reason}")
 
 
+def summarize_vs_live(data):
+    """印「這次會把線上 `data.json` 改成什麼」。
+
+    ⚠️ 2026-08-14 加。`summarize()` 印的 `diff` 比較基準是
+    `snapshots/v2_frozen_20260727.json` —— 一份凍結的舊管線快照,**不是**磁碟上
+    正在服役的 `data.json`。所以那份差異每次都印同一批 288 個單位,
+    「這次改了什麼」反而看不見:實測過磁碟上的 data.json 與現算 0 差異時,
+    `--diff` 照樣印 288 個單位。
+
+    `更新網站.command` 的第 1 步就是拿那份差異問人「看起來對嗎?」,
+    而它無法回答這個問題 —— 關卡等於空轉。這裡補上真正該看的那一份。
+    """
+    if not os.path.exists(DATA):
+        print("\n(磁碟上沒有 data.json,這是第一次建置)")
+        return
+    live = json.load(open(DATA, encoding="utf-8"))
+
+    def flat(d):
+        out = {}
+        for t, v in d.items():
+            if not isinstance(v, dict):
+                continue
+            for cell, cols in v.items():
+                if isinstance(cols, dict):
+                    for c, val in cols.items():
+                        out[(t, cell, c)] = val
+        return out
+
+    a, b = flat(live), flat(data)
+    gained = [k for k in b if a.get(k) is None and b[k] is not None]
+    lost = [k for k in a if a[k] is not None and b.get(k) is None]
+    changed = [k for k in b if a.get(k) is not None and b[k] is not None and a[k] != b[k]]
+    bank_d = (live.get("banks") or []) != (data.get("banks") or [])
+
+    print("\n" + "=" * 60)
+    print("與**線上 data.json**(這次會被覆蓋掉的那份)的差異")
+    print("=" * 60)
+    if not (gained or lost or changed or bank_d):
+        print("  沒有任何欄位改變 —— 線上檔已經與 facts/ 同步。")
+        return
+    print(f"  null → 有值 : {len(gained):>4}")
+    print(f"  有值 → null : {len(lost):>4}   ← 這一項不是 0 就要看清楚為什麼")
+    print(f"  數字改變     : {len(changed):>4}   ← 這一項不是 0 就要看清楚為什麼")
+    if bank_d:
+        print(f"  銀行清單     : {live.get('banks')} → {data.get('banks')}")
+    for label, ks in (("有值 → null", lost), ("數字改變", changed)):
+        for k in sorted(ks)[:20]:
+            print(f"    [{label}] {k[0]} {k[1]} {k[2]}: {a.get(k)} → {b.get(k)}")
+        if len(ks) > 20:
+            print(f"    … 另有 {len(ks) - 20} 筆")
+
+
 def main(argv):
     stale = _assert_no_stale_verdict()
     data, manifest, diff = build()
@@ -333,6 +408,7 @@ def main(argv):
     assert after == stale[1], "build 期間動到了 results/verdict.json —— 鐵則 2 被違反"
 
     summarize(manifest, diff)
+    summarize_vs_live(data)
 
     if "--diff" in argv:
         print("\n（--diff:未寫任何檔）")

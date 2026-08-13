@@ -27,9 +27,10 @@ import re
 import locate
 
 import checks
+import config
 from v4 import adapter, reader
 
-CLASSES = ("Trading", "OCI", "AC")
+CLASSES = tuple(config.CLASSES)
 
 
 # ─────────────────────────────── W1 ───────────────────────────────
@@ -117,9 +118,22 @@ def check_bucket_complete(book):
     if not book or book.get("rows") is None:
         return {"status": "no_witness", "diff": None}
     agg = adapter.aggregate(book["rows"], book.get("printed_subtotal"))
-    if agg.ok:
-        return {"status": "OK", "diff": 0}
-    return {"status": "MISMATCH", "diff": None, "note": agg.reason}
+    if not agg.arithmetic_ok:
+        return {"status": "MISMATCH", "diff": None, "note": agg.reason}
+    if agg.unknown:
+        # ── v9:缺字是標記,不是失敗 ────────────────────────────────────
+        # **不准在這裡回 "OK"**:回 OK 等於把「1 列沒歸桶」這件事抹掉,
+        # 而 v9 的整個立論是「錢要看得見」——閘門拿掉之後,標記就是僅存的
+        # 那道防線,它不能同時消失(見 `checks.unbucketed_reason` 的註解)。
+        #
+        # 用一個**自己的狀態**而不是 MISMATCH:`ledger.HARD_GATES` 只把
+        # MISMATCH 判 RED,所以這格會是 GREEN(可歸檔)但畫面上仍看得到
+        # 「N 列待歸桶」。兩種原因不能長成同一個結果(鐵律 9)。
+        return {"status": "UNBUCKETED", "diff": None,
+                "note": agg.reason,
+                "unbucketed": sum(v for _n, v, _w in agg.unknown if v is not None),
+                "names": [n for n, _v, _w in agg.unknown]}
+    return {"status": "OK", "diff": 0}
 
 
 # ─────────────────────────────── W6 ───────────────────────────────

@@ -202,7 +202,9 @@ def flags():
             note = []
             if (y, b) in state.misaligned():
                 note.append("帳面與成本的分券種對不齊(兩張表顆粒度不同)→ 利率軸留白")
-            if not state.ac_hidden(y, b):
+            if not state.has_basis(y, b, "wide", "AC"):
+                note.append("AC 逐桶在 data.json 裡不存在(只有全帳合計)→ 利率軸整體端、報酬軸+AC隱藏浮虧 留白")
+            elif not state.ac_hidden(y, b):
                 note.append("沒有 AC 公允揭露 → 利率軸整體端、報酬軸+AC隱藏浮虧 留白")
             sc = state.yield_pct(y, b)
             if sc and sc[1] == "僅AC":

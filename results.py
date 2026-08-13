@@ -70,6 +70,21 @@ def build(cells):
             # 兩者在「只有自帶錨」的格子上不同(locate 那邊是 None),
             # 之前這裡報的是 locate 那個,下游看到的跟閘門實際用的不一致。
             "anchor": anchor,
+            # ── v9:未歸桶的錢要看得見 ────────────────────────────────
+            # **永遠是數字,即使是 0**(不是 None)——「這格未歸桶是 0」與
+            # 「這格沒有這個欄位」在畫面上會塌成同一種樣子,而那正是本次要
+            # 修的病(docs/plan_v9_不擋人.md §二原則 3)。
+            #
+            # ⚠️ **上面的 `wide` / `wide_cost` 判準刻意沒有放寬。** 計劃原本
+            # 寫「改用 arithmetic_ok 就發布部分七桶」,實測 20 格之後收回:
+            # 其中 14 格未歸桶 > 50%、10 格是 100%(七桶全 0)——那些格的
+            # `facts/` 裡根本沒有明細列,只有類別小計列。放行的話網站會出現
+            # 10 格「公債 0 / 公司債 0 / 金融債 0」,正是 `v4/adapter.py` 檔頭
+            # 記載的那個「沒有任何其他檢查抓得到」的災難。
+            # 未歸桶先只進資料與複核台;要不要拿它放寬發布,等 S3 把明細列
+            # 真的抄進 facts/ 之後、剩下的是小額餘數時再談。
+            "unbucketed": views["帳面"].unbucketed_total,
+            "unbucketed_cost": views["成本"].unbucketed_total,
         }
         audit[key] = {
             "sources": [{"page": r["source_page"], "kind": r.get("source_kind"),

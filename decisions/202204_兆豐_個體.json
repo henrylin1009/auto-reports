@@ -223,15 +223,15 @@
    "taxonomy_ref": "tax:政府債券"
   },
   {
-   "at": "2026-07-29T13:50:10.960752Z",
-   "by": "decide",
+   "at": "2026-08-12T23:44:19",
+   "by": "llm_classify",
    "group": "債務工具",
    "locator": {
     "cell_key": "202204_兆豐_個體|OCI",
     "row_index": 3,
     "source_page": 32
    },
-   "mapping": null,
+   "mapping": "資產基礎",
    "name": "受益證券",
    "occurrence": {
     "cell_key": "202204_兆豐_個體|OCI",
@@ -241,8 +241,8 @@
     "scope": "row"
    },
    "references": [],
-   "state": "UNCLASSIFIED",
-   "taxonomy_ref": null
+   "state": "PROVISIONAL",
+   "taxonomy_ref": "tax:受益證券"
   },
   {
    "at": "2026-07-29T13:50:10.960781Z",
@@ -538,15 +538,15 @@
    "taxonomy_ref": "tax:定期存單-可轉讓"
   },
   {
-   "at": "2026-07-29T13:50:10.960960Z",
-   "by": "decide",
+   "at": "2026-08-12T23:44:19",
+   "by": "llm_classify",
    "group": "透過其他綜合損益按公允價值衡量之金融資產",
    "locator": {
     "cell_key": "202204_兆豐_個體|OCI",
     "row_index": 7,
     "source_page": 128
    },
-   "mapping": null,
+   "mapping": "資產基礎",
    "name": "資產證券化",
    "occurrence": {
     "cell_key": "202204_兆豐_個體|OCI",
@@ -556,8 +556,8 @@
     "scope": "row"
    },
    "references": [],
-   "state": "UNCLASSIFIED",
-   "taxonomy_ref": null
+   "state": "PROVISIONAL",
+   "taxonomy_ref": "tax:資產證券化"
   }
  ],
  "202204_兆豐_個體|Trading": [
@@ -628,15 +628,15 @@
    "taxonomy_ref": "tax:非上市、上櫃、興櫃股票"
   },
   {
-   "at": "2026-07-29T13:50:01.800323Z",
-   "by": "decide",
+   "at": "2026-08-12T23:44:19",
+   "by": "llm_classify",
    "group": "強制透過損益按公允價值衡量之金融資產",
    "locator": {
     "cell_key": "202204_兆豐_個體|Trading",
     "row_index": 3,
     "source_page": 31
    },
-   "mapping": null,
+   "mapping": "資產基礎",
    "name": "受益證券",
    "occurrence": {
     "cell_key": "202204_兆豐_個體|Trading",
@@ -646,8 +646,8 @@
     "scope": "row"
    },
    "references": [],
-   "state": "UNCLASSIFIED",
-   "taxonomy_ref": null
+   "state": "PROVISIONAL",
+   "taxonomy_ref": "tax:受益證券"
   },
   {
    "at": "2026-07-29T13:50:01.800353Z",
@@ -804,15 +804,15 @@
    "taxonomy_ref": "tax:股票"
   },
   {
-   "at": "2026-07-29T13:50:01.800453Z",
-   "by": "decide",
+   "at": "2026-08-12T23:44:19",
+   "by": "llm_classify",
    "group": "透過損益按公允價值衡量之金融資產",
    "locator": {
     "cell_key": "202204_兆豐_個體|Trading",
     "row_index": 1,
     "source_page": 127
    },
-   "mapping": null,
+   "mapping": "資產基礎",
    "name": "受益證券",
    "occurrence": {
     "cell_key": "202204_兆豐_個體|Trading",
@@ -822,8 +822,8 @@
     "scope": "row"
    },
    "references": [],
-   "state": "UNCLASSIFIED",
-   "taxonomy_ref": null
+   "state": "PROVISIONAL",
+   "taxonomy_ref": "tax:受益證券"
   },
   {
    "at": "2026-07-29T13:50:01.800475Z",
