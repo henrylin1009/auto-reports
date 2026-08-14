@@ -48,7 +48,21 @@ Claude Code 讀取、驗算、分類。看到「要人看」的格子,點進去�
 按「我看過原始頁,照這樣歸檔」寫進事實庫。改完按「重建」,`data.json`
 就會照最新的事實庫重算。
 
+### clone 下來會拿到什麼、不會拿到什麼
+
+| | 進 git | 說明 |
+|---|---|---|
+| `data.json`(算好的發布資料) | ✅ | **clone 完直接 `python3 app.py` 就看得到全部圖表**,不必重建 |
+| `facts/*.json`(事實庫) | ✅ | 70 份、203 格,人可讀的 diff |
+| `pdf_cache/*.pdf`(原始財報) | ❌ | 太大,而且 `python3 app.py fetch` 抓得回來(需要台灣網路,TWSE 擋雲端 IP) |
+| `facts.db` | ❌ | 由 `facts/*.json` 匯入而來,沒有它會自動直讀 JSON |
+
+**沒有 PDF 時**:網頁、圖表、模擬器全部能用;`build`(重算)和 8 支要開 PDF
+驗算的測試會停下來並告訴你去跑 `app.py fetch`。這是刻意的 ——
+驗算的定義就是「合計對得上原始財報的資產負債表」,沒有原始檔就不該假裝驗過。
+
 ```bash
+python3 run_tests.py            # 35 支(沒有 PDF 時 27 支,其餘明確跳過)
 python3 app.py build --diff     # 由 facts/ 重算,只印差異不寫檔
 python3 app.py build --write    # 寫入 data.json
 python3 app.py migrate          # facts/*.json → facts.db(三張表儲存後端)

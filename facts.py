@@ -76,7 +76,10 @@ def _use_db(facts_dir):
     (2026-08-11 實測抓到:`test_b2.py` 的 F3 案例把 `doc="X"` 的假資料
     寫進了正式事實庫,`facts/X.json` 是這次事故的殘留)。
     """
-    return facts_dir is None and DIR == _DEFAULT_DIR and db_mod.exists()
+    # ⚠️ 2026-08-14:判準是 `has_facts()`(DB 裡真的有列)而不是 `exists()`
+    # (檔案在不在)。空的 DB 檔會劫持整個事實庫 —— 見 `db.has_facts()` 的說明,
+    # 實測是乾淨 clone 跑一次測試就會發生,而症狀是「資料全部無聲消失」。
+    return facts_dir is None and DIR == _DEFAULT_DIR and db_mod.has_facts()
 
 
 def load(facts_dir=None):

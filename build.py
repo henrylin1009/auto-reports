@@ -110,8 +110,31 @@ def rebuild_v3():
     """**當次**由 facts/ 重算 verdict。回傳 (verdict, facts_sha, cells 數)。"""
     cells = facts.load()
     train, _leak = holdout.split(cells)          # 保留集永不進入發布
+    _require_pdfs(train)
     verdict, _audit = results.build(train)
     return verdict, _sha(*glob.glob("facts/*.json")), len(train)
+
+
+def _require_pdfs(train):
+    """驗算要讀原始 PDF —— 缺檔就先講清楚,不要丟 FileNotFoundError 的堆疊。
+
+    ⚠️ 2026-08-14 加。`results.build()` 會對每份文件呼叫 `locate.locate(
+    f"pdf_cache/{doc}.pdf")` 去找資產負債表錨,而 `pdf_cache/` 依設計不入 git
+    (CI 自己抓)。乾淨 clone 直接跑 `app.py build` 得到的是一段指向
+    `locate.py:174 os.stat` 的堆疊 —— 看不出來該做什麼。
+    """
+    docs = sorted({recs[0]["doc"] for recs in train.values() if recs})
+    missing = [d for d in docs if not os.path.exists(f"pdf_cache/{d}.pdf")]
+    if not missing:
+        return
+    raise SystemExit(
+        f"\n❌ 無法重建:{len(missing)}/{len(docs)} 份原始 PDF 不在 pdf_cache/。\n\n"
+        f"  驗算(合計對得上資產負債表)必須讀原始 PDF,而 pdf_cache/ 依設計不入 git。\n"
+        f"  缺的前幾份:{missing[:3]}\n\n"
+        f"  先抓檔(需要台灣網路,TWSE 擋雲端 IP):\n\n"
+        f"      python3 app.py fetch\n\n"
+        f"  只是想看現有資料的話不必重建 —— repo 裡的 data.json 已經算好了,\n"
+        f"  直接 `python3 app.py` 起工作台就看得到。\n")
 
 
 def eligible(v, basis, src="v3"):
@@ -349,21 +372,16 @@ def summarize(manifest, diff):
             print(f"    {n:>4}  {reason}")
 
 
-def summarize_vs_live(data):
-    """印「這次會把線上 `data.json` 改成什麼」。
+def _live_delta(data):
+    """與磁碟上 `data.json` 的逐欄差異。
 
-    ⚠️ 2026-08-14 加。`summarize()` 印的 `diff` 比較基準是
-    `snapshots/v2_frozen_20260727.json` —— 一份凍結的舊管線快照,**不是**磁碟上
-    正在服役的 `data.json`。所以那份差異每次都印同一批 288 個單位,
-    「這次改了什麼」反而看不見:實測過磁碟上的 data.json 與現算 0 差異時,
-    `--diff` 照樣印 288 個單位。
-
-    `更新網站.command` 的第 1 步就是拿那份差異問人「看起來對嗎?」,
-    而它無法回答這個問題 —— 關卡等於空轉。這裡補上真正該看的那一份。
+    回傳 `(gained, lost, changed, live, a, b)`:前三個是鍵的清單,`live` 是線上
+    那份 payload(不存在時 None),`a`/`b` 是攤平後的線上/新版查表。
+    **只算一次**,給 `summarize_vs_live()` 印表與 `refuse_if_self_destructive()`
+    判斷共用 —— 這兩件事若各算一份,遲早會在「什麼算 lost」上分岔。
     """
     if not os.path.exists(DATA):
-        print("\n(磁碟上沒有 data.json,這是第一次建置)")
-        return
+        return [], [], [], None, {}, {}
     live = json.load(open(DATA, encoding="utf-8"))
 
     def flat(d):
@@ -378,9 +396,75 @@ def summarize_vs_live(data):
         return out
 
     a, b = flat(live), flat(data)
-    gained = [k for k in b if a.get(k) is None and b[k] is not None]
-    lost = [k for k in a if a[k] is not None and b.get(k) is None]
-    changed = [k for k in b if a.get(k) is not None and b[k] is not None and a[k] != b[k]]
+    return ([k for k in b if a.get(k) is None and b[k] is not None],
+            [k for k in a if a[k] is not None and b.get(k) is None],
+            [k for k in b if a.get(k) is not None and b[k] is not None and a[k] != b[k]],
+            live, a, b)
+
+
+def refuse_if_self_destructive(data, n_cells, argv):
+    """`--write` 的自毀防護:這次重建會把大量已發布的數字清成 null 就擋下來。
+
+    ⚠️ 2026-08-14 加。實測一次乾淨 `git clone` + `pip install` + `app.py build --write`:
+    `rebuild_v3()` 回 **0 格**,產出的是一份全 null 的 `data.json`,而它會**直接
+    覆蓋掉 repo 裡那份好的**。README 就是叫人跑這行指令的。
+
+    原因是驗算要讀原始 PDF(`bs_anchor` 對資產負債表錨),而 `pdf_cache/` 依設計
+    不入 git(CI 會自己抓)。所以「clone 下來就能重建」這件事從來不成立 ——
+    但失敗的樣子不是報錯,是**安靜地產出一份空的**,跟「今年真的沒資料」
+    長得一模一樣。這正是這個專案一路在防的那種錯。
+
+    門檻用比例而不是絕對數:清掉一兩格可能是真的(某份文件被判不合格),
+    清掉一大片一定是環境問題。要真的清空請加 `--force`。
+    """
+    _gained, lost, _changed, live, _a, _b = _live_delta(data)
+    if live is None:
+        return
+    live_n = sum(1 for t, v in live.items() if isinstance(v, dict)
+                 for cols in v.values() if isinstance(cols, dict)
+                 for x in cols.values() if x is not None)
+    if not lost or "--force" in argv:
+        return
+    if len(lost) <= max(20, live_n * 0.05):
+        return
+
+    print(f"\n{'=' * 60}\n❌ 拒絕寫入:這次重建會把 {len(lost)}/{live_n} 個已發布的數字清成 null")
+    print("=" * 60)
+    if n_cells == 0 or not os.path.isdir("pdf_cache") or not os.listdir("pdf_cache"):
+        print("""
+原因幾乎確定是:**原始 PDF 不在本機**。
+
+  驗算(對資產負債表錨)要讀 pdf_cache/*.pdf,而那個目錄依設計不進 git。
+  沒有 PDF → 一格都驗不過 → 產出一份全 null 的 data.json。
+
+  先抓檔再重建(需要台灣網路,TWSE 擋雲端 IP):
+
+      python3 app.py fetch
+
+  只是想看現有資料的話,不必重建 —— repo 裡的 data.json 已經是算好的,
+  直接 `python3 app.py` 起工作台就看得到。""")
+    else:
+        print("\n  facts/ 或判斷層可能被改壞了。先看上面「有值 → null」那幾筆是哪些格。")
+    print("\n確定要這樣寫入請加 --force。\n")
+    raise SystemExit(2)
+
+
+def summarize_vs_live(data):
+    """印「這次會把線上 `data.json` 改成什麼」。
+
+    ⚠️ 2026-08-14 加。`summarize()` 印的 `diff` 比較基準是
+    `snapshots/v2_frozen_20260727.json` —— 一份凍結的舊管線快照,**不是**磁碟上
+    正在服役的 `data.json`。所以那份差異每次都印同一批 288 個單位,
+    「這次改了什麼」反而看不見:實測過磁碟上的 data.json 與現算 0 差異時,
+    `--diff` 照樣印 288 個單位。
+
+    `更新網站.command` 的第 1 步就是拿那份差異問人「看起來對嗎?」,
+    而它無法回答這個問題 —— 關卡等於空轉。這裡補上真正該看的那一份。
+    """
+    gained, lost, changed, live, a, b = _live_delta(data)  # 與防護共用同一次計算
+    if live is None:
+        print("\n(磁碟上沒有 data.json,這是第一次建置)")
+        return
     bank_d = (live.get("banks") or []) != (data.get("banks") or [])
 
     print("\n" + "=" * 60)
@@ -414,6 +498,7 @@ def main(argv):
         print("\n（--diff:未寫任何檔）")
         return 0
     if "--write" in argv:
+        refuse_if_self_destructive(data, manifest["inputs"]["facts"]["cells"], argv)
         if os.path.exists(DATA):
             shutil.copy(DATA, DATA + ".pre_build")
         dump(data, DATA)

@@ -1717,10 +1717,10 @@
    "unit": "2025Q4|中信|AC|wide_consol"
   }
  ],
- "build_timestamp": "2026-08-14T01:58:40",
+ "build_timestamp": "2026-08-14T08:07:14",
  "code_revision": {
   "dirty": true,
-  "git": "146b9b8a684145a6a3c3528741caf7f74ef0d291"
+  "git": "2dc0ef879d93d501e06470e08ef258ff05fafcd8"
  },
  "counts": {
   "blanked": 135,

@@ -81,7 +81,49 @@ CREATE INDEX IF NOT EXISTS idx_rul_cell ON rulings(doc, cls, id);
 
 
 def exists(path=None):
+    """`facts.db` 這個檔在不在。**只回答檔案存在性** —— 文件登記
+    (`documents` 表、上傳去重)用這個。
+
+    ⚠️ 不要拿它來決定「事實庫要不要走 DB」,那是另一個問題,見 `has_facts()`。
+    兩者曾經是同一個函式,結果是 `test_upload` 的清理被跳過(它的 DB 只有
+    `documents` 一張表有列)—— 一道判斷兩種用途,這個 repo 反覆踩的形狀。
+    """
     return os.path.exists(path or PATH)
+
+
+def has_facts(path=None):
+    """`facts.db` 存在**而且真的有事實**(`observations` 或 `rulings` 有列)。
+
+    ⚠️ 2026-08-14:原本只看檔案在不在,而那讓一個**空的 DB 檔劫持整個事實庫**。
+    實測(乾淨 `git clone` + `pip install` + `python3 run_tests.py`):
+      `test_upload.py` 起真的伺服器上傳檔案 → `server.py::_handle_upload`
+      → `db.find_document_by_sha256()` → `connect()`,而 `sqlite3.connect()`
+      **在唯讀查詢時也會把檔案建出來**(空的,只有 schema)。
+      從那一刻起 `facts.load()` 走 DB 分支 → 回 **0 格**(JSON 裡明明有 203 格)。
+    症狀是「所有資料無聲消失」,不是報錯 —— `build.py` 會照常產出一份全 null
+    的 `data.json`,長得跟「今年真的沒資料」一模一樣。
+
+    `.gitignore` 對這個檔的承諾是「沒有這個檔時 facts.py 自動退回直讀
+    facts/*.json,clone 下來不需要它就能跑」。**空的 DB 在語意上就是沒有 DB**,
+    所以判準改成「有沒有資料」而不是「檔案在不在」,承諾才真的成立。
+    """
+    p = path or PATH
+    if not os.path.exists(p):
+        return False
+    try:
+        conn = sqlite3.connect(f"file:{p}?mode=ro", uri=True, timeout=5)
+    except sqlite3.Error:
+        return False
+    try:
+        for t in ("observations", "rulings"):
+            try:
+                if conn.execute(f"SELECT 1 FROM {t} LIMIT 1").fetchone():
+                    return True
+            except sqlite3.Error:      # 表還沒建 → 等同沒有資料
+                continue
+        return False
+    finally:
+        conn.close()
 
 
 def connect(path=None):
