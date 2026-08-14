@@ -5,7 +5,7 @@ Claude Code（不需要 API key，不需要付費）。
 
 **▶ 目前的公開儀表板（示範資料集）：** https://henrylin1009.github.io/auto-reports/
 
-五家台灣銀行的債券投資組合是內建的**示範資料集**，不是交付物——它存在的
+六家台灣銀行的債券投資組合是內建的**示範資料集**，不是交付物——它存在的
 目的是證明這台機器會動。這個 repo 真正的產物是一套可以核對任何一批
 「PDF 財報 → 結構化數字 → 視覺化」資料的工具鏈。
 
@@ -34,14 +34,22 @@ Claude Code（不需要 API key，不需要付費）。
 `claude -p`,不寫程式、沒有 Claude Code 訂閱的人拿到執行檔也只能看示範資料、
 無法加自己的銀行,兩者的受眾其實互相矛盾)。
 
+**macOS 最省事:clone 完直接雙擊 [`啟動.command`](啟動.command)。** 第一次執行
+會自動建虛擬環境、裝依賴、開工作台(實測從裸 clone 到網頁跑起來約 1 分鐘),
+之後每次雙擊直接開。
+
+手動跑的話:
+
 ```bash
 git clone <this repo> && cd auto-reports
-pip install -r requirements.txt   # 少這一步會缺 openpyxl/pdfplumber 起不來
-python3 app.py          # 起工作台,自動開瀏覽器 http://127.0.0.1:8765
+python3 -m venv .venv                      # 這一步不能省,見下方說明
+.venv/bin/pip install -r requirements.txt
+.venv/bin/python app.py                    # 起工作台 http://127.0.0.1:8765
 ```
 
-或雙擊 [`啟動.command`](啟動.command)（macOS）——第一次執行會自動建立
-虛擬環境、裝依賴,之後每次雙擊直接開。
+⚠️ **一定要先建虛擬環境。** 現在的 Homebrew / Debian Python 依 PEP 668 會擋掉
+直接 `pip install`,錯誤訊息是 `error: externally-managed-environment` ——
+這不是這個專案的問題,但你會在第一步就撞到。`啟動.command` 已經幫你處理掉。
 
 打開後在「資料」頁把一份 PDF 拖進網頁上傳,系統會自動排隊用你的
 Claude Code 讀取、驗算、分類。看到「要人看」的格子,點進去核對原始頁,
@@ -52,7 +60,7 @@ Claude Code 讀取、驗算、分類。看到「要人看」的格子,點進去�
 
 | | 進 git | 說明 |
 |---|---|---|
-| `data.json`(算好的發布資料) | ✅ | **clone 完直接 `python3 app.py` 就看得到全部圖表**,不必重建 |
+| `data.json`(算好的發布資料) | ✅ | **clone 完直接雙擊 `啟動.command`(或 `.venv/bin/python app.py`)就看得到全部圖表**,不必重建 |
 | `facts/*.json`(事實庫) | ✅ | 70 份、203 格,人可讀的 diff |
 | `pdf_cache/*.pdf`(原始財報) | ❌ | 太大,而且 `python3 app.py fetch` 抓得回來(需要台灣網路,TWSE 擋雲端 IP) |
 | `facts.db` | ❌ | 由 `facts/*.json` 匯入而來,沒有它會自動直讀 JSON |
@@ -62,11 +70,12 @@ Claude Code 讀取、驗算、分類。看到「要人看」的格子,點進去�
 驗算的定義就是「合計對得上原始財報的資產負債表」,沒有原始檔就不該假裝驗過。
 
 ```bash
-python3 run_tests.py            # 35 支(沒有 PDF 時 27 支,其餘明確跳過)
-python3 app.py build --diff     # 由 facts/ 重算,只印差異不寫檔
-python3 app.py build --write    # 寫入 data.json
-python3 app.py migrate          # facts/*.json → facts.db(三張表儲存後端)
-python3 app.py fetch            # 抓最新財報(需要台灣網路,TWSE 擋雲端 IP)
+# 以下一律用虛擬環境裡的 python(下面寫 .venv/bin/python,不是 python3)
+.venv/bin/python run_tests.py         # 35 支(沒有 PDF 時 27 支,其餘明確跳過)
+.venv/bin/python app.py build --diff  # 由 facts/ 重算,只印差異不寫檔
+.venv/bin/python app.py build --write # 寫入 data.json
+.venv/bin/python app.py migrate       # facts/*.json → facts.db(三張表儲存後端)
+.venv/bin/python app.py fetch         # 抓最新財報(需要台灣網路,TWSE 擋雲端 IP)
 ```
 
 `app.py` 是**唯一入口**,收的是日常會用到的四件事;其餘研究/除錯用的
@@ -92,11 +101,18 @@ python3 app.py fetch            # 抓最新財報(需要台灣網路,TWSE 擋雲
 
 ## 銀行債券示範資料集的涵蓋範圍
 
-中信(5841)、國泰(5835)、富邦(5836)、兆豐(5843)、玉山(5847),個體財報
+國泰(5835)、富邦(5836)、中信(5841)、兆豐(5843)、玉山(5847) 五家較完整,
+華南(5838) 目前只有 2025H2 一格、且兩個口徑各缺一類(帳面缺 AC、成本缺
+Trading);第一(5844) 已抄但一格都還發不出去,所以不在發布清單裡。個體財報
 （entity-level,非合併）,來源 TWSE 公開資訊觀測站。分類:FVTPL(Trading)、
 FVOCI(OCI)、攤銷後成本(AC),桶:政府公債/公司債/金融債/資產基礎證券/
-貨幣市場/其他/股票。近三年（2023 起）涵蓋率高,更早期的半年報有不少是
-資產負債表頁為掃描影像、無法核對錨值的情形,誠實標記為缺資料而非猜測。
+貨幣市場/其他/股票。
+
+**實際涵蓋率(2026-08-14 實測,別當成滿的)**:逐桶表帳面 35%、成本 50%;
+首頁那張四桶長條圖有「三類全齊才畫」的規則,所以只涵蓋 14 格
+(兆豐/國泰/富邦 各 3、玉山 3、中信 2 —— 華南湊不齊,進不了首頁但逐桶表看得到)。
+近三年（2023 起）涵蓋率高,更早期的半年報有不少是資產負債表頁為掃描影像、
+無法核對錨值的情形,誠實標記為缺資料而非猜測。
 
 ## 技術堆疊
 
@@ -106,8 +122,8 @@ SQLite（三張表儲存）· pdfplumber/pypdfium2（PDF 讀取）· 手刻 HTML
 
 ## 開發文件
 
-**先看 [`docs/現況.md`](docs/現況.md)** —— 它是唯一的入口索引,說明 34 份計畫
-文件哪幾份還有效、哪幾份已作廢。不要直接挑一份 `plan_*.md` 讀,編號大的不一定
+**先看 [`docs/現況.md`](docs/現況.md)** —— 它是唯一的入口索引,說明 40 份文件
+哪幾份還有效、哪幾份已作廢。不要直接挑一份 `plan_*.md` 讀,編號大的不一定
 是最新的結論(v8 在寫完當天就被自己作廢了)。
 
 逐項驗收記錄與實測證據見 [`docs/plan_v7_完成品.md`](docs/plan_v7_完成品.md)
